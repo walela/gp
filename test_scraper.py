@@ -1,3 +1,6 @@
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 from scraper.chess_results import ChessResultsScraper
 
 def main():
@@ -10,6 +13,7 @@ def main():
         print(f"Found {len(results)} Kenyan players\n")
         
         for result in results:
+            print("-" * 50)
             print(f"Player: {result.player.name}")
             print(f"Federation: {result.player.federation}")
             print(f"FIDE ID: {result.player.fide_id}")
@@ -18,7 +22,6 @@ def main():
             print(f"TPR: {result.tpr}")
             print(f"Games Played: {result.games_played}/{result.total_rounds}")
             print(f"Has Walkover: {result.has_walkover}")
-            print("-" * 50)
             
     except Exception as e:
         print(f"Error: {e}")

@@ -70,7 +70,7 @@ class ChessResultsScraper:
         response = self.session.get(standings_url)
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        results = self._parse_standings(soup, total_rounds)
+        results = self._parse_standings(soup, total_rounds, tournament_id)
         return tournament_name, results
     
     def _get_tournament_name(self, soup: BeautifulSoup) -> str:
@@ -100,7 +100,7 @@ class ChessResultsScraper:
         logger.warning("Could not find round count, defaulting to 6")
         return 6
     
-    def _parse_standings(self, soup: BeautifulSoup, total_rounds: int) -> List[TournamentResult]:
+    def _parse_standings(self, soup: BeautifulSoup, total_rounds: int, tournament_id: str) -> List[TournamentResult]:
         """Parse the final standings table to extract player results."""
         results = []
         
@@ -130,6 +130,7 @@ class ChessResultsScraper:
         
         # Find column indices
         rank_idx = next((i for i, h in enumerate(headers) if 'rank' in h or 'rk' in h or 'pos' in h or '#' in h), 0)
+        start_rank_idx = next((i for i, h in enumerate(headers) if 'sno' in h), 1)  # sno column is for starting rank
         name_idx = next((i for i, h in enumerate(headers) if 'name' in h or 'player' in h), 2)
         fed_idx = next((i for i, h in enumerate(headers) if 'fed' in h or 'flag' in h), 3)
         rating_idx = next((i for i, h in enumerate(headers) if 'rtg' in h or 'rating' in h), 4)
@@ -141,14 +142,14 @@ class ChessResultsScraper:
         
         for row in rows:
             cols = row.find_all('td')
-            if len(cols) < max(rank_idx, name_idx, fed_idx, rating_idx, points_idx, tpr_idx) + 1:
+            if len(cols) < max(rank_idx, start_rank_idx, name_idx, fed_idx, rating_idx, points_idx, tpr_idx) + 1:
                 continue
             
             try:
-                # Extract rank
+                # Extract rank and starting rank
                 try:
                     rank = int(cols[rank_idx].text.strip().split('.')[0])  # Handle "1." format
-                    start_rank = rank  # Use rank as start_rank since it's not always available
+                    start_rank = int(cols[start_rank_idx].text.strip())  # Get starting rank from sno column
                 except (ValueError, IndexError):
                     rank = start_rank = 0
                 
@@ -183,7 +184,7 @@ class ChessResultsScraper:
                 # Create player object
                 player = Player(
                     name=name,
-                    fide_id=self._extract_fide_id(cols[name_idx]),
+                    fide_id=self._extract_fide_id(cols[name_idx], tournament_id, start_rank),
                     federation=federation,
                     rating=rating,
                     title=None,  # We'll add this later if needed
@@ -213,13 +214,26 @@ class ChessResultsScraper:
         
         return results
     
-    def _extract_fide_id(self, cell) -> Optional[str]:
+    def _extract_fide_id(self, cell, tournament_id: str, start_rank: int) -> Optional[str]:
         """Extract FIDE ID from player cell."""
-        link = cell.find('a')
-        if link and 'href' in link.attrs:
-            match = re.search(r'fed=(\d+)', link['href'])
-            if match:
-                return match.group(1)
+        # Construct player details URL using starting rank
+        player_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=9&fed=KEN&turdet=YES&flag=30&snr={start_rank}"
+        try:
+            logger.debug(f"Fetching player details from {player_url}")
+            response = self.session.get(player_url)
+            player_soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Look for FIDE ID in player details
+            fide_row = player_soup.find('td', string=re.compile(r'Fide-ID'))
+            if fide_row and fide_row.find_next_sibling('td'):
+                fide_id = fide_row.find_next_sibling('td').text.strip()
+                if fide_id and fide_id.isdigit():
+                    logger.debug(f"Found FIDE ID: {fide_id}")
+                    return fide_id
+                    
+        except Exception as e:
+            logger.error(f"Error fetching player details: {str(e)}")
+            
         return None
     
     def _extract_rating(self, rating_text: str) -> Optional[int]:
