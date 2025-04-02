@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Grand Prix Rankings</h1>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>
+                    <a href="{{ url_for('rankings', sort='name', dir='asc' if sort_by == 'name' and sort_dir == 'desc' else 'desc', page=current_page) }}" class="text-dark text-decoration-none">
+                        Name
+                        {% if sort_by == 'name' %}
+                        <small>{{ '▼' if sort_dir == 'desc' else '▲' }}</small>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>FIDE ID</th>
+                <th>
+                    <a href="{{ url_for('rankings', sort='rating', dir='asc' if sort_by == 'rating' and sort_dir == 'desc' else 'desc', page=current_page) }}" class="text-dark text-decoration-none">
+                        Rating
+                        {% if sort_by == 'rating' %}
+                        <small>{{ '▼' if sort_dir == 'desc' else '▲' }}</small>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ url_for('rankings', sort='tournaments_played', dir='asc' if sort_by == 'tournaments_played' and sort_dir == 'desc' else 'desc', page=current_page) }}" class="text-dark text-decoration-none">
+                        Tournaments
+                        {% if sort_by == 'tournaments_played' %}
+                        <small>{{ '▼' if sort_dir == 'desc' else '▲' }}</small>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ url_for('rankings', sort='best_1', dir='asc' if sort_by == 'best_1' and sort_dir == 'desc' else 'desc', page=current_page) }}" class="text-dark text-decoration-none">
+                        Best TPR
+                        {% if sort_by == 'best_1' %}
+                        <small>{{ '▼' if sort_dir == 'desc' else '▲' }}</small>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ url_for('rankings', sort='best_2', dir='asc' if sort_by == 'best_2' and sort_dir == 'desc' else 'desc', page=current_page) }}" class="text-dark text-decoration-none">
+                        Best 2 Avg
+                        {% if sort_by == 'best_2' %}
+                        <small>{{ '▼' if sort_dir == 'desc' else '▲' }}</small>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ url_for('rankings', sort='best_3', dir='asc' if sort_by == 'best_3' and sort_dir == 'desc' else 'desc', page=current_page) }}" class="text-dark text-decoration-none">
+                        Best 3 Avg
+                        {% if sort_by == 'best_3' %}
+                        <small>{{ '▼' if sort_dir == 'desc' else '▲' }}</small>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ url_for('rankings', sort='best_4', dir='asc' if sort_by == 'best_4' and sort_dir == 'desc' else 'desc', page=current_page) }}" class="text-dark text-decoration-none">
+                        Best 4 Avg
+                        {% if sort_by == 'best_4' %}
+                        <small>{{ '▼' if sort_dir == 'desc' else '▲' }}</small>
+                        {% endif %}
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in rankings %}
+            <tr>
+                <td>{{ (current_page - 1) * 25 + loop.index }}</td>
+                <td>{{ player.name }}</td>
+                <td>{{ player.fide_id or 'None' }}</td>
+                <td>{{ player.rating }}</td>
+                <td>{{ player.tournaments_played }}</td>
+                <td>
+                    {{ player.best_1 }}
+                    {% if player.tournament_1 %}
+                    <br><small class="text-muted">{{ player.tournament_1 }}</small>
+                    {% endif %}
+                </td>
+                <td>{{ player.best_2 }}</td>
+                <td>{{ player.best_3 }}</td>
+                <td>{{ player.best_4 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if total_pages > 1 %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {{ 'disabled' if current_page == 1 }}">
+            <a class="page-link" href="{{ url_for('rankings', page=current_page-1, sort=sort_by, dir=sort_dir) if current_page > 1 else '#' }}">Previous</a>
+        </li>
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {{ 'active' if p == current_page }}">
+            <a class="page-link" href="{{ url_for('rankings', page=p, sort=sort_by, dir=sort_dir) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        <li class="page-item {{ 'disabled' if current_page == total_pages }}">
+            <a class="page-link" href="{{ url_for('rankings', page=current_page+1, sort=sort_by, dir=sort_dir) if current_page < total_pages else '#' }}">Next</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

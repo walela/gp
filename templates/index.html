@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Tournaments</h1>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for id, name in tournaments.items() %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ name }}</h5>
+                <p class="card-text text-muted">Tournament ID: {{ id }}</p>
+                <a href="{{ url_for('tournament', tournament_id=id) }}" class="btn btn-primary">View Results</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
