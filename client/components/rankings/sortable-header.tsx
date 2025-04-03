@@ -9,9 +9,10 @@ interface SortableHeaderProps {
   column: string
   label: string
   align?: "left" | "right"
+  basePath?: string
 }
 
-export function SortableHeader({ column, label, align = "left" }: SortableHeaderProps) {
+export function SortableHeader({ column, label, align = "left", basePath = "/rankings" }: SortableHeaderProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const sort = searchParams.get("sort")
@@ -23,7 +24,7 @@ export function SortableHeader({ column, label, align = "left" }: SortableHeader
     const params = new URLSearchParams(searchParams)
     params.set("sort", column)
     params.set("dir", isActive && dir === "desc" ? "asc" : "desc")
-    router.push(`/rankings?${params.toString()}`)
+    router.push(`${basePath}?${params.toString()}`)
   }
 
   return (

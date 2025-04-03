@@ -5,6 +5,7 @@ import { SortableHeader } from "@/components/rankings/sortable-header"
 import { Button } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { getRankings } from "@/services/api"
+import { cn } from "@/lib/utils"
 
 interface RankingsPageProps {
   searchParams: {
@@ -15,17 +16,25 @@ interface RankingsPageProps {
 }
 
 export default async function RankingsPage({ searchParams }: RankingsPageProps) {
-  const sort = searchParams.sort || 'best_4'
+  const sort = searchParams.sort || 'best_2'
   const dir = (searchParams.dir || 'desc') as 'asc' | 'desc'
   const page = Number(searchParams.page || '1')
   const { rankings, total_pages } = await getRankings({ sort, dir, page })
+
+  // Get top 9 by best_2 for highlighting
+  const top9ByBest2 = new Set(
+    [...rankings]
+      .sort((a, b) => b.best_2 - a.best_2)
+      .slice(0, 9)
+      .map(p => p.fide_id || p.name)
+  )
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
         <p className="text-muted-foreground">
-          Current standings based on best tournament performances
+          Current standings based on best tournament performances. Top 9 players by Best 2 Average are highlighted.
         </p>
       </div>
 
@@ -33,7 +42,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Rank</TableHead>
+              <TableHead className="w-[4rem] text-right pr-8">Rank</TableHead>
               <SortableHeader column="name" label="Name" />
               <SortableHeader column="rating" label="Rating" align="right" />
               <SortableHeader column="tournaments_played" label="Tournaments" align="right" />
@@ -45,12 +54,22 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           </TableHeader>
           <TableBody>
             {rankings.map((player, index) => (
-              <TableRow key={player.fide_id || player.name}>
-                <TableCell>{(page - 1) * 25 + index + 1}</TableCell>
-                <TableCell className="font-medium">{player.name}</TableCell>
-                <TableCell className="text-right">{player.rating || 'Unrated'}</TableCell>
-                <TableCell className="text-right">{player.tournaments_played}</TableCell>
-                <TableCell className="text-right">
+              <TableRow 
+                key={player.fide_id || player.name} 
+                className={cn(
+                  "even:bg-muted/30",
+                  top9ByBest2.has(player.fide_id || player.name) && "bg-green-50 even:bg-green-50/70 hover:bg-green-100"
+                )}
+              >
+                <TableCell className="text-right pr-8 font-medium">{(page - 1) * 25 + index + 1}</TableCell>
+                <TableCell>
+                  <Link href={`/player/${player.fide_id}`} className="font-medium text-blue-600 hover:underline">
+                    {player.name}
+                  </Link>
+                </TableCell>
+                <TableCell className="text-right tabular-nums">{player.rating || 'Unrated'}</TableCell>
+                <TableCell className="text-right tabular-nums">{player.tournaments_played}</TableCell>
+                <TableCell className="text-right tabular-nums">
                   <div>{player.best_1}</div>
                   {player.tournament_1 && (
                     <div className="text-sm text-muted-foreground">
@@ -58,9 +77,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="text-right">{player.best_2}</TableCell>
-                <TableCell className="text-right">{player.best_3}</TableCell>
-                <TableCell className="text-right">{Math.round(player.best_4)}</TableCell>
+                <TableCell className="text-right tabular-nums">{player.best_2}</TableCell>
+                <TableCell className="text-right tabular-nums">{player.best_3}</TableCell>
+                <TableCell className="text-right tabular-nums">{Math.round(player.best_4)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

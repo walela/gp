@@ -133,7 +133,7 @@ def get_player_rankings():
 @app.route('/api/rankings')
 def rankings():
     """Get current GP rankings."""
-    sort = request.args.get('sort', 'best_4')
+    sort = request.args.get('sort', 'best_2')
     dir = request.args.get('dir', 'desc')
     page = int(request.args.get('page', '1'))
     per_page = 25
