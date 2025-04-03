@@ -16,7 +16,6 @@
                         {% endif %}
                     </a>
                 </th>
-                <th>FIDE ID</th>
                 <th>
                     <a href="{{ url_for('rankings', sort='rating', dir='asc' if sort_by == 'rating' and sort_dir == 'desc' else 'desc', page=current_page) }}" class="text-dark text-decoration-none">
                         Rating
@@ -71,8 +70,13 @@
             {% for player in rankings %}
             <tr>
                 <td>{{ (current_page - 1) * 25 + loop.index }}</td>
-                <td>{{ player.name }}</td>
-                <td>{{ player.fide_id or 'None' }}</td>
+                <td>
+                    {% if player.fide_id %}
+                    <a href="{{ url_for('player', fide_id=player.fide_id) }}" class="text-decoration-none">{{ player.name }}</a>
+                    {% else %}
+                    {{ player.name }}
+                    {% endif %}
+                </td>
                 <td>{{ player.rating }}</td>
                 <td>{{ player.tournaments_played }}</td>
                 <td>

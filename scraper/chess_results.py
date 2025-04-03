@@ -8,10 +8,15 @@ from bs4 import BeautifulSoup
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from urllib.parse import urljoin
+import sqlite3
+from db import Database
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Initialize database
+db = Database()
 
 @dataclass
 class Player:
@@ -52,10 +57,14 @@ class ChessResultsScraper:
         
         # Get tournament name and round count
         tournament_name = soup.find('title').text.split('-')[0].strip()
-        round_count = self._get_round_count(soup)
+        round_count = 8 if tournament_id == "1126042" else self._get_round_count(soup)
         
-        # Fetch final standings
-        standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}"
+        # For Mavens tournament, use crosstable view to get final points
+        if tournament_id == "1126042":
+            standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=2&rd=8"
+        else:
+            standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}"
+            
         response = self.session.get(standings_url)
         soup = BeautifulSoup(response.text, 'html.parser')
         
@@ -77,9 +86,20 @@ class ChessResultsScraper:
         patterns = [
             r"Final Ranking after (\d+) Rounds",
             r"Ranking after Round (\d+)",
-            r"Round (\d+)"
+            r"Round (\d+)",
+            r"(\d+) Rounds"
         ]
         
+        # First try to find in the title
+        title = soup.find('title')
+        if title:
+            title_text = title.text
+            for pattern in patterns:
+                match = re.search(pattern, title_text)
+                if match:
+                    return int(match.group(1))
+        
+        # Then try to find in any text
         for pattern in patterns:
             round_text = soup.find(string=re.compile(pattern))
             if round_text:
@@ -87,9 +107,18 @@ class ChessResultsScraper:
                 if match:
                     return int(match.group(1))
         
-        # Default to 6 rounds if we can't find it
-        logger.warning("Could not find round count, defaulting to 6")
-        return 6
+        # If we still can't find it, look for the last round number in the crosstable
+        round_links = soup.find_all('a', href=re.compile(r'art=3.*rd=\d+'))
+        if round_links:
+            rounds = [int(re.search(r'rd=(\d+)', link['href']).group(1)) 
+                     for link in round_links 
+                     if re.search(r'rd=(\d+)', link['href'])]
+            if rounds:
+                return max(rounds)
+        
+        # Default to 9 rounds if we can't find it
+        logger.warning("Could not find round count, defaulting to 9")
+        return 9
     
     def _parse_standings(self, soup: BeautifulSoup, total_rounds: int, tournament_id: str = None) -> List[TournamentResult]:
         """Parse the standings table and return list of tournament results."""
@@ -112,23 +141,50 @@ class ChessResultsScraper:
             if len(cells) < len(headers):
                 continue
                 
-            # Only process Kenyan players
-            if 'KEN' not in cells[headers.index('fed')].text:
-                continue
+            # Check if this is a crosstable view (art=2)
+            if tournament_id == "1126042":
+                # In crosstable, player details are in a different format
+                name_cell = cells[1]  # Name is always in second column
+                name = name_cell.text.strip()
+                # Skip non-Kenyan players by checking their name in the database
+                with sqlite3.connect(db.db_file) as conn:
+                    c = conn.cursor()
+                    c.execute('SELECT federation FROM players WHERE name = ?', (name,))
+                    result = c.fetchone()
+                    if not result or result[0] != 'KEN':
+                        continue
                 
-            # Get player info
-            name = cells[headers.index('name')].text.strip()
-            rating = int(cells[headers.index('rtg')].text) if cells[headers.index('rtg')].text.strip() else 0
-            points = float(cells[headers.index('pts.')].text.replace(',', '.'))
-            rank = int(cells[headers.index('rk.')].text)
-            start_rank = int(cells[headers.index('sno')].text)
-            
-            # Calculate TPR
-            tpr_cell = cells[headers.index('rp')]
-            tpr = int(tpr_cell.text) if tpr_cell.text.strip() else 0
-            
-            # Get FIDE ID if available
-            fide_id = self._extract_fide_id(cells[headers.index('name')], tournament_id, start_rank)
+                # Get player info from database
+                c.execute('SELECT fide_id, rating FROM players WHERE name = ?', (name,))
+                player_info = c.fetchone()
+                if not player_info:
+                    continue
+                    
+                fide_id, rating = player_info
+                points = float(cells[-2].text.replace(',', '.'))  # Points are in second-to-last column
+                rank = int(cells[0].text)  # Rank is in first column
+                start_rank = rank  # In crosstable, we don't have start rank
+                
+                # TPR is not available in crosstable
+                tpr = 0
+            else:
+                # Regular standings view (art=1)
+                if 'KEN' not in cells[headers.index('fed')].text:
+                    continue
+                    
+                # Get player info
+                name = cells[headers.index('name')].text.strip()
+                rating = int(cells[headers.index('rtg')].text) if cells[headers.index('rtg')].text.strip() else 0
+                points = float(cells[headers.index('pts.')].text.replace(',', '.'))
+                rank = int(cells[headers.index('rk.')].text)
+                start_rank = int(cells[headers.index('sno')].text)
+                
+                # Calculate TPR
+                tpr_cell = cells[headers.index('rp')]
+                tpr = int(tpr_cell.text) if tpr_cell.text.strip() else 0
+                
+                # Get FIDE ID if available
+                fide_id = self._extract_fide_id(cells[headers.index('name')], tournament_id, start_rank)
             
             # Create player and result objects
             player = Player(name=name, fide_id=fide_id, federation="KEN", rating=rating)
