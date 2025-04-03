@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getTournaments } from "@/services/api"
 
-export default async function Home() {
+export default async function HomePage() {
   const tournaments = await getTournaments()
 
   return (

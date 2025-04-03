@@ -10,9 +10,10 @@ interface SortableHeaderProps {
   label: string
   align?: "left" | "right"
   basePath?: string
+  className?: string
 }
 
-export function SortableHeader({ column, label, align = "left", basePath = "/rankings" }: SortableHeaderProps) {
+export function SortableHeader({ column, label, align = "left", basePath = "/rankings", className }: SortableHeaderProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const sort = searchParams.get("sort")
@@ -28,7 +29,7 @@ export function SortableHeader({ column, label, align = "left", basePath = "/ran
   }
 
   return (
-    <TableHead className={cn("cursor-pointer select-none", align === "right" && "text-right")} onClick={handleSort}>
+    <TableHead className={cn("cursor-pointer select-none", align === "right" && "text-right", className)} onClick={handleSort}>
       <div className={cn("flex items-center gap-1", align === "right" ? "justify-end" : "justify-start")}>
         <span>{label}</span>
         <span className="text-muted-foreground">

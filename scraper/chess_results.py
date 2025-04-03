@@ -61,7 +61,7 @@ class ChessResultsScraper:
         
         # For Mavens tournament, use crosstable view to get final points
         if tournament_id == "1126042":
-            standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=2&rd=8"
+            standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=2"
         else:
             standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}"
             
@@ -72,13 +72,6 @@ class ChessResultsScraper:
         results = self._parse_standings(soup, round_count, tournament_id)
         
         return tournament_name, results
-    
-    def _get_tournament_name(self, soup: BeautifulSoup) -> str:
-        """Extract tournament name from the page."""
-        title = soup.find('h2')
-        if title:
-            return title.text.strip()
-        return "Unknown Tournament"
     
     def _get_round_count(self, soup: BeautifulSoup) -> int:
         """Extract total number of rounds from the tournament."""

@@ -11,10 +11,9 @@ interface PlayerPageProps {
 }
 
 export default async function PlayerPage({ params }: PlayerPageProps) {
-  let player
-  try {
-    player = await getPlayer(params.id)
-  } catch {
+  const player = await getPlayer(params.id)
+
+  if (!player) {
     notFound()
   }
 
@@ -29,7 +28,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
           </div>
           <div className="contents">
             <dt className="text-muted-foreground">Current Rating</dt>
-            <dd className="font-medium tabular-nums">{player.rating}</dd>
+            <dd className="font-medium tabular-nums">{player.rating || 'Unrated'}</dd>
           </div>
         </dl>
       </div>
