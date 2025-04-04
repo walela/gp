@@ -5,7 +5,7 @@ import { getPlayer } from "@/services/api"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, Trophy } from "lucide-react"
 
 interface PlayerPageProps {
   params: {
@@ -20,19 +20,46 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     notFound()
   }
 
+  // Calculate performance metrics
+  const totalTournaments = player.results.length
+  const bestTpr = Math.max(...player.results.map(r => r.tpr || 0))
+  const averagePoints = player.results.reduce((acc, r) => acc + r.points, 0) / totalTournaments
+
   return (
     <div className="space-y-6 pb-8">
       {/* Player Header */}
-      <Card className="p-6 space-y-4">
-        <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{player.name}</h1>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="text-xs sm:text-sm">
-              FIDE ID: {player.fide_id}
-            </Badge>
-            <Badge variant="outline" className="text-xs sm:text-sm">
-              Rating: {player.rating || 'Unrated'}
-            </Badge>
+      <Card className="rounded-none border-x-0 bg-gradient-to-br from-muted/50 to-background">
+        <div className="p-6 space-y-6">
+          {/* Player Info */}
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{player.name}</h1>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline" className="text-xs sm:text-sm">
+                FIDE ID: {player.fide_id}
+              </Badge>
+              <Badge variant="outline" className="text-xs sm:text-sm">
+                Rating: {player.rating || 'Unrated'}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Tournaments</p>
+              <p className="text-2xl font-bold tabular-nums">{totalTournaments}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Best TPR</p>
+              <p className="text-2xl font-bold tabular-nums flex items-center gap-2">
+                {bestTpr}
+                {bestTpr >= 2000 && <Trophy className="h-4 w-4 text-yellow-500" />}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Avg. Points</p>
+              <p className="text-2xl font-bold tabular-nums">{averagePoints.toFixed(1)}</p>
+            </div>
           </div>
         </div>
       </Card>
@@ -44,10 +71,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         {/* Mobile View */}
         <div className="block sm:hidden space-y-4">
           {player.results.map((result) => (
-            <Card key={result.tournament_id} className="p-4">
+            <Card key={result.tournament_id} className="rounded-none border-x-0">
               <Link 
                 href={`/tournament/${result.tournament_id}`}
-                className="block space-y-3"
+                className="block p-4 space-y-3 hover:bg-muted/50 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-blue-600">{result.tournament_name}</h3>
@@ -73,7 +100,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         </div>
 
         {/* Desktop View */}
-        <Card className="hidden sm:block rounded-none">
+        <Card className="hidden sm:block rounded-none border-x-0">
           <ScrollArea>
             <Table>
               <TableHeader>
