@@ -98,7 +98,13 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                         className="font-medium text-blue-600 hover:underline"
                         title={player.name}
                       >
-                        {player.name}
+                        <span className="sm:hidden">
+                          {player.name.length > 25 
+                            ? player.name.split(' ').slice(0, 2).join(' ') + '...'
+                            : player.name
+                          }
+                        </span>
+                        <span className="hidden sm:inline">{player.name}</span>
                       </Link>
                     </div>
                   </TableCell>
