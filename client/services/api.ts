@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5003/api'
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'
 
 export interface Tournament {
   id: string
