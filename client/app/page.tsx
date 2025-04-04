@@ -11,16 +11,18 @@ export default async function HomePage() {
     {
       id: "742150",
       name: "Kenya Open 2025",
-      date: "2025-05-01",
+      startDate: "2025-04-18",
+      endDate: "2025-04-21",
       location: "Nairobi",
-      rounds: 9,
+      rounds: 8,
     },
     {
       id: "742151",
       name: "Nakuru Open 2025",
-      date: "2025-06-15",
+      startDate: "2025-05-01",
+      endDate: "2025-05-03",
       location: "Nakuru",
-      rounds: 7,
+      rounds: 6,
     }
   ]
 
@@ -78,11 +80,16 @@ export default async function HomePage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <CalendarDays className="h-4 w-4" />
-                    <span>{new Date(tournament.date).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric"
-                    })}</span>
+                    <span>
+                      {new Date(tournament.startDate).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric"
+                      })} - {new Date(tournament.endDate).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric"
+                      })}
+                    </span>
                   </div>
                 </div>
                 <div className="flex gap-4 text-sm">
