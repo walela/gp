@@ -23,7 +23,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   // Calculate performance metrics
   const totalTournaments = player.results.length
   const bestTpr = Math.max(...player.results.map(r => r.tpr || 0))
-  const averagePoints = player.results.reduce((acc, r) => acc + r.points, 0) / totalTournaments
+  const validTprResults = player.results.filter(r => r.tpr)
+  const averageTpr = validTprResults.length > 0
+    ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length)
+    : 0
 
   return (
     <div className="space-y-4 pb-8">
@@ -58,8 +61,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground">Avg. Points</p>
-                <p className="font-medium tabular-nums">{averagePoints.toFixed(1)}</p>
+                <p className="text-muted-foreground">Avg. TPR</p>
+                <p className="font-medium tabular-nums">{averageTpr || '-'}</p>
               </div>
             </div>
           </div>
