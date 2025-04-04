@@ -15,7 +15,7 @@ const Table = React.forwardRef<
     <table
       ref={ref}
       data-slot="table"
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn("w-full caption-bottom text-sm bg-white/80 backdrop-blur-sm border border-muted/50 rounded-lg overflow-hidden shadow-sm", className)}
       {...props}
     />
   </div>
@@ -29,7 +29,7 @@ const TableHeader = React.forwardRef<
   <thead
     data-slot="table-header"
     ref={ref}
-    className={cn("[&_tr]:border-b", className)}
+    className={cn("bg-muted/30 border-b border-muted/50", className)}
     {...props}
   />
 ))
@@ -42,7 +42,7 @@ const TableBody = React.forwardRef<
   <tbody
     data-slot="table-body"
     ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
+    className={cn("divide-y divide-muted/20", className)}
     {...props}
   />
 ))
@@ -55,10 +55,7 @@ const TableFooter = React.forwardRef<
   <tfoot
     data-slot="table-footer"
     ref={ref}
-    className={cn(
-      "bg-muted/50 border-t font-medium [&>tr]:last:border-b-0",
-      className
-    )}
+    className={cn("border-t border-muted/50 bg-muted/30 font-medium", className)}
     {...props}
   />
 ))
@@ -72,7 +69,7 @@ const TableRow = React.forwardRef<
     data-slot="table-row"
     ref={ref}
     className={cn(
-      "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+      "transition-colors hover:bg-muted/20 data-[state=selected]:bg-muted/30",
       className
     )}
     {...props}
