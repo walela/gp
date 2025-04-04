@@ -62,7 +62,13 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                           className="font-medium text-blue-600 hover:underline"
                           title={result.player.name}
                         >
-                          {result.player.name}
+                          <span className="sm:hidden">
+                            {result.player.name.length > 25 
+                              ? result.player.name.split(' ').slice(0, 2).join(' ') + '...'
+                              : result.player.name
+                            }
+                          </span>
+                          <span className="hidden sm:inline">{result.player.name}</span>
                         </Link>
                       ) : (
                         <span className="font-medium" title={result.player.name}>{result.player.name}</span>
