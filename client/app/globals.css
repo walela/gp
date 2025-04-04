@@ -118,5 +118,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(135deg, rgb(248 250 252) 0%, rgb(241 245 249) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 }
