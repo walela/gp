@@ -26,55 +26,57 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   const averagePoints = player.results.reduce((acc, r) => acc + r.points, 0) / totalTournaments
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-4 pb-8">
       {/* Player Header */}
       <Card className="rounded-none border-x-0 bg-gradient-to-br from-muted/50 to-background">
-        <div className="p-6 space-y-6">
-          {/* Player Info */}
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{player.name}</h1>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className="text-xs sm:text-sm">
-                FIDE ID: {player.fide_id}
-              </Badge>
-              <Badge variant="outline" className="text-xs sm:text-sm">
-                Rating: {player.rating || 'Unrated'}
-              </Badge>
+        <div className="p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            {/* Player Info */}
+            <div className="space-y-1.5 flex-1">
+              <h1 className="text-2xl font-bold tracking-tight">{player.name}</h1>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="outline" className="text-xs">
+                  FIDE ID: {player.fide_id}
+                </Badge>
+                <Badge variant="outline" className="text-xs">
+                  Rating: {player.rating || 'Unrated'}
+                </Badge>
+              </div>
             </div>
-          </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Tournaments</p>
-              <p className="text-2xl font-bold tabular-nums">{totalTournaments}</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Best TPR</p>
-              <p className="text-2xl font-bold tabular-nums flex items-center gap-2">
-                {bestTpr}
-                {bestTpr >= 2000 && <Trophy className="h-4 w-4 text-yellow-500" />}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Avg. Points</p>
-              <p className="text-2xl font-bold tabular-nums">{averagePoints.toFixed(1)}</p>
+            {/* Stats */}
+            <div className="flex gap-4 text-sm">
+              <div>
+                <p className="text-muted-foreground">Tournaments</p>
+                <p className="font-medium tabular-nums">{totalTournaments}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Best TPR</p>
+                <p className="font-medium tabular-nums flex items-center gap-1">
+                  {bestTpr}
+                  {bestTpr >= 2000 && <Trophy className="h-3 w-3 text-yellow-500" />}
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Avg. Points</p>
+                <p className="font-medium tabular-nums">{averagePoints.toFixed(1)}</p>
+              </div>
             </div>
           </div>
         </div>
       </Card>
 
       {/* Tournament History */}
-      <div className="space-y-4">
-        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">Tournament History</h2>
+      <div className="space-y-3">
+        <h2 className="text-lg font-semibold tracking-tight">Tournament History</h2>
         
         {/* Mobile View */}
-        <div className="block sm:hidden space-y-4">
+        <div className="block sm:hidden space-y-2">
           {player.results.map((result) => (
             <Card key={result.tournament_id} className="rounded-none border-x-0">
               <Link 
                 href={`/tournament/${result.tournament_id}`}
-                className="block p-4 space-y-3 hover:bg-muted/50 transition-colors"
+                className="block p-3 space-y-2 hover:bg-muted/50 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-blue-600">{result.tournament_name}</h3>
@@ -82,15 +84,15 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-sm">
                   <div>
-                    <p className="text-muted-foreground">Rating</p>
+                    <p className="text-muted-foreground text-xs">Rating</p>
                     <p className="font-medium tabular-nums">{result.rating}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">Points</p>
+                    <p className="text-muted-foreground text-xs">Points</p>
                     <p className="font-medium tabular-nums">{result.points}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">TPR</p>
+                    <p className="text-muted-foreground text-xs">TPR</p>
                     <p className="font-medium tabular-nums">{result.tpr || '-'}</p>
                   </div>
                 </div>
