@@ -48,19 +48,19 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             </div>
 
             {/* Stats */}
-            <div className="flex gap-4 text-sm">
-              <div>
+            <div className="flex gap-8 text-sm">
+              <div className="min-w-[80px]">
                 <p className="text-muted-foreground">Tournaments</p>
                 <p className="font-medium tabular-nums">{totalTournaments}</p>
               </div>
-              <div>
+              <div className="min-w-[80px]">
                 <p className="text-muted-foreground">Best TPR</p>
                 <p className="font-medium tabular-nums flex items-center gap-1">
                   {bestTpr}
                   {bestTpr >= 2000 && <Trophy className="h-3 w-3 text-yellow-500" />}
                 </p>
               </div>
-              <div>
+              <div className="min-w-[80px]">
                 <p className="text-muted-foreground">Avg. TPR</p>
                 <p className="font-medium tabular-nums">{averageTpr || '-'}</p>
               </div>
