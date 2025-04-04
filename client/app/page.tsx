@@ -29,9 +29,9 @@ export default async function HomePage() {
   return (
     <div className="space-y-8 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Grand Prix Tournaments</h1>
-        <p className="text-muted-foreground">
-          Track Kenyan chess tournaments and player performances
+        <h1 className="scroll-m-20 text-4xl font-bold tracking-tight">Grand Prix Tournaments</h1>
+        <p className="text-lg text-muted-foreground">
+          Track your performance across the 2024 Kenya Grand Prix series.
         </p>
       </div>
       
