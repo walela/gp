@@ -5,6 +5,7 @@ from db import Database
 from typing import Dict, List
 import math
 import sqlite3
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -222,4 +223,5 @@ def refresh_tournament(tournament_id):
     return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5003)
+    port = int(os.environ.get('PORT', 5003))
+    app.run(host='0.0.0.0', port=port)
