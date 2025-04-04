@@ -11,10 +11,9 @@ interface PlayerPageProps {
   params: {
     id: string
   }
-  searchParams?: { [key: string]: string | string[] | undefined }
 }
 
-export default async function PlayerPage({ params, searchParams }: PlayerPageProps) {
+export default async function PlayerPage({ params }: PlayerPageProps) {
   const player = await getPlayer(params.id)
 
   if (!player) {
