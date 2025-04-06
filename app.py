@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from scraper.chess_results import ChessResultsScraper
+from chess_results import ChessResultsScraper
 from db import Database
 import sqlite3
 import os

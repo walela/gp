@@ -1,4 +1,4 @@
-from scraper.chess_results import ChessResultsScraper
+from chess_results import ChessResultsScraper
 
 def main():
     # Initialize scraper

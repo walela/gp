@@ -5,9 +5,8 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 from dataclasses import dataclass
-from urllib.parse import urljoin
 import sqlite3
 from db import Database
 

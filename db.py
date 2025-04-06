@@ -1,7 +1,7 @@
 import sqlite3
 from typing import List, Dict, Optional
 from dataclasses import asdict
-import json
+
 
 class Database:
     def __init__(self, db_file: str = 'gp_tracker.db'):
