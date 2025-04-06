@@ -1,13 +1,13 @@
-import Link from "next/link"
-import { Card } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
-import { SortableHeader } from "@/components/rankings/sortable-header"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from "lucide-react"
-import { getRankings } from "@/services/api"
-import { cn } from "@/lib/utils"
-import { ViewSelector } from "@/components/rankings/view-selector"
+import Link from 'next/link'
+import { Card } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { SortableHeader } from '@/components/rankings/sortable-header'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from 'lucide-react'
+import { getRankings } from '@/services/api'
+import { cn } from '@/lib/utils'
+import { ViewSelector } from '@/components/rankings/view-selector'
 
 interface RankingsPageProps {
   searchParams: {
@@ -37,11 +37,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   )
 
   // Filter rankings if search is provided
-  const filteredRankings = search
-    ? rankings.filter(player => 
-        player.name.toLowerCase().includes(search.toLowerCase())
-      )
-    : rankings
+  const filteredRankings = search ? rankings.filter(player => player.name.toLowerCase().includes(search.toLowerCase())) : rankings
 
   return (
     <div className="space-y-6">
@@ -56,13 +52,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <div className="relative w-full sm:w-[300px]">
           <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <form>
-            <Input
-              type="search"
-              name="q"
-              placeholder="Search players..."
-              defaultValue={search}
-              className="pl-9"
-            />
+            <Input type="search" name="q" placeholder="Search players..." defaultValue={search} className="pl-9" />
           </form>
         </div>
 
@@ -76,33 +66,68 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <TableRow>
                 <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-[3rem] text-right pr-4 lg:pr-8" />
                 <SortableHeader column="name" label="Name" basePath="/rankings" className="w-[120px] sm:w-[160px] lg:w-[200px]" />
-                <SortableHeader column="rating" label="Rating" align="right" basePath="/rankings" className="hidden lg:table-cell" />
-                <SortableHeader column="tournaments_played" label="Tournaments" align="right" basePath="/rankings" className="hidden sm:table-cell" />
-                <SortableHeader column="best_1" label="Best TPR" align="right" basePath="/rankings" className={cn("w-[4rem]", view === 'best_1' ? "table-cell" : "hidden lg:table-cell")} />
-                <SortableHeader column="best_2" label="Best 2" align="right" basePath="/rankings" className={cn("w-[4rem]", view === 'best_2' ? "table-cell" : "hidden lg:table-cell")} />
-                <SortableHeader column="best_3" label="Best 3" align="right" basePath="/rankings" className={cn("w-[4rem]", view === 'best_3' ? "table-cell" : "hidden lg:table-cell")} />
-                <SortableHeader column="best_4" label="Best 4" align="right" basePath="/rankings" className={cn("w-[4rem]", view === 'best_4' ? "table-cell" : "hidden lg:table-cell")} />
+                <SortableHeader
+                  column="rating"
+                  label="Rating"
+                  align="right"
+                  basePath="/rankings"
+                  className="hidden lg:table-cell"
+                />
+                <SortableHeader
+                  column="tournaments_played"
+                  label="Tournaments"
+                  align="right"
+                  basePath="/rankings"
+                  className="hidden sm:table-cell"
+                />
+                <SortableHeader
+                  column="best_1"
+                  label="Best TPR"
+                  align="right"
+                  basePath="/rankings"
+                  className={cn('w-[4rem]', view === 'best_1' ? 'table-cell' : 'hidden lg:table-cell')}
+                />
+                <SortableHeader
+                  column="best_2"
+                  label="Best 2"
+                  align="right"
+                  basePath="/rankings"
+                  className={cn('w-[4rem]', view === 'best_2' ? 'table-cell' : 'hidden lg:table-cell')}
+                />
+                <SortableHeader
+                  column="best_3"
+                  label="Best 3"
+                  align="right"
+                  basePath="/rankings"
+                  className={cn('w-[4rem]', view === 'best_3' ? 'table-cell' : 'hidden lg:table-cell')}
+                />
+                <SortableHeader
+                  column="best_4"
+                  label="Best 4"
+                  align="right"
+                  basePath="/rankings"
+                  className={cn('w-[4rem]', view === 'best_4' ? 'table-cell' : 'hidden lg:table-cell')}
+                />
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredRankings.map((player, index) => (
-                <TableRow 
-                  key={player.fide_id || ''} 
-                  className={top9ByBest2.has(player.fide_id || '') ? "bg-green-50 even:bg-green-50/70 hover:bg-green-100" : "even:bg-muted/30"}
-                >
+                <TableRow
+                  key={player.fide_id || ''}
+                  className={
+                    top9ByBest2.has(player.fide_id || '')
+                      ? 'bg-green-50 even:bg-green-50/70 hover:bg-green-100'
+                      : 'even:bg-muted/30'
+                  }>
                   <TableCell className="text-right pr-4 lg:pr-8 font-medium">{(page - 1) * 25 + index + 1}</TableCell>
                   <TableCell className="w-[120px] sm:w-[160px] lg:w-[200px]">
                     <div className="truncate">
-                      <Link 
+                      <Link
                         href={`/player/${player.fide_id}`}
                         className="font-medium text-blue-600 hover:underline"
-                        title={player.name}
-                      >
+                        title={player.name}>
                         <span className="sm:hidden">
-                          {player.name.length > 25 
-                            ? player.name.split(' ').slice(0, 2).join(' ') + '...'
-                            : player.name
-                          }
+                          {player.name.length > 25 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
                         </span>
                         <span className="hidden sm:inline">{player.name}</span>
                       </Link>
@@ -110,7 +135,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                   </TableCell>
                   <TableCell className="hidden lg:table-cell text-right tabular-nums">{player.rating || 'Unrated'}</TableCell>
                   <TableCell className="hidden sm:table-cell text-right tabular-nums">{player.tournaments_played}</TableCell>
-                  <TableCell className={cn("text-right", view === 'best_1' ? "table-cell" : "hidden lg:table-cell")}>
+                  <TableCell className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden lg:table-cell')}>
                     <div className="flex flex-col items-end gap-1">
                       <div className="tabular-nums font-medium">{player.best_1}</div>
                       {player.tournament_1 && (
@@ -120,9 +145,18 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className={cn("text-right tabular-nums w-[4rem]", view === 'best_2' ? "table-cell" : "hidden lg:table-cell")}>{player.best_2}</TableCell>
-                  <TableCell className={cn("text-right tabular-nums w-[4rem]", view === 'best_3' ? "table-cell" : "hidden lg:table-cell")}>{player.best_3}</TableCell>
-                  <TableCell className={cn("text-right tabular-nums w-[4rem]", view === 'best_4' ? "table-cell" : "hidden lg:table-cell")}>{Math.round(player.best_4)}</TableCell>
+                  <TableCell
+                    className={cn('text-right tabular-nums w-[4rem]', view === 'best_2' ? 'table-cell' : 'hidden lg:table-cell')}>
+                    {player.best_2}
+                  </TableCell>
+                  <TableCell
+                    className={cn('text-right tabular-nums w-[4rem]', view === 'best_3' ? 'table-cell' : 'hidden lg:table-cell')}>
+                    {player.best_3}
+                  </TableCell>
+                  <TableCell
+                    className={cn('text-right tabular-nums w-[4rem]', view === 'best_4' ? 'table-cell' : 'hidden lg:table-cell')}>
+                    {Math.round(player.best_4)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -132,47 +166,35 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
       {total_pages > 1 && (
         <div className="flex flex-wrap justify-center gap-1">
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            disabled={page === 1}
-          >
+          <Button variant="outline" size="sm" asChild disabled={page === 1}>
             <Link
               href={{
-                pathname: "/rankings",
+                pathname: '/rankings',
                 query: {
                   sort,
                   dir,
                   view,
                   page: page - 1
                 }
-              }}
-            >
+              }}>
               <ChevronLeftIcon className="h-4 w-4 sm:mr-1" />
               <span className="hidden sm:inline">Previous</span>
             </Link>
           </Button>
 
           <div className="hidden sm:flex gap-1">
-            {Array.from({ length: total_pages }, (_, i) => i + 1).map((p) => (
-              <Button
-                key={p}
-                variant={p === page ? "default" : "outline"}
-                size="sm"
-                asChild
-              >
+            {Array.from({ length: total_pages }, (_, i) => i + 1).map(p => (
+              <Button key={p} variant={p === page ? 'default' : 'outline'} size="sm" asChild>
                 <Link
                   href={{
-                    pathname: "/rankings",
+                    pathname: '/rankings',
                     query: {
                       sort,
                       dir,
                       view,
                       page: p
                     }
-                  }}
-                >
+                  }}>
                   {p}
                 </Link>
               </Button>
@@ -185,23 +207,17 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             </span>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            disabled={page === total_pages}
-          >
+          <Button variant="outline" size="sm" asChild disabled={page === total_pages}>
             <Link
               href={{
-                pathname: "/rankings",
+                pathname: '/rankings',
                 query: {
                   sort,
                   dir,
                   view,
                   page: page + 1
                 }
-              }}
-            >
+              }}>
               <span className="hidden sm:inline">Next</span>
               <ChevronRightIcon className="h-4 w-4 sm:ml-1" />
             </Link>

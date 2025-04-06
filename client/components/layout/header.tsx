@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { MainNav } from "@/components/layout/main-nav"
-import { Separator } from "@/components/ui/separator"
+import Link from 'next/link'
+import { MainNav } from '@/components/layout/main-nav'
+import { Separator } from '@/components/ui/separator'
 
 export function Header() {
   return (

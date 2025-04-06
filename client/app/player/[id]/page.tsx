@@ -1,11 +1,11 @@
-import Link from "next/link"
-import { Card } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { getPlayer } from "@/services/api"
-import { notFound } from "next/navigation"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { ChevronRight, Trophy } from "lucide-react"
+import Link from 'next/link'
+import { Card } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { getPlayer } from '@/services/api'
+import { notFound } from 'next/navigation'
+import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { ChevronRight, Trophy } from 'lucide-react'
 
 interface PlayerPageProps {
   params: {
@@ -24,9 +24,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   const totalTournaments = player.results.length
   const bestTpr = Math.max(...player.results.map(r => r.tpr || 0))
   const validTprResults = player.results.filter(r => r.tpr)
-  const averageTpr = validTprResults.length > 0
-    ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length)
-    : 0
+  const averageTpr =
+    validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
 
   return (
     <div className="space-y-4 pb-8">
@@ -72,15 +71,14 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       {/* Tournament History */}
       <div className="space-y-3">
         <h2 className="text-lg font-semibold tracking-tight">Tournament History</h2>
-        
+
         {/* Mobile View */}
         <div className="block sm:hidden space-y-2">
-          {player.results.map((result) => (
+          {player.results.map(result => (
             <Card key={result.tournament_id} className="rounded-none border-x-0">
-              <Link 
+              <Link
                 href={`/tournament/${result.tournament_id}`}
-                className="block p-3 space-y-2 hover:bg-muted/50 transition-colors"
-              >
+                className="block p-3 space-y-2 hover:bg-muted/50 transition-colors">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-blue-600">{result.tournament_name}</h3>
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -117,13 +115,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {player.results.map((result) => (
+                {player.results.map(result => (
                   <TableRow key={result.tournament_id} className="even:bg-muted/30">
                     <TableCell>
-                      <Link 
-                        href={`/tournament/${result.tournament_id}`}
-                        className="font-medium text-blue-600 hover:underline"
-                      >
+                      <Link href={`/tournament/${result.tournament_id}`} className="font-medium text-blue-600 hover:underline">
                         {result.tournament_name}
                       </Link>
                     </TableCell>
