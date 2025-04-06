@@ -32,7 +32,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{tournament.name}</h1>
+        <h1 className="scroll-m-20 text-2xl md:text-3xl 2xl:text-4xl font-bold tracking-tight">{tournament.name}</h1>
         <p className="text-muted-foreground">
           Tournament results and player performances
         </p>

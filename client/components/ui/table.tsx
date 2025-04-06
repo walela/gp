@@ -15,7 +15,7 @@ const Table = React.forwardRef<
     <table
       ref={ref}
       data-slot="table"
-      className={cn("w-full caption-bottom text-sm bg-white/80 backdrop-blur-sm border border-muted/50 rounded-lg overflow-hidden shadow-sm", className)}
+      className={cn("w-full caption-bottom text-sm bg-white/80 backdrop-blur-sm border border-muted/30 rounded-sm overflow-hidden shadow-sm", className)}
       {...props}
     />
   </div>
