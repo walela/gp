@@ -2,36 +2,48 @@
 
 import { TableHead } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
-import { ArrowUpDownIcon } from "lucide-react"
-import Link from "next/link"
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 interface SortableHeaderProps {
   column: string
   label: string
-  basePath: string
-  align?: 'left' | 'right'
+  align?: "left" | "right"
+  basePath?: string
   className?: string
 }
 
-export function SortableHeader({ column, label, basePath, align = 'left', className }: SortableHeaderProps) {
+export function SortableHeader({ column, label, align = "left", basePath = "/rankings", className }: SortableHeaderProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const sort = searchParams.get("sort")
+  const dir = searchParams.get("dir")
+  const isActive = sort === column
+  const isAsc = isActive && dir === "asc"
+
+  const handleSort = () => {
+    const params = new URLSearchParams(searchParams)
+    params.set("sort", column)
+    params.set("dir", isActive && dir === "desc" ? "asc" : "desc")
+    router.push(`${basePath}?${params.toString()}`)
+  }
+
   return (
-    <TableHead className={cn("cursor-pointer select-none", className)}>
-      <Link 
-        href={{
-          pathname: basePath,
-          query: {
-            sort: column,
-            dir: 'desc'
-          }
-        }}
-        className="flex items-center gap-1"
-        style={{ justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}
-      >
+    <TableHead className={cn("cursor-pointer select-none", align === "right" && "text-right", className)} onClick={handleSort}>
+      <div className={cn("flex items-center gap-1", align === "right" ? "justify-end" : "justify-start")}>
         <span>{label}</span>
         <span className="text-muted-foreground">
-          <ArrowUpDownIcon className="h-4 w-4" />
+          {isActive ? (
+            isAsc ? (
+              <ArrowUpIcon className="h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="h-4 w-4" />
+            )
+          ) : (
+            <ArrowUpDownIcon className="h-4 w-4" />
+          )}
         </span>
-      </Link>
+      </div>
     </TableHead>
   )
 }
