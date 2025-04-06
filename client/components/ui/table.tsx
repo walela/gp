@@ -15,7 +15,7 @@ const Table = React.forwardRef<
     <table
       ref={ref}
       data-slot="table"
-      className={cn("w-full caption-bottom text-sm bg-white/80 backdrop-blur-sm border border-muted/50 rounded-lg overflow-hidden shadow-sm", className)}
+      className={cn("w-full caption-bottom text-sm bg-white/80 backdrop-blur-sm border border-muted/30 rounded-md overflow-hidden", className)}
       {...props}
     />
   </div>
@@ -29,7 +29,7 @@ const TableHeader = React.forwardRef<
   <thead
     data-slot="table-header"
     ref={ref}
-    className={cn("bg-muted/30 border-b border-muted/50", className)}
+    className={cn("bg-muted/20 border-b border-muted/30", className)}
     {...props}
   />
 ))
@@ -42,7 +42,7 @@ const TableBody = React.forwardRef<
   <tbody
     data-slot="table-body"
     ref={ref}
-    className={cn("divide-y divide-muted/20", className)}
+    className={cn("divide-y divide-muted/10", className)}
     {...props}
   />
 ))
@@ -55,7 +55,7 @@ const TableFooter = React.forwardRef<
   <tfoot
     data-slot="table-footer"
     ref={ref}
-    className={cn("border-t border-muted/50 bg-muted/30 font-medium", className)}
+    className={cn("border-t border-muted/30 bg-muted/20 font-medium", className)}
     {...props}
   />
 ))
@@ -85,7 +85,7 @@ const TableHead = React.forwardRef<
     data-slot="table-head"
     ref={ref}
     className={cn(
-      "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "text-foreground px-2 py-3 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       className
     )}
     {...props}

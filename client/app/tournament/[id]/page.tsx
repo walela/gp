@@ -22,8 +22,19 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
   const sort = searchParams.sort || 'points'
   const dir = (searchParams.dir || 'desc') as 'asc' | 'desc'
   const page = Number(searchParams.page || '1')
+  const tournamentId = params.id
 
-  const tournament = await getTournament(params.id, { sort, dir, page })
+  // Helper function to create pagination URL
+  const createPaginationUrl = (targetPage: number) => {
+    const urlParams = new URLSearchParams()
+    if (sort !== 'points') urlParams.set('sort', sort)
+    if (dir !== 'desc') urlParams.set('dir', dir)
+    if (targetPage !== 1) urlParams.set('page', String(targetPage))
+    const queryString = urlParams.toString()
+    return `/tournament/${tournamentId}${queryString ? `?${queryString}` : ''}`
+  }
+
+  const tournament = await getTournament(tournamentId, { sort, dir, page })
 
   if (!tournament) {
     notFound()
@@ -38,16 +49,16 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         </p>
       </div>
 
-      <Card className="rounded-none">
+      <Card className="rounded-none p-0">
         <div className="w-full">
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableHeader column="rank" label="Rank" basePath={`/tournament/${params.id}`} className="w-[3rem] text-right pr-4 lg:pr-8" />
-                <SortableHeader column="name" label="Name" basePath={`/tournament/${params.id}`} className="w-[120px] sm:w-[160px] lg:w-[200px]" />
-                <SortableHeader column="rating" label="Rating" align="right" basePath={`/tournament/${params.id}`} className="hidden lg:table-cell" />
-                <SortableHeader column="points" label="Points" align="right" basePath={`/tournament/${params.id}`} className="hidden lg:table-cell" />
-                <SortableHeader column="tpr" label="TPR" align="right" basePath={`/tournament/${params.id}`} className="w-[4rem]" />
+                <SortableHeader column="rank" label="Rank" basePath={`/tournament/${tournamentId}`} className="w-[3rem] text-right pr-4 lg:pr-8" />
+                <SortableHeader column="name" label="Name" basePath={`/tournament/${tournamentId}`} className="w-[120px] sm:w-[160px] lg:w-[200px]" />
+                <SortableHeader column="rating" label="Rating" align="right" basePath={`/tournament/${tournamentId}`} className="hidden lg:table-cell" />
+                <SortableHeader column="points" label="Points" align="right" basePath={`/tournament/${tournamentId}`} className="hidden lg:table-cell" />
+                <SortableHeader column="tpr" label="TPR" align="right" basePath={`/tournament/${tournamentId}`} className="w-[4rem]" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -93,15 +104,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
             asChild
             disabled={page === 1}
           >
-            <Link
-              href={{
-                pathname: `/tournament/${params.id}`,
-                query: {
-                  ...searchParams,
-                  page: page - 1
-                }
-              }}
-            >
+            <Link href={createPaginationUrl(page - 1)}>
               <ChevronLeftIcon className="h-4 w-4 sm:mr-1" />
               <span className="hidden sm:inline">Previous</span>
             </Link>
@@ -115,15 +118,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                 size="sm"
                 asChild
               >
-                <Link
-                  href={{
-                    pathname: `/tournament/${params.id}`,
-                    query: {
-                      ...searchParams,
-                      page: p
-                    }
-                  }}
-                >
+                <Link href={createPaginationUrl(p)}>
                   {p}
                 </Link>
               </Button>
@@ -142,15 +137,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
             asChild
             disabled={page === tournament.total_pages}
           >
-            <Link
-              href={{
-                pathname: `/tournament/${params.id}`,
-                query: {
-                  ...searchParams,
-                  page: page + 1
-                }
-              }}
-            >
+            <Link href={createPaginationUrl(page + 1)}>
               <span className="hidden sm:inline">Next</span>
               <ChevronRightIcon className="h-4 w-4 sm:ml-1" />
             </Link>
