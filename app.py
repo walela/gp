@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 db = Database()
 
-# Tournament IDs for 2024 Grand Prix
+# Tournament IDs for 2025 Grand Prix
 TOURNAMENTS = {
     "1095243": "Eldoret Chess Championships",
     "1126042": "Mavens Open",
@@ -19,15 +19,14 @@ TOURNAMENTS = {
 
 PLAYERS_PER_PAGE = 25
 
-def get_tournament_data(tournament_id: str, force_refresh: bool = False):
+def get_tournament_data(tournament_id: str):
     """Get tournament data from database or scrape if needed."""
-    if not force_refresh:
-        # Try to get from database first
-        data = db.get_tournament(tournament_id)
-        if data:
-            return data['name'], data['results']
+    # Try to get from database first
+    data = db.get_tournament(tournament_id)
+    if data:
+        return data['name'], data['results']
     
-    # Not in database or force refresh, scrape it
+    # Not in database, scrape it
     scraper = ChessResultsScraper()
     name, results = scraper.get_tournament_data(tournament_id)
     
@@ -213,12 +212,6 @@ def player(fide_id):
             'rating': player_rating,
             'results': tournament_results
         })
-
-@app.route('/api/refresh/<tournament_id>')
-def refresh_tournament(tournament_id):
-    """Force refresh tournament data."""
-    get_tournament_data(tournament_id, force_refresh=True)
-    return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5003))
