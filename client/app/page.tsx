@@ -35,7 +35,7 @@ export default async function HomePage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
         {tournaments.map((tournament) => (
           <Link key={tournament.id} href={`/tournament/${tournament.id}`}>
             <Card className="hover:bg-muted/50 hover:scale-[1.02] transition-all cursor-pointer h-full">
