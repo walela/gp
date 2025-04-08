@@ -55,14 +55,24 @@ class ChessResultsScraper:
         soup = BeautifulSoup(response.text, 'html.parser')
         
         # Get tournament name and round count
-        tournament_name = soup.find('title').text.split('-')[0].strip()
+        title_text = soup.find('title').text
+        title_parts = title_text.split('-')
+        # Discard the first 3 standard parts ("Chess", "Results Server Chess", "results.com")
+        if len(title_parts) > 3:
+            tournament_name = ' '.join(part.strip() for part in title_parts[3:]).strip()
+        else:
+            # Fallback if title format is unexpected
+            tournament_name = title_parts[-1].strip()
+            
+        # Remove common redundant suffixes like "Open Section"
+        suffix_to_remove = "Open Section"
+        if tournament_name.lower().endswith(suffix_to_remove.lower()):
+            tournament_name = tournament_name[:-len(suffix_to_remove)].strip()
+
         round_count = 8 if tournament_id == "1126042" else self._get_round_count(soup)
         
-        # For Mavens tournament, use crosstable view to get final points
-        if tournament_id == "1126042":
-            standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=2"
-        else:
-            standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}"
+        # Fetch the final ranking page for the determined round count
+        standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}"
             
         response = self.session.get(standings_url)
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -132,52 +142,25 @@ class ChessResultsScraper:
             cells = row.find_all('td')
             if len(cells) < len(headers):
                 continue
-                
-            # Check if this is a crosstable view (art=2)
-            if tournament_id == "1126042":
-                # In crosstable, player details are in a different format
-                name_cell = cells[1]  # Name is always in second column
-                name = name_cell.text.strip()
-                # Skip non-Kenyan players by checking their name in the database
-                with sqlite3.connect(db.db_file) as conn:
-                    c = conn.cursor()
-                    c.execute('SELECT federation FROM players WHERE name = ?', (name,))
-                    result = c.fetchone()
-                    if not result or result[0] != 'KEN':
-                        continue
-                
-                # Get player info from database
-                c.execute('SELECT fide_id, rating FROM players WHERE name = ?', (name,))
-                player_info = c.fetchone()
-                if not player_info:
-                    continue
-                    
-                fide_id, rating = player_info
-                points = float(cells[-2].text.replace(',', '.'))  # Points are in second-to-last column
-                rank = int(cells[0].text)  # Rank is in first column
-                start_rank = rank  # In crosstable, we don't have start rank
-                
-                # TPR is not available in crosstable
-                tpr = 0
-            else:
-                # Regular standings view (art=1)
-                if 'KEN' not in cells[headers.index('fed')].text:
-                    continue
-                    
-                # Get player info
-                name = cells[headers.index('name')].text.strip()
-                rating = int(cells[headers.index('rtg')].text) if cells[headers.index('rtg')].text.strip() else 0
-                points = float(cells[headers.index('pts.')].text.replace(',', '.'))
-                rank = int(cells[headers.index('rk.')].text)
-                start_rank = int(cells[headers.index('sno')].text)
-                
-                # Calculate TPR
-                tpr_cell = cells[headers.index('rp')]
-                tpr = int(tpr_cell.text) if tpr_cell.text.strip() else 0
-                
-                # Get FIDE ID if available
-                fide_id = self._extract_fide_id(cells[headers.index('name')], tournament_id, start_rank)
             
+            # Use standard parsing logic for all tournaments (art=1 view)
+            if 'KEN' not in cells[headers.index('fed')].text:
+                continue
+                
+            # Get player info
+            name = cells[headers.index('name')].text.strip()
+            rating = int(cells[headers.index('rtg')].text) if cells[headers.index('rtg')].text.strip() else 0
+            points = float(cells[headers.index('pts.')].text.replace(',', '.'))
+            rank = int(cells[headers.index('rk.')].text)
+            start_rank = int(cells[headers.index('sno')].text)
+            
+            # Calculate TPR
+            tpr_cell = cells[headers.index('rp')]
+            tpr = int(tpr_cell.text) if tpr_cell.text.strip() else 0
+            
+            # Get FIDE ID if available
+            fide_id = self._extract_fide_id(cells[headers.index('name')], tournament_id, start_rank)
+        
             # Create player and result objects
             player = Player(name=name, fide_id=fide_id, federation="KEN", rating=rating)
             result = TournamentResult(
@@ -277,3 +260,54 @@ class ChessResultsScraper:
             and not result.has_walkover
             and result.player.federation == "KEN"
         )
+
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Scrape and save chess-results tournament data.')
+    parser.add_argument('tournament_id', help='The chess-results tournament ID to scrape.')
+    args = parser.parse_args()
+    
+    tournament_id = args.tournament_id
+    
+    logger.info(f"Starting scrape for tournament ID: {tournament_id}")
+    
+    scraper = ChessResultsScraper()
+    db_manager = Database() # Use the default db name
+    
+    try:
+        # 1. Delete existing data for this tournament
+        logger.info(f"Deleting existing data for tournament {tournament_id}...")
+        db_manager.delete_tournament_data(tournament_id)
+        
+        # 2. Scrape new data
+        logger.info(f"Scraping new data for tournament {tournament_id}...")
+        name, results = scraper.get_tournament_data(tournament_id)
+        
+        if not results:
+            logger.warning(f"No results found for tournament {tournament_id}. Skipping save.")
+        else:
+            # 3. Convert results to dict format for saving
+            results_dict = []
+            for result in results:
+                r = {
+                    'player': {
+                        'name': result.player.name,
+                        'fide_id': result.player.fide_id,
+                        'rating': result.player.rating,
+                        'federation': result.player.federation
+                    },
+                    'points': result.points,
+                    'tpr': result.tpr,
+                    'has_walkover': result.has_walkover
+                }
+                results_dict.append(r)
+                
+            # 4. Save to database
+            logger.info(f"Saving {len(results_dict)} results for tournament {tournament_id} ({name})...")
+            db_manager.save_tournament(tournament_id, name, results_dict)
+            logger.info(f"Successfully saved data for tournament {tournament_id}")
+            
+    except Exception as e:
+        logger.error(f"An error occurred during scraping/saving for tournament {tournament_id}: {e}", exc_info=True)
