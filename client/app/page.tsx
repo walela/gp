@@ -40,14 +40,8 @@ export default async function HomePage() {
           <Link key={tournament.id} href={`/tournament/${tournament.id}`}>
             <Card className="hover:bg-muted/50 hover:scale-[1.02] transition-all cursor-pointer h-full">
               <CardHeader>
-                <CardTitle>{tournament.name}</CardTitle>
-                <CardDescription>{tournament.results} players registered</CardDescription>
-              </CardHeader>
-              <CardContent className="text-sm">
-                <div className="flex justify-between text-sm">
-                  <span className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
-                    View details →
-                  </span>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{tournament.name}</CardTitle>
                   <Badge
                     className={
                       tournament.status === 'Completed'
@@ -56,6 +50,14 @@ export default async function HomePage() {
                     }>
                     {tournament.status}
                   </Badge>
+                </div>
+                <CardDescription>{tournament.results} players registered</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm">
+                <div className="flex justify-start text-sm">
+                  <span className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
+                    View details →
+                  </span>
                 </div>
               </CardContent>
             </Card>
