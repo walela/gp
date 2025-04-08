@@ -122,15 +122,18 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                   <TableCell className="text-right pr-4 lg:pr-8 font-medium">{(page - 1) * 25 + index + 1}</TableCell>
                   <TableCell className="w-[120px] sm:w-[160px] lg:w-[200px]">
                     <div className="truncate">
-                      <Link
-                        href={`/player/${player.fide_id}`}
-                        className="font-medium text-blue-600 hover:underline"
-                        title={player.name}>
-                        <span className="sm:hidden">
-                          {player.name.length > 25 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
-                        </span>
-                        <span className="hidden sm:inline">{player.name}</span>
-                      </Link>
+                      <div className="flex items-center gap-1">
+                        <Link
+                          href={`/player/${player.fide_id || player.name}`}
+                          className="font-medium text-blue-600 group flex items-center gap-1"
+                          title={player.name}>
+                          <span className="sm:hidden flex items-center gap-1">
+                            {player.name.length > 25 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
+                            <span className="text-muted-foreground/50">›</span>
+                          </span>
+                          <span className="hidden sm:inline group-hover:underline">{player.name}</span>
+                        </Link>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell text-right tabular-nums">{player.rating || 'Unrated'}</TableCell>

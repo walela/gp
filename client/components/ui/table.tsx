@@ -11,7 +11,7 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
         ref={ref}
         data-slot="table"
         className={cn(
-          'w-full caption-bottom text-sm bg-white/80 backdrop-blur-sm border border-muted/30 rounded-sm overflow-hidden shadow-sm',
+          'w-full caption-bottom text-sm bg-white border border-muted/30 rounded-sm overflow-hidden shadow-sm',
           className
         )}
         {...props}
@@ -57,7 +57,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       data-slot="table-row"
       ref={ref}
-      className={cn('transition-colors hover:bg-muted/20 data-[state=selected]:bg-muted/30', className)}
+      className={cn('transition-colors even:bg-muted/10 hover:bg-muted/30 data-[state=selected]:bg-muted/30', className)}
       {...props}
     />
   )

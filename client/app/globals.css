@@ -118,7 +118,10 @@
   }
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(135deg, rgb(248 250 252) 0%, rgb(241 245 249) 100%);
+    background: 
+      radial-gradient(circle at 0% 0%, rgb(248 250 252) 0%, transparent 50%),
+      radial-gradient(circle at 100% 0%, rgb(243 244 246) 0%, transparent 50%),
+      linear-gradient(135deg, rgb(248 250 252) 0%, rgb(241 245 249) 100%);
     background-attachment: fixed;
     min-height: 100vh;
   }
