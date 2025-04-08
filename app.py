@@ -11,7 +11,7 @@ db = Database()
 
 # Tournament IDs for 2025 Grand Prix
 TOURNAMENTS = {
-    "1095243": "Eldoret Chess Championships",
+    "1095243": "Eldoret Open",
     "1126042": "Mavens Open",
     "1130967": "Waridi Chess Festival",
     "1135144": "Kisumu Open"
