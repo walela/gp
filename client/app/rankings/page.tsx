@@ -26,18 +26,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const view = searchParams.view || 'best_2'
   const search = searchParams.q || ''
 
-  const { rankings, total_pages } = await getRankings({ sort, dir, page })
+  // Pass search query to the backend for filtering
+  const { rankings, total_pages } = await getRankings({ sort, dir, page, q: search })
 
-  // Get top 9 by best_2 for highlighting
+  // Get top 9 by best_2 for highlighting (using the potentially filtered rankings)
   const top9ByBest2 = new Set(
     [...rankings]
       .sort((a, b) => b.best_2 - a.best_2)
       .slice(0, 9)
       .map(p => p.fide_id || p.name)
   )
-
-  // Filter rankings if search is provided
-  const filteredRankings = search ? rankings.filter(player => player.name.toLowerCase().includes(search.toLowerCase())) : rankings
 
   return (
     <div className="space-y-6">
@@ -111,7 +109,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredRankings.map((player, index) => (
+              {/* Use 'rankings' directly as it's already filtered by the backend */}
+              {rankings.map((player, index) => (
                 <TableRow
                   key={player.fide_id || ''}
                   className={

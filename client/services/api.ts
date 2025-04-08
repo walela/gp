@@ -94,12 +94,17 @@ export async function getTournamentDetails(id: string, params: {
   return response.json()
 }
 
-export async function getRankings({ sort = 'best_2', dir = 'desc', page = 1 }: {
+export async function getRankings({ sort = 'best_2', dir = 'desc', page = 1, q }: {
   sort?: string
   dir?: 'asc' | 'desc'
   page?: number
+  q?: string
 } = {}) {
-  const res = await fetch(`${API_BASE}/rankings?sort=${sort}&dir=${dir}&page=${page}`)
+  let url = `${API_BASE}/rankings?sort=${sort}&dir=${dir}&page=${page}`
+  if (q) {
+    url += `&q=${encodeURIComponent(q)}`
+  }
+  const res = await fetch(url)
   const data = await res.json()
   return data as RankingsResponse
 }

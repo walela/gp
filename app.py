@@ -134,10 +134,16 @@ def rankings():
     sort = request.args.get('sort', 'best_2')
     dir = request.args.get('dir', 'desc')
     page = int(request.args.get('page', '1'))
+    search_query = request.args.get('q')  # Get the search query
     per_page = 25
 
     player_rankings = get_player_rankings()
     reverse = dir == 'desc'
+
+    # Filter by search query if provided
+    if search_query:
+        search_query_lower = search_query.lower()
+        player_rankings = [p for p in player_rankings if search_query_lower in p['name'].lower()]
 
     # Map frontend sort keys to data keys
     sort_key = {
