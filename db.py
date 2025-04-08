@@ -1,7 +1,9 @@
 import sqlite3
 from typing import List, Dict, Optional
 from dataclasses import asdict
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Database:
     def __init__(self, db_file: str = 'gp_tracker.db'):
@@ -167,3 +169,12 @@ class Database:
                 })
             
             return all_results
+
+    def delete_tournament_data(self, tournament_id: str):
+        """Delete tournament and its associated results."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('DELETE FROM results WHERE tournament_id = ?', (tournament_id,))
+            c.execute('DELETE FROM tournaments WHERE id = ?', (tournament_id,))
+            conn.commit()
+            logger.info(f"Deleted data for tournament ID: {tournament_id}")
