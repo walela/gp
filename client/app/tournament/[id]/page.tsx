@@ -117,13 +117,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         <div className="flex flex-wrap justify-center gap-1">
           <Button variant="outline" size="sm" asChild disabled={page === 1}>
             <Link
-              href={{
-                pathname: `/tournament/${params.id}`,
-                query: {
-                  ...searchParams,
-                  page: page - 1
-                }
-              }}>
+              href={`/tournament/${params.id}?sort=${sort}&dir=${dir}&page=${page - 1}`}>
               <ChevronLeftIcon className="h-4 w-4 sm:mr-1" />
               <span className="hidden sm:inline">Previous</span>
             </Link>
@@ -133,13 +127,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
             {Array.from({ length: tournament.total_pages }, (_, i) => i + 1).map(p => (
               <Button key={p} variant={p === page ? 'default' : 'outline'} size="sm" asChild>
                 <Link
-                  href={{
-                    pathname: `/tournament/${params.id}`,
-                    query: {
-                      ...searchParams,
-                      page: p
-                    }
-                  }}>
+                  href={`/tournament/${params.id}?sort=${sort}&dir=${dir}&page=${p}`}>
                   {p}
                 </Link>
               </Button>
@@ -154,13 +142,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
 
           <Button variant="outline" size="sm" asChild disabled={page === tournament.total_pages}>
             <Link
-              href={{
-                pathname: `/tournament/${params.id}`,
-                query: {
-                  ...searchParams,
-                  page: page + 1
-                }
-              }}>
+              href={`/tournament/${params.id}?sort=${sort}&dir=${dir}&page=${page + 1}`}>
               <span className="hidden sm:inline">Next</span>
               <ChevronRightIcon className="h-4 w-4 sm:ml-1" />
             </Link>

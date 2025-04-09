@@ -170,15 +170,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <div className="flex flex-wrap justify-center gap-1">
           <Button variant="outline" size="sm" asChild disabled={page === 1}>
             <Link
-              href={{
-                pathname: '/rankings',
-                query: {
-                  sort,
-                  dir,
-                  view,
-                  page: page - 1
-                }
-              }}>
+              href={`/rankings?sort=${sort}&dir=${dir}&view=${view}&page=${page - 1}${search ? `&q=${encodeURIComponent(search)}` : ''}`}>
               <ChevronLeftIcon className="h-4 w-4 sm:mr-1" />
               <span className="hidden sm:inline">Previous</span>
             </Link>
@@ -188,15 +180,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             {Array.from({ length: total_pages }, (_, i) => i + 1).map(p => (
               <Button key={p} variant={p === page ? 'default' : 'outline'} size="sm" asChild>
                 <Link
-                  href={{
-                    pathname: '/rankings',
-                    query: {
-                      sort,
-                      dir,
-                      view,
-                      page: p
-                    }
-                  }}>
+                  href={`/rankings?sort=${sort}&dir=${dir}&view=${view}&page=${p}${search ? `&q=${encodeURIComponent(search)}` : ''}`}>
                   {p}
                 </Link>
               </Button>
@@ -211,15 +195,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
           <Button variant="outline" size="sm" asChild disabled={page === total_pages}>
             <Link
-              href={{
-                pathname: '/rankings',
-                query: {
-                  sort,
-                  dir,
-                  view,
-                  page: page + 1
-                }
-              }}>
+              href={`/rankings?sort=${sort}&dir=${dir}&view=${view}&page=${page + 1}${search ? `&q=${encodeURIComponent(search)}` : ''}`}>
               <span className="hidden sm:inline">Next</span>
               <ChevronRightIcon className="h-4 w-4 sm:ml-1" />
             </Link>
