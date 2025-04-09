@@ -2,11 +2,11 @@ import React from 'react'
 import Link from 'next/link'
 import { Github, Bot, ExternalLink } from 'lucide-react'
 
-export function Footer() {    
+export function Footer() {  
   return (
     <footer className="w-full border-t bg-background py-4">
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-5">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-center items-center">
+        <div className="flex flex-wrap items-center justify-center gap-8">
           <div className="flex flex-wrap items-center justify-center gap-1 text-sm text-muted-foreground">
             <span>Built by</span>
             <Link 

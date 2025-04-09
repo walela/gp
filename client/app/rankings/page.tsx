@@ -20,14 +20,23 @@ interface RankingsPageProps {
 }
 
 export default async function RankingsPage({ searchParams }: RankingsPageProps) {
-  const sort = searchParams.sort || 'best_2'
-  const dir = (searchParams.dir || 'desc') as 'asc' | 'desc'
-  const page = Number(searchParams.page || '1')
-  const view = searchParams.view || 'best_2'
-  const search = searchParams.q || ''
+  // Properly await the searchParams object
+  const params = await searchParams;
+  
+  // Now we can safely access the properties
+  const sort = params.sort || 'best_2'
+  const dir = (params.dir || 'desc') as 'asc' | 'desc'
+  const page = Number(params.page || '1')
+  const view = params.view || 'best_2'
+  const search = params.q || ''
 
   // Pass search query to the backend for filtering
-  const { rankings, total_pages } = await getRankings({ sort, dir, page, q: search })
+  const { rankings, total_pages } = await getRankings({ 
+    sort, 
+    dir, 
+    page, 
+    q: search 
+  })
 
   // Get top 9 by best_2 for highlighting (using the potentially filtered rankings)
   const top9ByBest2 = new Set(

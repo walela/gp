@@ -19,11 +19,21 @@ interface TournamentPageProps {
 }
 
 export default async function TournamentPage({ params, searchParams }: TournamentPageProps) {
-  const sort = searchParams.sort || 'points'
-  const dir = (searchParams.dir || 'desc') as 'asc' | 'desc'
-  const page = Number(searchParams.page || '1')
+  // Properly await the params and searchParams objects
+  const routeParams = await params;
+  const queryParams = await searchParams;
+  
+  // Now we can safely access the properties
+  const id = routeParams.id
+  const sort = queryParams.sort || 'points'
+  const dir = (queryParams.dir || 'desc') as 'asc' | 'desc'
+  const page = Number(queryParams.page || '1')
 
-  const tournament = await getTournament(params.id, { sort, dir, page })
+  const tournament = await getTournament(id, { 
+    sort, 
+    dir, 
+    page 
+  })
 
   if (!tournament) {
     notFound()
@@ -44,34 +54,34 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                 <SortableHeader
                   column="rank"
                   label="Rank"
-                  basePath={`/tournament/${params.id}`}
+                  basePath={`/tournament/${id}`}
                   className="w-[3rem] text-right pr-4 lg:pr-8"
                 />
                 <SortableHeader
                   column="name"
                   label="Name"
-                  basePath={`/tournament/${params.id}`}
+                  basePath={`/tournament/${id}`}
                   className="w-[120px] sm:w-[160px] lg:w-[200px]"
                 />
                 <SortableHeader
                   column="rating"
                   label="Rating"
                   align="right"
-                  basePath={`/tournament/${params.id}`}
+                  basePath={`/tournament/${id}`}
                   className="hidden lg:table-cell"
                 />
                 <SortableHeader
                   column="points"
                   label="Points"
                   align="right"
-                  basePath={`/tournament/${params.id}`}
+                  basePath={`/tournament/${id}`}
                   className="hidden lg:table-cell"
                 />
                 <SortableHeader
                   column="tpr"
                   label="TPR"
                   align="right"
-                  basePath={`/tournament/${params.id}`}
+                  basePath={`/tournament/${id}`}
                   className="w-[4rem]"
                 />
               </TableRow>
@@ -117,7 +127,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         <div className="flex flex-wrap justify-center gap-1">
           <Button variant="outline" size="sm" asChild disabled={page === 1}>
             <Link
-              href={`/tournament/${params.id}?sort=${sort}&dir=${dir}&page=${page - 1}`}>
+              href={`/tournament/${id}?sort=${sort}&dir=${dir}&page=${page - 1}`}>
               <ChevronLeftIcon className="h-4 w-4 sm:mr-1" />
               <span className="hidden sm:inline">Previous</span>
             </Link>
@@ -127,7 +137,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
             {Array.from({ length: tournament.total_pages }, (_, i) => i + 1).map(p => (
               <Button key={p} variant={p === page ? 'default' : 'outline'} size="sm" asChild>
                 <Link
-                  href={`/tournament/${params.id}?sort=${sort}&dir=${dir}&page=${p}`}>
+                  href={`/tournament/${id}?sort=${sort}&dir=${dir}&page=${p}`}>
                   {p}
                 </Link>
               </Button>
@@ -142,7 +152,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
 
           <Button variant="outline" size="sm" asChild disabled={page === tournament.total_pages}>
             <Link
-              href={`/tournament/${params.id}?sort=${sort}&dir=${dir}&page=${page + 1}`}>
+              href={`/tournament/${id}?sort=${sort}&dir=${dir}&page=${page + 1}`}>
               <span className="hidden sm:inline">Next</span>
               <ChevronRightIcon className="h-4 w-4 sm:ml-1" />
             </Link>
