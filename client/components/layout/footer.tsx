@@ -1,8 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
-import { Github, Code, ExternalLink } from 'lucide-react'
+import { Github, Bot, ExternalLink } from 'lucide-react'
 
-export function Footer() {  
+export function Footer() {    
   return (
     <footer className="w-full border-t bg-background py-4">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -24,7 +24,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="flex items-center hover:text-foreground transition-colors"
             >
-              <Code size={14} className="mx-0.5" />
+              <Bot size={14} className="mx-0.5" />
               <span className="underline underline-offset-2 decoration-dotted">Claude 3.7</span>
             </Link>
           </div>
