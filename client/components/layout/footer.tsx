@@ -2,17 +2,12 @@ import React from 'react'
 import Link from 'next/link'
 import { Github, Code, ExternalLink } from 'lucide-react'
 
-export function Footer() {
-  const currentYear = new Date().getFullYear()
-  
+export function Footer() {  
   return (
     <footer className="w-full border-t bg-background py-4">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div className="text-sm text-muted-foreground">
-          {currentYear} Chess Kenya Grand Prix Tracker
-        </div>
-        <div className="flex items-center gap-5">
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-5">
+          <div className="flex flex-wrap items-center justify-center gap-1 text-sm text-muted-foreground">
             <span>Built by</span>
             <Link 
               href="https://austinwalela.com" 
@@ -22,7 +17,7 @@ export function Footer() {
             >
               Austin Walela
             </Link>
-            <span>+</span>
+            <span className="mx-1">+</span>
             <Link
               href="https://claude.ai"
               target="_blank"
