@@ -35,9 +35,13 @@ export default async function HomePage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="flex flex-wrap gap-6">
         {tournaments.map((tournament) => (
-          <Link key={tournament.id} href={`/tournament/${tournament.id}`}>
+          <Link 
+            key={tournament.id} 
+            href={`/tournament/${tournament.id}`}
+            className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]"
+          >
             <Card className="hover:bg-muted/50 hover:scale-[1.02] transition-all cursor-pointer h-full">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -70,9 +74,13 @@ export default async function HomePage() {
         <p className="text-muted-foreground">View upcoming chess tournaments in Kenya</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="flex flex-wrap gap-6">
         {upcomingTournaments.map((tournament) => (
-          <Link key={tournament.id} href={`/tournament/${tournament.id}`}>
+          <Link 
+            key={tournament.id} 
+            href={`/tournament/${tournament.id}`}
+            className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]"
+          >
             <Card className="hover:bg-muted/50 hover:scale-[1.02] transition-all cursor-pointer h-full">
               <CardHeader>
                 <div className="flex items-center justify-between">
