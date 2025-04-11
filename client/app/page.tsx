@@ -65,7 +65,7 @@ export default async function HomePage() {
     },
     {
       id: '742161',
-      name: 'Jumuiya ya Afrika Mashariki Open',
+      name: '3rd Jumuiya ya Afrika Mashariki Open',
       month: 'September 20-21',
       location: 'Nairobi',
       tentativeRounds: 6
@@ -89,15 +89,12 @@ export default async function HomePage() {
   return (
     <div className="space-y-8 pb-8">
       <div>
-        <h1 className="scroll-m-20 text-2xl font-bold tracking-tight">Chess Tournament Tracker</h1>
-        <p className="text-base text-muted-foreground">
-          Track chess tournaments across Kenya for the 2025 season
-        </p>
+        <h1 className="scroll-m-20 text-2xl font-bold tracking-tight">2025 CK Grand Prix Tournament Tracker</h1>
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Completed Tournaments</h2>
-        <p className="text-muted-foreground mb-4">Official tournaments in the 2024 Kenya Grand Prix series</p>
+        <h2 className="text-xl font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
+        <p className="text-muted-foreground mb-4">Completed tournaments in the 2025 Chess Kenya Grand Prix series</p>
       
         <div className="flex flex-wrap gap-6">
           {tournaments.map((tournament) => (
@@ -135,9 +132,9 @@ export default async function HomePage() {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Upcoming Tournaments</h2>
+        <h2 className="text-xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
         <p className="text-muted-foreground mb-4">Grand Prix tournaments within the next 60 days. Confirmed tournaments
-          are indicated with a green tick
+          are indicated with a green check.
         </p>
       
         <div className="flex flex-wrap gap-6">
@@ -195,7 +192,7 @@ export default async function HomePage() {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Planned Tournaments</h2>
+        <h2 className="text-xl font-bold tracking-tight text-gray-700">Planned Tournaments</h2>
         <p className="text-muted-foreground mb-4">Future tournaments with tentative dates and details</p>
       
         <div className="flex flex-wrap gap-6">
