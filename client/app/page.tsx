@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CalendarDays, MapPin, Hash, Calendar } from 'lucide-react'
+import { CalendarDays, MapPin, Hash, Calendar, CheckCircle2, HelpCircle } from 'lucide-react'
 import { getTournaments } from '@/services/api'
 
 export default async function HomePage() {
@@ -10,77 +10,79 @@ export default async function HomePage() {
   const upcomingTournaments = [
     {
       id: '742150',
-      name: 'Kenya Open 2025',
+      name: 'Kenya Open',
       startDate: '2025-04-18',
       endDate: '2025-04-21',
       location: 'Nairobi',
-      rounds: 8
+      rounds: 8,
+      confirmed: false
     },
     {
       id: '742151',
-      name: 'Nakuru Open 2025',
+      name: 'Nakuru Open',
       startDate: '2025-05-01',
       endDate: '2025-05-03',
       location: 'Nakuru',
-      rounds: 6
+      rounds: 6,
+      confirmed: true
     },
     {
       id: '742152',
-      name: 'Kiambu Open 2025',
+      name: 'Kiambu Open',
       startDate: '2025-05-10',
       endDate: '2025-05-11',
       location: 'Nairobi',
-      rounds: 6
+      rounds: 6,
+      confirmed: true
     },
     {
       id: '742153',
-      name: 'Nyeri Open 2025',
+      name: 'Nyeri Open',
       startDate: '2025-05-29',
       endDate: '2025-05-31',
       location: 'Nyeri',
-      rounds: 6
+      rounds: 6,
+      confirmed: false
     },
     {
       id: '742154',
-      name: 'Nairobi County Classic Open 2025',
+      name: 'Nairobi County Open',
       startDate: '2025-05-30',
       endDate: '2025-06-02',
       location: 'Nairobi',
-      rounds: 8
+      rounds: 8,
+      confirmed: false
     }
   ]
 
   const plannedTournaments = [
     {
       id: '742160',
-      name: 'Nairobi Chess Club Championship',
+      name: '67th NCC Championship',
       month: 'August',
       location: 'Nairobi',
       tentativeRounds: 6
     },
     {
       id: '742161',
-      name: 'Jumuiya ya Afrika Mashariki Championship',
-      month: 'September',
+      name: 'Jumuiya ya Afrika Mashariki Open',
+      month: 'September 20-21',
       location: 'Nairobi',
-      tentativeRounds: 6,
-      tentativeDays: '20-21'
+      tentativeRounds: 6
     },
     {
       id: '742162',
       name: 'Mombasa Open 2025',
-      month: 'October',
+      month: 'October 10-12',
       location: 'Mombasa',
-      tentativeRounds: 6,
-      tentativeDays: '10-12'
+      tentativeRounds: 6
     },
     {
       id: '742163',
       name: 'Bungoma Open 2025',
-      month: 'November',
+      month: 'November 1-2',
       location: 'Bungoma',
-      tentativeRounds: 6,
-      tentativeDays: '1-2'
+      tentativeRounds: 6
     }
   ]
 
@@ -134,7 +136,9 @@ export default async function HomePage() {
 
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Upcoming Tournaments</h2>
-        <p className="text-muted-foreground mb-4">Confirmed tournaments with fixed dates and venues</p>
+        <p className="text-muted-foreground mb-4">Grand Prix tournaments within the next 60 days. Confirmed tournaments
+          are indicated with a green tick
+        </p>
       
         <div className="flex flex-wrap gap-6">
           {upcomingTournaments.map((tournament) => (
@@ -146,8 +150,17 @@ export default async function HomePage() {
               <Card className="hover:bg-muted/50 hover:scale-[1.02] transition-all cursor-pointer h-full">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>{tournament.name}</CardTitle>
-                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Upcoming</Badge>
+                    <CardTitle className="flex items-center gap-1.5">
+                      {tournament.name}
+                      {tournament.confirmed ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <HelpCircle className="h-4 w-4 text-amber-600" />
+                      )}
+                    </CardTitle>
+                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
+                      Upcoming
+                    </Badge>
                   </div>
                   <CardDescription className="flex items-center gap-2 mt-2">
                     <CalendarDays className="h-4 w-4" />
@@ -199,10 +212,7 @@ export default async function HomePage() {
                   </div>
                   <CardDescription className="flex items-center gap-2 mt-2">
                     <Calendar className="h-4 w-4" />
-                    <span>
-                      {tournament.month} 2025
-                      {tournament.tentativeDays && ` (${tournament.tentativeDays})`}
-                    </span>
+                    <span>{tournament.month} 2025</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4 text-sm">
