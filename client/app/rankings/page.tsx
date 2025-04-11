@@ -1,6 +1,13 @@
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { 
+  CustomTable, 
+  CustomTableHeader, 
+  CustomTableBody, 
+  CustomTableRow, 
+  CustomTableHead, 
+  CustomTableCell 
+} from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -66,113 +73,127 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <ViewSelector view={view} />
       </div>
 
-      <Card className="rounded-none">
-        <div className="w-full">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-[3rem] text-right pr-4 lg:pr-8" />
-                <SortableHeader column="name" label="Name" basePath="/rankings" className="w-[120px] sm:w-[160px] lg:w-[200px]" />
+      <Card className="rounded-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0">
+        <CustomTable className="h-full">
+          <CustomTableHeader>
+            <CustomTableRow>
+              <CustomTableHead className="w-[40px] text-right">
+                <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-full" />
+              </CustomTableHead>
+              <CustomTableHead className="min-w-[120px]">
+                <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />
+              </CustomTableHead>
+              <CustomTableHead className="hidden md:table-cell text-right">
                 <SortableHeader
                   column="rating"
                   label="Rating"
                   align="right"
                   basePath="/rankings"
-                  className="hidden lg:table-cell"
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead className="hidden sm:table-cell text-right">
                 <SortableHeader
                   column="tournaments_played"
                   label="Tournaments"
                   align="right"
                   basePath="/rankings"
-                  className="hidden sm:table-cell"
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead
+                className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
                 <SortableHeader
                   column="best_1"
                   label="Best TPR"
                   align="right"
                   basePath="/rankings"
-                  className={cn('w-[4rem]', view === 'best_1' ? 'table-cell' : 'hidden lg:table-cell')}
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead
+                className={cn('text-right', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
                 <SortableHeader
                   column="best_2"
                   label="Best 2"
                   align="right"
                   basePath="/rankings"
-                  className={cn('w-[4rem]', view === 'best_2' ? 'table-cell' : 'hidden lg:table-cell')}
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead
+                className={cn('text-right', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
                 <SortableHeader
                   column="best_3"
                   label="Best 3"
                   align="right"
                   basePath="/rankings"
-                  className={cn('w-[4rem]', view === 'best_3' ? 'table-cell' : 'hidden lg:table-cell')}
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead
+                className={cn('text-right', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
                 <SortableHeader
                   column="best_4"
                   label="Best 4"
                   align="right"
                   basePath="/rankings"
-                  className={cn('w-[4rem]', view === 'best_4' ? 'table-cell' : 'hidden lg:table-cell')}
+                  className="w-full"
                 />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {/* Use 'rankings' directly as it's already filtered by the backend */}
-              {rankings.map((player, index) => (
-                <TableRow
-                  key={player.fide_id || ''}
-                  className={
-                    top9ByBest2.has(player.fide_id || '')
-                      ? 'bg-green-50 even:bg-green-50/70 hover:bg-green-100'
-                      : 'even:bg-muted/30'
-                  }>
-                  <TableCell className="text-right pr-4 lg:pr-8 font-medium">{(page - 1) * 25 + index + 1}</TableCell>
-                  <TableCell className="w-[120px] sm:w-[160px] lg:w-[200px]">
-                    <div className="truncate">
-                      <div className="flex items-center gap-1">
-                        <Link
-                          href={`/player/${player.fide_id || player.name}`}
-                          className="font-medium text-blue-600 group flex items-center gap-1"
-                          title={player.name}>
-                          <span className="sm:hidden flex items-center gap-1">
-                            {player.name.length > 25 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
-                            <span className="text-muted-foreground/50">›</span>
-                          </span>
-                          <span className="hidden sm:inline group-hover:underline">{player.name}</span>
-                        </Link>
+              </CustomTableHead>
+            </CustomTableRow>
+          </CustomTableHeader>
+          <CustomTableBody>
+            {rankings.map((player, index) => (
+              <CustomTableRow
+                key={player.fide_id || player.name}
+                className={cn(
+                  top9ByBest2.has(player.fide_id || player.name) ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                )}
+              >
+                <CustomTableCell isHeader className="text-right">{(page - 1) * 25 + index + 1}</CustomTableCell>
+                <CustomTableCell className="min-w-[120px]">
+                  <div className="truncate">
+                    <Link
+                      href={`/player/${player.fide_id || player.name}`}
+                      className="font-medium text-blue-600 group flex items-center gap-1"
+                      title={player.name}>
+                      <span className="sm:hidden flex items-center gap-1">
+                        {player.name.length > 15 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
+                        <span className="text-muted-foreground/50">›</span>
+                      </span>
+                      <span className="hidden sm:inline group-hover:underline">{player.name}</span>
+                    </Link>
+                  </div>
+                </CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right tabular-nums">{player.rating || 'Unrated'}</CustomTableCell>
+                <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">{player.tournaments_played}</CustomTableCell>
+                <CustomTableCell className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="tabular-nums font-medium">{player.best_1}</div>
+                    {player.tournament_1 && (
+                      <div className="hidden sm:block text-xs text-muted-foreground truncate max-w-[140px]">
+                        {player.tournament_1}
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell text-right tabular-nums">{player.rating || 'Unrated'}</TableCell>
-                  <TableCell className="hidden sm:table-cell text-right tabular-nums">{player.tournaments_played}</TableCell>
-                  <TableCell className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden lg:table-cell')}>
-                    <div className="flex flex-col items-end gap-1">
-                      <div className="tabular-nums font-medium">{player.best_1}</div>
-                      {player.tournament_1 && (
-                        <div className="hidden sm:block text-xs text-muted-foreground truncate max-w-[140px]">
-                          {player.tournament_1}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell
-                    className={cn('text-right tabular-nums w-[4rem]', view === 'best_2' ? 'table-cell' : 'hidden lg:table-cell')}>
-                    {player.best_2}
-                  </TableCell>
-                  <TableCell
-                    className={cn('text-right tabular-nums w-[4rem]', view === 'best_3' ? 'table-cell' : 'hidden lg:table-cell')}>
-                    {player.best_3}
-                  </TableCell>
-                  <TableCell
-                    className={cn('text-right tabular-nums w-[4rem]', view === 'best_4' ? 'table-cell' : 'hidden lg:table-cell')}>
-                    {Math.round(player.best_4)}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                    )}
+                  </div>
+                </CustomTableCell>
+                <CustomTableCell
+                  className={cn('text-right tabular-nums', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
+                  {player.best_2}
+                </CustomTableCell>
+                <CustomTableCell
+                  className={cn('text-right tabular-nums', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
+                  {player.best_3}
+                </CustomTableCell>
+                <CustomTableCell
+                  className={cn('text-right tabular-nums', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
+                  {Math.round(player.best_4)}
+                </CustomTableCell>
+              </CustomTableRow>
+            ))}
+          </CustomTableBody>
+        </CustomTable>
       </Card>
 
       {total_pages > 1 && (

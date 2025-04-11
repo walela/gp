@@ -1,6 +1,5 @@
 'use client'
 
-import { TableHead } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -29,7 +28,10 @@ export function SortableHeader({ column, label, align = 'left', basePath = '/ran
   }
 
   return (
-    <TableHead className={cn('cursor-pointer select-none', align === 'right' && 'text-right', className)} onClick={handleSort}>
+    <div 
+      className={cn('cursor-pointer select-none w-full', align === 'right' && 'text-right', className)} 
+      onClick={handleSort}
+    >
       <div className={cn('flex items-center gap-1', align === 'right' ? 'justify-end' : 'justify-start')}>
         <span>{label}</span>
         <span className="text-muted-foreground">
@@ -44,6 +46,6 @@ export function SortableHeader({ column, label, align = 'left', basePath = '/ran
           )}
         </span>
       </div>
-    </TableHead>
+    </div>
   )
 }

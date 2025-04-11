@@ -1,6 +1,13 @@
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { 
+  CustomTable, 
+  CustomTableHeader, 
+  CustomTableBody, 
+  CustomTableRow, 
+  CustomTableHead, 
+  CustomTableCell 
+} from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
@@ -46,81 +53,89 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         <p className="text-muted-foreground">Tournament results and player performances</p>
       </div>
 
-      <Card className="rounded-none">
-        <div className="w-full">
-          <Table>
-            <TableHeader>
-              <TableRow>
+      <Card className="rounded-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0">
+        <CustomTable className="h-full">
+          <CustomTableHeader>
+            <CustomTableRow>
+              <CustomTableHead className="w-[40px] text-right">
                 <SortableHeader
                   column="rank"
                   label="Rank"
                   basePath={`/tournament/${id}`}
-                  className="w-[3rem] text-right pr-4 lg:pr-8"
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead className="min-w-[120px]">
                 <SortableHeader
                   column="name"
                   label="Name"
                   basePath={`/tournament/${id}`}
-                  className="w-[120px] sm:w-[160px] lg:w-[200px]"
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead className="hidden md:table-cell text-right">
                 <SortableHeader
                   column="rating"
                   label="Rating"
                   align="right"
                   basePath={`/tournament/${id}`}
-                  className="hidden lg:table-cell"
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead className="hidden md:table-cell text-right">
                 <SortableHeader
                   column="points"
                   label="Points"
                   align="right"
                   basePath={`/tournament/${id}`}
-                  className="hidden lg:table-cell"
+                  className="w-full"
                 />
+              </CustomTableHead>
+              <CustomTableHead className="text-right">
                 <SortableHeader
                   column="tpr"
                   label="TPR"
                   align="right"
                   basePath={`/tournament/${id}`}
-                  className="w-[4rem]"
+                  className="w-full"
                 />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {tournament.results.map((result, index) => (
-                <TableRow key={result.player.fide_id || result.player.name} className="even:bg-muted/30">
-                  <TableCell className="text-right pr-4 lg:pr-8 font-medium">{(page - 1) * 25 + index + 1}</TableCell>
-                  <TableCell className="w-[120px] sm:w-[160px] lg:w-[200px]">
-                    <div className="truncate">
-                      {result.player.fide_id ? (
-                        <Link
-                          href={`/player/${result.player.fide_id}`}
-                          className="font-medium text-blue-600 hover:underline"
-                          title={result.player.name}>
-                          <span className="sm:hidden">
-                            {result.player.name.length > 25
-                              ? result.player.name.split(' ').slice(0, 2).join(' ') + '...'
-                              : result.player.name}
-                          </span>
-                          <span className="hidden sm:inline">{result.player.name}</span>
-                        </Link>
-                      ) : (
-                        <span className="font-medium" title={result.player.name}>
-                          {result.player.name}
+              </CustomTableHead>
+            </CustomTableRow>
+          </CustomTableHeader>
+          <CustomTableBody>
+            {tournament.results.map((result, index) => (
+              <CustomTableRow key={result.player.fide_id || result.player.name}>
+                <CustomTableCell isHeader className="text-right">{(page - 1) * 25 + index + 1}</CustomTableCell>
+                <CustomTableCell className="min-w-[120px]">
+                  <div className="truncate">
+                    {result.player.fide_id ? (
+                      <Link
+                        href={`/player/${result.player.fide_id}`}
+                        className="font-medium text-blue-600 hover:underline"
+                        title={result.player.name}>
+                        <span className="sm:hidden">
+                          {result.player.name.length > 15
+                            ? result.player.name.split(' ').slice(0, 2).join(' ') + '...'
+                            : result.player.name}
                         </span>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell text-right tabular-nums">
-                    {result.player.rating || 'Unrated'}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell text-right tabular-nums">{result.points}</TableCell>
-                  <TableCell className="text-right tabular-nums w-[4rem]">{result.tpr || '-'}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                        <span className="hidden sm:inline">{result.player.name}</span>
+                      </Link>
+                    ) : (
+                      <span className="font-medium" title={result.player.name}>
+                        {result.player.name}
+                      </span>
+                    )}
+                  </div>
+                </CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right tabular-nums">
+                  {result.player.rating || 'Unrated'}
+                </CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right tabular-nums">{result.points}</CustomTableCell>
+                <CustomTableCell className="text-right tabular-nums">{result.tpr || '-'}</CustomTableCell>
+              </CustomTableRow>
+            ))}
+          </CustomTableBody>
+        </CustomTable>
       </Card>
 
       {tournament.total_pages > 1 && (
