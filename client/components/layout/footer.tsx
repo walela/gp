@@ -1,30 +1,15 @@
 import React from 'react'
 import Link from 'next/link'
-import { Bot, ExternalLink } from 'lucide-react'
+import { Copyright, ExternalLink } from 'lucide-react'
 
 export function Footer() {
   return (
     <footer className="w-full border-t bg-background py-4">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-center items-center">
         <div className="flex flex-wrap items-center justify-center gap-8">
-          <div className="flex flex-wrap items-center justify-center gap-1 text-sm text-muted-foreground">
-            <span>Built by</span>
-            <Link
-              href="https://austinwalela.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2 decoration-dotted hover:text-foreground transition-colors">
-              Austin Walela
-            </Link>
-            <span className="mx-1">+</span>
-            <Link
-              href="https://claude.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center hover:text-foreground transition-colors">
-              <Bot size={14} className="mx-0.5" />
-              <span className="underline underline-offset-2 decoration-dotted">Claude 3.7</span>
-            </Link>
+          <div className="text-sm text-muted-foreground flex items-center gap-1">
+            <Copyright size={14} />
+            <span>2025 <span className="underline underline-offset-2 decoration-dotted">Austin Walela</span></span>
           </div>
           <Link
             href="https://github.com/walela/gp"

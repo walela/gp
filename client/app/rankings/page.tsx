@@ -71,11 +71,15 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         </div>
       </div>
 
-      <div className="mb-0 mt-0">
+      <div className="mb-0 mt-0 sm:hidden">
         <ViewSelector view={view} />
       </div>
 
-      <Card className="rounded-bl-lg rounded-br-lg rounded-tr-lg rounded-tl-none border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0 mt-[-1px]">
+      <Card className={cn(
+        "rounded-bl-lg rounded-br-lg rounded-tr-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0",
+        "sm:rounded-tl-lg sm:mt-0",
+        "mt-[-1px] rounded-tl-none"
+      )}>
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow>
