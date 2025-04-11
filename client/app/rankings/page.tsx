@@ -176,9 +176,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                           : "text-blue-600"
                       )}
                       title={player.name}>
-                      {top9ByBest2.has(player.fide_id || player.name) && (
-                        <span className="text-green-600 dark:text-green-500 mr-0.5">•</span>
-                      )}
                       <span className="sm:hidden flex items-center gap-1">
                         {player.name.length > 15 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
                         <span className="text-muted-foreground/50">›</span>
