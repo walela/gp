@@ -11,7 +11,7 @@ export function Header() {
             <span className="font-bold truncate">
               <span className="hidden sm:inline">Chess Kenya </span>
               <span className="sm:hidden">CK </span>
-              2024-2025 GP
+              2024-2025 Grand Prix Tracker
             </span>
           </Link>
           <MainNav />
