@@ -62,18 +62,20 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         </p>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 mb-6">
         <div className="relative w-full sm:w-[300px]">
           <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <form>
             <Input type="search" name="q" placeholder="Search players..." defaultValue={search} className="pl-9" />
           </form>
         </div>
+      </div>
 
+      <div className="mb-0 mt-0">
         <ViewSelector view={view} />
       </div>
 
-      <Card className="rounded-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0">
+      <Card className="rounded-bl-lg rounded-br-lg rounded-tr-lg rounded-tl-none border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0 mt-[-1px]">
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow>

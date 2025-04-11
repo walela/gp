@@ -1,6 +1,8 @@
 'use client'
 
-import { SegmentedControl } from '@/components/ui/segmented-control'
+import { cn } from '@/lib/utils'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 interface ViewSelectorProps {
   view: string
@@ -14,18 +16,36 @@ const viewOptions = [
 ]
 
 export function ViewSelector({ view }: ViewSelectorProps) {
+  const searchParams = useSearchParams()
+  
+  const getViewUrl = (viewValue: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('view', viewValue)
+    params.set('sort', viewValue)
+    return `/rankings?${params.toString()}`
+  }
+  
   return (
-    <div className="sm:hidden overflow-x-auto pb-2">
-      <SegmentedControl
-        value={view}
-        options={viewOptions}
-        onChange={value => {
-          const url = new URL(window.location.href)
-          url.searchParams.set('view', value)
-          url.searchParams.set('sort', value)
-          window.location.href = url.toString()
-        }}
-      />
+    <div className="flex overflow-x-auto">
+      <div className="inline-flex rounded-t-lg bg-white/80 backdrop-blur-sm border border-b-0 shadow-sm">
+        {viewOptions.map(option => {
+          const isActive = view === option.value;
+          return (
+            <Link
+              key={option.value}
+              href={getViewUrl(option.value)}
+              className={cn(
+                'inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-all',
+                isActive 
+                  ? 'bg-primary text-primary-foreground border-b-2 border-b-primary' 
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              {option.label}
+            </Link>
+          );
+        })}
+      </div>
     </div>
   )
 }
