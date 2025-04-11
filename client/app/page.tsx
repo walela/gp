@@ -139,12 +139,11 @@ export default async function HomePage() {
       
         <div className="flex flex-wrap gap-6">
           {upcomingTournaments.map((tournament) => (
-            <Link 
-              key={tournament.id} 
-              href={`/tournament/${tournament.id}`}
+            <div 
+              key={tournament.id}
               className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]"
             >
-              <Card className="hover:bg-muted/50 hover:scale-[1.02] transition-all cursor-pointer h-full">
+              <Card className="h-full">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-1.5">
@@ -186,7 +185,7 @@ export default async function HomePage() {
                   </div>
                 </CardContent>
               </Card>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
