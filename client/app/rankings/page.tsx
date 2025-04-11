@@ -11,7 +11,7 @@ import {
 import { SortableHeader } from '@/components/rankings/sortable-header'
 import { Input } from '@/components/ui/input'
 import { SearchIcon } from 'lucide-react'
-import { getRankings } from '@/services/api'
+import { getRankings, getTopPlayers } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { Pagination } from '@/components/ui/pagination'
@@ -28,8 +28,8 @@ interface RankingsPageProps {
 
 export default async function RankingsPage({ searchParams }: RankingsPageProps) {
   // Properly await the searchParams object
-  const params = await searchParams;
-  
+  const params = await searchParams
+
   // Now we can safely access the properties
   const sort = params.sort || 'best_2'
   const dir = (params.dir || 'desc') as 'asc' | 'desc'
@@ -38,20 +38,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const search = params.q || ''
 
   // Pass search query to the backend for filtering
-  const { rankings, total_pages } = await getRankings({ 
-    sort, 
-    dir, 
-    page, 
-    q: search 
+  const { rankings, total_pages } = await getRankings({
+    sort,
+    dir,
+    page,
+    q: search
   })
 
-  // Get top 9 by best_2 for highlighting (using the potentially filtered rankings)
-  const top9ByBest2 = new Set(
-    [...rankings]
-      .sort((a, b) => b.best_2 - a.best_2)
-      .slice(0, 9)
-      .map(p => p.fide_id || p.name)
-  )
+  // Get top 9 by best_2 from all data, not just the current page
+  const { topPlayers } = await getTopPlayers({ count: 9, sortBy: 'best_2' })
+  const top9ByBest2 = new Set(topPlayers.map(p => p.fide_id || p.name))
 
   return (
     <div className="space-y-6">
@@ -75,11 +71,12 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <ViewSelector view={view} />
       </div>
 
-      <Card className={cn(
-        "rounded-bl-lg rounded-br-lg rounded-tr-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0",
-        "sm:rounded-tl-lg sm:mt-0",
-        "mt-[-1px] rounded-tl-none"
-      )}>
+      <Card
+        className={cn(
+          'rounded-bl-lg rounded-br-lg rounded-tr-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0',
+          'sm:rounded-tl-lg sm:mt-0',
+          'mt-[-1px] rounded-tl-none'
+        )}>
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow>
@@ -90,13 +87,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />
               </CustomTableHead>
               <CustomTableHead className="hidden md:table-cell text-right">
-                <SortableHeader
-                  column="rating"
-                  label="Rating"
-                  align="right"
-                  basePath="/rankings"
-                  className="w-full"
-                />
+                <SortableHeader column="rating" label="Rating" align="right" basePath="/rankings" className="w-full" />
               </CustomTableHead>
               <CustomTableHead className="hidden sm:table-cell text-right">
                 <SortableHeader
@@ -107,45 +98,17 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                   className="w-full"
                 />
               </CustomTableHead>
-              <CustomTableHead
-                className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader
-                  column="best_1"
-                  label="Best TPR"
-                  align="right"
-                  basePath="/rankings"
-                  className="w-full"
-                />
+              <CustomTableHead className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
+                <SortableHeader column="best_1" label="Best TPR" align="right" basePath="/rankings" className="w-full" />
               </CustomTableHead>
-              <CustomTableHead
-                className={cn('text-right', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader
-                  column="best_2"
-                  label="Best 2"
-                  align="right"
-                  basePath="/rankings"
-                  className="w-full"
-                />
+              <CustomTableHead className={cn('text-right', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
+                <SortableHeader column="best_2" label="Best 2" align="right" basePath="/rankings" className="w-full" />
               </CustomTableHead>
-              <CustomTableHead
-                className={cn('text-right', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader
-                  column="best_3"
-                  label="Best 3"
-                  align="right"
-                  basePath="/rankings"
-                  className="w-full"
-                />
+              <CustomTableHead className={cn('text-right', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
+                <SortableHeader column="best_3" label="Best 3" align="right" basePath="/rankings" className="w-full" />
               </CustomTableHead>
-              <CustomTableHead
-                className={cn('text-right', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader
-                  column="best_4"
-                  label="Best 4"
-                  align="right"
-                  basePath="/rankings"
-                  className="w-full"
-                />
+              <CustomTableHead className={cn('text-right', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
+                <SortableHeader column="best_4" label="Best 4" align="right" basePath="/rankings" className="w-full" />
               </CustomTableHead>
             </CustomTableRow>
           </CustomTableHeader>
@@ -154,11 +117,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <CustomTableRow
                 key={player.fide_id || player.name}
                 className={cn(
-                  top9ByBest2.has(player.fide_id || player.name) 
-                    ? 'bg-green-50/80 dark:bg-green-900/20 border-l-4 border-l-green-500 dark:border-l-green-400' 
+                  top9ByBest2.has(player.fide_id || player.name)
+                    ? 'bg-green-50/80 dark:bg-green-900/20 border-l-4 border-l-green-500 dark:border-l-green-400'
                     : ''
-                )}
-              >
+                )}>
                 <CustomTableCell isHeader className="text-right">
                   {(page - 1) * 25 + index + 1}
                   {/* {top9ByBest2.has(player.fide_id || player.name) ? (
@@ -176,10 +138,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     <Link
                       href={`/player/${player.fide_id || player.name}`}
                       className={cn(
-                        "font-medium group flex items-center gap-1",
-                        top9ByBest2.has(player.fide_id || player.name)
-                          ? "text-blue-700 dark:text-blue-400"
-                          : "text-blue-600"
+                        'font-medium group flex items-center gap-1',
+                        top9ByBest2.has(player.fide_id || player.name) ? 'text-blue-700 dark:text-blue-400' : 'text-blue-600'
                       )}
                       title={player.name}>
                       <span className="sm:hidden flex items-center gap-1">
@@ -190,8 +150,12 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     </Link>
                   </div>
                 </CustomTableCell>
-                <CustomTableCell className="hidden md:table-cell text-right tabular-nums">{player.rating || 'Unrated'}</CustomTableCell>
-                <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">{player.tournaments_played}</CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right tabular-nums">
+                  {player.rating || 'Unrated'}
+                </CustomTableCell>
+                <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">
+                  {player.tournaments_played}
+                </CustomTableCell>
                 <CustomTableCell className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
                   <div className="flex flex-col items-end gap-1">
                     <div className="tabular-nums font-medium">{player.best_1}</div>
@@ -225,10 +189,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       </Card>
 
       {total_pages > 1 && (
-        <Pagination 
-          currentPage={page} 
-          totalPages={total_pages} 
-          basePath="/rankings" 
+        <Pagination
+          currentPage={page}
+          totalPages={total_pages}
+          basePath="/rankings"
           queryParams={{
             sort,
             dir,

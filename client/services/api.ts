@@ -64,37 +64,47 @@ export interface RankingsResponse {
   total_pages: number
 }
 
-export async function getTournaments(params: {
-  sort?: string
-  dir?: 'asc' | 'desc'
-  page?: number
-} = {}): Promise<Tournament[]> {
+export async function getTournaments(
+  params: {
+    sort?: string
+    dir?: 'asc' | 'desc'
+    page?: number
+  } = {}
+): Promise<Tournament[]> {
   const searchParams = new URLSearchParams()
   if (params.sort) searchParams.set('sort', params.sort)
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
-  
+
   const response = await fetch(`${API_BASE}/tournaments?${searchParams}`)
   if (!response.ok) throw new Error('Failed to fetch tournaments')
   return response.json()
 }
 
-export async function getTournamentDetails(id: string, params: {
-  sort?: string
-  dir?: 'asc' | 'desc'
-  page?: number
-} = {}): Promise<TournamentDetails> {
+export async function getTournamentDetails(
+  id: string,
+  params: {
+    sort?: string
+    dir?: 'asc' | 'desc'
+    page?: number
+  } = {}
+): Promise<TournamentDetails> {
   const searchParams = new URLSearchParams()
   if (params.sort) searchParams.set('sort', params.sort)
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
-  
+
   const response = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`)
   if (!response.ok) throw new Error('Failed to fetch tournament details')
   return response.json()
 }
 
-export async function getRankings({ sort = 'best_2', dir = 'desc', page = 1, q }: {
+export async function getRankings({
+  sort = 'best_2',
+  dir = 'desc',
+  page = 1,
+  q
+}: {
   sort?: string
   dir?: 'asc' | 'desc'
   page?: number
@@ -115,16 +125,19 @@ export async function getPlayer(id: string): Promise<PlayerDetails> {
   return data as PlayerDetails
 }
 
-export async function getTournament(id: string, params: {
-  sort?: string
-  dir?: 'asc' | 'desc'
-  page?: number
-} = {}): Promise<TournamentDetails> {
+export async function getTournament(
+  id: string,
+  params: {
+    sort?: string
+    dir?: 'asc' | 'desc'
+    page?: number
+  } = {}
+): Promise<TournamentDetails> {
   const searchParams = new URLSearchParams()
   if (params.sort) searchParams.set('sort', params.sort)
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
-  
+
   const res = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`)
   const data = await res.json()
   return data as TournamentDetails
@@ -134,4 +147,36 @@ export async function refreshTournament(id: string): Promise<{ status: string }>
   const response = await fetch(`${API_BASE}/refresh/${id}`)
   if (!response.ok) throw new Error('Failed to refresh tournament')
   return response.json()
+}
+
+export interface TopPlayersResponse {
+  topPlayers: PlayerRanking[]
+}
+
+export async function getTopPlayers({
+  count = 9,
+  sortBy = 'best_2',
+  dir = 'desc',
+  q = ''
+}: {
+  count?: number
+  sortBy?: string
+  dir?: 'asc' | 'desc'
+  q?: string
+} = {}): Promise<TopPlayersResponse> {
+  let url = `${API_BASE}/rankings?sort=${sortBy}&dir=${dir}&limit=${count}`
+
+  if (q) {
+    url += `&q=${encodeURIComponent(q)}`
+  }
+
+  // Add a special parameter to indicate we want all results for determining top players
+  url += '&top_only=true'
+
+  const res = await fetch(url)
+  const data = await res.json()
+
+  return {
+    topPlayers: data.rankings.slice(0, count)
+  }
 }
