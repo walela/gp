@@ -119,9 +119,9 @@
   body {
     @apply bg-background text-foreground;
     background: 
-      radial-gradient(circle at 0% 0%, rgb(248 250 252) 0%, transparent 50%),
-      radial-gradient(circle at 100% 0%, rgb(243 244 246) 0%, transparent 50%),
-      linear-gradient(135deg, rgb(248 250 252) 0%, rgb(241 245 249) 100%);
+      radial-gradient(circle at 0 0, #b4c4d5 0%, #0000 50%), 
+      radial-gradient(circle at 100% 0, #f3f4f6 0%, #563a3a00 50%), 
+      linear-gradient(253deg, #f8fafc 0%, #f1f5f9 100%);
     background-attachment: fixed;
     min-height: 100vh;
   }
