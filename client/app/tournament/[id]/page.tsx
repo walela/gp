@@ -9,10 +9,9 @@ import {
   CustomTableCell 
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
-import { Button } from '@/components/ui/button'
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { getTournament } from '@/services/api'
 import { notFound } from 'next/navigation'
+import { Pagination } from '@/components/ui/pagination'
 
 interface TournamentPageProps {
   params: {
@@ -139,40 +138,16 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
       </Card>
 
       {tournament.total_pages > 1 && (
-        <div className="flex flex-wrap justify-center gap-1">
-          <Button variant="outline" size="sm" asChild disabled={page === 1}>
-            <Link
-              href={`/tournament/${id}?sort=${sort}&dir=${dir}&page=${page - 1}`}>
-              <ChevronLeftIcon className="h-4 w-4 sm:mr-1" />
-              <span className="hidden sm:inline">Previous</span>
-            </Link>
-          </Button>
-
-          <div className="hidden sm:flex gap-1">
-            {Array.from({ length: tournament.total_pages }, (_, i) => i + 1).map(p => (
-              <Button key={p} variant={p === page ? 'default' : 'outline'} size="sm" asChild>
-                <Link
-                  href={`/tournament/${id}?sort=${sort}&dir=${dir}&page=${p}`}>
-                  {p}
-                </Link>
-              </Button>
-            ))}
-          </div>
-
-          <div className="sm:hidden">
-            <span className="mx-2 text-sm text-muted-foreground">
-              Page {page} of {tournament.total_pages}
-            </span>
-          </div>
-
-          <Button variant="outline" size="sm" asChild disabled={page === tournament.total_pages}>
-            <Link
-              href={`/tournament/${id}?sort=${sort}&dir=${dir}&page=${page + 1}`}>
-              <span className="hidden sm:inline">Next</span>
-              <ChevronRightIcon className="h-4 w-4 sm:ml-1" />
-            </Link>
-          </Button>
-        </div>
+        <Pagination 
+          currentPage={page} 
+          totalPages={tournament.total_pages} 
+          basePath={`/tournament/${id}`} 
+          queryParams={{
+            sort,
+            dir
+          }}
+          className="mt-4"
+        />
       )}
     </div>
   )

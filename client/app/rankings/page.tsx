@@ -9,12 +9,12 @@ import {
   CustomTableCell 
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from 'lucide-react'
+import { SearchIcon } from 'lucide-react'
 import { getRankings } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
+import { Pagination } from '@/components/ui/pagination'
 
 interface RankingsPageProps {
   searchParams: {
@@ -221,40 +221,18 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       </Card>
 
       {total_pages > 1 && (
-        <div className="flex flex-wrap justify-center gap-1">
-          <Button variant="outline" size="sm" asChild disabled={page === 1}>
-            <Link
-              href={`/rankings?sort=${sort}&dir=${dir}&view=${view}&page=${page - 1}${search ? `&q=${encodeURIComponent(search)}` : ''}`}>
-              <ChevronLeftIcon className="h-4 w-4 sm:mr-1" />
-              <span className="hidden sm:inline">Previous</span>
-            </Link>
-          </Button>
-
-          <div className="hidden sm:flex gap-1">
-            {Array.from({ length: total_pages }, (_, i) => i + 1).map(p => (
-              <Button key={p} variant={p === page ? 'default' : 'outline'} size="sm" asChild>
-                <Link
-                  href={`/rankings?sort=${sort}&dir=${dir}&view=${view}&page=${p}${search ? `&q=${encodeURIComponent(search)}` : ''}`}>
-                  {p}
-                </Link>
-              </Button>
-            ))}
-          </div>
-
-          <div className="sm:hidden">
-            <span className="mx-2 text-sm text-muted-foreground">
-              Page {page} of {total_pages}
-            </span>
-          </div>
-
-          <Button variant="outline" size="sm" asChild disabled={page === total_pages}>
-            <Link
-              href={`/rankings?sort=${sort}&dir=${dir}&view=${view}&page=${page + 1}${search ? `&q=${encodeURIComponent(search)}` : ''}`}>
-              <span className="hidden sm:inline">Next</span>
-              <ChevronRightIcon className="h-4 w-4 sm:ml-1" />
-            </Link>
-          </Button>
-        </div>
+        <Pagination 
+          currentPage={page} 
+          totalPages={total_pages} 
+          basePath="/rankings" 
+          queryParams={{
+            sort,
+            dir,
+            view,
+            ...(search ? { q: search } : {})
+          }}
+          className="mt-4"
+        />
       )}
     </div>
   )
