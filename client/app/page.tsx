@@ -88,7 +88,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-4 space-y-8">
+      <div className="container mx-auto px-2 py-4 space-y-8">
 
         <div>
           <h2 className="text-xl font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
@@ -131,7 +131,7 @@ export default async function HomePage() {
                   key={tournament.id}
                   href={`/tournament/${tournament.id}`}
                   className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
-                  <Card className="h-full">
+                  <Card className="h-full gap-2 py-4 rounded-lg">
                     <CardHeader className="pb-1 pt-3 px-4">
                       <div className="flex items-center justify-between">
                         <CardTitle>{tournament.name}</CardTitle>
@@ -200,7 +200,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap gap-6">
             {upcomingTournaments.map(tournament => (
               <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
-                <Card className="h-full">
+                <Card className="h-full py-4 gap-2 rounded-lg">
                   <CardHeader className="pb-1 pt-3 px-4">
                     <div className="flex items-center justify-between">
                       <CardTitle className="flex items-center gap-1.5">
@@ -284,7 +284,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap gap-6">
             {plannedTournaments.map(tournament => (
               <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
-                <Card className="h-full">
+                <Card className="h-full gap-2 py-4 rounded-lg">
                   <CardHeader className="pb-1 pt-3 px-4">
                     <div className="flex items-center justify-between">
                       <CardTitle>{tournament.name}</CardTitle>
