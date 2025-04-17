@@ -93,7 +93,7 @@ export default async function HomePage() {
           <h2 className="text-xl font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
           <p className="text-muted-foreground mb-4">Completed tournaments in the 2025 Chess Kenya Grand Prix series</p>
 
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap gap-4">
             {tournaments.map(tournament => {
               // Determine location based on tournament name
               let location = 'Nairobi'
@@ -196,7 +196,7 @@ export default async function HomePage() {
             Grand Prix tournaments within the next 60 days. Confirmed tournaments are indicated with a green check.
           </p>
 
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap gap-4">
             {upcomingTournaments.map(tournament => (
               <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
                 <Card className="h-full py-4 gap-2 rounded-lg">
@@ -280,7 +280,7 @@ export default async function HomePage() {
           <h2 className="text-xl font-bold tracking-tight text-gray-700">Planned Tournaments</h2>
           <p className="text-muted-foreground mb-4">Future tournaments with tentative dates and details</p>
 
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap gap-4">
             {plannedTournaments.map(tournament => (
               <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
                 <Card className="h-full gap-2 py-4 rounded-lg">
