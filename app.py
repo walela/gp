@@ -173,51 +173,52 @@ def rankings():
 @app.route('/api/player/<fide_id>')
 def player(fide_id):
     """Get player tournament history."""
-    # Query database for all tournaments
+    player_details = None
+    tournament_results = []
+    
     with sqlite3.connect(db.db_file) as conn:
+        conn.row_factory = sqlite3.Row # Return rows as dictionary-like objects
         c = conn.cursor()
+        
+        # 1. Fetch player details
+        c.execute('SELECT name, fide_id, federation FROM players WHERE fide_id = ?', (fide_id,))
+        player_row = c.fetchone()
+        
+        if not player_row:
+            # Return 404 or empty if player not found by FIDE ID
+             return jsonify({'error': 'Player not found'}), 404
+             
+        player_details = dict(player_row)
+
+        # 2. Fetch tournament results for this player using the correct JOIN
+        # We join results -> players (on player_id) and results -> tournaments (on tournament_id)
+        # We filter by players.fide_id
         c.execute('''
-            SELECT t.id, t.name, r.points, r.tpr, r.rating
-            FROM tournaments t
-            JOIN results r ON t.id = r.tournament_id
-            JOIN players p ON r.player_fide_id = p.fide_id AND r.player_name = p.name
+            SELECT 
+                t.id as tournament_id, 
+                t.name as tournament_name, 
+                r.points, 
+                r.tpr, 
+                r.rating as rating_in_tournament 
+            FROM results r
+            JOIN players p ON r.player_id = p.id 
+            JOIN tournaments t ON r.tournament_id = t.id
             WHERE p.fide_id = ?
-            ORDER BY t.created_at DESC
+            ORDER BY t.id DESC -- Or however you want to order results
         ''', (fide_id,))
-        results = c.fetchall()
         
-        # Get player name and latest rating
-        c.execute('''
-            SELECT p.name, r.rating 
-            FROM players p
-            JOIN results r ON r.player_fide_id = p.fide_id AND r.player_name = p.name
-            WHERE p.fide_id = ?
-            ORDER BY r.created_at DESC
-            LIMIT 1
-        ''', (fide_id,))
-        player_info = c.fetchone()
+        results_rows = c.fetchall()
+        tournament_results = [dict(row) for row in results_rows]
         
-        if not player_info:
-            return jsonify({'error': 'Player not found'}), 404
-            
-        player_name, player_rating = player_info
-        
-        tournament_results = []
-        for tournament_id, tournament_name, points, tpr, rating in results:
-            tournament_results.append({
-                'tournament_id': tournament_id,
-                'tournament_name': tournament_name,
-                'points': points,
-                'tpr': tpr,
-                'rating': rating
-            })
-        
-        return jsonify({
-            'name': player_name,
-            'fide_id': fide_id,
-            'rating': player_rating,
-            'results': tournament_results
-        })
+    # Combine player details and results into the response
+    return jsonify({
+        'name': player_details['name'],
+        'fide_id': player_details['fide_id'],
+        'federation': player_details['federation'], # Added federation
+        'results': tournament_results
+        # Note: 'rating' (current rating) isn't stored directly on players table
+        # Could calculate from latest 'rating_in_tournament' if needed
+    })
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5003))
