@@ -123,31 +123,34 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 )}>
                 <CustomTableCell isHeader className="text-right">
                   {(page - 1) * 25 + index + 1}
-                  {/* {top9ByBest2.has(player.fide_id || player.name) ? (
-                    <div className="flex items-center justify-end gap-1">
-                      <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-200">
-                        {(page - 1) * 25 + index + 1}
-                      </span>
-                    </div>
-                  ) : (
-                    (page - 1) * 25 + index + 1
-                  )} */}
                 </CustomTableCell>
                 <CustomTableCell className="min-w-[120px]">
                   <div className="truncate">
-                    <Link
-                      href={`/player/${player.fide_id || player.name}`}
-                      className={cn(
-                        'font-medium group flex items-center gap-1',
-                        top9ByBest2.has(player.fide_id || player.name) ? 'text-blue-700 dark:text-blue-400' : 'text-blue-600'
-                      )}
-                      title={player.name}>
-                      <span className="sm:hidden flex items-center gap-1">
-                        {player.name.length > 15 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
-                        <span className="text-muted-foreground/50">›</span>
+                    {player.fide_id ? (
+                      <Link
+                        href={`/player/${player.fide_id}`}
+                        className={cn(
+                          'font-medium group flex items-center gap-1',
+                          top9ByBest2.has(player.fide_id) ? 'text-blue-700 dark:text-blue-400' : 'text-blue-600'
+                        )}
+                        title={player.name}>
+                        <span className="sm:hidden flex items-center gap-1">
+                          {player.name.length > 15 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
+                          <span className="text-muted-foreground/50">›</span>
+                        </span>
+                        <span className="hidden sm:inline group-hover:underline">{player.name}</span>
+                      </Link>
+                    ) : (
+                      <span 
+                        className={cn(
+                          'font-medium',
+                           top9ByBest2.has(player.name) ? 'text-blue-700 dark:text-blue-400' : '' 
+                        )} 
+                        title={player.name}
+                      >
+                        {player.name}
                       </span>
-                      <span className="hidden sm:inline group-hover:underline">{player.name}</span>
-                    </Link>
+                    )}
                   </div>
                 </CustomTableCell>
                 <CustomTableCell className="hidden md:table-cell text-right tabular-nums">
