@@ -15,7 +15,8 @@ export default async function HomePage() {
       endDate: '2025-04-21',
       location: 'Nairobi',
       rounds: 8,
-      confirmed: false
+      confirmed: false,
+      status: 'postponed'
     },
     {
       id: '742151',
@@ -210,7 +211,20 @@ export default async function HomePage() {
                           <HelpCircle className="h-4 w-4 text-amber-600" />
                         )}
                       </CardTitle>
-                      <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Upcoming</Badge>
+                      {tournament.status === 'postponed' ? (
+                        <Badge className="bg-gray-200 text-gray-600 hover:bg-gray-200 whitespace-nowrap">
+                          Postponed
+                        </Badge>
+                      ) : (
+                        <Badge
+                          className={
+                            tournament.confirmed
+                              ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                              : 'bg-blue-100 text-blue-700 hover:bg-blue-100'
+                          }>
+                          {tournament.confirmed ? 'Confirmed' : 'Upcoming'}
+                        </Badge>
+                      )}
                     </div>
                     <CardDescription className="flex items-center gap-2 mt-1">
                       <CalendarDays className="h-4 w-4" />
