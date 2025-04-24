@@ -16,6 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        {/* Chess-themed background gradient */}
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-200 via-white to-amber-100 dark:from-blue-900 dark:via-slate-900 dark:to-amber-900/70 -z-10" />
+        
         <div className="relative flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">

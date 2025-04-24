@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { PlayerDetails, PlayerResult } from '@/services/api'
-import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChevronRight, Trophy, CalendarDays, TrendingUp, Star, ExternalLink } from 'lucide-react'
 import {
@@ -29,6 +28,8 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8 max-w-5xl">
+      {/* Background with subtle gradient - Removed as it's now in the root layout */}
+      
       {/* Player Header */}
       <Card className="shadow-sm rounded-md py-0">
         <div className="p-4">
@@ -93,7 +94,7 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
         {/* Mobile View */}
         <div className="block sm:hidden space-y-2">
           {player.results.map((result: PlayerResult) => (
-            <Card key={result.tournament_id} className="overflow-hidden rounded-md">
+            <Card key={result.tournament_id} className="overflow-hidden rounded-md py-0">
               <Link
                 href={`/tournament/${result.tournament_id}`}
                 className="block hover:bg-muted/30 transition-colors">
