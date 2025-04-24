@@ -3,7 +3,8 @@ import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 
 export default async function PlayerPage({ params }: { params: { id: string } }) {
-  const { id } = params
+  // Properly await params to access its properties
+  const { id } = await params
 
   let player: PlayerDetails | null = null
   let error: Error | null = null
