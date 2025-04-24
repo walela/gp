@@ -18,16 +18,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         {/* Chess-themed background with subtle checkerboard pattern */}
         <div className="fixed inset-0 -z-10 overflow-hidden">
-          {/* Gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-amber-100"></div>
+          {/* Enhanced gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-100/80 via-white to-slate-300"></div>
           
-          {/* Mesh grid pattern */}
+          {/* Subtle vignette effect */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_70%,rgba(241,245,249,0.3)_100%)]"></div>
+          
+          {/* Subtle grid pattern */}
           <div className="absolute inset-0">
-            {/* Horizontal and vertical grid lines */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f610_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+            {/* Fine grid - very subtle */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#64748b05_1px,transparent_1px),linear-gradient(to_bottom,#64748b05_1px,transparent_1px)] bg-[size:8px_8px]"></div>
             
-            {/* Diagonal grid lines for mesh effect */}
-            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_calc(50%_-_0.5px),#00000008_calc(50%_-_0.5px),#00000008_calc(50%_+_0.5px),transparent_calc(50%_+_0.5px)),linear-gradient(135deg,transparent_calc(50%_-_0.5px),#f59e0b08_calc(50%_-_0.5px),#f59e0b08_calc(50%_+_0.5px),transparent_calc(50%_+_0.5px))] bg-[size:48px_48px]"></div>
+            {/* Medium grid - light */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#64748b08_1px,transparent_1px),linear-gradient(to_bottom,#64748b08_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+            
+            {/* Major grid lines - still subtle */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#64748b10_1px,transparent_1px),linear-gradient(to_bottom,#64748b10_1px,transparent_1px)] bg-[size:160px_160px]"></div>
           </div>
         </div>
         

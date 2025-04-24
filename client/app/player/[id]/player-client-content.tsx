@@ -106,7 +106,7 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
         </div>
 
         {/* Desktop View */}
-        <Card className="hidden sm:block rounded-md py-0 overflow-hidden">
+        <Card className="hidden sm:block rounded-md py-0 overflow-hidden`">
           <ScrollArea className="max-h-[600px]">
             <CustomTable className="w-full">
               <CustomTableHeader>
