@@ -16,8 +16,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* Chess-themed background gradient */}
-        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-200 via-white to-amber-100 dark:from-blue-900 dark:via-slate-900 dark:to-amber-900/70 -z-10" />
+        {/* Chess-themed background with subtle checkerboard pattern */}
+        <div className="fixed inset-0 -z-10 overflow-hidden">
+          {/* Gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-amber-100"></div>
+          
+          {/* Mesh grid pattern */}
+          <div className="absolute inset-0">
+            {/* Horizontal and vertical grid lines */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f610_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+            
+            {/* Diagonal grid lines for mesh effect */}
+            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_calc(50%_-_0.5px),#00000008_calc(50%_-_0.5px),#00000008_calc(50%_+_0.5px),transparent_calc(50%_+_0.5px)),linear-gradient(135deg,transparent_calc(50%_-_0.5px),#f59e0b08_calc(50%_-_0.5px),#f59e0b08_calc(50%_+_0.5px),transparent_calc(50%_+_0.5px))] bg-[size:48px_48px]"></div>
+          </div>
+        </div>
         
         <div className="relative flex min-h-screen flex-col">
           <Header />

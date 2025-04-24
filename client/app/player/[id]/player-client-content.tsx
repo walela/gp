@@ -27,62 +27,49 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
     validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8 max-w-5xl">
-      {/* Background with subtle gradient - Removed as it's now in the root layout */}
-      
+    <div className="container mx-auto px-4 py-8 space-y-8 max-w-4xl">
       {/* Player Header */}
-      <Card className="shadow-sm rounded-md py-0">
-        <div className="p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            {/* Player Info */}
-            <div className="space-y-2 flex-1">
-              <div className="flex items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-bold">{player.name}</h1>
+      <Card className="shadow-sm rounded-md overflow-hidden py-0 gap-0">
+        <div className="p-4 border-b">
+          <div className="flex flex-col space-y-3">
+            <h1 className="text-2xl sm:text-3xl font-bold">{player.name}</h1>
+            
+            {player.fide_id && (
+              <div className="flex items-center gap-2">
+                <a
+                  href={`https://ratings.fide.com/profile/${player.fide_id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline text-sm flex items-center gap-1.5">
+                  FIDE ID: {player.fide_id}
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
               </div>
-              {player.fide_id && (
-                <div className="flex items-center gap-2">
-                  <a 
-                    href={`https://ratings.fide.com/profile/${player.fide_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm flex items-center gap-1.5"
-                  >
-                    FIDE ID: {player.fide_id}
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              )}
-            </div>
+            )}
+          </div>
+        </div>
 
-            {/* Stats */}
-            <div className="flex gap-8 pt-3 sm:pt-0 border-t sm:border-t-0 sm:border-l sm:pl-6 mt-3 sm:mt-0">
-              <div>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <CalendarDays className="h-4 w-4" />
-                  <span>Tournaments</span>
-                </div>
-                <p className="font-semibold text-xl mt-1">{totalTournaments}</p>
-              </div>
-              
-              <div>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Star className="h-4 w-4" />
-                  <span>Best TPR</span>
-                </div>
-                <p className="font-semibold text-xl mt-1 flex items-center gap-1">
-                  {bestTpr}
-                  {bestTpr >= 2000 && <Trophy className="h-4 w-4 text-amber-500" />}
-                </p>
-              </div>
-              
-              <div>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <TrendingUp className="h-4 w-4" />
-                  <span>Avg. TPR</span>
-                </div>
-                <p className="font-semibold text-xl mt-1">{averageTpr || '-'}</p>
-              </div>
-            </div>
+        {/* Stats Section */}
+        <div className="p-4 grid grid-cols-3 gap-6 bg-gray-50">
+          <div className="flex flex-col items-center">
+            <CalendarDays className="h-5 w-5 text-gray-500 mb-1" />
+            <span className="text-xs text-muted-foreground">Tournaments</span>
+            <p className="font-semibold text-xl">{totalTournaments}</p>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <Star className="h-5 w-5 text-amber-500 mb-1" />
+            <span className="text-xs text-muted-foreground">Best TPR</span>
+            <p className="font-semibold text-xl flex items-center gap-1">
+              {bestTpr}
+              {bestTpr >= 2000 && <Trophy className="h-4 w-4 text-amber-500" />}
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <TrendingUp className="h-5 w-5 text-gray-500 mb-1" />
+            <span className="text-xs text-muted-foreground">Avg. TPR</span>
+            <p className="font-semibold text-xl">{averageTpr || '-'}</p>
           </div>
         </div>
       </Card>
@@ -92,29 +79,25 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
         <h2 className="text-xl font-semibold">Tournament History</h2>
 
         {/* Mobile View */}
-        <div className="block sm:hidden space-y-2">
+        <div className="block sm:hidden space-y-3">
           {player.results.map((result: PlayerResult) => (
-            <Card key={result.tournament_id} className="overflow-hidden rounded-md py-0">
-              <Link
-                href={`/tournament/${result.tournament_id}`}
-                className="block hover:bg-muted/30 transition-colors">
-                <div className="p-3 border-b">
+            <Card key={result.tournament_id} className="overflow-hidden py-0 rounded-md">
+              <Link href={`/tournament/${result.tournament_id}`} className="block hover:bg-gray-50 transition-colors">
+                <div className="p-4 border-b">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-blue-600">
-                      {result.tournament_name}
-                    </h3>
+                    <h3 className="font-medium text-blue-600">{result.tournament_name}</h3>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </div>
                 </div>
-                
-                <div className="p-3 grid grid-cols-2 gap-4">
+
+                <div className="p-4 grid grid-cols-2 gap-6">
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Points</p>
-                    <p className="font-medium text-base">{result.points.toFixed(1)}</p>
+                    <p className="text-xs text-muted-foreground mb-1">Points</p>
+                    <p className="font-medium text-lg">{result.points.toFixed(1)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">TPR</p>
-                    <p className="font-medium text-base">{result.tpr ?? '-'}</p>
+                    <p className="text-xs text-muted-foreground mb-1">TPR</p>
+                    <p className="font-medium text-lg">{result.tpr ?? '-'}</p>
                   </div>
                 </div>
               </Link>
@@ -123,33 +106,28 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
         </div>
 
         {/* Desktop View */}
-        <Card className="hidden py-2 sm:block rounded-md overflow-hidden">
+        <Card className="hidden sm:block rounded-md py-0 overflow-hidden">
           <ScrollArea className="max-h-[600px]">
             <CustomTable className="w-full">
               <CustomTableHeader>
-                <CustomTableRow className="bg-muted/30 border-b">
-                  <CustomTableHead className="w-[60%] py-2 px-4">Tournament</CustomTableHead>
-                  <CustomTableHead className="text-right w-[20%] py-2 px-4">Points</CustomTableHead>
-                  <CustomTableHead className="text-right w-[20%] py-2 px-4">TPR</CustomTableHead>
+                <CustomTableRow className="bg-gray-50 border-b">
+                  <CustomTableHead className="w-[60%] py-3 px-5 text-sm font-medium">Tournament</CustomTableHead>
+                  <CustomTableHead className="text-right w-[20%] py-3 px-5 text-sm font-medium">Points</CustomTableHead>
+                  <CustomTableHead className="text-right w-[20%] py-3 px-5 text-sm font-medium">TPR</CustomTableHead>
                 </CustomTableRow>
               </CustomTableHeader>
               <CustomTableBody>
                 {player.results.map((result: PlayerResult) => (
-                  <CustomTableRow 
-                    key={result.tournament_id} 
-                    className="hover:bg-muted/20 transition-colors border-b last:border-0"
-                  >
-                    <CustomTableCell className="py-2 px-4">
+                  <CustomTableRow
+                    key={result.tournament_id}
+                    className="hover:bg-gray-50 transition-colors border-b last:border-0">
+                    <CustomTableCell className="py-3 px-5">
                       <Link href={`/tournament/${result.tournament_id}`} className="hover:underline text-blue-600 font-medium">
                         {result.tournament_name}
                       </Link>
                     </CustomTableCell>
-                    <CustomTableCell className="text-right py-2 px-4 font-medium">
-                      {result.points.toFixed(1)}
-                    </CustomTableCell>
-                    <CustomTableCell className="text-right py-2 px-4 font-medium">
-                      {result.tpr ?? '-'}
-                    </CustomTableCell>
+                    <CustomTableCell className="text-right py-3 px-5 font-medium">{result.points.toFixed(1)}</CustomTableCell>
+                    <CustomTableCell className="text-right py-3 px-5 font-medium">{result.tpr ?? '-'}</CustomTableCell>
                   </CustomTableRow>
                 ))}
               </CustomTableBody>

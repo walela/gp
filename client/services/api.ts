@@ -41,7 +41,9 @@ export interface PlayerResult {
 export interface PlayerDetails {
   name: string
   fide_id: string
-  rating: number | null
+  federation: string
+  current_fide_rating: number | null
+  latest_tournament_rating: number | null
   results: PlayerResult[]
 }
 

@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
-import { 
-  CustomTable, 
-  CustomTableHeader, 
-  CustomTableBody, 
-  CustomTableRow, 
-  CustomTableHead, 
-  CustomTableCell 
+import {
+  CustomTable,
+  CustomTableHeader,
+  CustomTableBody,
+  CustomTableRow,
+  CustomTableHead,
+  CustomTableCell
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 import { Input } from '@/components/ui/input'
@@ -141,13 +141,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                         <span className="hidden sm:inline group-hover:underline">{player.name}</span>
                       </Link>
                     ) : (
-                      <span 
-                        className={cn(
-                          'font-medium',
-                           top9ByBest2.has(player.name) ? 'text-blue-700 dark:text-blue-400' : '' 
-                        )} 
-                        title={player.name}
-                      >
+                      <span
+                        className={cn('font-medium', top9ByBest2.has(player.name) ? 'text-blue-700 dark:text-blue-400' : '')}
+                        title={player.name}>
                         {player.name}
                       </span>
                     )}

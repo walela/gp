@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Chess Pieces Pattern -->
+  <!-- King -->
+  <path d="M80,60 L80,40 L100,40 L100,60 L90,60 L95,80 L85,80 Z" fill="#000" />
+  <circle cx="90" cy="30" r="10" fill="#000" />
+  
+  <!-- Queen -->
+  <path d="M160,60 L160,40 L180,40 L180,60 L170,60 L175,80 L165,80 Z" fill="#000" />
+  <circle cx="170" cy="30" r="8" fill="#000" />
+  <circle cx="160" cy="30" r="4" fill="#000" />
+  <circle cx="180" cy="30" r="4" fill="#000" />
+  
+  <!-- Rook -->
+  <path d="M240,40 L240,60 L230,60 L230,80 L250,80 L250,60 L240,60 Z" fill="#000" />
+  <rect x="230" y="30" width="20" height="10" fill="#000" />
+  
+  <!-- Bishop -->
+  <path d="M310,80 L320,40 L330,80 Z" fill="#000" />
+  <circle cx="320" cy="30" r="8" fill="#000" />
+  
+  <!-- Knight -->
+  <path d="M70,140 C70,120 90,120 90,130 C90,140 100,150 110,150 L80,150 L80,170 L110,170 L110,150" fill="#000" />
+  
+  <!-- Pawn -->
+  <circle cx="170" cy="140" r="10" fill="#000" />
+  <path d="M160,150 L180,150 L180,170 L160,170 Z" fill="#000" />
+  
+  <!-- Chess Board Squares -->
+  <rect x="240" y="120" width="40" height="40" fill="#000" />
+  <rect x="280" y="120" width="40" height="40" fill="#000" opacity="0.6" />
+  <rect x="240" y="160" width="40" height="40" fill="#000" opacity="0.6" />
+  <rect x="280" y="160" width="40" height="40" fill="#000" />
+  
+  <!-- More Pawns -->
+  <circle cx="70" cy="240" r="8" fill="#000" />
+  <path d="M62,248 L78,248 L78,260 L62,260 Z" fill="#000" />
+  
+  <circle cx="120" cy="240" r="8" fill="#000" />
+  <path d="M112,248 L128,248 L128,260 L112,260 Z" fill="#000" />
+  
+  <!-- More Chess Pieces -->
+  <path d="M170,220 L170,240 L160,240 L160,260 L180,260 L180,240 L170,240 Z" fill="#000" />
+  <rect x="160" y="210" width="20" height="10" fill="#000" />
+  
+  <path d="M230,260 L240,220 L250,260 Z" fill="#000" />
+  <circle cx="240" cy="210" r="8" fill="#000" />
+  
+  <!-- Scattered Pieces -->
+  <circle cx="310" cy="240" r="10" fill="#000" />
+  <path d="M300,250 L320,250 L320,270 L300,270 Z" fill="#000" />
+  
+  <path d="M70,320 L70,300 L90,300 L90,320 L80,320 L85,340 L75,340 Z" fill="#000" />
+  <circle cx="80" cy="290" r="10" fill="#000" />
+  
+  <path d="M150,320 C150,300 170,300 170,310 C170,320 180,330 190,330 L160,330 L160,350 L190,350 L190,330" fill="#000" />
+  
+  <!-- More Board Squares -->
+  <rect x="240" y="300" width="40" height="40" fill="#000" />
+  <rect x="280" y="300" width="40" height="40" fill="#000" opacity="0.6" />
+  <rect x="240" y="340" width="40" height="40" fill="#000" opacity="0.6" />
+  <rect x="280" y="340" width="40" height="40" fill="#000" />
+</svg>

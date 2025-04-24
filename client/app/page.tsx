@@ -200,11 +200,16 @@ export default async function HomePage() {
           <div className="flex flex-wrap gap-4">
             {upcomingTournaments.map(tournament => (
               <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
-                <Card className="h-full py-4 gap-2 rounded-lg">
+                <Card 
+                  className={`h-full py-4 gap-2 rounded-lg ${tournament.status === 'postponed' ? 'opacity-75' : ''}`}>
                   <CardHeader className="pb-1 pt-3 px-4">
                     <div className="flex items-center justify-between">
                       <CardTitle className="flex items-center gap-1.5">
-                        {tournament.name}
+                        <Link 
+                          href={`/tournament/${tournament.id}`} 
+                          className={tournament.status === 'postponed' ? 'line-through text-gray-500 hover:underline' : 'hover:underline'}>
+                          {tournament.name}
+                        </Link>
                         {tournament.confirmed ? (
                           <CheckCircle2 className="h-4 w-4 text-green-600" />
                         ) : (
