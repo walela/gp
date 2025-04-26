@@ -35,7 +35,7 @@ export interface PlayerResult {
   tournament_name: string
   points: number
   tpr: number | null
-  rating: number | null
+  rating_in_tournament: number | null
 }
 
 export interface PlayerDetails {

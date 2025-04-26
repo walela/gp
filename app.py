@@ -14,75 +14,80 @@ TOURNAMENTS = {
     "1095243": "Eldoret Open",
     "1126042": "Mavens Open",
     "1130967": "Waridi Chess Festival",
-    "1135144": "Kisumu Open"
+    "1135144": "Kisumu Open",
 }
 
 PLAYERS_PER_PAGE = 25
+
 
 def get_tournament_data(tournament_id: str):
     """Get tournament data from database or scrape if needed."""
     # Try to get from database first
     data = db.get_tournament(tournament_id)
     if data:
-        return data['name'], data['results']
-    
+        return data["name"], data["results"]
+
     # Not in database, scrape it
     scraper = ChessResultsScraper()
     name, results = scraper.get_tournament_data(tournament_id)
-    
+
     # Convert to dict for storage
     results_dict = []
     for result in results:
         r = {
-            'player': {
-                'name': result.player.name,
-                'fide_id': result.player.fide_id,
-                'rating': result.player.rating,
-                'federation': result.player.federation
+            "player": {
+                "name": result.player.name,
+                "fide_id": result.player.fide_id,
+                "rating": result.player.rating,
+                "federation": result.player.federation,
             },
-            'points': result.points,
-            'tpr': result.tpr,
-            'has_walkover': result.has_walkover
+            "points": result.points,
+            "tpr": result.tpr,
+            "has_walkover": result.has_walkover,
         }
         results_dict.append(r)
-    
+
     # Save to database
     db.save_tournament(tournament_id, TOURNAMENTS[tournament_id], results_dict)
-    
+
     return TOURNAMENTS[tournament_id], results_dict
 
-@app.route('/api/tournaments')
+
+@app.route("/api/tournaments")
 def tournaments():
     """Get list of all tournaments."""
     tournament_list = []
     for id, name in TOURNAMENTS.items():
         data = db.get_tournament(id)
-        tournament_list.append({
-            'id': id,
-            'name': name,
-            'results': len(data['results']) if data else 0,
-            'status': 'Completed' if data else 'Upcoming'
-        })
+        tournament_list.append(
+            {
+                "id": id,
+                "name": name,
+                "results": len(data["results"]) if data else 0,
+                "status": "Completed" if data else "Upcoming",
+            }
+        )
     return jsonify(tournament_list)
 
-@app.route('/api/tournament/<tournament_id>')
+
+@app.route("/api/tournament/<tournament_id>")
 def tournament(tournament_id):
-    sort = request.args.get('sort', 'points')
-    dir = request.args.get('dir', 'desc')
-    page = int(request.args.get('page', '1'))
+    sort = request.args.get("sort", "points")
+    dir = request.args.get("dir", "desc")
+    page = int(request.args.get("page", "1"))
     per_page = 25
 
     tournament_name, results = get_tournament_data(tournament_id)
-    
+
     # Sort results
-    if sort == 'name':
-        results.sort(key=lambda x: x['player']['name'].lower(), reverse=dir == 'desc')
-    elif sort == 'rating':
-        results.sort(key=lambda x: x['player']['rating'] or 0, reverse=dir == 'desc')
-    elif sort == 'points':
-        results.sort(key=lambda x: x['points'], reverse=dir == 'desc')
-    elif sort == 'tpr':
-        results.sort(key=lambda x: x['tpr'] or 0, reverse=dir == 'desc')
+    if sort == "name":
+        results.sort(key=lambda x: x["player"]["name"].lower(), reverse=dir == "desc")
+    elif sort == "rating":
+        results.sort(key=lambda x: x["player"]["rating"] or 0, reverse=dir == "desc")
+    elif sort == "points":
+        results.sort(key=lambda x: x["points"], reverse=dir == "desc")
+    elif sort == "tpr":
+        results.sort(key=lambda x: x["tpr"] or 0, reverse=dir == "desc")
 
     # Paginate results
     total_pages = (len(results) + per_page - 1) // per_page
@@ -90,110 +95,130 @@ def tournament(tournament_id):
     end = start + per_page
     paginated_results = results[start:end]
 
-    return jsonify({
-        'name': tournament_name,
-        'id': tournament_id,
-        'results': paginated_results,
-        'total': len(results),
-        'page': page,
-        'total_pages': total_pages
-    })
+    return jsonify(
+        {
+            "name": tournament_name,
+            "id": tournament_id,
+            "results": paginated_results,
+            "total": len(results),
+            "page": page,
+            "total_pages": total_pages,
+        }
+    )
+
 
 def get_player_rankings():
     all_results = db.get_all_results()
-    
+
     # Calculate best N results for each player
     player_rankings = []
     for player_id, results in all_results.items():
         # Sort by TPR
-        results.sort(key=lambda x: x['tpr'] if x['tpr'] else 0, reverse=True)
-        
+        results.sort(key=lambda x: x["tpr"] if x["tpr"] else 0, reverse=True)
+
         # Get best results
-        best_1 = results[0]['tpr'] if len(results) >= 1 else 0
-        best_2 = sum(r['tpr'] for r in results[:2]) / 2 if len(results) >= 2 else 0
-        best_3 = sum(r['tpr'] for r in results[:3]) / 3 if len(results) >= 3 else 0
-        best_4 = sum(r['tpr'] for r in results[:4]) / 4 if len(results) >= 4 else 0
-        
-        player_rankings.append({
-            'name': results[0]['player']['name'],
-            'fide_id': results[0]['player']['fide_id'],
-            'rating': results[0]['player']['rating'],
-            'tournaments_played': len(results),
-            'best_1': round(best_1),
-            'tournament_1': results[0]['tournament']['name'] if len(results) >= 1 else None,
-            'best_2': round(best_2),
-            'best_3': round(best_3),
-            'best_4': round(best_4)
-        })
-    
+        best_1 = results[0]["tpr"] if len(results) >= 1 else 0
+        best_2 = sum(r["tpr"] for r in results[:2]) / 2 if len(results) >= 2 else 0
+        best_3 = sum(r["tpr"] for r in results[:3]) / 3 if len(results) >= 3 else 0
+        best_4 = sum(r["tpr"] for r in results[:4]) / 4 if len(results) >= 4 else 0
+
+        player_rankings.append(
+            {
+                "name": results[0]["player"]["name"],
+                "fide_id": results[0]["player"]["fide_id"],
+                "rating": results[0]["player"]["rating"],
+                "tournaments_played": len(results),
+                "best_1": round(best_1),
+                "tournament_1": (
+                    results[0]["tournament"]["name"] if len(results) >= 1 else None
+                ),
+                "best_2": round(best_2),
+                "best_3": round(best_3),
+                "best_4": round(best_4),
+            }
+        )
+
     return player_rankings
 
-@app.route('/api/rankings')
+
+@app.route("/api/rankings")
 def rankings():
     """Get current GP rankings."""
-    sort = request.args.get('sort', 'best_2')
-    dir = request.args.get('dir', 'desc')
-    page = int(request.args.get('page', '1'))
-    search_query = request.args.get('q')  # Get the search query
+    sort = request.args.get("sort", "best_2")
+    dir = request.args.get("dir", "desc")
+    page = int(request.args.get("page", "1"))
+    search_query = request.args.get("q")  # Get the search query
     per_page = 25
 
     player_rankings = get_player_rankings()
-    reverse = dir == 'desc'
+    reverse = dir == "desc"
 
     # Filter by search query if provided
     if search_query:
         search_query_lower = search_query.lower()
-        player_rankings = [p for p in player_rankings if search_query_lower in p['name'].lower()]
+        player_rankings = [
+            p for p in player_rankings if search_query_lower in p["name"].lower()
+        ]
 
     # Map frontend sort keys to data keys
     sort_key = {
-        'name': 'name',
-        'rating': 'rating',
-        'tournaments_played': 'tournaments_played',
-        'best_1': 'best_1',
-        'best_2': 'best_2',
-        'best_3': 'best_3',
-        'best_4': 'best_4'
-    }.get(sort, 'best_4')
+        "name": "name",
+        "rating": "rating",
+        "tournaments_played": "tournaments_played",
+        "best_1": "best_1",
+        "best_2": "best_2",
+        "best_3": "best_3",
+        "best_4": "best_4",
+    }.get(sort, "best_4")
 
-    player_rankings.sort(key=lambda x: (x[sort_key] if x[sort_key] is not None else -float('inf')), reverse=reverse)
+    player_rankings.sort(
+        key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
+        reverse=reverse,
+    )
 
     total_pages = (len(player_rankings) + per_page - 1) // per_page
     start = (page - 1) * per_page
     end = start + per_page
     current_page_rankings = player_rankings[start:end]
 
-    return jsonify({
-        'rankings': current_page_rankings,
-        'total': len(player_rankings),
-        'page': page,
-        'total_pages': total_pages
-    })
+    return jsonify(
+        {
+            "rankings": current_page_rankings,
+            "total": len(player_rankings),
+            "page": page,
+            "total_pages": total_pages,
+        }
+    )
 
-@app.route('/api/player/<fide_id>')
+
+@app.route("/api/player/<fide_id>")
 def player(fide_id):
     """Get player tournament history."""
     player_details = None
     tournament_results = []
-    
+
     with sqlite3.connect(db.db_file) as conn:
-        conn.row_factory = sqlite3.Row # Return rows as dictionary-like objects
+        conn.row_factory = sqlite3.Row  # Return rows as dictionary-like objects
         c = conn.cursor()
-        
+
         # 1. Fetch player details
-        c.execute('SELECT name, fide_id, federation FROM players WHERE fide_id = ?', (fide_id,))
+        c.execute(
+            "SELECT name, fide_id, federation FROM players WHERE fide_id = ?",
+            (fide_id,),
+        )
         player_row = c.fetchone()
-        
+
         if not player_row:
             # Return 404 or empty if player not found by FIDE ID
-             return jsonify({'error': 'Player not found'}), 404
-             
+            return jsonify({"error": "Player not found"}), 404
+
         player_details = dict(player_row)
 
         # 2. Fetch tournament results for this player using the correct JOIN
         # We join results -> players (on player_id) and results -> tournaments (on tournament_id)
         # We filter by players.fide_id
-        c.execute('''
+        c.execute(
+            """
             SELECT 
                 t.id as tournament_id, 
                 t.name as tournament_name, 
@@ -205,21 +230,35 @@ def player(fide_id):
             JOIN tournaments t ON r.tournament_id = t.id
             WHERE p.fide_id = ?
             ORDER BY t.id DESC -- Or however you want to order results
-        ''', (fide_id,))
-        
+        """,
+            (fide_id,),
+        )
+
         results_rows = c.fetchall()
         tournament_results = [dict(row) for row in results_rows]
-        
-    # Combine player details and results into the response
-    return jsonify({
-        'name': player_details['name'],
-        'fide_id': player_details['fide_id'],
-        'federation': player_details['federation'], # Added federation
-        'results': tournament_results
-        # Note: 'rating' (current rating) isn't stored directly on players table
-        # Could calculate from latest 'rating_in_tournament' if needed
-    })
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5003))
-    app.run(host='0.0.0.0', port=port)
+    # Combine player details and results into the response
+    return jsonify(
+        {
+            "name": player_details["name"],
+            "fide_id": player_details["fide_id"],
+            "federation": player_details["federation"],
+            "results": [
+                {
+                    "tournament_id": result["tournament_id"],
+                    "tournament_name": result["tournament_name"],
+                    "points": result["points"],
+                    "tpr": result["tpr"],
+                    "rating_in_tournament": result["rating_in_tournament"],
+                }
+                for result in tournament_results
+            ],
+            # Note: 'rating' (current rating) isn't stored directly on players table
+            # Could calculate from latest 'rating_in_tournament' if needed
+        }
+    )
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5003))
+    app.run(host="0.0.0.0", port=port)

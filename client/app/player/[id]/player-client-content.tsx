@@ -19,6 +19,7 @@ interface PlayerClientContentProps {
 }
 
 export default function PlayerClientContent({ player }: PlayerClientContentProps) {
+  console.log('player', player)
   // Calculate performance metrics
   const totalTournaments = player.results.length
   const bestTpr = Math.max(...player.results.map(r => r.tpr || 0))
@@ -90,10 +91,14 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                   </div>
                 </div>
 
-                <div className="p-4 grid grid-cols-2 gap-6">
+                <div className="p-4 grid grid-cols-3 gap-6">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Points</p>
                     <p className="font-medium text-lg">{result.points.toFixed(1)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Rating</p>
+                    <p className="font-medium text-lg">{result.rating_in_tournament}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">TPR</p>
@@ -106,13 +111,14 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
         </div>
 
         {/* Desktop View */}
-        <Card className="hidden sm:block rounded-md py-0 overflow-hidden`">
+        <Card className="hidden sm:block rounded-md py-0 overflow-hidden">
           <ScrollArea className="max-h-[600px]">
             <CustomTable className="w-full">
               <CustomTableHeader>
                 <CustomTableRow className="bg-gray-50 border-b">
                   <CustomTableHead className="w-[60%] py-3 px-5 text-sm font-medium">Tournament</CustomTableHead>
                   <CustomTableHead className="text-right w-[20%] py-3 px-5 text-sm font-medium">Points</CustomTableHead>
+                  <CustomTableHead className="text-right w-[20%] py-3 px-5 text-sm font-medium">Rating</CustomTableHead>
                   <CustomTableHead className="text-right w-[20%] py-3 px-5 text-sm font-medium">TPR</CustomTableHead>
                 </CustomTableRow>
               </CustomTableHeader>
@@ -127,6 +133,7 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                       </Link>
                     </CustomTableCell>
                     <CustomTableCell className="text-right py-3 px-5 font-medium">{result.points.toFixed(1)}</CustomTableCell>
+                    <CustomTableCell className="text-right py-3 px-5 font-medium">{result.rating_in_tournament}</CustomTableCell>
                     <CustomTableCell className="text-right py-3 px-5 font-medium">{result.tpr ?? '-'}</CustomTableCell>
                   </CustomTableRow>
                 ))}
