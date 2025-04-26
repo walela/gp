@@ -41,6 +41,7 @@ export interface PlayerResult {
   start_rank: number | null
   chess_results_url: string
   player_card_url: string
+  rounds: number
 }
 
 export interface PlayerDetails {

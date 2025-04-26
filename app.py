@@ -249,7 +249,11 @@ def player(fide_id):
                     r.points, 
                     r.tpr, 
                     r.rating as rating_in_tournament,
-                    r.start_rank
+                    r.start_rank,
+                    CASE
+                        WHEN t.name LIKE '%Mavens%' THEN 8
+                        ELSE 6
+                    END as rounds
                 FROM results r
                 JOIN players p ON r.player_id = p.id 
                 JOIN tournaments t ON r.tournament_id = t.id
@@ -269,7 +273,11 @@ def player(fide_id):
                         t.name as tournament_name, 
                         r.points, 
                         r.tpr, 
-                        r.rating as rating_in_tournament
+                        r.rating as rating_in_tournament,
+                        CASE
+                            WHEN t.name LIKE '%Mavens%' THEN 8
+                            ELSE 6
+                        END as rounds
                     FROM results r
                     JOIN players p ON r.player_id = p.id 
                     JOIN tournaments t ON r.tournament_id = t.id
@@ -298,6 +306,7 @@ def player(fide_id):
                     "tpr": result["tpr"],
                     "rating_in_tournament": result["rating_in_tournament"],
                     "start_rank": result.get("start_rank"),
+                    "rounds": result.get("rounds"),
                     "chess_results_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1",
                     "player_card_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1&art=9&snr={result.get('start_rank', '')}" if result.get("start_rank") else None
                 }
