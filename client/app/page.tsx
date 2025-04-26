@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { CalendarDays, MapPin, Hash, Calendar, CheckCircle2, HelpCircle } from 'lucide-react'
 import { getTournaments } from '@/services/api'
+import { getShortTournamentName } from '@/utils/tournament'
 
 export default async function HomePage() {
   const tournaments = await getTournaments()
@@ -134,7 +135,10 @@ export default async function HomePage() {
                   <Card className="h-full gap-2 py-4 rounded-lg">
                     <CardHeader className="pb-1 pt-3 px-4">
                       <div className="flex items-center justify-between">
-                        <CardTitle>{tournament.name}</CardTitle>
+                        <CardTitle>
+                          <span className="hidden sm:inline">{tournament.name}</span>
+                          <span className="sm:hidden">{getShortTournamentName(tournament.name)}</span>
+                        </CardTitle>
                         <Badge
                           className={
                             tournament.status === 'Completed'
@@ -208,7 +212,8 @@ export default async function HomePage() {
                         <Link 
                           href={`/tournament/${tournament.id}`} 
                           className={tournament.status === 'postponed' ? 'line-through text-gray-500 hover:underline' : 'hover:underline'}>
-                          {tournament.name}
+                          <span className="hidden sm:inline">{tournament.name}</span>
+                          <span className="sm:hidden">{getShortTournamentName(tournament.name)}</span>
                         </Link>
                         {tournament.confirmed ? (
                           <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -305,7 +310,10 @@ export default async function HomePage() {
                 <Card className="h-full gap-2 py-4 rounded-lg">
                   <CardHeader className="pb-1 pt-3 px-4">
                     <div className="flex items-center justify-between">
-                      <CardTitle>{tournament.name}</CardTitle>
+                      <CardTitle>
+                        <span className="hidden sm:inline">{tournament.name}</span>
+                        <span className="sm:hidden">{getShortTournamentName(tournament.name)}</span>
+                      </CardTitle>
                       <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">Planned</Badge>
                     </div>
                     <CardDescription className="flex items-center gap-2 mt-1">

@@ -19,6 +19,8 @@ export interface TournamentResult {
   points: number
   tpr: number | null
   has_walkover: boolean
+  rating: number | null
+  start_rank: number | null
 }
 
 export interface TournamentDetails {
@@ -36,6 +38,9 @@ export interface PlayerResult {
   points: number
   tpr: number | null
   rating_in_tournament: number | null
+  start_rank: number | null
+  chess_results_url: string
+  player_card_url: string
 }
 
 export interface PlayerDetails {

@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { PlayerDetails, PlayerResult } from '@/services/api'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { ChevronRight, Trophy, CalendarDays, TrendingUp, Star, ExternalLink } from 'lucide-react'
+import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, Hash } from 'lucide-react'
+import { getShortTournamentName } from '@/utils/tournament'
 import {
   CustomTable,
   CustomTableHeader,
@@ -19,7 +20,6 @@ interface PlayerClientContentProps {
 }
 
 export default function PlayerClientContent({ player }: PlayerClientContentProps) {
-  console.log('player', player)
   // Calculate performance metrics
   const totalTournaments = player.results.length
   const bestTpr = Math.max(...player.results.map(r => r.tpr || 0))
@@ -82,30 +82,73 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
         {/* Mobile View */}
         <div className="block sm:hidden space-y-3">
           {player.results.map((result: PlayerResult) => (
-            <Card key={result.tournament_id} className="overflow-hidden py-0 rounded-md">
-              <Link href={`/tournament/${result.tournament_id}`} className="block hover:bg-gray-50 transition-colors">
-                <div className="p-4 border-b">
+            <Card key={result.tournament_id} className="overflow-hidden py-0 gap-4 rounded-md">
+              <div className="p-4 border-b">
+                <div className="flex flex-col">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-blue-600">{result.tournament_name}</h3>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center">
+                      {result.start_rank ? (
+                        <a 
+                          href={result.player_card_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-600 hover:underline flex items-center"
+                          title="View player card on chess-results.com"
+                        >
+                          {getShortTournamentName(result.tournament_name)}
+                          <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                        </a>
+                      ) : (
+                        <Link href={`/tournament/${result.tournament_id}`} className="font-medium text-blue-600 hover:underline">
+                          {getShortTournamentName(result.tournament_name)}
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="p-4 grid grid-cols-3 gap-6">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Points</p>
-                    <p className="font-medium text-lg">{result.points.toFixed(1)}</p>
+              <div className="p-4 grid grid-cols-2 gap-y-4">
+                <div className="flex items-center">
+                  <div className="bg-blue-50 rounded-full p-2 mr-3">
+                    <Hash className="h-4 w-4 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Rating</p>
+                    <p className="text-xs text-muted-foreground">Starting Rank</p>
+                    <p className="font-medium text-lg">{result.start_rank ?? '-'}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <div className="bg-purple-50 rounded-full p-2 mr-3">
+                    <TrendingUp className="h-4 w-4 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Rating</p>
                     <p className="font-medium text-lg">{result.rating_in_tournament}</p>
                   </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <div className="bg-green-50 rounded-full p-2 mr-3">
+                    <Trophy className="h-4 w-4 text-green-600" />
+                  </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">TPR</p>
+                    <p className="text-xs text-muted-foreground">Points</p>
+                    <p className="font-medium text-lg">{result.points.toFixed(1)}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <div className="bg-amber-50 rounded-full p-2 mr-3">
+                    <Star className="h-4 w-4 text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">TPR</p>
                     <p className="font-medium text-lg">{result.tpr ?? '-'}</p>
                   </div>
                 </div>
-              </Link>
+              </div>
             </Card>
           ))}
         </div>
@@ -116,10 +159,11 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
             <CustomTable className="w-full">
               <CustomTableHeader>
                 <CustomTableRow className="bg-gray-50 border-b">
-                  <CustomTableHead className="w-[60%] py-3 px-5 text-sm font-medium">Tournament</CustomTableHead>
-                  <CustomTableHead className="text-right w-[20%] py-3 px-5 text-sm font-medium">Points</CustomTableHead>
-                  <CustomTableHead className="text-right w-[20%] py-3 px-5 text-sm font-medium">Rating</CustomTableHead>
-                  <CustomTableHead className="text-right w-[20%] py-3 px-5 text-sm font-medium">TPR</CustomTableHead>
+                  <CustomTableHead className="w-[52%] py-3 px-5 text-sm font-medium">Tournament</CustomTableHead>
+                  <CustomTableHead className="text-right w-[12%] py-3 px-5 text-sm font-medium">Starting Rank</CustomTableHead>
+                  <CustomTableHead className="text-right w-[12%] py-3 px-5 text-sm font-medium">Rating</CustomTableHead>
+                  <CustomTableHead className="text-right w-[12%] py-3 px-5 text-sm font-medium">Points</CustomTableHead>
+                  <CustomTableHead className="text-right w-[12%] py-3 px-5 text-sm font-medium">TPR</CustomTableHead>
                 </CustomTableRow>
               </CustomTableHeader>
               <CustomTableBody>
@@ -128,12 +172,28 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                     key={result.tournament_id}
                     className="hover:bg-gray-50 transition-colors border-b last:border-0">
                     <CustomTableCell className="py-3 px-5">
-                      <Link href={`/tournament/${result.tournament_id}`} className="hover:underline text-blue-600 font-medium">
-                        {result.tournament_name}
-                      </Link>
+                      <div className="flex items-center">
+                        {result.start_rank ? (
+                          <a 
+                            href={result.player_card_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="font-medium text-blue-600 hover:underline flex items-center"
+                            title="View player card on chess-results.com"
+                          >
+                            {result.tournament_name}
+                            <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                          </a>
+                        ) : (
+                          <Link href={`/tournament/${result.tournament_id}`} className="font-medium text-blue-600 hover:underline">
+                            {result.tournament_name}
+                          </Link>
+                        )}
+                      </div>
                     </CustomTableCell>
-                    <CustomTableCell className="text-right py-3 px-5 font-medium">{result.points.toFixed(1)}</CustomTableCell>
+                    <CustomTableCell className="text-right py-3 px-5 font-medium">{result.start_rank ?? '-'}</CustomTableCell>
                     <CustomTableCell className="text-right py-3 px-5 font-medium">{result.rating_in_tournament}</CustomTableCell>
+                    <CustomTableCell className="text-right py-3 px-5 font-medium">{result.points.toFixed(1)}</CustomTableCell>
                     <CustomTableCell className="text-right py-3 px-5 font-medium">{result.tpr ?? '-'}</CustomTableCell>
                   </CustomTableRow>
                 ))}

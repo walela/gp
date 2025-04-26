@@ -127,7 +127,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   </div>
                 </CustomTableCell>
                 <CustomTableCell className="hidden md:table-cell text-right tabular-nums">
-                  {result.player.rating || 'Unrated'}
+                  {result.rating || 'Unrated'}
                 </CustomTableCell>
                 <CustomTableCell className="hidden md:table-cell text-right tabular-nums">{result.points}</CustomTableCell>
                 <CustomTableCell className="text-right tabular-nums">{result.tpr || '-'}</CustomTableCell>

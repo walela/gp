@@ -4,6 +4,9 @@ from chess_results import ChessResultsScraper
 from db import Database
 import sqlite3
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -58,15 +61,26 @@ def tournaments():
     """Get list of all tournaments."""
     tournament_list = []
     for id, name in TOURNAMENTS.items():
-        data = db.get_tournament(id)
-        tournament_list.append(
-            {
-                "id": id,
-                "name": name,
-                "results": len(data["results"]) if data else 0,
-                "status": "Completed" if data else "Upcoming",
-            }
-        )
+        try:
+            data = db.get_tournament(id)
+            tournament_list.append(
+                {
+                    "id": id,
+                    "name": name,
+                    "results": len(data["results"]) if data else 0,
+                    "status": "Completed" if data else "Upcoming",
+                }
+            )
+        except Exception as e:
+            logger.error(f"Error getting tournament {id}: {e}")
+            tournament_list.append(
+                {
+                    "id": id,
+                    "name": name,
+                    "results": 0,
+                    "status": "Error",
+                }
+            )
     return jsonify(tournament_list)
 
 
@@ -77,34 +91,43 @@ def tournament(tournament_id):
     page = int(request.args.get("page", "1"))
     per_page = 25
 
-    tournament_name, results = get_tournament_data(tournament_id)
+    try:
+        data = db.get_tournament(tournament_id)
+        if not data:
+            return jsonify({"error": "Tournament not found"}), 404
+            
+        tournament_name = data["name"]
+        results = data["results"]
 
-    # Sort results
-    if sort == "name":
-        results.sort(key=lambda x: x["player"]["name"].lower(), reverse=dir == "desc")
-    elif sort == "rating":
-        results.sort(key=lambda x: x["player"]["rating"] or 0, reverse=dir == "desc")
-    elif sort == "points":
-        results.sort(key=lambda x: x["points"], reverse=dir == "desc")
-    elif sort == "tpr":
-        results.sort(key=lambda x: x["tpr"] or 0, reverse=dir == "desc")
+        # Sort results
+        if sort == "name":
+            results.sort(key=lambda x: x["player"]["name"].lower(), reverse=dir == "desc")
+        elif sort == "rating":
+            results.sort(key=lambda x: x["rating"] or 0, reverse=dir == "desc")
+        elif sort == "points":
+            results.sort(key=lambda x: x["points"], reverse=dir == "desc")
+        elif sort == "tpr":
+            results.sort(key=lambda x: x["tpr"] or 0, reverse=dir == "desc")
 
-    # Paginate results
-    total_pages = (len(results) + per_page - 1) // per_page
-    start = (page - 1) * per_page
-    end = start + per_page
-    paginated_results = results[start:end]
+        # Paginate results
+        total_pages = (len(results) + per_page - 1) // per_page
+        start = (page - 1) * per_page
+        end = start + per_page
+        paginated_results = results[start:end]
 
-    return jsonify(
-        {
-            "name": tournament_name,
-            "id": tournament_id,
-            "results": paginated_results,
-            "total": len(results),
-            "page": page,
-            "total_pages": total_pages,
-        }
-    )
+        return jsonify(
+            {
+                "name": tournament_name,
+                "id": tournament_id,
+                "results": paginated_results,
+                "total": len(results),
+                "page": page,
+                "total_pages": total_pages,
+            }
+        )
+    except Exception as e:
+        logger.error(f"Error getting tournament {tournament_id}: {e}")
+        return jsonify({"error": f"Error getting tournament data: {str(e)}"}), 500
 
 
 def get_player_rankings():
@@ -217,22 +240,46 @@ def player(fide_id):
         # 2. Fetch tournament results for this player using the correct JOIN
         # We join results -> players (on player_id) and results -> tournaments (on tournament_id)
         # We filter by players.fide_id
-        c.execute(
-            """
-            SELECT 
-                t.id as tournament_id, 
-                t.name as tournament_name, 
-                r.points, 
-                r.tpr, 
-                r.rating as rating_in_tournament 
-            FROM results r
-            JOIN players p ON r.player_id = p.id 
-            JOIN tournaments t ON r.tournament_id = t.id
-            WHERE p.fide_id = ?
-            ORDER BY t.id DESC -- Or however you want to order results
-        """,
-            (fide_id,),
-        )
+        try:
+            c.execute(
+                """
+                SELECT 
+                    t.id as tournament_id, 
+                    t.name as tournament_name, 
+                    r.points, 
+                    r.tpr, 
+                    r.rating as rating_in_tournament,
+                    r.start_rank
+                FROM results r
+                JOIN players p ON r.player_id = p.id 
+                JOIN tournaments t ON r.tournament_id = t.id
+                WHERE p.fide_id = ?
+                ORDER BY t.id DESC -- Or however you want to order results
+            """,
+                (fide_id,),
+            )
+        except sqlite3.OperationalError as e:
+            # If start_rank column doesn't exist or can't be accessed, try without it
+            if 'no such column: r.start_rank' in str(e):
+                logger.warning("start_rank column not found, using query without it")
+                c.execute(
+                    """
+                    SELECT 
+                        t.id as tournament_id, 
+                        t.name as tournament_name, 
+                        r.points, 
+                        r.tpr, 
+                        r.rating as rating_in_tournament
+                    FROM results r
+                    JOIN players p ON r.player_id = p.id 
+                    JOIN tournaments t ON r.tournament_id = t.id
+                    WHERE p.fide_id = ?
+                    ORDER BY t.id DESC -- Or however you want to order results
+                """,
+                    (fide_id,),
+                )
+            else:
+                raise
 
         results_rows = c.fetchall()
         tournament_results = [dict(row) for row in results_rows]
@@ -250,6 +297,9 @@ def player(fide_id):
                     "points": result["points"],
                     "tpr": result["tpr"],
                     "rating_in_tournament": result["rating_in_tournament"],
+                    "start_rank": result.get("start_rank"),
+                    "chess_results_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1",
+                    "player_card_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1&art=9&snr={result.get('start_rank', '')}" if result.get("start_rank") else None
                 }
                 for result in tournament_results
             ],
