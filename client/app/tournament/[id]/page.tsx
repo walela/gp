@@ -74,6 +74,15 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               </CustomTableHead>
               <CustomTableHead className="hidden md:table-cell text-right">
                 <SortableHeader
+                  column="start_rank"
+                  label="Starting Rank"
+                  align="right"
+                  basePath={`/tournament/${id}`}
+                  className="w-full"
+                />
+              </CustomTableHead>
+              <CustomTableHead className="hidden md:table-cell text-right">
+                <SortableHeader
                   column="rating"
                   label="Rating"
                   align="right"
@@ -126,6 +135,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                     )}
                   </div>
                 </CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right tabular-nums">{result.start_rank || '-'}</CustomTableCell>
                 <CustomTableCell className="hidden md:table-cell text-right tabular-nums">
                   {result.rating || 'Unrated'}
                 </CustomTableCell>
