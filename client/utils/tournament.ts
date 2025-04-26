@@ -12,7 +12,8 @@ export const getShortTournamentName = (fullName: string): string => {
   const specialCases: Record<string, string> = {
     "Eldoret Chess Championships Open": "Eldoret Open",
     "Mavens Open Chess Championship 2025": "Mavens Open",
-    "Waridi Chess Festival 2025": "Waridi Festival",
+    "Waridi Chess Festival 2025": "Waridi Chess Festival",
+    "Waridi Chess Festival": "Waridi Chess Festival",
     "Kisumu Open Chess Tournament": "Kisumu Open"
   };
 

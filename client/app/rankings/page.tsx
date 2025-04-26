@@ -80,8 +80,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow>
-              <CustomTableHead className="w-[40px] text-right">
-                <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-full" />
+              <CustomTableHead className="w-[30px] sm:w-[40px] text-right">
+                <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-full hidden sm:block" />
+                <SortableHeader column="rank" label="#" basePath="/rankings" className="w-full sm:hidden" />
               </CustomTableHead>
               <CustomTableHead className="min-w-[120px]">
                 <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />

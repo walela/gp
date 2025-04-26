@@ -7,7 +7,6 @@ import { getShortTournamentName } from '@/utils/tournament'
 
 export default async function HomePage() {
   const tournaments = await getTournaments()
-
   const upcomingTournaments = [
     {
       id: '742150',

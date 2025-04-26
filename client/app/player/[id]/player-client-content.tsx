@@ -20,7 +20,6 @@ interface PlayerClientContentProps {
 }
 
 export default function PlayerClientContent({ player }: PlayerClientContentProps) {
-  console.log('player', player)
   // Calculate performance metrics
   const totalTournaments = player.results.length
   const bestTpr = Math.max(...player.results.map(r => r.tpr || 0))
