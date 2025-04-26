@@ -7,7 +7,6 @@ import requests
 from bs4 import BeautifulSoup
 from typing import List, Optional, Tuple
 from dataclasses import dataclass
-import sqlite3
 from db import Database
 
 # Set up logging
