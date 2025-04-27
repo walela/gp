@@ -51,14 +51,6 @@ class Database:
                 )
             ''')
             
-            # Add indexes for frequently queried fields
-            c.execute('CREATE INDEX IF NOT EXISTS idx_players_fide_id ON players(fide_id)')
-            c.execute('CREATE INDEX IF NOT EXISTS idx_players_name ON players(name)')
-            c.execute('CREATE INDEX IF NOT EXISTS idx_results_tpr ON results(tpr)')
-            c.execute('CREATE INDEX IF NOT EXISTS idx_results_points ON results(points)')
-            c.execute('CREATE INDEX IF NOT EXISTS idx_results_tournament_id ON results(tournament_id)')
-            c.execute('CREATE INDEX IF NOT EXISTS idx_results_player_id ON results(player_id)')
-            
             conn.commit()
     
     def save_tournament(self, tournament_id: str, tournament_name: str, results: List[Dict]):
@@ -105,87 +97,88 @@ class Database:
                 # 3. If still not found, insert new player
                 if player_db_id is None:
                     c.execute('''
-                        INSERT INTO players (fide_id, name, federation) VALUES (?, ?, ?)
+                        INSERT INTO players (fide_id, name, federation) 
+                        VALUES (?, ?, ?)
                     ''', (player_fide_id, player_name, player_federation))
-                    player_db_id = c.lastrowid
+                    player_db_id = c.lastrowid # Get the ID of the newly inserted player
                 # --- End: Find or Create Player ---
 
-                # Save result
+                # Save result using the unique player_db_id and dot notation for result attributes
                 c.execute('''
                     INSERT OR REPLACE INTO results 
                     (tournament_id, player_id, rating, points, tpr, has_walkover, start_rank)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?) 
                 ''', (
-                    tournament_id, 
-                    player_db_id, 
-                    player_rating, 
-                    result.points, 
-                    result.tpr, 
-                    result.has_walkover,
-                    result.start_rank if hasattr(result, 'start_rank') else None
+                    tournament_id,
+                    player_db_id, # Use the unique ID
+                    player_rating, # Use rating from player object
+                    result.points,
+                    result.tpr, # Access TPR via dot notation
+                    bool(result.has_walkover), # Access walkover via dot notation
+                    result.start_rank # Access start_rank via dot notation
                 ))
             
             conn.commit()
     
-    def get_tournament(self, tournament_id: str):
+    def get_tournament(self, tournament_id: str) -> Optional[Dict]:
         """Get tournament details and results."""
         with sqlite3.connect(self.db_file) as conn:
-            # Enable dictionary factory for row results
-            conn.row_factory = sqlite3.Row
             c = conn.cursor()
             
             # Get tournament name
             c.execute('SELECT name FROM tournaments WHERE id = ?', (tournament_id,))
             tournament_row = c.fetchone()
-            
             if not tournament_row:
-                return None
+                return None # Tournament not found
+            tournament_name = tournament_row[0]
             
-            tournament_name = tournament_row['name']
-            
-            # Check if start_rank column exists in the results table
+            # Get results, joining players correctly
             try:
-                c.execute('SELECT start_rank FROM results LIMIT 1')
-                has_start_rank = True
-            except sqlite3.OperationalError:
-                has_start_rank = False
-            
-            # Get all results for this tournament with player info
-            # Optimized query with proper JOIN syntax and column selection
-            query = '''
-                SELECT 
-                    p.name, p.fide_id, p.federation,
-                    r.rating, r.points, r.tpr, r.has_walkover
-            '''
-            
-            if has_start_rank:
-                query += ', r.start_rank'
-                
-            query += '''
-                FROM results r
-                JOIN players p ON r.player_id = p.id
-                WHERE r.tournament_id = ?
-            '''
-            
-            c.execute(query, (tournament_id,))
+                c.execute('''
+                    SELECT 
+                        p.name, p.fide_id, p.federation,
+                        r.rating, r.points, r.tpr, r.has_walkover, r.start_rank
+                    FROM results r
+                    JOIN players p ON r.player_id = p.id 
+                    WHERE r.tournament_id = ?
+                    ORDER BY r.tpr DESC
+                ''', (tournament_id,))
+            except sqlite3.OperationalError as e:
+                # If start_rank column doesn't exist or can't be accessed, try without it
+                if 'no such column: r.start_rank' in str(e):
+                    logger.warning("start_rank column not found, using query without it")
+                    c.execute('''
+                        SELECT 
+                            p.name, p.fide_id, p.federation,
+                            r.rating, r.points, r.tpr, r.has_walkover
+                        FROM results r
+                        JOIN players p ON r.player_id = p.id 
+                        WHERE r.tournament_id = ?
+                        ORDER BY r.tpr DESC
+                    ''', (tournament_id,))
+                else:
+                    raise
             
             results = []
             for row in c.fetchall():
+                # Check if we have start_rank in the results
+                has_start_rank = len(row) > 7
+                
                 result_data = {
                     'player': {
-                        'name': row['name'],
-                        'fide_id': row['fide_id'],
-                        'federation': row['federation']
+                        'name': row[0],
+                        'fide_id': row[1],
+                        'federation': row[2]
                     },
-                    'rating': row['rating'],
-                    'points': row['points'],
-                    'tpr': row['tpr'],
-                    'has_walkover': bool(row['has_walkover'])
+                    'rating': row[3],
+                    'points': row[4],
+                    'tpr': row[5],
+                    'has_walkover': bool(row[6])
                 }
                 
                 # Add start_rank if available
                 if has_start_rank:
-                    result_data['start_rank'] = row['start_rank']
+                    result_data['start_rank'] = row[7]
                 
                 results.append(result_data)
             
@@ -197,64 +190,67 @@ class Database:
     def get_all_results(self) -> Dict[str, List]:
         """Get all results grouped by player."""
         with sqlite3.connect(self.db_file) as conn:
-            # Enable dictionary factory for row results
-            conn.row_factory = sqlite3.Row
             c = conn.cursor()
             
-            # Check if start_rank column exists in the results table
             try:
-                c.execute('SELECT start_rank FROM results LIMIT 1')
-                has_start_rank = True
-            except sqlite3.OperationalError:
-                has_start_rank = False
-            
-            # Build query based on column availability
-            query = '''
-                SELECT 
-                    p.id as player_db_id,
-                    p.name, p.fide_id, p.federation,
-                    r.rating, r.points, r.tpr, r.has_walkover,
-                    t.id as tournament_id, t.name as tournament_name
-            '''
-            
-            if has_start_rank:
-                query += ', r.start_rank'
-                
-            query += '''
-                FROM results r
-                JOIN players p ON r.player_id = p.id
-                JOIN tournaments t ON r.tournament_id = t.id
-                ORDER BY r.tpr DESC
-            '''
-            
-            c.execute(query)
+                c.execute('''
+                    SELECT 
+                        p.name, p.fide_id, p.federation,
+                        r.rating, r.points, r.tpr, r.has_walkover, r.start_rank,
+                        t.id, t.name,
+                        p.id 
+                    FROM results r
+                    JOIN players p ON r.player_id = p.id
+                    JOIN tournaments t ON r.tournament_id = t.id
+                    ORDER BY r.tpr DESC
+                ''')
+            except sqlite3.OperationalError as e:
+                # If start_rank column doesn't exist or can't be accessed, try without it
+                if 'no such column: r.start_rank' in str(e):
+                    logger.warning("start_rank column not found, using query without it")
+                    c.execute('''
+                        SELECT 
+                            p.name, p.fide_id, p.federation,
+                            r.rating, r.points, r.tpr, r.has_walkover,
+                            t.id, t.name,
+                            p.id 
+                        FROM results r
+                        JOIN players p ON r.player_id = p.id
+                        JOIN tournaments t ON r.tournament_id = t.id
+                        ORDER BY r.tpr DESC
+                    ''')
+                else:
+                    raise
             
             all_results = {}
             for row in c.fetchall():
-                player_db_id = row['player_db_id']
+                # Adjust index based on whether we have start_rank or not
+                has_start_rank = len(row) > 10
+                offset = 1 if has_start_rank else 0
+                player_db_id = row[10 if has_start_rank else 9]
                 
                 if player_db_id not in all_results:
                     all_results[player_db_id] = []
             
                 result_data = {
                     'player': {
-                        'name': row['name'],
-                        'fide_id': row['fide_id'],
-                        'federation': row['federation'],
-                        'rating': row['rating']
+                        'name': row[0],
+                        'fide_id': row[1],
+                        'federation': row[2],
+                        'rating': row[3]
                     },
-                    'points': row['points'],
-                    'tpr': row['tpr'],
-                    'has_walkover': bool(row['has_walkover']),
+                    'points': row[4],
+                    'tpr': row[5],
+                    'has_walkover': bool(row[6]),
                     'tournament': {
-                        'id': row['tournament_id'],
-                        'name': row['tournament_name']
+                        'id': row[7 + offset],
+                        'name': row[8 + offset]
                     }
                 }
                 
                 # Add start_rank if available
                 if has_start_rank:
-                    result_data['start_rank'] = row['start_rank']
+                    result_data['start_rank'] = row[7]
                 else:
                     result_data['start_rank'] = None
                 

@@ -139,14 +139,12 @@ export async function getTournament(
     sort?: string
     dir?: 'asc' | 'desc'
     page?: number
-    all_results?: boolean
   } = {}
 ): Promise<TournamentDetails> {
   const searchParams = new URLSearchParams()
   if (params.sort) searchParams.set('sort', params.sort)
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
-  if (params.all_results) searchParams.set('all_results', 'true')
 
   const res = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`)
   const data = await res.json()
