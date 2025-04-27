@@ -27,7 +27,7 @@ export function ViewSelector({ view }: ViewSelectorProps) {
   
   return (
     <div className="flex overflow-x-auto">
-      <div className="inline-flex rounded-t-lg bg-white/80 backdrop-blur-sm border border-b-0 shadow-sm">
+      <div className="inline-flex rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-sm">
         {viewOptions.map(option => {
           const isActive = view === option.value;
           return (

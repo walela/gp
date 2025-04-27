@@ -13,7 +13,6 @@ import { getTournament } from '@/services/api'
 import { notFound } from 'next/navigation'
 import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 
 interface TournamentPageProps {
   params: {
@@ -65,7 +64,6 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
       <div>
         <h1 className="scroll-m-20 text-2xl md:text-3xl 2xl:text-4xl font-bold tracking-tight">
           {tournament.name}
-          <Badge className="ml-3 bg-green-100 text-green-700 hover:bg-green-100">Completed</Badge>
         </h1>
         <p className="text-muted-foreground">Tournament results and player performances</p>
       </div>
@@ -230,16 +228,23 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow className="bg-gray-50 border-b">
-              <CustomTableHead className="w-[40px] text-right py-4 px-6 font-semibold text-gray-700">
+              <CustomTableHead className="w-[30px] sm:w-[40px] text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
+                <SortableHeader
+                  column="rank"
+                  label="#"
+                  align="right"
+                  basePath={`/tournament/${id}`}
+                  className="w-full sm:hidden"
+                />
                 <SortableHeader
                   column="rank"
                   label="Rank"
                   align="right"
                   basePath={`/tournament/${id}`}
-                  className="w-full"
+                  className="w-full hidden sm:block"
                 />
               </CustomTableHead>
-              <CustomTableHead className="min-w-[120px] py-4 px-6 font-semibold text-gray-700">
+              <CustomTableHead className="min-w-[120px] py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
                 <SortableHeader
                   column="name"
                   label="Name"
@@ -247,7 +252,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   className="w-full"
                 />
               </CustomTableHead>
-              <CustomTableHead className="hidden md:table-cell text-right py-4 px-6 font-semibold text-gray-700">
+              <CustomTableHead className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
                 <SortableHeader
                   column="start_rank"
                   label="Starting Rank"
@@ -256,7 +261,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   className="w-full"
                 />
               </CustomTableHead>
-              <CustomTableHead className="hidden md:table-cell text-right py-4 px-6 font-semibold text-gray-700">
+              <CustomTableHead className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
                 <SortableHeader
                   column="rating"
                   label="Rating"
@@ -265,7 +270,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   className="w-full"
                 />
               </CustomTableHead>
-              <CustomTableHead className="hidden md:table-cell text-right py-4 px-6 font-semibold text-gray-700">
+              <CustomTableHead className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
                 <SortableHeader
                   column="points"
                   label="Points"
@@ -274,7 +279,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   className="w-full"
                 />
               </CustomTableHead>
-              <CustomTableHead className="text-right py-4 px-6 font-semibold text-gray-700">
+              <CustomTableHead className="text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
                 <SortableHeader
                   column="tpr"
                   label="TPR"
@@ -291,8 +296,8 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                 key={result.player.fide_id || result.player.name}
                 className="hover:bg-gray-50 transition-colors"
               >
-                <CustomTableCell isHeader className="text-right py-4 px-6 font-medium text-gray-700">{(page - 1) * 25 + index + 1}</CustomTableCell>
-                <CustomTableCell className="min-w-[120px] py-4 px-6">
+                <CustomTableCell isHeader className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700">{(page - 1) * 25 + index + 1}</CustomTableCell>
+                <CustomTableCell className="min-w-[120px] py-2 px-3 sm:py-4 sm:px-6">
                   <div className="truncate">
                     {result.player.fide_id ? (
                       <Link
@@ -313,12 +318,12 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                     )}
                   </div>
                 </CustomTableCell>
-                <CustomTableCell className="hidden md:table-cell text-right py-4 px-6 font-medium text-gray-700 tabular-nums">{result.start_rank || '-'}</CustomTableCell>
-                <CustomTableCell className="hidden md:table-cell text-right py-4 px-6 font-medium text-gray-700 tabular-nums">
+                <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">{result.start_rank || '-'}</CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">
                   {result.rating || 'Unrated'}
                 </CustomTableCell>
-                <CustomTableCell className="hidden md:table-cell text-right py-4 px-6 font-medium text-gray-700 tabular-nums">{result.points}</CustomTableCell>
-                <CustomTableCell className="text-right py-4 px-6 font-medium text-gray-700 tabular-nums">{result.tpr || '-'}</CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">{result.points}</CustomTableCell>
+                <CustomTableCell className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">{result.tpr || '-'}</CustomTableCell>
               </CustomTableRow>
             ))}
           </CustomTableBody>

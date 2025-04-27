@@ -15,6 +15,7 @@ import { getRankings, getTopPlayers } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { Pagination } from '@/components/ui/pagination'
+import { getShortTournamentName } from '@/utils/tournament'
 
 interface RankingsPageProps {
   searchParams: {
@@ -67,15 +68,14 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         </div>
       </div>
 
-      <div className="mb-0 mt-0 sm:hidden">
+      <div className="mb-0">
         <ViewSelector view={view} />
       </div>
 
       <Card
         className={cn(
           'rounded-bl-lg rounded-br-lg rounded-tr-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0',
-          'sm:rounded-tl-lg sm:mt-0',
-          'mt-[-1px] rounded-tl-none'
+          'rounded-tl-none'
         )}>
         <CustomTable className="h-full">
           <CustomTableHeader>
@@ -119,11 +119,15 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 key={player.fide_id || player.name}
                 className={cn(
                   top9ByBest2.has(player.fide_id || player.name)
-                    ? 'bg-green-50/80 dark:bg-green-900/20 border-l-4 border-l-green-500 dark:border-l-green-400'
-                    : ''
+                    ? 'bg-blue-50/50 border-l-2 border-l-blue-400'
+                    : index % 2 === 0 ? 'bg-gray-50/50' : ''
                 )}>
                 <CustomTableCell isHeader className="text-right">
-                  {(page - 1) * 25 + index + 1}
+                  {top9ByBest2.has(player.fide_id || player.name) ? (
+                    <span className="font-semibold">{(page - 1) * 25 + index + 1}</span>
+                  ) : (
+                    (page - 1) * 25 + index + 1
+                  )}
                 </CustomTableCell>
                 <CustomTableCell className="min-w-[120px]">
                   <div className="truncate">
@@ -132,7 +136,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                         href={`/player/${player.fide_id}`}
                         className={cn(
                           'font-medium group flex items-center gap-1',
-                          top9ByBest2.has(player.fide_id) ? 'text-blue-700 dark:text-blue-400' : 'text-blue-600'
+                          top9ByBest2.has(player.fide_id) ? 'text-blue-600' : 'text-blue-600'
                         )}
                         title={player.name}>
                         <span className="sm:hidden flex items-center gap-1">
@@ -143,7 +147,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       </Link>
                     ) : (
                       <span
-                        className={cn('font-medium', top9ByBest2.has(player.name) ? 'text-blue-700 dark:text-blue-400' : '')}
+                        className={cn('font-medium', top9ByBest2.has(player.name) ? 'text-blue-600' : '')}
                         title={player.name}>
                         {player.name}
                       </span>
@@ -161,7 +165,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     <div className="tabular-nums font-medium">{player.best_1}</div>
                     {player.tournament_1 && (
                       <div className="hidden sm:block text-xs text-muted-foreground truncate max-w-[140px]">
-                        {player.tournament_1}
+                        {getShortTournamentName(player.tournament_1)}
                       </div>
                     )}
                   </div>
@@ -169,7 +173,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 <CustomTableCell
                   className={cn('text-right tabular-nums', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
                   {top9ByBest2.has(player.fide_id || player.name) ? (
-                    <span className="font-semibold text-blue-700 dark:text-blue-400">{player.best_2}</span>
+                    <span className="font-semibold text-blue-700">{player.best_2}</span>
                   ) : (
                     player.best_2
                   )}
