@@ -10,8 +10,8 @@ export function Header() {
           <Link href="/" className="flex items-center min-w-0">
             <span className="font-bold truncate">
               <span className="hidden sm:inline">Chess Kenya </span>
-              <span className="sm:hidden">CK </span>
-              2025 Grand Prix Tracker
+              <span className="sm:hidden">2025 CK GP</span>
+              <span className="hidden sm:inline">2025 Grand Prix Tracker</span>
             </span>
           </Link>
           <MainNav />
