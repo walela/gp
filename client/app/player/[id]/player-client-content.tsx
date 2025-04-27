@@ -28,12 +28,12 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
     validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-6 space-y-8 max-w-4xl">
       {/* Player Header */}
       <Card className="shadow-sm rounded-md overflow-hidden py-0 gap-0">
-        <div className="p-4 border-b">
-          <div className="flex flex-col space-y-3">
-            <h1 className="text-2xl sm:text-3xl font-bold">{player.name}</h1>
+        <div className="px-4 py-2 border-b">
+          <div className="flex flex-col space-y-2">
+            <h1 className="text-2xl font-semibold">{player.name}</h1>
             
             {player.fide_id && (
               <div className="flex items-center gap-2">
@@ -55,13 +55,13 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
           <div className="flex flex-col items-center">
             <CalendarDays className="h-5 w-5 text-gray-500 mb-1" />
             <span className="text-xs text-muted-foreground">Tournaments</span>
-            <p className="font-semibold text-xl">{totalTournaments}</p>
+            <p className="text-gray-700 text-lg">{totalTournaments}</p>
           </div>
 
           <div className="flex flex-col items-center">
             <Star className="h-5 w-5 text-amber-500 mb-1" />
             <span className="text-xs text-muted-foreground">Best TPR</span>
-            <p className="font-semibold text-xl flex items-center gap-1">
+            <p className="text-gray-700 text-lg flex items-center gap-1">
               {bestTpr}
               {bestTpr >= 2000 && <Trophy className="h-4 w-4 text-amber-500" />}
             </p>
@@ -70,7 +70,7 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
           <div className="flex flex-col items-center">
             <TrendingUp className="h-5 w-5 text-gray-500 mb-1" />
             <span className="text-xs text-muted-foreground">Avg. TPR</span>
-            <p className="font-semibold text-xl">{averageTpr || '-'}</p>
+            <p className="text-gray-700 text-lg">{averageTpr || '-'}</p>
           </div>
         </div>
       </Card>
