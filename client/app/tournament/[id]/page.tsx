@@ -9,7 +9,7 @@ import {
   CustomTableCell 
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
-import { getTournament } from '@/services/api'
+import { getTournament, getTournamentAllResults, TournamentResult } from '@/services/api'
 import { notFound } from 'next/navigation'
 import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
@@ -25,6 +25,23 @@ interface TournamentPageProps {
   }
 }
 
+// Function to calculate average TPR of top 10 players
+function calculateAverageTopTpr(results: TournamentResult[]) {
+  // Filter out invalid TPRs
+  const validTprResults = results.filter(r => r.tpr !== null);
+  
+  if (validTprResults.length === 0) {
+    return 0;
+  }
+  
+  // Sort by TPR in descending order
+  const sortedResults = [...validTprResults].sort((a, b) => (b.tpr || 0) - (a.tpr || 0));
+  // Take top 10 or all if less than 10
+  const top10 = sortedResults.slice(0, Math.min(10, sortedResults.length));
+  // Calculate average
+  return Math.round(top10.reduce((sum, r) => sum + (r.tpr || 0), 0) / top10.length);
+}
+
 export default async function TournamentPage({ params, searchParams }: TournamentPageProps) {
   // Properly await the params and searchParams objects
   const routeParams = await params;
@@ -36,28 +53,22 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
   const dir = (queryParams.dir || 'desc') as 'asc' | 'desc'
   const page = Number(queryParams.page || '1')
 
+  // Fetch paginated tournament data for display
   const tournament = await getTournament(id, { 
     sort, 
     dir, 
     page 
   })
 
+  // Fetch all tournament results for TPR calculation
+  const allResults = await getTournamentAllResults(id);
+
   if (!tournament) {
     notFound()
   }
 
-  // Calculate average TPR of top 10 players
-  let averageTopTpr = 0;
-  const validTprResults = tournament.results.filter(r => r.tpr !== null);
-  
-  if (validTprResults.length > 0) {
-    // Sort by TPR in descending order
-    const sortedResults = [...validTprResults].sort((a, b) => (b.tpr || 0) - (a.tpr || 0));
-    // Take top 10 or all if less than 10
-    const top10 = sortedResults.slice(0, Math.min(10, sortedResults.length));
-    // Calculate average
-    averageTopTpr = Math.round(top10.reduce((sum, r) => sum + (r.tpr || 0), 0) / top10.length);
-  }
+  // Calculate average TPR of top 10 players using all results
+  const averageTopTpr = calculateAverageTopTpr(allResults);
 
   return (
     <div className="space-y-6">
@@ -65,7 +76,6 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         <h1 className="scroll-m-20 text-2xl md:text-3xl 2xl:text-4xl font-bold tracking-tight">
           {tournament.name}
         </h1>
-        <p className="text-muted-foreground">Tournament results and player performances</p>
       </div>
 
       {/* Tournament Metadata - Optimized for mobile */}
@@ -323,7 +333,9 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   {result.rating || 'Unrated'}
                 </CustomTableCell>
                 <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">{result.points}</CustomTableCell>
-                <CustomTableCell className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">{result.tpr || '-'}</CustomTableCell>
+                <CustomTableCell className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">
+                  {(result.tpr || '-')}
+                </CustomTableCell>
               </CustomTableRow>
             ))}
           </CustomTableBody>

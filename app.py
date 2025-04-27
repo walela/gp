@@ -90,6 +90,7 @@ def tournament(tournament_id):
     dir = request.args.get("dir", "desc")
     page = int(request.args.get("page", "1"))
     per_page = 25
+    all_results = request.args.get("all_results", "false").lower() == "true"
 
     try:
         data = db.get_tournament(tournament_id)
@@ -108,6 +109,19 @@ def tournament(tournament_id):
             results.sort(key=lambda x: x["points"], reverse=dir == "desc")
         elif sort == "tpr":
             results.sort(key=lambda x: x["tpr"] or 0, reverse=dir == "desc")
+
+        # If all_results is true, return all results without pagination
+        if all_results:
+            return jsonify(
+                {
+                    "name": tournament_name,
+                    "id": tournament_id,
+                    "results": results,
+                    "total": len(results),
+                    "page": 1,
+                    "total_pages": 1,
+                }
+            )
 
         # Paginate results
         total_pages = (len(results) + per_page - 1) // per_page

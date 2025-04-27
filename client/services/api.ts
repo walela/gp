@@ -188,3 +188,10 @@ export async function getTopPlayers({
     topPlayers: data.rankings.slice(0, count)
   }
 }
+
+export async function getTournamentAllResults(id: string): Promise<TournamentResult[]> {
+  // Fetch all results without pagination
+  const res = await fetch(`${API_BASE}/tournament/${id}?all_results=true`)
+  const data = await res.json()
+  return data.results as TournamentResult[]
+}
