@@ -62,23 +62,39 @@ def tournaments():
     tournament_list = []
     for id, name in TOURNAMENTS.items():
         try:
-            data = db.get_tournament(id)
-            tournament_list.append(
-                {
-                    "id": id,
-                    "name": name,
-                    "results": len(data["results"]) if data else 0,
-                    "status": "Completed" if data else "Upcoming",
-                }
-            )
+            # Check if tournament exists in DB (implies it's completed/scraped)
+            tournament_exists = db.does_tournament_exist(id)
+            
+            if tournament_exists:
+                # Get only the count of results
+                results_count = db.get_tournament_results_count(id)
+                tournament_list.append(
+                    {
+                        "id": id,
+                        "name": name,
+                        "results": results_count, # Use the count
+                        "status": "Completed",
+                    }
+                )
+            else:
+                # Tournament doesn't exist in DB, assume Upcoming
+                tournament_list.append(
+                    {
+                        "id": id,
+                        "name": name,
+                        "results": 0, # No results yet
+                        "status": "Upcoming",
+                    }
+                )
         except Exception as e:
-            logger.error(f"Error getting tournament {id}: {e}")
+            logger.error(f"Error processing tournament {id} ({name}): {e}")
+            # Add entry with error status if needed, or skip
             tournament_list.append(
                 {
                     "id": id,
                     "name": name,
                     "results": 0,
-                    "status": "Error",
+                    "status": "Error", # Indicate an issue processing this one
                 }
             )
     return jsonify(tournament_list)

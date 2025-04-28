@@ -266,3 +266,26 @@ class Database:
             c.execute('DELETE FROM tournaments WHERE id = ?', (tournament_id,))
             conn.commit()
             logger.info(f"Deleted data for tournament ID: {tournament_id}")
+
+    def does_tournament_exist(self, tournament_id: str) -> bool:
+        """Check if a tournament ID exists in the tournaments table."""
+        with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+            c.execute("SELECT 1 FROM tournaments WHERE id = ? LIMIT 1", (tournament_id,))
+            return c.fetchone() is not None
+
+    def get_tournament_results_count(self, tournament_id: str) -> int:
+        """Get the count of results for a specific tournament."""
+        with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+            # Ensure the results table exists, handle potential error if it doesn't
+            # (Though usually it should exist if tournaments do)
+            try:
+                c.execute("SELECT COUNT(*) as count FROM results WHERE tournament_id = ?", (tournament_id,))
+                row = c.fetchone()
+                return row['count'] if row else 0
+            except sqlite3.OperationalError as e:
+                logger.error(f"Error counting results for tournament {tournament_id}: {e}")
+                return 0 # Return 0 if table/column missing or other SQL error
