@@ -120,7 +120,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 className={cn(
                   top9ByBest2.has(player.fide_id || player.name)
                     ? 'bg-blue-50/50 border-l-2 border-l-blue-400'
-                    : index % 2 === 0 ? 'bg-gray-50/50' : ''
+                    : index % 2 === 0
+                    ? 'bg-gray-50/50'
+                    : ''
                 )}>
                 <CustomTableCell isHeader className="text-right">
                   {top9ByBest2.has(player.fide_id || player.name) ? (
