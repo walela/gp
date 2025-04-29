@@ -9,17 +9,7 @@ export default async function HomePage() {
   const tournaments = await getTournaments()
   const upcomingTournaments = [
     {
-      id: '742150',
-      name: 'Kenya Open',
-      startDate: '2025-04-18',
-      endDate: '2025-04-21',
-      location: 'Nairobi',
-      rounds: 8,
-      confirmed: false,
-      status: 'postponed'
-    },
-    {
-      id: '742151',
+      id: '1165146',
       name: 'Nakuru Open',
       startDate: '2025-05-01',
       endDate: '2025-05-03',
@@ -84,7 +74,17 @@ export default async function HomePage() {
       month: 'November 1-2',
       location: 'Bungoma',
       tentativeRounds: 6
-    }
+    },
+    {
+      id: '742150',
+      name: 'Kenya Open',
+      startDate: '2025-04-18',
+      endDate: '2025-04-21',
+      location: 'Nairobi',
+      rounds: 8,
+      confirmed: false,
+      status: 'postponed'
+    },
   ]
 
   return (
