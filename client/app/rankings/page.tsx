@@ -32,10 +32,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const params = await searchParams
 
   // Now we can safely access the properties
-  const sort = params.sort || 'best_2'
+  const sort = params.sort || 'best_3'
   const dir = (params.dir || 'desc') as 'asc' | 'desc'
   const page = Number(params.page || '1')
-  const view = params.view || 'best_2'
+  const view = params.view || 'best_3'
   const search = params.q || ''
 
   // Pass search query to the backend for filtering
@@ -46,16 +46,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
     q: search
   })
 
-  // Get top 9 by best_2 from all data, not just the current page
-  const { topPlayers } = await getTopPlayers({ count: 9, sortBy: 'best_2' })
-  const top9ByBest2 = new Set(topPlayers.map(p => p.fide_id || p.name))
+  // Get top 9 by best_3 from all data, not just the current page
+  const { topPlayers } = await getTopPlayers({ count: 9, sortBy: 'best_3' })
+  const top9ByBest3 = new Set(topPlayers.map(p => p.fide_id || p.name))
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
         <p className="text-muted-foreground">
-          Current standings based on best tournament performances. Top 9 players by Best 2 Average are highlighted.
+          Current standings based on best tournament performances. Top 9 players by Best 3 Average are highlighted.
         </p>
       </div>
 
@@ -118,38 +118,41 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <CustomTableRow
                 key={player.fide_id || player.name}
                 className={cn(
-                  top9ByBest2.has(player.fide_id || player.name)
-                    ? 'bg-blue-50/50 border-l-2 border-l-blue-400'
+                  top9ByBest3.has(player.fide_id || player.name)
+                    ? 'bg-blue-50/50 border-l-2 border-l-blue-500 hover:bg-blue-100/50'
                     : index % 2 === 0
-                    ? 'bg-gray-50/50'
-                    : ''
+                    ? 'bg-gray-50/50 hover:bg-gray-100/50'
+                    : 'bg-white hover:bg-gray-50/50'
                 )}>
                 <CustomTableCell isHeader className="text-right">
-                  {top9ByBest2.has(player.fide_id || player.name) ? (
-                    <span className="font-semibold">{(page - 1) * 25 + index + 1}</span>
+                  {top9ByBest3.has(player.fide_id || player.name) ? (
+                    <span className="font-semibold text-blue-700">{(page - 1) * 25 + index + 1}</span>
                   ) : (
                     (page - 1) * 25 + index + 1
                   )}
                 </CustomTableCell>
-                <CustomTableCell className="min-w-[120px]">
+                <CustomTableCell>
                   <div className="truncate">
                     {player.fide_id ? (
                       <Link
                         href={`/player/${player.fide_id}`}
                         className={cn(
                           'font-medium group flex items-center gap-1',
-                          top9ByBest2.has(player.fide_id) ? 'text-blue-600' : 'text-blue-600'
+                          top9ByBest3.has(player.fide_id) ? 'text-blue-700 hover:text-blue-800' : 'text-blue-600 hover:text-blue-700'
                         )}
                         title={player.name}>
                         <span className="sm:hidden flex items-center gap-1">
                           {player.name.length > 15 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
                           <span className="text-muted-foreground/50">›</span>
                         </span>
-                        <span className="hidden sm:inline group-hover:underline">{player.name}</span>
+                        <span className="hidden sm:block group-hover:underline">{player.name}</span>
                       </Link>
                     ) : (
                       <span
-                        className={cn('font-medium', top9ByBest2.has(player.name) ? 'text-blue-600' : '')}
+                        className={cn(
+                          'font-medium',
+                          top9ByBest3.has(player.name) ? 'text-blue-700' : ''
+                        )}
                         title={player.name}>
                         {player.name}
                       </span>
@@ -162,7 +165,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">
                   {player.tournaments_played}
                 </CustomTableCell>
-                <CustomTableCell className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
+                <CustomTableCell
+                  className={cn('text-right tabular-nums', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
                   <div className="flex flex-col items-end gap-1">
                     <div className="tabular-nums font-medium">{player.best_1}</div>
                     {player.tournament_1 && (
@@ -174,15 +178,15 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 </CustomTableCell>
                 <CustomTableCell
                   className={cn('text-right tabular-nums', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
-                  {top9ByBest2.has(player.fide_id || player.name) ? (
-                    <span className="font-semibold text-blue-700">{player.best_2}</span>
-                  ) : (
-                    player.best_2
-                  )}
+                  {player.best_2}
                 </CustomTableCell>
                 <CustomTableCell
                   className={cn('text-right tabular-nums', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
-                  {player.best_3}
+                  {top9ByBest3.has(player.fide_id || player.name) ? (
+                    <span className="font-semibold text-blue-700">{player.best_3}</span>
+                  ) : (
+                    player.best_3
+                  )}
                 </CustomTableCell>
                 <CustomTableCell
                   className={cn('text-right tabular-nums', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>

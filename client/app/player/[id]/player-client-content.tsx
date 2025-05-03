@@ -181,12 +181,12 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                             className="font-medium text-blue-600 hover:underline flex items-center"
                             title="View player card on chess-results.com"
                           >
-                            {result.tournament_name}
+                            {getShortTournamentName(result.tournament_name)}
                             <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
                           </a>
                         ) : (
                           <Link href={`/tournament/${result.tournament_id}`} className="font-medium text-blue-600 hover:underline">
-                            {result.tournament_name}
+                            {getShortTournamentName(result.tournament_name)}
                           </Link>
                         )}
                       </div>
