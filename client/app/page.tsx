@@ -9,8 +9,8 @@ type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
 
 export default async function HomePage() {
   const tournaments = await getTournaments()
-  // Debug log for tournament names
-  tournaments.forEach(t => console.log('Tournament name:', JSON.stringify(t.name)))
+  console.log('Tournaments:', tournaments)
+  console.log('Tournament names:', tournaments.map(tournament => tournament.name))
 
   const upcomingTournaments = [
     {
