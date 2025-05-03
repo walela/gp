@@ -13,6 +13,7 @@ import { getTournament, getTournamentAllResults, TournamentResult } from '@/serv
 import { notFound } from 'next/navigation'
 import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
+import { getShortTournamentName } from '@/utils/tournament'
 
 interface TournamentPageProps {
   params: {
@@ -86,10 +87,12 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="scroll-m-20 text-2xl md:text-3xl 2xl:text-4xl font-bold tracking-tight">
-          {tournament.name}
-        </h1>
+      <div className="flex flex-col gap-4 md:gap-8">
+        <div className="flex flex-col gap-2 md:gap-4">
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+            {getShortTournamentName(tournament.name)}
+          </h1>
+        </div>
       </div>
 
       {/* Tournament Metadata - Optimized for mobile */}
