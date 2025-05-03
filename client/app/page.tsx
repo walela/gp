@@ -10,6 +10,7 @@ type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
 export default async function HomePage() {
   const tournaments = await getTournaments()
   console.log('Tournaments:', tournaments)
+  console.log('Tournament names:', tournaments.map(tournament => tournament.name))
 
   const upcomingTournaments = [
     {
