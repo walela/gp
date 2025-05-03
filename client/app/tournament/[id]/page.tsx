@@ -42,16 +42,30 @@ function calculateAverageTopTpr(results: TournamentResult[]) {
   return Math.round(top10.reduce((sum, r) => sum + (r.tpr || 0), 0) / top10.length);
 }
 
+// Function to get tournament date
+function getTournamentDate(name: string) {
+  if (name.includes('Eldoret')) return 'January 25-26, 2025'
+  if (name.includes('Mavens')) return 'Feb 28 - Mar 2, 2025'
+  if (name.includes('Waridi')) return 'March 8-9, 2025'
+  if (name.includes('Kisumu')) return 'March 22-23, 2025'
+  if (name.includes('Nakuru')) return 'May 1-3, 2025'
+  return 'TBD'
+}
+
+// Function to get tournament location
+function getTournamentLocation(name: string) {
+  if (name.includes('Eldoret')) return 'Eldoret, Kenya'
+  if (name.includes('Kisumu')) return 'Kisumu, Kenya'
+  if (name.includes('Nakuru')) return 'Nakuru, Kenya'
+  return 'Nairobi, Kenya'
+}
+
 export default async function TournamentPage({ params, searchParams }: TournamentPageProps) {
-  // Properly await the params and searchParams objects
-  const routeParams = await params;
-  const queryParams = await searchParams;
-  
   // Now we can safely access the properties
-  const id = routeParams.id
-  const sort = queryParams.sort || 'points'
-  const dir = (queryParams.dir || 'desc') as 'asc' | 'desc'
-  const page = Number(queryParams.page || '1')
+  const id = params.id
+  const sort = searchParams.sort || 'points'
+  const dir = (searchParams.dir || 'desc') as 'asc' | 'desc'
+  const page = Number(searchParams.page || '1')
 
   // Fetch paginated tournament data for display
   const tournament = await getTournament(id, { 
@@ -87,11 +101,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <div>
                 <p className="text-xs text-muted-foreground">Date</p>
                 <p className="text-sm font-medium">
-                  {tournament.name.includes('Eldoret') ? 'January 25-26, 2025' : 
-                   tournament.name.includes('Mavens') ? 'Feb 28 - Mar 2, 2025' :
-                   tournament.name.includes('Waridi') ? 'March 8-9, 2025' :
-                   tournament.name.includes('Kisumu') ? 'March 22-23, 2025' : 
-                   'TBD'}
+                  {getTournamentDate(tournament.name)}
                 </p>
               </div>
             </div>
@@ -100,9 +110,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <div>
                 <p className="text-xs text-muted-foreground">Location</p>
                 <p className="text-sm font-medium">
-                  {tournament.name.includes('Eldoret') ? 'Eldoret, Kenya' : 
-                   tournament.name.includes('Kisumu') ? 'Kisumu, Kenya' : 
-                   'Nairobi, Kenya'}
+                  {getTournamentLocation(tournament.name)}
                 </p>
               </div>
             </div>
@@ -158,11 +166,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <div>
                 <p className="text-xs text-gray-500">Date</p>
                 <p className="font-medium text-sm">
-                  {tournament.name.includes('Eldoret') ? 'January 25-26, 2025' : 
-                   tournament.name.includes('Mavens') ? 'Feb 28 - Mar 2, 2025' :
-                   tournament.name.includes('Waridi') ? 'March 8-9, 2025' :
-                   tournament.name.includes('Kisumu') ? 'March 22-23, 2025' : 
-                   'TBD'}
+                  {getTournamentDate(tournament.name)}
                 </p>
               </div>
             </div>
@@ -174,9 +178,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <div>
                 <p className="text-xs text-gray-500">Location</p>
                 <p className="font-medium text-sm">
-                  {tournament.name.includes('Eldoret') ? 'Eldoret, Kenya' : 
-                   tournament.name.includes('Kisumu') ? 'Kisumu, Kenya' : 
-                   'Nairobi, Kenya'}
+                  {getTournamentLocation(tournament.name)}
                 </p>
               </div>
             </div>

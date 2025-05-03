@@ -13,11 +13,12 @@ CORS(app)  # Enable CORS for all routes
 db = Database()
 
 # Tournament IDs for 2025 Grand Prix
-TOURNAMENTS = {
+TOURNAMENT_NAMES = {
     "1095243": "Eldoret Open",
     "1126042": "Mavens Open",
     "1130967": "Waridi Chess Festival",
     "1135144": "Kisumu Open",
+    "1165146": "The East Africa Chess Championship - Nakuru Grand Prix 2025",
 }
 
 PLAYERS_PER_PAGE = 25
@@ -51,16 +52,16 @@ def get_tournament_data(tournament_id: str):
         results_dict.append(r)
 
     # Save to database
-    db.save_tournament(tournament_id, TOURNAMENTS[tournament_id], results_dict)
+    db.save_tournament(tournament_id, TOURNAMENT_NAMES[tournament_id], results_dict)
 
-    return TOURNAMENTS[tournament_id], results_dict
+    return TOURNAMENT_NAMES[tournament_id], results_dict
 
 
 @app.route("/api/tournaments")
 def tournaments():
     """Get list of all tournaments."""
     tournament_list = []
-    for id, name in TOURNAMENTS.items():
+    for id, name in TOURNAMENT_NAMES.items():
         try:
             # Check if tournament exists in DB (implies it's completed/scraped)
             tournament_exists = db.does_tournament_exist(id)
@@ -197,7 +198,7 @@ def get_player_rankings():
 @app.route("/api/rankings")
 def rankings():
     """Get current GP rankings."""
-    sort = request.args.get("sort", "best_2")
+    sort = request.args.get("sort", "best_3")
     dir = request.args.get("dir", "desc")
     page = int(request.args.get("page", "1"))
     search_query = request.args.get("q")  # Get the search query
@@ -222,7 +223,7 @@ def rankings():
         "best_2": "best_2",
         "best_3": "best_3",
         "best_4": "best_4",
-    }.get(sort, "best_4")
+    }.get(sort, "best_3")
 
     player_rankings.sort(
         key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),

@@ -5,18 +5,14 @@ import { CalendarDays, MapPin, Hash, Calendar, CheckCircle2, HelpCircle } from '
 import { getTournaments } from '@/services/api'
 import { getShortTournamentName } from '@/utils/tournament'
 
+type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
+
 export default async function HomePage() {
   const tournaments = await getTournaments()
+  // Debug log for tournament names
+  tournaments.forEach(t => console.log('Tournament name:', JSON.stringify(t.name)))
+
   const upcomingTournaments = [
-    {
-      id: '1165146',
-      name: 'Nakuru Open',
-      startDate: '2025-05-01',
-      endDate: '2025-05-03',
-      location: 'Nakuru',
-      rounds: 6,
-      confirmed: true
-    },
     {
       id: '742152',
       name: 'Kiambu Open',
@@ -24,7 +20,8 @@ export default async function HomePage() {
       endDate: '2025-05-11',
       location: 'Nairobi',
       rounds: 6,
-      confirmed: true
+      confirmed: true,
+      status: 'Upcoming' satisfies TournamentStatus
     },
     {
       id: '742153',
@@ -33,7 +30,8 @@ export default async function HomePage() {
       endDate: '2025-05-31',
       location: 'Nyeri',
       rounds: 6,
-      confirmed: false
+      confirmed: false,
+      status: 'Upcoming' satisfies TournamentStatus
     },
     {
       id: '742154',
@@ -42,8 +40,9 @@ export default async function HomePage() {
       endDate: '2025-06-02',
       location: 'Nairobi',
       rounds: 8,
-      confirmed: false
-    }
+      confirmed: false,
+      status: 'Upcoming' satisfies TournamentStatus
+    },
   ]
 
   const plannedTournaments = [
@@ -83,7 +82,7 @@ export default async function HomePage() {
       location: 'Nairobi',
       rounds: 8,
       confirmed: false,
-      status: 'postponed'
+      status: 'postponed' satisfies TournamentStatus
     },
   ]
 
@@ -106,6 +105,8 @@ export default async function HomePage() {
                 location = 'Nairobi'
               } else if (tournament.name.includes('Mavens')) {
                 location = 'Nairobi'
+              } else if (tournament.name.includes('Nakuru')) {
+                location = 'Nakuru'
               }
 
               // Determine rounds based on tournament name
@@ -124,6 +125,8 @@ export default async function HomePage() {
                 dates = 'March 8th-9th, 2025'
               } else if (tournament.name.includes('Mavens')) {
                 dates = 'February 28th - March 2nd, 2025'
+              } else if (tournament.name.includes('Nakuru')) {
+                dates = 'May 1st-3rd, 2025'
               }
 
               return (
@@ -135,8 +138,7 @@ export default async function HomePage() {
                     <CardHeader className="pb-1 pt-3 px-4">
                       <div className="flex items-center justify-between">
                         <CardTitle>
-                          <span className="hidden sm:inline">{tournament.name}</span>
-                          <span className="sm:hidden">{getShortTournamentName(tournament.name)}</span>
+                          {getShortTournamentName(tournament.name)}
                         </CardTitle>
                         <Badge
                           className={
@@ -211,8 +213,7 @@ export default async function HomePage() {
                         <Link 
                           href={`/tournament/${tournament.id}`} 
                           className={tournament.status === 'postponed' ? 'line-through text-gray-500 hover:underline' : 'hover:underline'}>
-                          <span className="hidden sm:inline">{tournament.name}</span>
-                          <span className="sm:hidden">{getShortTournamentName(tournament.name)}</span>
+                          {getShortTournamentName(tournament.name)}
                         </Link>
                         {tournament.confirmed ? (
                           <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -310,8 +311,7 @@ export default async function HomePage() {
                   <CardHeader className="pb-1 pt-3 px-4">
                     <div className="flex items-center justify-between">
                       <CardTitle>
-                        <span className="hidden sm:inline">{tournament.name}</span>
-                        <span className="sm:hidden">{getShortTournamentName(tournament.name)}</span>
+                        {getShortTournamentName(tournament.name)}
                       </CardTitle>
                       <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">Planned</Badge>
                     </div>

@@ -108,7 +108,7 @@ export async function getTournamentDetails(
 }
 
 export async function getRankings({
-  sort = 'best_2',
+  sort = 'best_3',
   dir = 'desc',
   page = 1,
   q
@@ -163,7 +163,7 @@ export interface TopPlayersResponse {
 
 export async function getTopPlayers({
   count = 9,
-  sortBy = 'best_2',
+  sortBy = 'best_3',
   dir = 'desc',
   q = ''
 }: {
