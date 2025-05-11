@@ -5,6 +5,33 @@ import { CalendarDays, MapPin, Hash, Calendar, CheckCircle2, HelpCircle } from '
 import { getTournaments } from '@/services/api'
 import { getShortTournamentName } from '@/utils/tournament'
 
+// Function to format a date with ordinal suffix (1st, 2nd, 3rd, etc.)
+function formatOrdinal(day: number): string {
+  if (day >= 11 && day <= 13) {
+    return day + 'th'
+  }
+  
+  switch (day % 10) {
+    case 1:
+      return day + 'st'
+    case 2:
+      return day + 'nd'
+    case 3:
+      return day + 'rd'
+    default:
+      return day + 'th'
+  }
+}
+
+// Function to format a date in the format "Month Day, Year" with ordinal suffix
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  }).replace(/\d+/, match => formatOrdinal(parseInt(match)))
+}
+
 type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
 
 export default async function HomePage() {
@@ -115,18 +142,26 @@ export default async function HomePage() {
                 rounds = 8
               }
 
-              // Determine dates based on tournament name
-              let dates = ''
-              if (tournament.name.includes('Eldoret')) {
-                dates = 'January 25th-26th, 2025'
-              } else if (tournament.name.includes('Kisumu')) {
-                dates = 'March 22nd-23rd, 2025'
-              } else if (tournament.name.includes('Waridi')) {
-                dates = 'March 8th-9th, 2025'
-              } else if (tournament.name.includes('Mavens')) {
-                dates = 'February 28th - March 2nd, 2025'
-              } else if (tournament.name.includes('Nakuru')) {
-                dates = 'May 1st-3rd, 2025'
+              // Format dates from API response
+              let dates = 'TBD'
+              if (tournament.start_date) {
+                const startDate = new Date(tournament.start_date)
+                
+                if (tournament.end_date) {
+                  const endDate = new Date(tournament.end_date)
+                  
+                  // If same month and year
+                  if (startDate.getMonth() === endDate.getMonth() && 
+                      startDate.getFullYear() === endDate.getFullYear()) {
+                    dates = `${startDate.toLocaleDateString('en-US', { month: 'long' })} ${formatOrdinal(startDate.getDate())}-${formatOrdinal(endDate.getDate())}, ${startDate.getFullYear()}`
+                  } else {
+                    // Different months or years
+                    dates = `${formatDate(startDate)} - ${formatDate(endDate)}`
+                  }
+                } else {
+                  // Only start date available
+                  dates = formatDate(startDate)
+                }
               }
 
               return (

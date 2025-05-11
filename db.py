@@ -1,7 +1,7 @@
 import sqlite3
-from typing import List, Dict, Optional
-from dataclasses import asdict
 import logging
+from typing import Dict, List, Optional, Tuple
+from dataclasses import asdict
 
 logger = logging.getLogger(__name__)
 
@@ -125,19 +125,21 @@ class Database:
         with sqlite3.connect(self.db_file) as conn:
             c = conn.cursor()
             
-            # Get tournament name
-            c.execute('SELECT name FROM tournaments WHERE id = ?', (tournament_id,))
+            # Get tournament name and dates
+            c.execute('SELECT name, start_date, end_date FROM tournaments WHERE id = ?', (tournament_id,))
             tournament_row = c.fetchone()
             if not tournament_row:
                 return None # Tournament not found
             tournament_name = tournament_row[0]
+            start_date = tournament_row[1] if len(tournament_row) > 1 else None
+            end_date = tournament_row[2] if len(tournament_row) > 2 else None
             
             # Get results, joining players correctly
             try:
                 c.execute('''
                     SELECT 
                         p.name, p.fide_id, p.federation,
-                        r.rating, r.points, r.tpr, r.has_walkover, r.start_rank
+                        r.rating, r.points, r.tpr, r.has_walkover, r.start_rank, r.result_status
                     FROM results r
                     JOIN players p ON r.player_id = p.id 
                     WHERE r.tournament_id = ?
@@ -150,7 +152,7 @@ class Database:
                     c.execute('''
                         SELECT 
                             p.name, p.fide_id, p.federation,
-                            r.rating, r.points, r.tpr, r.has_walkover
+                            r.rating, r.points, r.tpr, r.has_walkover, r.result_status
                         FROM results r
                         JOIN players p ON r.player_id = p.id 
                         WHERE r.tournament_id = ?
@@ -161,8 +163,9 @@ class Database:
             
             results = []
             for row in c.fetchall():
-                # Check if we have start_rank in the results
-                has_start_rank = len(row) > 7
+                # Check row structure based on length
+                has_start_rank = len(row) > 8  # With result_status, we have at least 9 columns
+                has_result_status = len(row) > 7  # Either 8 (without start_rank) or 9 columns
                 
                 result_data = {
                     'player': {
@@ -176,6 +179,13 @@ class Database:
                     'has_walkover': bool(row[6])
                 }
                 
+                # Add result_status if available (should be in all new data)
+                if has_result_status:
+                    result_status_idx = 8 if has_start_rank else 7
+                    result_data['result_status'] = row[result_status_idx]
+                else:
+                    result_data['result_status'] = 'valid'  # Default for old data
+                
                 # Add start_rank if available
                 if has_start_rank:
                     result_data['start_rank'] = row[7]
@@ -184,6 +194,8 @@ class Database:
             
             return {
                 'name': tournament_name,
+                'start_date': start_date,
+                'end_date': end_date,
                 'results': results
             }
     
@@ -196,7 +208,7 @@ class Database:
                 c.execute('''
                     SELECT 
                         p.name, p.fide_id, p.federation,
-                        r.rating, r.points, r.tpr, r.has_walkover, r.start_rank,
+                        r.rating, r.points, r.tpr, r.has_walkover, r.start_rank, r.result_status,
                         t.id, t.name,
                         p.id 
                     FROM results r
@@ -211,7 +223,7 @@ class Database:
                     c.execute('''
                         SELECT 
                             p.name, p.fide_id, p.federation,
-                            r.rating, r.points, r.tpr, r.has_walkover,
+                            r.rating, r.points, r.tpr, r.has_walkover, r.result_status,
                             t.id, t.name,
                             p.id 
                         FROM results r
@@ -224,10 +236,27 @@ class Database:
             
             all_results = {}
             for row in c.fetchall():
-                # Adjust index based on whether we have start_rank or not
-                has_start_rank = len(row) > 10
-                offset = 1 if has_start_rank else 0
-                player_db_id = row[10 if has_start_rank else 9]
+                # Check row length to determine structure
+                has_start_rank = len(row) > 11  # With result_status, we have at least 12 columns
+                has_result_status = True  # We always expect result_status now
+                
+                # Calculate offsets based on available columns
+                if has_start_rank:
+                    # Full row with start_rank and result_status
+                    # [name, fide_id, fed, rating, points, tpr, has_walkover, start_rank, result_status, t_id, t_name, p_id]
+                    player_db_id = row[11]
+                    tournament_id_idx = 9
+                    tournament_name_idx = 10
+                    result_status_idx = 8
+                    start_rank_idx = 7
+                else:
+                    # Row without start_rank but with result_status
+                    # [name, fide_id, fed, rating, points, tpr, has_walkover, result_status, t_id, t_name, p_id]
+                    player_db_id = row[10]
+                    tournament_id_idx = 8
+                    tournament_name_idx = 9
+                    result_status_idx = 7
+                    start_rank_idx = None
                 
                 if player_db_id not in all_results:
                     all_results[player_db_id] = []
@@ -243,14 +272,18 @@ class Database:
                     'tpr': row[5],
                     'has_walkover': bool(row[6]),
                     'tournament': {
-                        'id': row[7 + offset],
-                        'name': row[8 + offset]
+                        'id': row[tournament_id_idx],
+                        'name': row[tournament_name_idx]
                     }
                 }
                 
+                # Add result_status
+                if has_result_status:
+                    result_data['result_status'] = row[result_status_idx]
+                
                 # Add start_rank if available
                 if has_start_rank:
-                    result_data['start_rank'] = row[7]
+                    result_data['start_rank'] = row[start_rank_idx]
                 else:
                     result_data['start_rank'] = None
                 
@@ -258,6 +291,16 @@ class Database:
             
             return all_results
 
+    def get_tournament_dates(self, tournament_id: str) -> Tuple[Optional[str], Optional[str]]:
+        """Get start and end dates for a tournament."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('SELECT start_date, end_date FROM tournaments WHERE id = ?', (tournament_id,))
+            result = c.fetchone()
+            if result:
+                return result[0], result[1]
+            return None, None
+            
     def delete_tournament_data(self, tournament_id: str):
         """Delete tournament and its associated results."""
         with sqlite3.connect(self.db_file) as conn:

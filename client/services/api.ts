@@ -5,6 +5,8 @@ export interface Tournament {
   name: string
   results: number
   status: 'Completed' | 'Upcoming'
+  start_date?: string
+  end_date?: string
 }
 
 export interface TournamentPlayer {
@@ -21,6 +23,7 @@ export interface TournamentResult {
   has_walkover: boolean
   rating: number | null
   start_rank: number | null
+  result_status?: 'valid' | 'walkover' | 'incomplete' | 'withdrawn' | 'unknown' | string
 }
 
 export interface TournamentDetails {
@@ -30,6 +33,8 @@ export interface TournamentDetails {
   total: number
   page: number
   total_pages: number
+  start_date?: string
+  end_date?: string
 }
 
 export interface PlayerResult {
@@ -42,6 +47,7 @@ export interface PlayerResult {
   chess_results_url: string
   player_card_url: string
   rounds: number
+  result_status?: 'valid' | 'walkover' | 'incomplete' | 'withdrawn' | string
 }
 
 export interface PlayerDetails {

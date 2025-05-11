@@ -19,6 +19,7 @@ TOURNAMENT_NAMES = {
     "1130967": "Waridi Chess Festival",
     "1135144": "Kisumu Open",
     "1165146": "The East Africa Chess Championship Nakuru Grand Prix 2025",
+    "1173578": "Kiambu Open",
 }
 
 PLAYERS_PER_PAGE = 25
@@ -69,12 +70,18 @@ def tournaments():
             if tournament_exists:
                 # Get only the count of results
                 results_count = db.get_tournament_results_count(id)
+                
+                # Get tournament dates
+                start_date, end_date = db.get_tournament_dates(id)
+                
                 tournament_list.append(
                     {
                         "id": id,
                         "name": name,
                         "results": results_count, # Use the count
                         "status": "Completed",
+                        "start_date": start_date,
+                        "end_date": end_date,
                     }
                 )
             else:
@@ -115,6 +122,8 @@ def tournament(tournament_id):
             return jsonify({"error": "Tournament not found"}), 404
             
         tournament_name = data["name"]
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
         results = data["results"]
 
         # Sort results
@@ -133,6 +142,8 @@ def tournament(tournament_id):
                 {
                     "name": tournament_name,
                     "id": tournament_id,
+                    "start_date": start_date,
+                    "end_date": end_date,
                     "results": results,
                     "total": len(results),
                     "page": 1,
@@ -150,6 +161,8 @@ def tournament(tournament_id):
             {
                 "name": tournament_name,
                 "id": tournament_id,
+                "start_date": start_date,
+                "end_date": end_date,
                 "results": paginated_results,
                 "total": len(results),
                 "page": page,
@@ -167,24 +180,32 @@ def get_player_rankings():
     # Calculate best N results for each player
     player_rankings = []
     for player_id, results in all_results.items():
+        # Filter results by federation and result_status
+        valid_results = [r for r in results if r["player"]["federation"] == "KEN" and 
+                         (r.get("result_status", "valid") == "valid" or r.get("result_status") is None)]
+        
+        # Skip players with no valid results
+        if not valid_results:
+            continue
+            
         # Sort by TPR
-        results.sort(key=lambda x: x["tpr"] if x["tpr"] else 0, reverse=True)
+        valid_results.sort(key=lambda x: x["tpr"] if x["tpr"] else 0, reverse=True)
 
         # Get best results
-        best_1 = results[0]["tpr"] if len(results) >= 1 else 0
-        best_2 = sum(r["tpr"] for r in results[:2]) / 2 if len(results) >= 2 else 0
-        best_3 = sum(r["tpr"] for r in results[:3]) / 3 if len(results) >= 3 else 0
-        best_4 = sum(r["tpr"] for r in results[:4]) / 4 if len(results) >= 4 else 0
+        best_1 = valid_results[0]["tpr"] if len(valid_results) >= 1 else 0
+        best_2 = sum(r["tpr"] for r in valid_results[:2]) / 2 if len(valid_results) >= 2 else 0
+        best_3 = sum(r["tpr"] for r in valid_results[:3]) / 3 if len(valid_results) >= 3 else 0
+        best_4 = sum(r["tpr"] for r in valid_results[:4]) / 4 if len(valid_results) >= 4 else 0
 
         player_rankings.append(
             {
-                "name": results[0]["player"]["name"],
-                "fide_id": results[0]["player"]["fide_id"],
-                "rating": results[0]["player"]["rating"],
-                "tournaments_played": len(results),
+                "name": valid_results[0]["player"]["name"],
+                "fide_id": valid_results[0]["player"]["fide_id"],
+                "rating": valid_results[0]["player"]["rating"],
+                "tournaments_played": len(valid_results),
                 "best_1": round(best_1),
                 "tournament_1": (
-                    results[0]["tournament"]["name"] if len(results) >= 1 else None
+                    valid_results[0]["tournament"]["name"] if len(valid_results) >= 1 else None
                 ),
                 "best_2": round(best_2),
                 "best_3": round(best_3),
@@ -281,6 +302,7 @@ def player(fide_id):
                     r.tpr, 
                     r.rating as rating_in_tournament,
                     r.start_rank,
+                    r.result_status,
                     CASE
                         WHEN t.name LIKE '%Mavens%' THEN 8
                         ELSE 6
@@ -305,6 +327,7 @@ def player(fide_id):
                         r.points, 
                         r.tpr, 
                         r.rating as rating_in_tournament,
+                        r.result_status,
                         CASE
                             WHEN t.name LIKE '%Mavens%' THEN 8
                             ELSE 6
@@ -338,6 +361,7 @@ def player(fide_id):
                     "rating_in_tournament": result["rating_in_tournament"],
                     "start_rank": result.get("start_rank"),
                     "rounds": result.get("rounds"),
+                    "result_status": result.get("result_status", "valid"),
                     "chess_results_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1",
                     "player_card_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1&art=9&snr={result.get('start_rank', '')}" if result.get("start_rank") else None
                 }
@@ -350,5 +374,5 @@ def player(fide_id):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5003))
+    port = int(os.environ.get("PORT", 5004))
     app.run(host="0.0.0.0", port=port)
