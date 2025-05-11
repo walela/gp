@@ -15,7 +15,8 @@ TOURNAMENTS = {
     "1095243": "Eldoret Open",
     "1126042": "Mavens Open",
     "1130967": "Waridi Chess Festival",
-    "1135144": "Kisumu Open"
+    "1135144": "Kisumu Open",
+    "1173578": "Kiambu Open"
 }
 
 def add_start_rank_column():

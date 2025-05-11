@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
-import { 
-  CustomTable, 
-  CustomTableHeader, 
-  CustomTableBody, 
-  CustomTableRow, 
-  CustomTableHead, 
-  CustomTableCell 
+import {
+  CustomTable,
+  CustomTableHeader,
+  CustomTableBody,
+  CustomTableRow,
+  CustomTableHead,
+  CustomTableCell
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 import { getTournament, getTournamentAllResults, TournamentResult } from '@/services/api'
@@ -29,28 +29,46 @@ interface TournamentPageProps {
 // Function to calculate average TPR of top 10 players
 function calculateAverageTopTpr(results: TournamentResult[]) {
   // Filter out invalid TPRs
-  const validTprResults = results.filter(r => r.tpr !== null);
-  
+  const validTprResults = results.filter(r => r.tpr !== null)
+
   if (validTprResults.length === 0) {
-    return 0;
+    return 0
   }
-  
+
   // Sort by TPR in descending order
-  const sortedResults = [...validTprResults].sort((a, b) => (b.tpr || 0) - (a.tpr || 0));
+  const sortedResults = [...validTprResults].sort((a, b) => (b.tpr || 0) - (a.tpr || 0))
   // Take top 10 or all if less than 10
-  const top10 = sortedResults.slice(0, Math.min(10, sortedResults.length));
+  const top10 = sortedResults.slice(0, Math.min(10, sortedResults.length))
   // Calculate average
-  return Math.round(top10.reduce((sum, r) => sum + (r.tpr || 0), 0) / top10.length);
+  return Math.round(top10.reduce((sum, r) => sum + (r.tpr || 0), 0) / top10.length)
 }
 
-// Function to get tournament date
-function getTournamentDate(name: string) {
-  if (name.includes('Eldoret')) return 'January 25-26, 2025'
-  if (name.includes('Mavens')) return 'Feb 28 - Mar 2, 2025'
-  if (name.includes('Waridi')) return 'March 8-9, 2025'
-  if (name.includes('Kisumu')) return 'March 22-23, 2025'
-  if (name.includes('Nakuru')) return 'May 1-3, 2025'
-  return 'TBD'
+// Function to format tournament date
+function formatTournamentDate(startDate?: string, endDate?: string) {
+  if (!startDate) return 'TBD'
+
+  // Parse dates
+  const start = new Date(startDate)
+  const end = endDate ? new Date(endDate) : null
+
+  // Format options
+  const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric', year: 'numeric' }
+
+  // Format start date
+  const startFormatted = start.toLocaleDateString('en-US', options)
+
+  // If no end date or same as start date, return just start date
+  if (!end || startDate === endDate) {
+    return startFormatted
+  }
+
+  // If same month and year, just show the day for end date
+  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    return `${start.toLocaleDateString('en-US', { month: 'long' })} ${start.getDate()}-${end.getDate()}, ${start.getFullYear()}`
+  }
+
+  // Otherwise show full end date
+  return `${startFormatted} - ${end.toLocaleDateString('en-US', options)}`
 }
 
 // Function to get tournament location
@@ -69,29 +87,27 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
   const page = Number(searchParams.page || '1')
 
   // Fetch paginated tournament data for display
-  const tournament = await getTournament(id, { 
-    sort, 
-    dir, 
-    page 
+  const tournament = await getTournament(id, {
+    sort,
+    dir,
+    page
   })
 
   // Fetch all tournament results for TPR calculation
-  const allResults = await getTournamentAllResults(id);
+  const allResults = await getTournamentAllResults(id)
 
   if (!tournament) {
     notFound()
   }
 
   // Calculate average TPR of top 10 players using all results
-  const averageTopTpr = calculateAverageTopTpr(allResults);
+  const averageTopTpr = calculateAverageTopTpr(allResults)
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:gap-8">
         <div className="flex flex-col gap-2 md:gap-4">
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-            {getShortTournamentName(tournament.name)}
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{getShortTournamentName(tournament.name)}</h1>
         </div>
       </div>
 
@@ -103,18 +119,14 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <CalendarDays className="h-4 w-4 text-blue-600 flex-shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">Date</p>
-                <p className="text-sm font-medium">
-                  {getTournamentDate(tournament.name)}
-                </p>
+                <p className="text-sm font-medium">{formatTournamentDate(tournament.start_date, tournament.end_date)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-red-600 flex-shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">Location</p>
-                <p className="text-sm font-medium">
-                  {getTournamentLocation(tournament.name)}
-                </p>
+                <p className="text-sm font-medium">{getTournamentLocation(tournament.name)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -128,9 +140,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <Trophy className="h-4 w-4 text-amber-600 flex-shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">Format</p>
-                <p className="text-sm font-medium">
-                  {tournament.name.includes('Mavens') ? '8 rounds' : '6 rounds'}
-                </p>
+                <p className="text-sm font-medium">{tournament.name.includes('Mavens') ? '8 rounds' : '6 rounds'}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -144,12 +154,11 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <ExternalLink className="h-4 w-4 text-blue-600 flex-shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">External</p>
-                <a 
+                <a
                   href={`https://chess-results.com/tnr${tournament.id}.aspx?lan=1`}
-                  target="_blank" 
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium text-blue-600 hover:underline"
-                >
+                  className="text-sm font-medium text-blue-600 hover:underline">
                   chess-results.com
                 </a>
               </div>
@@ -168,24 +177,20 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               </div>
               <div>
                 <p className="text-xs text-gray-500">Date</p>
-                <p className="font-medium text-sm">
-                  {getTournamentDate(tournament.name)}
-                </p>
+                <p className="font-medium text-sm">{formatTournamentDate(tournament.start_date, tournament.end_date)}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <div className="bg-red-50 p-2 rounded-full flex-shrink-0">
                 <MapPin className="h-5 w-5 text-red-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-500">Location</p>
-                <p className="font-medium text-sm">
-                  {getTournamentLocation(tournament.name)}
-                </p>
+                <p className="font-medium text-sm">{getTournamentLocation(tournament.name)}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <div className="bg-purple-50 p-2 rounded-full flex-shrink-0">
                 <Users className="h-5 w-5 text-purple-600" />
@@ -195,19 +200,17 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                 <p className="font-medium text-sm">{tournament.total} players</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <div className="bg-amber-50 p-2 rounded-full flex-shrink-0">
                 <Trophy className="h-5 w-5 text-amber-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-500">Format</p>
-                <p className="font-medium text-sm">
-                  {tournament.name.includes('Mavens') ? '8 rounds' : '6 rounds'}
-                </p>
+                <p className="font-medium text-sm">{tournament.name.includes('Mavens') ? '8 rounds' : '6 rounds'}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <div className="bg-yellow-50 p-2 rounded-full flex-shrink-0">
                 <Star className="h-5 w-5 text-yellow-600" />
@@ -217,19 +220,18 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                 <p className="font-medium text-sm">{averageTopTpr}</p>
               </div>
             </div>
-            
+
             <div className="col-span-5 mt-1">
               <div className="flex items-center gap-3">
                 <div className="bg-blue-50 p-2 rounded-full flex-shrink-0">
                   <ExternalLink className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <a 
+                  <a
                     href={`https://chess-results.com/tnr${tournament.id}.aspx?lan=1`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm"
-                  >
+                    className="text-blue-600 hover:underline text-sm">
                     View tournament on chess-results.com
                   </a>
                 </div>
@@ -260,12 +262,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                 />
               </CustomTableHead>
               <CustomTableHead className="min-w-[120px] py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
-                <SortableHeader
-                  column="name"
-                  label="Name"
-                  basePath={`/tournament/${id}`}
-                  className="w-full"
-                />
+                <SortableHeader column="name" label="Name" basePath={`/tournament/${id}`} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
                 <SortableHeader
@@ -277,41 +274,25 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                 />
               </CustomTableHead>
               <CustomTableHead className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
-                <SortableHeader
-                  column="rating"
-                  label="Rating"
-                  align="right"
-                  basePath={`/tournament/${id}`}
-                  className="w-full"
-                />
+                <SortableHeader column="rating" label="Rating" align="right" basePath={`/tournament/${id}`} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
-                <SortableHeader
-                  column="points"
-                  label="Points"
-                  align="right"
-                  basePath={`/tournament/${id}`}
-                  className="w-full"
-                />
+                <SortableHeader column="points" label="Points" align="right" basePath={`/tournament/${id}`} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className="text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
-                <SortableHeader
-                  column="tpr"
-                  label="TPR"
-                  align="right"
-                  basePath={`/tournament/${id}`}
-                  className="w-full"
-                />
+                <SortableHeader column="tpr" label="TPR" align="right" basePath={`/tournament/${id}`} className="w-full" />
+              </CustomTableHead>
+              <CustomTableHead className="text-center py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
+                <span className="w-full text-center block" title="Whether the result is valid for TPR calculations">TPR Valid</span>
               </CustomTableHead>
             </CustomTableRow>
           </CustomTableHeader>
           <CustomTableBody>
             {tournament.results.map((result, index) => (
-              <CustomTableRow 
-                key={result.player.fide_id || result.player.name}
-                className="hover:bg-gray-50 transition-colors"
-              >
-                <CustomTableCell isHeader className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700">{(page - 1) * 25 + index + 1}</CustomTableCell>
+              <CustomTableRow key={result.player.fide_id || result.player.name} className="hover:bg-gray-50 transition-colors">
+                <CustomTableCell isHeader className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700">
+                  {(page - 1) * 25 + index + 1}
+                </CustomTableCell>
                 <CustomTableCell className="min-w-[120px] py-2 px-3 sm:py-4 sm:px-6">
                   <div className="truncate">
                     {result.player.fide_id ? (
@@ -333,13 +314,38 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                     )}
                   </div>
                 </CustomTableCell>
-                <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">{result.start_rank || '-'}</CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">
+                  {result.start_rank || '-'}
+                </CustomTableCell>
                 <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">
                   {result.rating || 'Unrated'}
                 </CustomTableCell>
-                <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">{result.points}</CustomTableCell>
+                <CustomTableCell className="hidden md:table-cell text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">
+                  {result.points}
+                </CustomTableCell>
                 <CustomTableCell className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">
-                  {(result.tpr || '-')}
+                  {result.tpr || '-'}
+                </CustomTableCell>
+                <CustomTableCell className="text-center py-2 px-3 sm:py-4 sm:px-6 font-medium tabular-nums">
+                  {result.result_status === 'valid' ? (
+                    <div className="flex items-center justify-center">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </span>
+                      <span className="ml-2 text-xs text-green-700 hidden md:inline">Valid</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center" title={`Invalid: ${result.result_status}`}>
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </span>
+                      <span className="ml-2 text-xs text-red-700 hidden md:inline">Invalid</span>
+                    </div>
+                  )}
                 </CustomTableCell>
               </CustomTableRow>
             ))}
@@ -348,10 +354,10 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
       </Card>
 
       {tournament.total_pages > 1 && (
-        <Pagination 
-          currentPage={page} 
-          totalPages={tournament.total_pages} 
-          basePath={`/tournament/${id}`} 
+        <Pagination
+          currentPage={page}
+          totalPages={tournament.total_pages}
+          basePath={`/tournament/${id}`}
           queryParams={{
             sort,
             dir

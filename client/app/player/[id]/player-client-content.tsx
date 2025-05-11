@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { PlayerDetails, PlayerResult } from '@/services/api'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, Hash } from 'lucide-react'
+import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, Hash, CheckCircle, XCircle } from 'lucide-react'
 import { getShortTournamentName } from '@/utils/tournament'
 import {
   CustomTable,
@@ -145,7 +145,19 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">TPR</p>
-                    <p className="font-medium text-lg">{result.tpr ?? '-'}</p>
+                    <div className="flex items-center">
+                      <p className="font-medium text-lg">{result.tpr ?? '-'}</p>
+                      {result.result_status && result.result_status !== 'valid' && (
+                        <span className="ml-2" title="Invalid result - not counted for rankings">
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        </span>
+                      )}
+                      {(!result.result_status || result.result_status === 'valid') && result.tpr && (
+                        <span className="ml-2" title="Valid result">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -194,7 +206,21 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                     <CustomTableCell className="text-right py-3 px-5 font-medium">{result.start_rank ?? '-'}</CustomTableCell>
                     <CustomTableCell className="text-right py-3 px-5 font-medium">{result.rating_in_tournament}</CustomTableCell>
                     <CustomTableCell className="text-right py-3 px-5 font-medium">{result.points.toFixed(1)}/{result.rounds}</CustomTableCell>
-                    <CustomTableCell className="text-right py-3 px-5 font-medium">{result.tpr ?? '-'}</CustomTableCell>
+                    <CustomTableCell className="text-right py-3 px-5 font-medium">
+                      <div className="flex items-center justify-end">
+                        <span>{result.tpr ?? '-'}</span>
+                        {result.result_status && result.result_status !== 'valid' && (
+                          <span className="ml-2" title="Invalid result - not counted for rankings">
+                            <XCircle className="h-4 w-4 text-red-500" />
+                          </span>
+                        )}
+                        {(!result.result_status || result.result_status === 'valid') && result.tpr && (
+                          <span className="ml-2" title="Valid result">
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </span>
+                        )}
+                      </div>
+                    </CustomTableCell>
                   </CustomTableRow>
                 ))}
               </CustomTableBody>
