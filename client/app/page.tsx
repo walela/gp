@@ -41,33 +41,23 @@ export default async function HomePage() {
 
   const upcomingTournaments = [
     {
-      id: '742152',
-      name: 'Kiambu Open',
-      startDate: '2025-05-10',
-      endDate: '2025-05-11',
-      location: 'Nairobi',
-      rounds: 6,
-      confirmed: true,
-      status: 'Upcoming' satisfies TournamentStatus
-    },
-    {
-      id: '742153',
-      name: 'Nyeri Open',
-      startDate: '2025-05-29',
-      endDate: '2025-05-31',
-      location: 'Nyeri',
-      rounds: 6,
-      confirmed: false,
-      status: 'Upcoming' satisfies TournamentStatus
-    },
-    {
       id: '742154',
       name: 'Nairobi County Open',
       startDate: '2025-05-30',
       endDate: '2025-06-02',
       location: 'Nairobi',
       rounds: 8,
-      confirmed: false,
+      confirmed: true,
+      status: 'Upcoming' satisfies TournamentStatus
+    },
+    {
+      id: '742153',
+      name: 'Nyeri Open',
+      startDate: '2025-06-06',
+      endDate: '2025-06-08',
+      location: 'Nyeri',
+      rounds: 6,
+      confirmed: true,
       status: 'Upcoming' satisfies TournamentStatus
     },
   ]
@@ -100,16 +90,6 @@ export default async function HomePage() {
       month: 'November 1-2',
       location: 'Bungoma',
       tentativeRounds: 6
-    },
-    {
-      id: '742150',
-      name: 'Kenya Open',
-      startDate: '2025-04-18',
-      endDate: '2025-04-21',
-      location: 'Nairobi',
-      rounds: 8,
-      confirmed: false,
-      status: 'postponed' satisfies TournamentStatus
     },
   ]
 
