@@ -3,34 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { CalendarDays, MapPin, Hash, Calendar, CheckCircle2, HelpCircle } from 'lucide-react'
 import { getTournaments } from '@/services/api'
-import { getShortTournamentName } from '@/utils/tournament'
+import { getShortTournamentName, formatTournamentDateWithOrdinals } from '@/utils/tournament'
 
-// Function to format a date with ordinal suffix (1st, 2nd, 3rd, etc.)
-function formatOrdinal(day: number): string {
-  if (day >= 11 && day <= 13) {
-    return day + 'th'
-  }
-  
-  switch (day % 10) {
-    case 1:
-      return day + 'st'
-    case 2:
-      return day + 'nd'
-    case 3:
-      return day + 'rd'
-    default:
-      return day + 'th'
-  }
-}
 
-// Function to format a date in the format "Month Day, Year" with ordinal suffix
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', { 
-    month: 'long', 
-    day: 'numeric', 
-    year: 'numeric' 
-  }).replace(/\d+/, match => formatOrdinal(parseInt(match)))
-}
 
 type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
 
@@ -123,26 +98,7 @@ export default async function HomePage() {
               }
 
               // Format dates from API response
-              let dates = 'TBD'
-              if (tournament.start_date) {
-                const startDate = new Date(tournament.start_date)
-                
-                if (tournament.end_date) {
-                  const endDate = new Date(tournament.end_date)
-                  
-                  // If same month and year
-                  if (startDate.getMonth() === endDate.getMonth() && 
-                      startDate.getFullYear() === endDate.getFullYear()) {
-                    dates = `${startDate.toLocaleDateString('en-US', { month: 'long' })} ${formatOrdinal(startDate.getDate())}-${formatOrdinal(endDate.getDate())}, ${startDate.getFullYear()}`
-                  } else {
-                    // Different months or years
-                    dates = `${formatDate(startDate)} - ${formatDate(endDate)}`
-                  }
-                } else {
-                  // Only start date available
-                  dates = formatDate(startDate)
-                }
-              }
+              const dates = formatTournamentDateWithOrdinals(tournament?.start_date, tournament?.end_date)
 
               return (
                 <Link

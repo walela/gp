@@ -13,7 +13,7 @@ import { getTournament, getTournamentAllResults, TournamentResult } from '@/serv
 import { notFound } from 'next/navigation'
 import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
-import { getShortTournamentName } from '@/utils/tournament'
+import { getShortTournamentName, formatTournamentDate } from '@/utils/tournament'
 
 interface TournamentPageProps {
   params: {
@@ -43,33 +43,7 @@ function calculateAverageTopTpr(results: TournamentResult[]) {
   return Math.round(top10.reduce((sum, r) => sum + (r.tpr || 0), 0) / top10.length)
 }
 
-// Function to format tournament date
-function formatTournamentDate(startDate?: string, endDate?: string) {
-  if (!startDate) return 'TBD'
 
-  // Parse dates
-  const start = new Date(startDate)
-  const end = endDate ? new Date(endDate) : null
-
-  // Format options
-  const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric', year: 'numeric' }
-
-  // Format start date
-  const startFormatted = start.toLocaleDateString('en-US', options)
-
-  // If no end date or same as start date, return just start date
-  if (!end || startDate === endDate) {
-    return startFormatted
-  }
-
-  // If same month and year, just show the day for end date
-  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-    return `${start.toLocaleDateString('en-US', { month: 'long' })} ${start.getDate()}-${end.getDate()}, ${start.getFullYear()}`
-  }
-
-  // Otherwise show full end date
-  return `${startFormatted} - ${end.toLocaleDateString('en-US', options)}`
-}
 
 // Function to get tournament location
 function getTournamentLocation(name: string) {
