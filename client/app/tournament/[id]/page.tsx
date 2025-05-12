@@ -54,11 +54,12 @@ function getTournamentLocation(name: string) {
 }
 
 export default async function TournamentPage({ params, searchParams }: TournamentPageProps) {
-  // Now we can safely access the properties
-  const id = params.id
-  const sort = searchParams.sort || 'points'
-  const dir = (searchParams.dir || 'desc') as 'asc' | 'desc'
-  const page = Number(searchParams.page || '1')
+  // Properly await the params and searchParams objects
+  const { id } = await params
+  const searchParamsData = await searchParams
+  const sort = searchParamsData.sort || 'points'
+  const dir = (searchParamsData.dir || 'desc') as 'asc' | 'desc'
+  const page = Number(searchParamsData.page || '1')
 
   // Fetch paginated tournament data for display
   const tournament = await getTournament(id, {
@@ -256,8 +257,8 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <CustomTableHead className="text-right py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
                 <SortableHeader column="tpr" label="TPR" align="right" basePath={`/tournament/${id}`} className="w-full" />
               </CustomTableHead>
-              <CustomTableHead className="text-center py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700">
-                <span className="w-full text-center block" title="Whether the result is valid for TPR calculations">TPR Valid</span>
+              <CustomTableHead className="text-center py-2 px-3 sm:py-4 sm:px-6 font-semibold text-gray-700 hidden md:table-cell">
+                <span className="w-full text-center block" title="Whether the result is valid for TPR calculations">Valid</span>
               </CustomTableHead>
             </CustomTableRow>
           </CustomTableHeader>
@@ -298,9 +299,18 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   {result.points}
                 </CustomTableCell>
                 <CustomTableCell className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">
-                  {result.tpr || '-'}
+                  <div className="flex items-center justify-end gap-1">
+                    {result.result_status !== 'valid' && result.tpr && (
+                      <span className="md:hidden" title={`Invalid: ${result.result_status}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                      </span>
+                    )}
+                    <span>{result.tpr || '-'}</span>
+                  </div>
                 </CustomTableCell>
-                <CustomTableCell className="text-center py-2 px-3 sm:py-4 sm:px-6 font-medium tabular-nums">
+                <CustomTableCell className="text-center py-2 px-3 sm:py-4 sm:px-6 font-medium tabular-nums hidden md:table-cell">
                   {result.result_status === 'valid' ? (
                     <div className="flex items-center justify-center">
                       <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
@@ -308,7 +318,6 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </span>
-                      <span className="ml-2 text-xs text-green-700 hidden md:inline">Valid</span>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center" title={`Invalid: ${result.result_status}`}>
@@ -317,7 +326,6 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                       </span>
-                      <span className="ml-2 text-xs text-red-700 hidden md:inline">Invalid</span>
                     </div>
                   )}
                 </CustomTableCell>
