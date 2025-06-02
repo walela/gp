@@ -3,9 +3,12 @@
 import { cn } from '@/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { ExportButton } from '@/components/ui/export-button'
 
 interface ViewSelectorProps {
   view: string
+  exportUrl?: string
+  exportFilename?: string
 }
 
 const viewOptions = [
@@ -15,7 +18,7 @@ const viewOptions = [
   { value: 'best_4', label: 'Best 4' }
 ]
 
-export function ViewSelector({ view }: ViewSelectorProps) {
+export function ViewSelector({ view, exportUrl, exportFilename }: ViewSelectorProps) {
   const searchParams = useSearchParams()
   
   const getViewUrl = (viewValue: string) => {
@@ -26,7 +29,7 @@ export function ViewSelector({ view }: ViewSelectorProps) {
   }
   
   return (
-    <div className="flex overflow-x-auto">
+    <div className="flex overflow-x-auto items-center gap-2">
       <div className="inline-flex rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-sm">
         {viewOptions.map(option => {
           const isActive = view === option.value;
@@ -46,6 +49,13 @@ export function ViewSelector({ view }: ViewSelectorProps) {
           );
         })}
       </div>
+      {exportUrl && (
+        <ExportButton 
+          url={exportUrl}
+          filename={exportFilename}
+          className="h-10 px-3 sm:px-4"
+        />
+      )}
     </div>
   )
 }

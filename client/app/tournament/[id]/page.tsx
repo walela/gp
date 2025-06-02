@@ -87,7 +87,6 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
           <ExportButton 
             url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/tournament/${id}/export?sort=${sort}&dir=${dir}`}
             filename={`${getShortTournamentName(tournament.name)}_results.csv`}
-            className="hidden sm:flex"
           />
         </div>
       </div>
@@ -223,16 +222,6 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
       </div>
 
       <Card className="rounded-lg border-0 shadow-sm overflow-hidden bg-white/95 backdrop-blur-sm p-0">
-        <div className="sm:hidden flex items-center justify-between px-4 py-3 bg-gray-50 border-b">
-          <span className="text-sm font-medium text-gray-700">Results</span>
-          <ExportButton 
-            url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/tournament/${id}/export?sort=${sort}&dir=${dir}`}
-            filename={`${getShortTournamentName(tournament.name)}_results.csv`}
-            className="h-8 px-3 text-xs"
-          >
-            <span className="hidden">Export</span>
-          </ExportButton>
-        </div>
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow className="bg-gray-50 border-b">

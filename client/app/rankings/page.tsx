@@ -60,11 +60,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             Current standings based on best tournament performances. Top 9 players by Best 4 Average are highlighted.
           </p>
         </div>
-        <ExportButton 
-          url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
-          filename={`GP_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
-          className="hidden sm:flex"
-        />
       </div>
 
       <div className="flex flex-col gap-4 mb-6">
@@ -77,7 +72,11 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       </div>
 
       <div className="mb-0">
-        <ViewSelector view={view} />
+        <ViewSelector 
+          view={view} 
+          exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+          exportFilename={`GP_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
+        />
       </div>
 
       <Card
@@ -85,16 +84,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           'rounded-bl-lg rounded-br-lg rounded-tr-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0',
           'rounded-tl-none'
         )}>
-        <div className="sm:hidden flex items-center justify-between px-4 py-3 bg-gray-50 border-b">
-          <span className="text-sm font-medium text-gray-700">Rankings</span>
-          <ExportButton 
-            url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
-            filename={`GP_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
-            className="h-8 px-3 text-xs"
-          >
-            <span className="hidden">Export</span>
-          </ExportButton>
-        </div>
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow>
