@@ -5,6 +5,9 @@ from db import Database
 import sqlite3
 import os
 import logging
+import csv
+import io
+from flask import Response
 
 logger = logging.getLogger(__name__)
 
@@ -374,6 +377,159 @@ def player(fide_id):
             # Could calculate from latest 'rating_in_tournament' if needed
         }
     )
+
+
+@app.route("/api/tournament/<tournament_id>/export")
+def export_tournament(tournament_id):
+    """Export tournament data as CSV."""
+    try:
+        data = db.get_tournament(tournament_id)
+        if not data:
+            return jsonify({"error": "Tournament not found"}), 404
+            
+        tournament_name = data["name"]
+        results = data["results"]
+
+        # Create CSV content
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
+        csv_writer.writerow(["Name", "FIDE ID", "Rating", "Federation", "Points", "TPR", "Has Walkover"])
+        for result in results:
+            csv_writer.writerow([
+                result["player"]["name"],
+                result["player"]["fide_id"],
+                result["player"]["rating"],
+                result["player"]["federation"],
+                result["points"],
+                result["tpr"],
+                result["has_walkover"]
+            ])
+
+        # Create CSV response
+        response = Response(output.getvalue(), content_type="text/csv")
+        response.headers["Content-Disposition"] = f"attachment; filename={tournament_name}_results.csv"
+        return response
+    except Exception as e:
+        logger.error(f"Error exporting tournament {tournament_id}: {e}")
+        return jsonify({"error": f"Error exporting tournament data: {str(e)}"}), 500
+
+
+@app.route("/api/rankings/export")
+def export_rankings():
+    """Export current GP rankings as CSV."""
+    try:
+        player_rankings = get_player_rankings()
+
+        # Create CSV content
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
+        csv_writer.writerow(["Name", "FIDE ID", "Rating", "Tournaments Played", "Best 1", "Tournament 1", "Best 2", "Best 3", "Best 4"])
+        for ranking in player_rankings:
+            csv_writer.writerow([
+                ranking["name"],
+                ranking["fide_id"],
+                ranking["rating"],
+                ranking["tournaments_played"],
+                ranking["best_1"],
+                ranking["tournament_1"],
+                ranking["best_2"],
+                ranking["best_3"],
+                ranking["best_4"]
+            ])
+
+        # Create CSV response
+        response = Response(output.getvalue(), content_type="text/csv")
+        response.headers["Content-Disposition"] = "attachment; filename=GP_rankings.csv"
+        return response
+    except Exception as e:
+        logger.error(f"Error exporting rankings: {e}")
+        return jsonify({"error": f"Error exporting rankings: {str(e)}"}), 500
+
+
+@app.route("/api/player/<fide_id>/export")
+def export_player(fide_id):
+    """Export player tournament history as CSV."""
+    player_details = None
+    tournament_results = []
+
+    with sqlite3.connect(db.db_file) as conn:
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        # Fetch player details
+        c.execute(
+            "SELECT name, fide_id, federation FROM players WHERE fide_id = ?",
+            (fide_id,),
+        )
+        player_row = c.fetchone()
+
+        if not player_row:
+            return jsonify({"error": "Player not found"}), 404
+
+        player_details = dict(player_row)
+
+        # Fetch tournament results
+        try:
+            c.execute(
+                """
+                SELECT 
+                    t.id as tournament_id, 
+                    t.name as tournament_name, 
+                    r.points, 
+                    r.tpr, 
+                    r.rating as rating_in_tournament,
+                    r.start_rank,
+                    r.result_status,
+                    CASE
+                        WHEN t.name LIKE '%Mavens%' THEN 8
+                        WHEN t.name LIKE '%Nairobi County%' THEN 8
+                        ELSE 6
+                    END as rounds
+                FROM results r
+                JOIN players p ON r.player_id = p.id 
+                JOIN tournaments t ON r.tournament_id = t.id
+                WHERE p.fide_id = ?
+                ORDER BY t.id DESC
+            """,
+                (fide_id,),
+            )
+            results_rows = c.fetchall()
+            tournament_results = [dict(row) for row in results_rows]
+        except Exception as e:
+            logger.error(f"Error fetching player results: {e}")
+
+    try:
+        # Create CSV content
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
+        
+        # Write player info
+        csv_writer.writerow([f"Player: {player_details['name']}"])
+        csv_writer.writerow([f"FIDE ID: {player_details['fide_id']}"])
+        csv_writer.writerow([f"Federation: {player_details['federation']}"])
+        csv_writer.writerow([])  # Empty row
+        
+        # Write tournament results header
+        csv_writer.writerow(["Tournament", "Rating", "Points", "Rounds", "TPR", "Status"])
+        
+        # Write results
+        for result in tournament_results:
+            csv_writer.writerow([
+                result["tournament_name"],
+                result["rating_in_tournament"] or "Unrated",
+                result["points"],
+                result["rounds"],
+                result["tpr"] or "-",
+                result.get("result_status", "valid")
+            ])
+
+        # Create CSV response
+        response = Response(output.getvalue(), content_type="text/csv")
+        response.headers["Content-Disposition"] = f"attachment; filename={player_details['name'].replace(' ', '_')}_tournament_history.csv"
+        return response
+    except Exception as e:
+        logger.error(f"Error exporting player data: {e}")
+        return jsonify({"error": f"Error exporting player data: {str(e)}"}), 500
 
 
 if __name__ == "__main__":

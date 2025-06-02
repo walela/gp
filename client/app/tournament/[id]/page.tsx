@@ -14,6 +14,7 @@ import { notFound } from 'next/navigation'
 import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
 import { getShortTournamentName, formatTournamentDate } from '@/utils/tournament'
+import { ExportButton } from '@/components/ui/export-button'
 
 interface TournamentPageProps {
   params: {
@@ -81,8 +82,12 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:gap-8">
-        <div className="flex flex-col gap-2 md:gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-4">
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{getShortTournamentName(tournament.name)}</h1>
+          <ExportButton 
+            url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/tournament/${id}/export`}
+            filename={`${getShortTournamentName(tournament.name)}_results.csv`}
+          />
         </div>
       </div>
 

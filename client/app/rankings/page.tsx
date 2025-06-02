@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { Pagination } from '@/components/ui/pagination'
 import { getShortTournamentName } from '@/utils/tournament'
+import { ExportButton } from '@/components/ui/export-button'
 
 interface RankingsPageProps {
   searchParams: {
@@ -52,11 +53,17 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
-        <p className="text-muted-foreground">
-          Current standings based on best tournament performances. Top 9 players by Best 4 Average are highlighted.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
+          <p className="text-muted-foreground">
+            Current standings based on best tournament performances. Top 9 players by Best 4 Average are highlighted.
+          </p>
+        </div>
+        <ExportButton 
+          url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export`}
+          filename="GP_rankings.csv"
+        />
       </div>
 
       <div className="flex flex-col gap-4 mb-6">

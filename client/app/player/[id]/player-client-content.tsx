@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card'
 import { PlayerDetails, PlayerResult } from '@/services/api'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, Hash, CheckCircle, XCircle } from 'lucide-react'
-import { getShortTournamentName } from '@/utils/tournament'
+import { getShortTournamentName, formatTournamentDate } from '@/utils/tournament'
 import {
   CustomTable,
   CustomTableHeader,
@@ -14,6 +14,8 @@ import {
   CustomTableHead,
   CustomTableCell
 } from '@/components/ui/custom-table'
+import { Badge } from '@/components/ui/badge'
+import { ExportButton } from '@/components/ui/export-button'
 
 interface PlayerClientContentProps {
   player: PlayerDetails
@@ -32,21 +34,27 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
       {/* Player Header */}
       <Card className="shadow-sm rounded-md overflow-hidden py-0 gap-0">
         <div className="p-4 border-b">
-          <div className="flex flex-col space-y-3">
-            <h1 className="text-2xl sm:text-3xl font-bold">{player.name}</h1>
-            
-            {player.fide_id && (
-              <div className="flex items-center gap-2">
-                <a
-                  href={`https://ratings.fide.com/profile/${player.fide_id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline text-sm flex items-center gap-1.5">
-                  FIDE ID: {player.fide_id}
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </div>
-            )}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+            <div className="flex flex-col space-y-3">
+              <h1 className="text-2xl sm:text-3xl font-bold">{player.name}</h1>
+              
+              {player.fide_id && (
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`https://ratings.fide.com/profile/${player.fide_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline text-sm flex items-center gap-1.5">
+                    FIDE ID: {player.fide_id}
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+              )}
+            </div>
+            <ExportButton 
+              url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/player/${player.fide_id}/export`}
+              filename={`${player.name.replace(' ', '_')}_tournament_history.csv`}
+            />
           </div>
         </div>
 
