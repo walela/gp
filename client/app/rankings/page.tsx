@@ -16,7 +16,6 @@ import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { Pagination } from '@/components/ui/pagination'
 import { getShortTournamentName } from '@/utils/tournament'
-import { ExportButton } from '@/components/ui/export-button'
 
 interface RankingsPageProps {
   searchParams: {

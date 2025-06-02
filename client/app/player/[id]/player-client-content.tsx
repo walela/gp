@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card'
 import { PlayerDetails, PlayerResult } from '@/services/api'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, Hash, CheckCircle, XCircle } from 'lucide-react'
-import { getShortTournamentName, formatTournamentDate } from '@/utils/tournament'
+import { getShortTournamentName } from '@/utils/tournament'
 import {
   CustomTable,
   CustomTableHeader,
@@ -14,7 +14,6 @@ import {
   CustomTableHead,
   CustomTableCell
 } from '@/components/ui/custom-table'
-import { Badge } from '@/components/ui/badge'
 import { ExportButton } from '@/components/ui/export-button'
 
 interface PlayerClientContentProps {
