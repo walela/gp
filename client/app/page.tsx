@@ -19,7 +19,7 @@ export default async function HomePage() {
       startDate: '2025-06-06',
       endDate: '2025-06-08',
       location: 'Nyeri',
-      rounds: 6,
+      rounds: 8,
       confirmed: true,
       status: 'Upcoming' satisfies TournamentStatus
     },
