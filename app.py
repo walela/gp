@@ -20,7 +20,7 @@ TOURNAMENT_NAMES = {
     "1135144": "Kisumu Open",
     "1165146": "The East Africa Chess Championship Nakuru Grand Prix 2025",
     "1173578": "Kiambu Open",
-    "1188044": "Nairobi County Open",
+    "1188044": "Nairobi County Chess Championship 2025",
 }
 
 PLAYERS_PER_PAGE = 25
