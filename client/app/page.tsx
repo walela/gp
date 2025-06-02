@@ -14,16 +14,6 @@ export default async function HomePage() {
 
   const upcomingTournaments = [
     {
-      id: '742154',
-      name: 'Nairobi County Open',
-      startDate: '2025-05-30',
-      endDate: '2025-06-02',
-      location: 'Nairobi',
-      rounds: 8,
-      confirmed: true,
-      status: 'Upcoming' satisfies TournamentStatus
-    },
-    {
       id: '742153',
       name: 'Nyeri Open',
       startDate: '2025-06-06',
@@ -91,7 +81,7 @@ export default async function HomePage() {
 
               // Determine rounds based on tournament name
               let rounds = 6
-              if (tournament.name.includes('Mavens')) {
+              if (tournament.name.includes('Mavens') || tournament.name.includes('Nairobi County')) {
                 rounds = 8
               }
 

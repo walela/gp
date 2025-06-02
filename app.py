@@ -20,6 +20,7 @@ TOURNAMENT_NAMES = {
     "1135144": "Kisumu Open",
     "1165146": "The East Africa Chess Championship Nakuru Grand Prix 2025",
     "1173578": "Kiambu Open",
+    "1188044": "Nairobi County Open",
 }
 
 PLAYERS_PER_PAGE = 25
@@ -219,7 +220,7 @@ def get_player_rankings():
 @app.route("/api/rankings")
 def rankings():
     """Get current GP rankings."""
-    sort = request.args.get("sort", "best_3")
+    sort = request.args.get("sort", "best_4")
     dir = request.args.get("dir", "desc")
     page = int(request.args.get("page", "1"))
     search_query = request.args.get("q")  # Get the search query
@@ -244,7 +245,7 @@ def rankings():
         "best_2": "best_2",
         "best_3": "best_3",
         "best_4": "best_4",
-    }.get(sort, "best_3")
+    }.get(sort, "best_4")
 
     player_rankings.sort(
         key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
@@ -305,6 +306,7 @@ def player(fide_id):
                     r.result_status,
                     CASE
                         WHEN t.name LIKE '%Mavens%' THEN 8
+                        WHEN t.name LIKE '%Nairobi County%' THEN 8
                         ELSE 6
                     END as rounds
                 FROM results r
@@ -330,6 +332,7 @@ def player(fide_id):
                         r.result_status,
                         CASE
                             WHEN t.name LIKE '%Mavens%' THEN 8
+                            WHEN t.name LIKE '%Nairobi County%' THEN 8
                             ELSE 6
                         END as rounds
                     FROM results r
