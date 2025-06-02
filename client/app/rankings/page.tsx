@@ -61,8 +61,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           </p>
         </div>
         <ExportButton 
-          url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export`}
-          filename="GP_rankings.csv"
+          url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+          filename={`GP_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
+          className="hidden sm:flex"
         />
       </div>
 
@@ -84,6 +85,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           'rounded-bl-lg rounded-br-lg rounded-tr-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0',
           'rounded-tl-none'
         )}>
+        <div className="sm:hidden flex items-center justify-between px-4 py-3 bg-gray-50 border-b">
+          <span className="text-sm font-medium text-gray-700">Rankings</span>
+          <ExportButton 
+            url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+            filename={`GP_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
+            className="h-8 px-3 text-xs"
+          >
+            <span className="hidden">Export</span>
+          </ExportButton>
+        </div>
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow>

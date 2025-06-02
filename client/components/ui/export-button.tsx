@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import { useState } from 'react'
+import { cn } from '@/lib/utils'
 
 interface ExportButtonProps {
   url: string
@@ -44,10 +45,22 @@ export function ExportButton({ url, filename, className, children }: ExportButto
       disabled={loading}
       size="sm"
       variant="outline"
-      className={className}
+      className={cn(
+        "flex items-center gap-2 transition-all duration-200",
+        "hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+        className
+      )}
     >
-      <Download className="h-4 w-4 mr-2" />
-      {loading ? 'Exporting...' : (children || 'Export CSV')}
+      <Download className={cn(
+        "h-4 w-4",
+        loading && "animate-bounce"
+      )} />
+      {loading ? (
+        <span className="hidden sm:inline">Exporting...</span>
+      ) : (
+        children || <span className="hidden sm:inline">Export CSV</span>
+      )}
     </Button>
   )
 } 

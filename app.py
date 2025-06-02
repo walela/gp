@@ -382,6 +382,9 @@ def player(fide_id):
 @app.route("/api/tournament/<tournament_id>/export")
 def export_tournament(tournament_id):
     """Export tournament data as CSV."""
+    sort = request.args.get("sort", "points")
+    dir = request.args.get("dir", "desc")
+    
     try:
         data = db.get_tournament(tournament_id)
         if not data:
@@ -390,24 +393,38 @@ def export_tournament(tournament_id):
         tournament_name = data["name"]
         results = data["results"]
 
+        # Sort results based on parameters
+        if sort == "name":
+            results.sort(key=lambda x: x["player"]["name"].lower(), reverse=dir == "desc")
+        elif sort == "rating":
+            results.sort(key=lambda x: x.get("rating") or x["player"]["rating"] or 0, reverse=dir == "desc")
+        elif sort == "points":
+            results.sort(key=lambda x: x["points"], reverse=dir == "desc")
+        elif sort == "tpr":
+            results.sort(key=lambda x: x["tpr"] or 0, reverse=dir == "desc")
+        elif sort == "start_rank":
+            results.sort(key=lambda x: x.get("start_rank") or 999999, reverse=dir == "desc")
+
         # Create CSV content
         output = io.StringIO()
         csv_writer = csv.writer(output)
-        csv_writer.writerow(["Name", "FIDE ID", "Rating", "Federation", "Points", "TPR", "Has Walkover"])
-        for result in results:
+        csv_writer.writerow(["Rank", "Name", "FIDE ID", "Rating", "Federation", "Points", "TPR", "Valid Result"])
+        
+        for idx, result in enumerate(results, 1):
             csv_writer.writerow([
+                idx,
                 result["player"]["name"],
                 result["player"]["fide_id"],
-                result["player"]["rating"],
+                result.get("rating") or result["player"]["rating"] or "Unrated",
                 result["player"]["federation"],
                 result["points"],
-                result["tpr"],
-                result["has_walkover"]
+                result["tpr"] or "-",
+                "Yes" if result.get("result_status", "valid") == "valid" else "No"
             ])
 
         # Create CSV response
         response = Response(output.getvalue(), content_type="text/csv")
-        response.headers["Content-Disposition"] = f"attachment; filename={tournament_name}_results.csv"
+        response.headers["Content-Disposition"] = f"attachment; filename={tournament_name.replace(' ', '_')}_results.csv"
         return response
     except Exception as e:
         logger.error(f"Error exporting tournament {tournament_id}: {e}")
@@ -417,21 +434,51 @@ def export_tournament(tournament_id):
 @app.route("/api/rankings/export")
 def export_rankings():
     """Export current GP rankings as CSV."""
+    sort = request.args.get("sort", "best_4")
+    dir = request.args.get("dir", "desc")
+    search_query = request.args.get("q")
+    
     try:
         player_rankings = get_player_rankings()
+        reverse = dir == "desc"
+
+        # Filter by search query if provided
+        if search_query:
+            search_query_lower = search_query.lower()
+            player_rankings = [
+                p for p in player_rankings if search_query_lower in p["name"].lower()
+            ]
+
+        # Map frontend sort keys to data keys
+        sort_key = {
+            "name": "name",
+            "rating": "rating",
+            "tournaments_played": "tournaments_played",
+            "best_1": "best_1",
+            "best_2": "best_2",
+            "best_3": "best_3",
+            "best_4": "best_4",
+        }.get(sort, "best_4")
+
+        player_rankings.sort(
+            key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
+            reverse=reverse,
+        )
 
         # Create CSV content
         output = io.StringIO()
         csv_writer = csv.writer(output)
-        csv_writer.writerow(["Name", "FIDE ID", "Rating", "Tournaments Played", "Best 1", "Tournament 1", "Best 2", "Best 3", "Best 4"])
-        for ranking in player_rankings:
+        csv_writer.writerow(["Rank", "Name", "FIDE ID", "Rating", "Tournaments Played", "Best 1 TPR", "Tournament (Best 1)", "Best 2 Avg", "Best 3 Avg", "Best 4 Avg"])
+        
+        for idx, ranking in enumerate(player_rankings, 1):
             csv_writer.writerow([
+                idx,
                 ranking["name"],
                 ranking["fide_id"],
-                ranking["rating"],
+                ranking["rating"] or "Unrated",
                 ranking["tournaments_played"],
                 ranking["best_1"],
-                ranking["tournament_1"],
+                ranking["tournament_1"] or "-",
                 ranking["best_2"],
                 ranking["best_3"],
                 ranking["best_4"]
@@ -439,7 +486,11 @@ def export_rankings():
 
         # Create CSV response
         response = Response(output.getvalue(), content_type="text/csv")
-        response.headers["Content-Disposition"] = "attachment; filename=GP_rankings.csv"
+        filename = "GP_rankings"
+        if search_query:
+            filename += f"_search_{search_query.replace(' ', '_')}"
+        filename += f"_by_{sort}.csv"
+        response.headers["Content-Disposition"] = f"attachment; filename={filename}"
         return response
     except Exception as e:
         logger.error(f"Error exporting rankings: {e}")
