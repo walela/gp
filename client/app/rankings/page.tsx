@@ -71,7 +71,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         </div>
       </div>
 
-      <div className="mb-0">
+      <div className="mb-0 w-full">
         <ViewSelector 
           view={view} 
           exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}

@@ -29,7 +29,7 @@ export function ViewSelector({ view, exportUrl, exportFilename }: ViewSelectorPr
   }
   
   return (
-    <div className="flex overflow-x-auto items-center gap-2">
+    <div className="flex items-center justify-between gap-2 w-full">
       <div className="inline-flex rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-sm">
         {viewOptions.map(option => {
           const isActive = view === option.value;
@@ -53,7 +53,7 @@ export function ViewSelector({ view, exportUrl, exportFilename }: ViewSelectorPr
         <ExportButton 
           url={exportUrl}
           filename={exportFilename}
-          className="h-10 px-3 sm:px-4"
+          className="h-9"
         />
       )}
     </div>
