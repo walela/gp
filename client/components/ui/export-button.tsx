@@ -44,6 +44,7 @@ export function ExportButton({ url, filename, className, children }: ExportButto
       disabled={loading}
       className={cn(
         "group relative inline-flex items-center justify-center gap-2 rounded-lg",
+        "hidden sm:inline-flex",
         "px-3 py-2 sm:px-4",
         "bg-gradient-to-b from-blue-500 to-blue-600 text-white",
         "shadow-lg shadow-blue-500/25",
