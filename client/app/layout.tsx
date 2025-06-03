@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
-const inter = Inter({ subsets: ['latin'] })
+const roboto = Roboto({ 
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700']
+})
 
 export const metadata: Metadata = {
   title: 'Chess Kenya 2024-2025 Grand Prix',
@@ -16,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={roboto.className}>
         {/* Chess-themed background with subtle checkerboard pattern */}
         <div className="fixed inset-0 -z-10 overflow-hidden">
           {/* Enhanced gradient background */}

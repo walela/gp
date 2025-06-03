@@ -17,6 +17,27 @@ import { ViewSelector } from '@/components/rankings/view-selector'
 import { Pagination } from '@/components/ui/pagination'
 import { getShortTournamentName } from '@/utils/tournament'
 
+// Smart name abbreviation function for very long names
+function getDisplayName(fullName: string): string {
+  // If name is reasonably short, return as-is
+  if (fullName.length <= 22) {
+    return fullName
+  }
+  
+  // For very long names, abbreviate only the last word
+  const parts = fullName.trim().split(' ')
+  if (parts.length >= 2) {
+    // Keep everything except the last part, then abbreviate the last part
+    const allButLast = parts.slice(0, -1).join(' ')
+    const lastPart = parts[parts.length - 1]
+    
+    return `${allButLast} ${lastPart.charAt(0)}.`
+  }
+  
+  // Single name that's too long - just truncate
+  return fullName.substring(0, 20) + '...'
+}
+
 interface RankingsPageProps {
   searchParams: {
     sort?: string
@@ -33,7 +54,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
   // Now we can safely access the properties
   const sort = params.sort || 'best_4'
-  const dir = (params.dir || 'desc') as 'asc' | 'desc'
+  const dir = params.dir || 'desc'
   const page = Number(params.page || '1')
   const view = params.view || 'best_4'
   const search = params.q || ''
@@ -148,10 +169,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                         )}
                         title={player.name}>
                         <span className="sm:hidden flex items-center gap-1">
-                          {player.name.length > 15 ? player.name.split(' ').slice(0, 2).join(' ') + '...' : player.name}
+                          {getDisplayName(player.name)}
                           <span className="text-muted-foreground/50">›</span>
                         </span>
-                        <span className="hidden sm:block group-hover:underline">{player.name}</span>
+                        <span className="hidden sm:block group-hover:underline">{getDisplayName(player.name)}</span>
                       </Link>
                     ) : (
                       <span
@@ -160,7 +181,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                           top9ByBest4.has(player.name) ? 'text-blue-700' : ''
                         )}
                         title={player.name}>
-                        {player.name}
+                        {getDisplayName(player.name)}
                       </span>
                     )}
                   </div>

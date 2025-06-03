@@ -250,10 +250,31 @@ def rankings():
         "best_4": "best_4",
     }.get(sort, "best_4")
 
-    player_rankings.sort(
-        key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
-        reverse=reverse,
-    )
+    # Implement cascading sort for best_4 rankings
+    if sort_key == "best_4":
+        def cascading_sort_key(player):
+            # Use best_4 if player has 4+ tournaments
+            if player["tournaments_played"] >= 4 and player["best_4"] > 0:
+                return (4, player["best_4"])  # Priority 4 (highest)
+            # Use best_3 if player has 3+ tournaments
+            elif player["tournaments_played"] >= 3 and player["best_3"] > 0:
+                return (3, player["best_3"])  # Priority 3
+            # Use best_2 if player has 2+ tournaments
+            elif player["tournaments_played"] >= 2 and player["best_2"] > 0:
+                return (2, player["best_2"])  # Priority 2
+            # Use best_1 if player has 1+ tournaments
+            elif player["tournaments_played"] >= 1 and player["best_1"] > 0:
+                return (1, player["best_1"])  # Priority 1 (lowest)
+            else:
+                return (0, 0)  # No valid data
+        
+        player_rankings.sort(key=cascading_sort_key, reverse=reverse)
+    else:
+        # Use original single-column sort for other columns
+        player_rankings.sort(
+            key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
+            reverse=reverse,
+        )
 
     total_pages = (len(player_rankings) + per_page - 1) // per_page
     start = (page - 1) * per_page
@@ -460,10 +481,31 @@ def export_rankings():
             "best_4": "best_4",
         }.get(sort, "best_4")
 
-        player_rankings.sort(
-            key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
-            reverse=reverse,
-        )
+        # Implement cascading sort for best_4 rankings
+        if sort_key == "best_4":
+            def cascading_sort_key(player):
+                # Use best_4 if player has 4+ tournaments
+                if player["tournaments_played"] >= 4 and player["best_4"] > 0:
+                    return (4, player["best_4"])  # Priority 4 (highest)
+                # Use best_3 if player has 3+ tournaments
+                elif player["tournaments_played"] >= 3 and player["best_3"] > 0:
+                    return (3, player["best_3"])  # Priority 3
+                # Use best_2 if player has 2+ tournaments
+                elif player["tournaments_played"] >= 2 and player["best_2"] > 0:
+                    return (2, player["best_2"])  # Priority 2
+                # Use best_1 if player has 1+ tournaments
+                elif player["tournaments_played"] >= 1 and player["best_1"] > 0:
+                    return (1, player["best_1"])  # Priority 1 (lowest)
+                else:
+                    return (0, 0)  # No valid data
+            
+            player_rankings.sort(key=cascading_sort_key, reverse=reverse)
+        else:
+            # Use original single-column sort for other columns
+            player_rankings.sort(
+                key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
+                reverse=reverse,
+            )
 
         # Create CSV content
         output = io.StringIO()
