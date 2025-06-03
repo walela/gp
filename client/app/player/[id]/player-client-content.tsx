@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { PlayerDetails, PlayerResult } from '@/services/api'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, Hash, CheckCircle, XCircle } from 'lucide-react'
+import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, Hash, CheckCircle } from 'lucide-react'
 import { getShortTournamentName } from '@/utils/tournament'
 import {
   CustomTable,
@@ -24,7 +24,7 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
   // Calculate performance metrics
   const totalTournaments = player.results.length
   const bestTpr = Math.max(...player.results.map(r => r.tpr || 0))
-  const validTprResults = player.results.filter(r => r.tpr)
+  const validTprResults = player.results.filter(r => r.tpr && (!r.result_status || r.result_status === 'valid'))
   const averageTpr =
     validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
 
@@ -115,14 +115,14 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                 </div>
               </div>
 
-              <div className="p-4 grid grid-cols-2 gap-y-4">
+              <div className="p-3 grid grid-cols-2 gap-y-4">
                 <div className="flex items-center">
                   <div className="bg-blue-50 rounded-full p-2 mr-3">
                     <Hash className="h-4 w-4 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Starting Rank</p>
-                    <p className="font-medium text-lg">{result.start_rank ?? '-'}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Starting Rank</p>
+                    <p className="font-medium">{result.start_rank ?? '-'}</p>
                   </div>
                 </div>
                 
@@ -131,8 +131,8 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                     <TrendingUp className="h-4 w-4 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Rating</p>
-                    <p className="font-medium text-lg">{result.rating_in_tournament}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Rating</p>
+                    <p className="font-medium">{result.rating_in_tournament}</p>
                   </div>
                 </div>
                 
@@ -141,8 +141,8 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                     <Trophy className="h-4 w-4 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Points</p>
-                    <p className="font-medium text-lg">{result.points.toFixed(1)}/{result.rounds}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Points</p>
+                    <p className="font-medium">{result.points.toFixed(1)}/{result.rounds}</p>
                   </div>
                 </div>
                 
@@ -151,18 +151,22 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                     <Star className="h-4 w-4 text-amber-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">TPR</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">TPR</p>
                     <div className="flex items-center">
-                      <p className="font-medium text-lg">{result.tpr ?? '-'}</p>
-                      {result.result_status && result.result_status !== 'valid' && (
-                        <span className="ml-2" title="Invalid result - not counted for rankings">
-                          <XCircle className="h-4 w-4 text-red-500" />
-                        </span>
-                      )}
-                      {(!result.result_status || result.result_status === 'valid') && result.tpr && (
-                        <span className="ml-2" title="Valid result">
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        </span>
+                      {result.result_status && result.result_status !== 'valid' ? (
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium text-gray-400 line-through">{result.tpr ?? '-'}</span>
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md border border-red-200">
+                            Invalid
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium">{result.tpr ?? '-'}</span>
+                          {result.tpr && (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -215,16 +219,20 @@ export default function PlayerClientContent({ player }: PlayerClientContentProps
                     <CustomTableCell className="text-right py-3 px-5 font-medium">{result.points.toFixed(1)}/{result.rounds}</CustomTableCell>
                     <CustomTableCell className="text-right py-3 px-5 font-medium">
                       <div className="flex items-center justify-end">
-                        <span>{result.tpr ?? '-'}</span>
-                        {result.result_status && result.result_status !== 'valid' && (
-                          <span className="ml-2" title="Invalid result - not counted for rankings">
-                            <XCircle className="h-4 w-4 text-red-500" />
-                          </span>
-                        )}
-                        {(!result.result_status || result.result_status === 'valid') && result.tpr && (
-                          <span className="ml-2" title="Valid result">
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                          </span>
+                        {result.result_status && result.result_status !== 'valid' ? (
+                          <div className="flex items-center space-x-2">
+                            <span className="font-medium text-gray-400 line-through">{result.tpr ?? '-'}</span>
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md border border-red-200">
+                              Invalid
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-2">
+                            <span className="font-medium">{result.tpr ?? '-'}</span>
+                            {result.tpr && (
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                            )}
+                          </div>
                         )}
                       </div>
                     </CustomTableCell>
