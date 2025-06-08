@@ -83,8 +83,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
-          <p className="text-muted-foreground">
-            Provisional standings. Top 9 players by Best 4 Average plus current Kenya #1 are highlighted.
+          <p className="text-pretty text-gray-600 text-sm tracking-tighter leading-tighter">
+            Provisional standings. Top 9 players by Best 4 Average and the current Kenya #1 are highlighted.
           </p>
         </div>
       </div>
