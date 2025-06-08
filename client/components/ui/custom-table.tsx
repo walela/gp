@@ -30,7 +30,7 @@ export function CustomTableRow({ className, ...props }: React.HTMLAttributes<HTM
 }
 
 export function CustomTableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th scope="col" className={`px-3 py-4 sm:px-4 md:px-6 whitespace-nowrap font-semibold ${className || ''}`} {...props} />;
+  return <th scope="col" className={`px-2 py-4 sm:px-4 md:px-6 whitespace-nowrap font-semibold ${className || ''}`} {...props} />;
 }
 
 interface CustomTableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
@@ -42,10 +42,10 @@ export function CustomTableCell({ className, isHeader, ...props }: CustomTableCe
     return (
       <th
         scope="row"
-        className={`px-3 py-4 sm:px-4 md:px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white ${className || ''}`}
+        className={`px-2 py-4 sm:px-4 md:px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white ${className || ''}`}
         {...props}
       />
     );
   }
-  return <td className={`px-3 py-3 sm:px-4 md:px-6 ${className || ''}`} {...props} />;
+  return <td className={`px-2 py-3 sm:px-4 md:px-6 ${className || ''}`} {...props} />;
 }
