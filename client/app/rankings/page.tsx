@@ -96,11 +96,14 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               name="q" 
               placeholder="Search players..." 
               defaultValue={search} 
-              className="pr-12 pl-4 h-11 bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 shadow-sm hover:shadow-md group-focus-within:shadow-md" 
+              className="pr-16 pl-4 h-11 bg-white/80 backdrop-blur-sm border-gray-200 transition-all duration-200 shadow-sm hover:shadow-md group-focus-within:shadow-md rounded-l-[0.625rem]" 
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <SearchIcon className="h-5 w-5 text-muted-foreground group-focus-within:text-blue-500 transition-colors duration-200" />
-            </div>
+            <button 
+              type="submit" 
+              className="absolute right-0 top-0 h-full px-4 bg-gray-200 hover:bg-blue-100 hover:text-blue-600 rounded-l-none rounded-r-[0.625rem] transition-all duration-200 border border-l-0 border-gray-200 hover:border-blue-300"
+            >
+              <SearchIcon className="h-4 w-4 text-gray-600" />
+            </button>
           </form>
         </div>
       </div>
