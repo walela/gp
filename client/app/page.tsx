@@ -13,14 +13,6 @@ type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
 export default async function HomePage() {
   const tournaments = await getTournaments()
   
-  // Debug logging for production issues
-  console.log('=== TOURNAMENT DEBUG ===')
-  console.log('Total tournaments fetched:', tournaments.length)
-  console.log('Tournament names:', tournaments.map(t => t.name))
-  console.log('QUO VADIS found:', tournaments.filter(t => t.name.includes('QUO VADIS')))
-  console.log('API URL:', process.env.NEXT_PUBLIC_API_URL)
-  console.log('========================')
-
   const upcomingTournaments: Array<{
     id: string;
     name: string;
