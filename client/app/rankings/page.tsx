@@ -71,13 +71,11 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const { topPlayers } = await getTopPlayers({ count: 9, sortBy: 'best_4' })
   const top9ByBest4 = new Set(topPlayers.map(p => p.fide_id || p.name))
   
-  // Find Kenya #1 (highest rated player)
-  const kenyaNumber1 = rankings.reduce((highest, player) => {
-    const playerRating = player.rating || 0
-    const highestRating = highest.rating || 0
-    return playerRating > highestRating ? player : highest
-  }, rankings[0])
-  const kenyaNumber1Id = kenyaNumber1?.fide_id || kenyaNumber1?.name
+  // Kenya #1 is Mcligeyo (ratings are outdated)
+  const kenyaNumber1Player = rankings.find(player => 
+    player.name.toLowerCase().includes('mcligeyo')
+  )
+  const kenyaNumber1Id = kenyaNumber1Player?.fide_id || kenyaNumber1Player?.name
 
   return (
     <div className="space-y-6">
