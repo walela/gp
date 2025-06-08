@@ -85,16 +85,24 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
           <p className="text-muted-foreground">
-            Current grand prix standings. Top 9 players by Best 4 Average plus current Kenya #1 are highlighted.
+            Provisional standings. Top 9 players by Best 4 Average plus current Kenya #1 are highlighted.
           </p>
         </div>
       </div>
 
       <div className="flex flex-col gap-4 mb-6">
-        <div className="relative w-full sm:w-[300px]">
-          <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <form>
-            <Input type="search" name="q" placeholder="Search players..." defaultValue={search} className="pl-9" />
+        <div className="relative w-full sm:w-[350px]">
+          <form className="relative group">
+            <Input 
+              type="search" 
+              name="q" 
+              placeholder="Search players..." 
+              defaultValue={search} 
+              className="pr-12 pl-4 h-11 bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 shadow-sm hover:shadow-md group-focus-within:shadow-md" 
+            />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+              <SearchIcon className="h-5 w-5 text-muted-foreground group-focus-within:text-blue-500 transition-colors duration-200" />
+            </div>
           </form>
         </div>
       </div>
