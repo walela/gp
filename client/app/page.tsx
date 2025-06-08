@@ -175,7 +175,7 @@ export default async function HomePage() {
 
         <div>
           <h2 className="text-xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
             Grand Prix tournaments within the next 60 days. Confirmed tournaments are indicated with a green check.
           </p>
 
@@ -279,7 +279,7 @@ export default async function HomePage() {
 
         <div>
           <h2 className="text-xl font-bold tracking-tight text-gray-700">Planned Tournaments</h2>
-          <p className="text-muted-foreground mb-4">Future tournaments with tentative dates and details</p>
+          <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">Future tournaments with tentative dates and details</p>
 
           <div className="flex flex-wrap gap-4">
             {plannedTournaments.map(tournament => (
