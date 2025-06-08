@@ -12,14 +12,23 @@ type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
 export default async function HomePage() {
   const tournaments = await getTournaments()
 
-  const upcomingTournaments = [
+  const upcomingTournaments: Array<{
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    location: string;
+    rounds: number;
+    confirmed: boolean;
+    status: TournamentStatus;
+  }> = [
     {
-      id: '742153',
-      name: 'Nyeri Open',
-      startDate: '2025-06-06',
-      endDate: '2025-06-08',
-      location: 'Nyeri',
-      rounds: 8,
+      id: '1200000',
+      name: 'Kitale Open',
+      startDate: '2025-07-19',
+      endDate: '2025-07-20',
+      location: 'Kitale',
+      rounds: 6,
       confirmed: true,
       status: 'Upcoming' satisfies TournamentStatus
     },
@@ -75,11 +84,13 @@ export default async function HomePage() {
                 location = 'Nairobi'
               } else if (tournament.name.includes('Nakuru')) {
                 location = 'Nakuru'
+              } else if (tournament.name.includes('QUO VADIS')) {
+                location = 'Nyeri'
               }
 
               // Determine rounds based on tournament name
               let rounds = 6
-              if (tournament.name.includes('Mavens') || tournament.name.includes('Nairobi County')) {
+              if (tournament.name.includes('Mavens') || tournament.name.includes('Nairobi County') || tournament.name.includes('QUO VADIS')) {
                 rounds = 8
               }
 

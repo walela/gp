@@ -69,6 +69,7 @@ export interface PlayerRanking {
   best_2: number
   best_3: number
   best_4: number
+  qualification_probability: number | null
 }
 
 export interface RankingsResponse {

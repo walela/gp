@@ -51,6 +51,7 @@ function getTournamentLocation(name: string) {
   if (name.includes('Eldoret')) return 'Eldoret, Kenya'
   if (name.includes('Kisumu')) return 'Kisumu, Kenya'
   if (name.includes('Nakuru')) return 'Nakuru, Kenya'
+  if (name.includes('QUO VADIS')) return 'Nyeri, Kenya'
   return 'Nairobi, Kenya'
 }
 
@@ -120,7 +121,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <Trophy className="h-4 w-4 text-amber-600 flex-shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">Format</p>
-                <p className="text-sm font-medium">{tournament.name.includes('Mavens') || tournament.name.includes('Nairobi County') ? '8 rounds' : '6 rounds'}</p>
+                <p className="text-sm font-medium">{tournament.name.includes('Mavens') || tournament.name.includes('Nairobi County') || tournament.name.includes('QUO VADIS') ? '8 rounds' : '6 rounds'}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -187,7 +188,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               </div>
               <div>
                 <p className="text-xs text-gray-500">Format</p>
-                <p className="font-medium text-sm">{tournament.name.includes('Mavens') || tournament.name.includes('Nairobi County') ? '8 rounds' : '6 rounds'}</p>
+                <p className="font-medium text-sm">{tournament.name.includes('Mavens') || tournament.name.includes('Nairobi County') || tournament.name.includes('QUO VADIS') ? '8 rounds' : '6 rounds'}</p>
               </div>
             </div>
 

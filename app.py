@@ -24,6 +24,7 @@ TOURNAMENT_NAMES = {
     "1165146": "The East Africa Chess Championship Nakuru Grand Prix 2025",
     "1173578": "Kiambu Open",
     "1188044": "Nairobi County Open",
+    "1193135": "QUO VADIS OPEN 2025",
 }
 
 PLAYERS_PER_PAGE = 25
@@ -178,6 +179,207 @@ def tournament(tournament_id):
         return jsonify({"error": f"Error getting tournament data: {str(e)}"}), 500
 
 
+def calculate_qualification_probability(player_tprs, tournaments_played, player_rating=None, current_best_4=0, is_kenya_number_one=False, chronological_tprs=None):
+    """
+    Calculate qualification probability for top 9 + Kenya #1 (10 spots total).
+    Uses performance-based thresholds: 1980+ = >95%, 2020+ = >99%
+    Based on analysis of competitive landscape across best_1, best_2, best_3 data.
+    """
+    if tournaments_played < 2:
+        return None
+    
+    # Get player's current effective performance
+    replacement_bonus = 0
+    
+    if tournaments_played <= 3:
+        # 3 tournaments or less - respect all results, no replacement upside
+        if tournaments_played == 3:
+            current_performance = sum(player_tprs[:3]) / 3
+        else:  # tournaments_played == 2
+            current_performance = sum(player_tprs[:2]) / 2
+    else:
+        # 4+ tournaments - apply replacement upside logic
+        best_3_performance = sum(player_tprs[:3]) / 3
+        
+        # If best_3 is significantly higher than best_4, use best_3 (replacement upside)
+        replacement_gap = best_3_performance - current_best_4
+        if replacement_gap >= 40:  # Significant weak 4th tournament
+            current_performance = best_3_performance  # Use the higher performance
+            replacement_bonus = min(15, replacement_gap // 10)  # Bonus for likely improvement
+        else:
+            current_performance = current_best_4
+    
+    best_tpr = max(player_tprs) if player_tprs else 0
+    
+    # Calculate trend bonus/penalty based on recent form using chronological data
+    trend_adjustment = 0
+    if chronological_tprs and len(chronological_tprs) >= 3:
+        # Compare recent half vs early half of tournaments (chronological order)
+        mid_point = len(chronological_tprs) // 2
+        recent_avg = sum(chronological_tprs[-mid_point:]) / mid_point  # Most recent tournaments
+        early_avg = sum(chronological_tprs[:mid_point]) / mid_point    # Earlier tournaments
+        
+        trend_diff = recent_avg - early_avg
+        
+        # Calculate recent performance vs current average for sustained poor form check
+        sustained_poor_form = recent_avg < (current_performance - 80)  # Recent << current average
+        
+        # Strong performers who have "banked" good results get much lighter trend penalties
+        has_banked_strong_position = current_performance >= 1950  # Top tier players
+        
+        if trend_diff >= 100:
+            trend_adjustment = 8   # Strong upward trend - hot streak
+        elif trend_diff >= 50:
+            trend_adjustment = 4   # Moderate upward trend - improving
+        elif trend_diff <= -150:
+            # Severe decline - but much lighter penalty for banked strong performers
+            if has_banked_strong_position:
+                trend_adjustment = -8 if sustained_poor_form else -5  # Light penalty - results are banked
+            else:
+                trend_adjustment = -25 if sustained_poor_form else -18  # Heavy penalty for bubble players
+        elif trend_diff <= -100:
+            # Strong downward trend - declining form
+            if has_banked_strong_position:
+                trend_adjustment = -6 if sustained_poor_form else -3  # Light penalty - results are banked
+            else:
+                trend_adjustment = -18 if sustained_poor_form else -12  # Heavy penalty for bubble players
+        elif trend_diff <= -50:
+            # Moderate downward trend - struggling
+            if has_banked_strong_position:
+                trend_adjustment = -3 if sustained_poor_form else -1  # Minimal penalty - results are banked
+            else:
+                trend_adjustment = -12 if sustained_poor_form else -6  # Moderate penalty for bubble players
+        # No adjustment for stable performance (-50 to +50)
+    
+    # Tier-based probability assessment based on competitive analysis
+    if current_performance >= 2150:
+        base_prob = 101  # True lock-in (will show as >99%) - Gohil tier
+    elif current_performance >= 2050:
+        base_prob = 99   # Virtual lock but not mathematically certain
+    elif current_performance >= 2000:
+        base_prob = 96   # Very strong but some uncertainty
+    elif current_performance >= 1980:
+        base_prob = 92   # Strong contender (Njoroge, Irungu, Methu tier)
+    elif current_performance >= 1950:
+        base_prob = 80   # Good position
+    elif current_performance >= 1920:
+        base_prob = 60   # Decent chance
+    elif current_performance >= 1900:
+        base_prob = 40   # Outside shot
+    elif current_performance >= 1880:
+        base_prob = 25   # Long shot
+    elif current_performance >= 1860:
+        base_prob = 15   # Very unlikely
+    elif current_performance >= 1840:
+        base_prob = 8    # Extremely unlikely
+    elif current_performance >= 1820:
+        base_prob = 4    # Minimal realistic chance
+    else:
+        base_prob = 1    # Minimal chance
+    
+    # High-variance player bonus (players who have shown they can spike high)
+    # But reduced if they've been consistently poor recently
+    variance_bonus = 0
+    if best_tpr >= 2100:
+        variance_bonus = 10  # Proven ability to reach elite level
+    elif best_tpr >= 2000:
+        variance_bonus = 5   # Proven ability to reach very high level
+    elif best_tpr >= 1950 and current_performance < 1900:
+        variance_bonus = 8   # Inconsistent but dangerous (can spike)
+    
+    # Reduce variance bonus for players showing sustained poor recent form
+    if chronological_tprs and len(chronological_tprs) >= 3:
+        recent_avg = sum(chronological_tprs[-2:]) / 2  # Last 2 tournaments
+        if recent_avg < 1850 and current_performance > 1950:
+            # Recent performance way below historical average - reduce variance bonus
+            variance_bonus = max(0, variance_bonus - 8)
+    
+    # Smarter completion penalty based on tournaments available and remaining opportunities
+    if tournaments_played < 4:
+        # 7 tournaments completed, ~5 more expected (12 total)
+        TOURNAMENTS_AVAILABLE = 7
+        TOURNAMENTS_REMAINING = 5
+        
+        participation_rate = tournaments_played / TOURNAMENTS_AVAILABLE
+        tournaments_needed = 4 - tournaments_played
+        
+        # Special harsh penalty for 2-tournament players - they're in extreme danger
+        if tournaments_played == 2:
+            # 2-tournament players face extreme vulnerability:
+            # - Must play 2 more tournaments (both count toward best_4)
+            # - Cannot afford any poor results
+            # - Every remaining tournament is high-stakes
+            completion_penalty = 35  # Harsh penalty reflecting extreme vulnerability
+        elif tournaments_needed <= TOURNAMENTS_REMAINING:
+            # Risk based on participation rate and commitment level
+            if participation_rate >= 0.5:  # 4+/7 - excellent participation
+                completion_penalty = tournaments_needed * 1  # Minimal penalty
+            elif participation_rate >= 0.4:  # 3/7 - good participation
+                completion_penalty = tournaments_needed * 3  # Low penalty
+            elif participation_rate >= 0.3:  # 2/7 - poor participation
+                completion_penalty = tournaments_needed * 12  # Significant penalty
+            else:  # 1/7 - very poor participation
+                completion_penalty = tournaments_needed * 18  # Heavy penalty
+        else:
+            # Higher risk if not enough tournaments remaining
+            completion_penalty = tournaments_needed * 25
+        
+        base_prob = int(base_prob * (1 - completion_penalty / 100))
+    
+    # Fluke penalty for low-rated players overperforming
+    fluke_penalty = 0
+    if player_rating and current_performance > player_rating:
+        overperformance = current_performance - player_rating
+        if overperformance >= 200:
+            fluke_penalty = 15  # Major overperformance - likely unsustainable
+        elif overperformance >= 150:
+            fluke_penalty = 10  # Significant overperformance
+        elif overperformance >= 100:
+            fluke_penalty = 5   # Moderate overperformance
+        # No penalty for <100 point overperformance (normal variance)
+    
+    # Apply multiplicative adjustments to base probability (these scale with base strength)
+    # Convert percentages to factors for multiplication
+    trend_factor = 1 + (trend_adjustment / 100)  # -25% becomes 0.75, +8% becomes 1.08
+    variance_factor = 1 + (variance_bonus / 200)  # Smaller impact: +10% becomes 1.05
+    fluke_factor = fluke_penalty / 100  # Convert to decimal for subtraction
+    
+    # Apply scaled adjustments - high base probs get smaller relative changes
+    base_adjusted = base_prob * trend_factor * variance_factor * (1 - fluke_factor)
+    
+    # Add fixed bonuses that don't scale with base probability
+    kenya_bonus = 20 if is_kenya_number_one else 0  # Alternative qualification path
+    replacement_bonus_scaled = replacement_bonus * (base_prob / 100)  # Scale with base strength
+    
+    final_prob = base_adjusted + kenya_bonus + replacement_bonus_scaled
+    
+    # Debug logging for specific players
+    player_name_for_debug = "methu"  # Check if any TPR info contains "methu"
+    debug_this_player = any(player_name_for_debug.lower() in str(tpr).lower() for tpr in (player_tprs + [current_performance]))
+    if debug_this_player or (current_performance > 1950 and final_prob < 90):
+        print(f"DEBUG QUALIFICATION CALC:")
+        print(f"  Current Performance: {current_performance}")
+        print(f"  Base Probability: {base_prob}%")
+        print(f"  Trend Adjustment: {trend_adjustment}% (factor: {trend_factor:.2f})")
+        print(f"  Variance Bonus: {variance_bonus}% (factor: {variance_factor:.2f})")
+        print(f"  Fluke Penalty: {fluke_penalty}% (factor: {1-fluke_factor:.2f})")
+        print(f"  Replacement Bonus: {replacement_bonus}% (scaled: {replacement_bonus_scaled:.1f})")
+        print(f"  Kenya Bonus: {kenya_bonus}%")
+        print(f"  Base Adjusted: {base_adjusted:.1f}%")
+        print(f"  Final Probability: {final_prob:.1f}%")
+        if chronological_tprs:
+            print(f"  Chronological TPRs: {chronological_tprs}")
+        print()
+    
+    # Cap at reasonable maximum
+    final_prob = min(final_prob, 101)
+    
+    # Return 0 for very low probabilities (will display as "<1%")
+    if final_prob < 1:
+        return 0
+    return int(final_prob)
+
+
 def get_player_rankings():
     all_results = db.get_all_results()
 
@@ -192,7 +394,10 @@ def get_player_rankings():
         if not valid_results:
             continue
             
-        # Sort by TPR
+        # Sort by chronological order (start_date) for trend analysis
+        chronological_results = sorted(valid_results, key=lambda x: x["tournament"]["start_date"] or "1900-01-01")
+        
+        # Sort by TPR for best results calculation
         valid_results.sort(key=lambda x: x["tpr"] if x["tpr"] else 0, reverse=True)
 
         # Get best results
@@ -200,6 +405,19 @@ def get_player_rankings():
         best_2 = sum(r["tpr"] for r in valid_results[:2]) / 2 if len(valid_results) >= 2 else 0
         best_3 = sum(r["tpr"] for r in valid_results[:3]) / 3 if len(valid_results) >= 3 else 0
         best_4 = sum(r["tpr"] for r in valid_results[:4]) / 4 if len(valid_results) >= 4 else 0
+
+        # Calculate qualification probability (top 9 + Kenya #1)
+        player_tprs = [r["tpr"] for r in valid_results if r["tpr"]]
+        chronological_tprs = [r["tpr"] for r in chronological_results if r["tpr"]]
+        player_rating = valid_results[0]["player"]["rating"]
+        player_name = valid_results[0]["player"]["name"]
+        is_kenya_number_one = "mcligeyo" in player_name.lower()
+        
+        # Debug specific players
+        if "methu" in player_name.lower():
+            print(f"Processing {player_name}: best_4={best_4:.1f}, tournaments={len(valid_results)}")
+        
+        qualification_probability = calculate_qualification_probability(player_tprs, len(valid_results), player_rating, best_4, is_kenya_number_one, chronological_tprs)
 
         player_rankings.append(
             {
@@ -214,6 +432,7 @@ def get_player_rankings():
                 "best_2": round(best_2),
                 "best_3": round(best_3),
                 "best_4": round(best_4),
+                "qualification_probability": qualification_probability,
             }
         )
 
@@ -248,6 +467,7 @@ def rankings():
         "best_2": "best_2",
         "best_3": "best_3",
         "best_4": "best_4",
+        "qualification_probability": "qualification_probability",
     }.get(sort, "best_4")
 
     # Implement cascading sort for best_4 rankings
@@ -271,10 +491,17 @@ def rankings():
         player_rankings.sort(key=cascading_sort_key, reverse=reverse)
     else:
         # Use original single-column sort for other columns
-        player_rankings.sort(
-            key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
-            reverse=reverse,
-        )
+        if sort_key == "qualification_probability":
+            # Special handling for qualification probability (treat None as -1 for sorting)
+            player_rankings.sort(
+                key=lambda x: (x[sort_key] if x[sort_key] is not None else -1),
+                reverse=reverse,
+            )
+        else:
+            player_rankings.sort(
+                key=lambda x: (x[sort_key] if x[sort_key] is not None else -float("inf")),
+                reverse=reverse,
+            )
 
     total_pages = (len(player_rankings) + per_page - 1) // per_page
     start = (page - 1) * per_page

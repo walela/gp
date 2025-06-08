@@ -20,6 +20,8 @@ class Database:
                 CREATE TABLE IF NOT EXISTS tournaments (
                     id TEXT PRIMARY KEY,
                     name TEXT NOT NULL,
+                    start_date DATE,
+                    end_date DATE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
@@ -209,7 +211,7 @@ class Database:
                     SELECT 
                         p.name, p.fide_id, p.federation,
                         r.rating, r.points, r.tpr, r.has_walkover, r.start_rank, r.result_status,
-                        t.id, t.name,
+                        t.id, t.name, t.start_date, t.end_date,
                         p.id 
                     FROM results r
                     JOIN players p ON r.player_id = p.id
@@ -224,7 +226,7 @@ class Database:
                         SELECT 
                             p.name, p.fide_id, p.federation,
                             r.rating, r.points, r.tpr, r.has_walkover, r.result_status,
-                            t.id, t.name,
+                            t.id, t.name, t.start_date, t.end_date,
                             p.id 
                         FROM results r
                         JOIN players p ON r.player_id = p.id
@@ -237,24 +239,28 @@ class Database:
             all_results = {}
             for row in c.fetchall():
                 # Check row length to determine structure
-                has_start_rank = len(row) > 11  # With result_status, we have at least 12 columns
+                has_start_rank = len(row) > 13  # With dates, we have at least 14 columns
                 has_result_status = True  # We always expect result_status now
                 
                 # Calculate offsets based on available columns
                 if has_start_rank:
-                    # Full row with start_rank and result_status
-                    # [name, fide_id, fed, rating, points, tpr, has_walkover, start_rank, result_status, t_id, t_name, p_id]
-                    player_db_id = row[11]
+                    # Full row with start_rank, result_status, and dates
+                    # [name, fide_id, fed, rating, points, tpr, has_walkover, start_rank, result_status, t_id, t_name, t_start_date, t_end_date, p_id]
+                    player_db_id = row[13]
                     tournament_id_idx = 9
                     tournament_name_idx = 10
+                    tournament_start_date_idx = 11
+                    tournament_end_date_idx = 12
                     result_status_idx = 8
                     start_rank_idx = 7
                 else:
-                    # Row without start_rank but with result_status
-                    # [name, fide_id, fed, rating, points, tpr, has_walkover, result_status, t_id, t_name, p_id]
-                    player_db_id = row[10]
+                    # Row without start_rank but with result_status and dates
+                    # [name, fide_id, fed, rating, points, tpr, has_walkover, result_status, t_id, t_name, t_start_date, t_end_date, p_id]
+                    player_db_id = row[12]
                     tournament_id_idx = 8
                     tournament_name_idx = 9
+                    tournament_start_date_idx = 10
+                    tournament_end_date_idx = 11
                     result_status_idx = 7
                     start_rank_idx = None
                 
@@ -273,7 +279,9 @@ class Database:
                     'has_walkover': bool(row[6]),
                     'tournament': {
                         'id': row[tournament_id_idx],
-                        'name': row[tournament_name_idx]
+                        'name': row[tournament_name_idx],
+                        'start_date': row[tournament_start_date_idx],
+                        'end_date': row[tournament_end_date_idx]
                     }
                 }
                 
@@ -332,3 +340,15 @@ class Database:
             except sqlite3.OperationalError as e:
                 logger.error(f"Error counting results for tournament {tournament_id}: {e}")
                 return 0 # Return 0 if table/column missing or other SQL error
+
+    def update_tournament_dates(self, tournament_id: str, start_date: str, end_date: str):
+        """Update tournament start and end dates."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('''
+                UPDATE tournaments 
+                SET start_date = ?, end_date = ? 
+                WHERE id = ?
+            ''', (start_date, end_date, tournament_id))
+            conn.commit()
+            return c.rowcount

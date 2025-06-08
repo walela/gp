@@ -83,7 +83,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
-          <p className="text-pretty text-gray-600 text-sm tracking-tighter leading-tighter">
+          <p className="text-pretty text-gray-600 text-sm tracking-wide leading-tighter">
             Provisional standings. Top 9 players by Best 4 Average and the current Kenya #1 are highlighted.
           </p>
         </div>
@@ -139,6 +139,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
                 <SortableHeader column="best_4" label="Best 4" align="right" basePath="/rankings" className="w-full" />
+              </CustomTableHead>
+              <CustomTableHead className="text-right w-[60px] sm:w-[70px] md:w-[100px] hidden">
+                <SortableHeader column="qualification_probability" label="Qual %" align="right" basePath="/rankings" className="w-full" />
               </CustomTableHead>
             </CustomTableRow>
           </CustomTableHeader>
@@ -251,6 +254,23 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     <span className="font-semibold text-blue-700">{player.best_4}</span>
                   ) : (
                     player.best_4
+                  )}
+                </CustomTableCell>
+                <CustomTableCell className="text-right tabular-nums text-xs hidden">
+                  {player.qualification_probability !== null ? (
+                    <span className={cn(
+                      "font-medium",
+                      player.qualification_probability >= 80 ? "text-green-700" :
+                      player.qualification_probability >= 50 ? "text-yellow-700" :
+                      player.qualification_probability >= 20 ? "text-orange-700" :
+                      "text-red-700"
+                    )}>
+                      {player.qualification_probability > 99 ? ">99%" : 
+                       player.qualification_probability === 0 ? "<1%" : 
+                       `${player.qualification_probability}%`}
+                    </span>
+                  ) : (
+                    <span className="text-gray-400 text-xs">Need 2+</span>
                   )}
                 </CustomTableCell>
               </CustomTableRow>
