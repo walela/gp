@@ -11,6 +11,14 @@ type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
 
 export default async function HomePage() {
   const tournaments = await getTournaments()
+  
+  // Debug logging for production issues
+  console.log('=== TOURNAMENT DEBUG ===')
+  console.log('Total tournaments fetched:', tournaments.length)
+  console.log('Tournament names:', tournaments.map(t => t.name))
+  console.log('QUO VADIS found:', tournaments.filter(t => t.name.includes('QUO VADIS')))
+  console.log('API URL:', process.env.NEXT_PUBLIC_API_URL)
+  console.log('========================')
 
   const upcomingTournaments: Array<{
     id: string;
@@ -72,25 +80,26 @@ export default async function HomePage() {
           <h2 className="text-xl mb-2 font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
           <div className="flex flex-wrap gap-4">
             {tournaments.map(tournament => {
-              // Determine location based on tournament name
+              // Determine location based on tournament name (case-insensitive, trimmed)
+              const normalizedName = tournament.name.trim().toUpperCase()
               let location = 'Nairobi'
-              if (tournament.name.includes('Eldoret')) {
+              if (normalizedName.includes('ELDORET')) {
                 location = 'Eldoret'
-              } else if (tournament.name.includes('Kisumu')) {
+              } else if (normalizedName.includes('KISUMU')) {
                 location = 'Kisumu'
-              } else if (tournament.name.includes('Waridi')) {
+              } else if (normalizedName.includes('WARIDI')) {
                 location = 'Nairobi'
-              } else if (tournament.name.includes('Mavens')) {
+              } else if (normalizedName.includes('MAVENS')) {
                 location = 'Nairobi'
-              } else if (tournament.name.includes('Nakuru')) {
+              } else if (normalizedName.includes('NAKURU')) {
                 location = 'Nakuru'
-              } else if (tournament.name.includes('QUO VADIS')) {
+              } else if (normalizedName.includes('QUO VADIS')) {
                 location = 'Nyeri'
               }
 
-              // Determine rounds based on tournament name
+              // Determine rounds based on tournament name (case-insensitive, trimmed)
               let rounds = 6
-              if (tournament.name.includes('Mavens') || tournament.name.includes('Nairobi County') || tournament.name.includes('QUO VADIS')) {
+              if (normalizedName.includes('MAVENS') || normalizedName.includes('NAIROBI COUNTY') || normalizedName.includes('QUO VADIS')) {
                 rounds = 8
               }
 
