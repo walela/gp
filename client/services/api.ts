@@ -69,7 +69,6 @@ export interface PlayerRanking {
   best_2: number
   best_3: number
   best_4: number
-  qualification_probability: number | null
 }
 
 export interface RankingsResponse {
@@ -179,17 +178,8 @@ export async function getTopPlayers({
   dir?: 'asc' | 'desc'
   q?: string
 } = {}): Promise<TopPlayersResponse> {
-  let url = `${API_BASE}/rankings?sort=${sortBy}&dir=${dir}&limit=${count}`
-
-  if (q) {
-    url += `&q=${encodeURIComponent(q)}`
-  }
-
-  // Add a special parameter to indicate we want all results for determining top players
-  url += '&top_only=true'
-
-  const res = await fetch(url)
-  const data = await res.json()
+  // Get first page with all top players
+  const data = await getRankings({ sort: sortBy, dir, page: 1, q })
 
   return {
     topPlayers: data.rankings.slice(0, count)
