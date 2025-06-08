@@ -146,10 +146,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 key={player.fide_id || player.name}
                 className={cn(
                   top9ByBest4.has(player.fide_id || player.name)
-                    ? 'bg-blue-50/50 border-l-2 border-l-blue-500 hover:bg-blue-100/50'
+                    ? 'bg-blue-50/50 border-l-2 border-l-blue-500'
                     : index % 2 === 0
-                    ? 'bg-gray-50/50 hover:bg-gray-100/50'
-                    : 'bg-white hover:bg-gray-50/50'
+                    ? 'bg-gray-50/50'
+                    : 'bg-white'
                 )}>
                 <CustomTableCell isHeader className="text-right">
                   {top9ByBest4.has(player.fide_id || player.name) ? (
