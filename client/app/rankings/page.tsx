@@ -9,11 +9,12 @@ import {
   CustomTableCell
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
-import { Input } from '@/components/ui/input'
-import { SearchIcon, ChevronRight, Crown } from 'lucide-react'
+
+import { ChevronRight, Crown } from 'lucide-react'
 import { getRankings, getTopPlayers } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
+import { SearchForm } from '@/components/rankings/search-form'
 import { Pagination } from '@/components/ui/pagination'
 import { getShortTournamentName } from '@/utils/tournament'
 
@@ -89,23 +90,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       </div>
 
       <div className="flex flex-col gap-4 mb-6">
-        <div className="relative w-full sm:w-[350px]">
-          <form className="relative group">
-            <Input 
-              type="search" 
-              name="q" 
-              placeholder="Search player list..." 
-              defaultValue={search} 
-              className="pr-16 pl-4 h-11 bg-white/80 backdrop-blur-sm border-gray-200 transition-all duration-200 shadow-sm hover:shadow-md group-focus-within:shadow-md rounded-l-[0.625rem]" 
-            />
-            <button 
-              type="submit" 
-              className="absolute right-0 top-0 h-full px-4 bg-gray-200 hover:bg-blue-100 hover:text-blue-600 rounded-l-none rounded-r-[0.625rem] transition-all duration-200 border border-l-0 border-gray-200"
-            >
-              <SearchIcon className="h-4 w-4 text-gray-600" />
-            </button>
-          </form>
-        </div>
+        <SearchForm defaultValue={search} />
       </div>
 
       <div className="mb-0 w-full">
@@ -158,7 +143,24 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             </CustomTableRow>
           </CustomTableHeader>
           <CustomTableBody>
-            {rankings.map((player, index) => (
+            {rankings.length === 0 ? (
+              <CustomTableRow>
+                <CustomTableCell colSpan={8} className="text-center py-12">
+                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Crown className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-medium">No players found</p>
+                      <p className="text-sm">
+                        {search ? `No results for "${search}"` : 'No players available'}
+                      </p>
+                    </div>
+                  </div>
+                </CustomTableCell>
+              </CustomTableRow>
+            ) : (
+              rankings.map((player, index) => (
               <CustomTableRow
                 key={player.fide_id || player.name}
                 className={cn(
@@ -252,7 +254,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                   )}
                 </CustomTableCell>
               </CustomTableRow>
-            ))}
+              ))
+            )}
           </CustomTableBody>
         </CustomTable>
       </Card>
