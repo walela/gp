@@ -79,6 +79,11 @@ def tournaments():
                 # Get tournament dates
                 start_date, end_date = db.get_tournament_dates(id)
                 
+                # Determine rounds based on tournament name
+                rounds = 6  # default
+                if any(keyword in name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
+                    rounds = 8
+                
                 tournament_list.append(
                     {
                         "id": id,
@@ -87,27 +92,40 @@ def tournaments():
                         "status": "Completed",
                         "start_date": start_date,
                         "end_date": end_date,
+                        "rounds": rounds,
                     }
                 )
             else:
                 # Tournament doesn't exist in DB, assume Upcoming
+                # Determine rounds based on tournament name
+                rounds = 6  # default
+                if any(keyword in name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
+                    rounds = 8
+                    
                 tournament_list.append(
                     {
                         "id": id,
                         "name": name,
                         "results": 0, # No results yet
                         "status": "Upcoming",
+                        "rounds": rounds,
                     }
                 )
         except Exception as e:
             logger.error(f"Error processing tournament {id} ({name}): {e}")
             # Add entry with error status if needed, or skip
+            # Determine rounds based on tournament name
+            rounds = 6  # default
+            if any(keyword in name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
+                rounds = 8
+                
             tournament_list.append(
                 {
                     "id": id,
                     "name": name,
                     "results": 0,
                     "status": "Error", # Indicate an issue processing this one
+                    "rounds": rounds,
                 }
             )
     return jsonify(tournament_list)
@@ -130,6 +148,11 @@ def tournament(tournament_id):
         start_date = data.get("start_date")
         end_date = data.get("end_date")
         results = data["results"]
+        
+        # Determine rounds based on tournament name
+        rounds = 6  # default
+        if any(keyword in tournament_name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
+            rounds = 8
 
         # Sort results
         if sort == "name":
@@ -149,6 +172,7 @@ def tournament(tournament_id):
                     "id": tournament_id,
                     "start_date": start_date,
                     "end_date": end_date,
+                    "rounds": rounds,
                     "results": results,
                     "total": len(results),
                     "page": 1,
@@ -168,6 +192,7 @@ def tournament(tournament_id):
                 "id": tournament_id,
                 "start_date": start_date,
                 "end_date": end_date,
+                "rounds": rounds,
                 "results": paginated_results,
                 "total": len(results),
                 "page": page,
@@ -340,6 +365,7 @@ def player(fide_id):
                     CASE
                         WHEN t.name LIKE '%Mavens%' THEN 8
                         WHEN t.name LIKE '%Nairobi County%' THEN 8
+                        WHEN t.name LIKE '%Quo Vadis%' THEN 8
                         ELSE 6
                     END as rounds
                 FROM results r
@@ -366,6 +392,7 @@ def player(fide_id):
                         CASE
                             WHEN t.name LIKE '%Mavens%' THEN 8
                             WHEN t.name LIKE '%Nairobi County%' THEN 8
+                            WHEN t.name LIKE '%Quo Vadis%' THEN 8
                             ELSE 6
                         END as rounds
                     FROM results r
@@ -585,6 +612,7 @@ def export_player(fide_id):
                     CASE
                         WHEN t.name LIKE '%Mavens%' THEN 8
                         WHEN t.name LIKE '%Nairobi County%' THEN 8
+                        WHEN t.name LIKE '%Quo Vadis%' THEN 8
                         ELSE 6
                     END as rounds
                 FROM results r

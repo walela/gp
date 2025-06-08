@@ -97,11 +97,8 @@ export default async function HomePage() {
                 location = 'Nyeri'
               }
 
-              // Determine rounds based on tournament name (case-insensitive, trimmed)
-              let rounds = 6
-              if (normalizedName.includes('MAVENS') || normalizedName.includes('NAIROBI COUNTY') || normalizedName.includes('QUO VADIS')) {
-                rounds = 8
-              }
+              // Rounds now come from the backend
+              const rounds = tournament.rounds || 6 // fallback to 6 if not provided
 
               // Format dates from API response
               const dates = formatTournamentDateWithOrdinals(tournament?.start_date, tournament?.end_date)

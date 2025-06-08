@@ -7,6 +7,7 @@ export interface Tournament {
   status: 'Completed' | 'Upcoming'
   start_date?: string
   end_date?: string
+  rounds?: number
 }
 
 export interface TournamentPlayer {
@@ -35,6 +36,7 @@ export interface TournamentDetails {
   total_pages: number
   start_date?: string
   end_date?: string
+  rounds?: number
 }
 
 export interface PlayerResult {
