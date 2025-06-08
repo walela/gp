@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { CalendarDays, MapPin, Hash, Calendar, CheckCircle2, HelpCircle } from 'lucide-react'
 import { getTournaments } from '@/services/api'
 import { getShortTournamentName, formatTournamentDateWithOrdinals } from '@/utils/tournament'
+import { Countdown } from '@/components/ui/countdown'
 
 
 
@@ -73,9 +74,15 @@ export default async function HomePage() {
     },
   ]
 
+  // Find the next upcoming tournament for countdown
+  const nextTournament = upcomingTournaments
+    .filter(t => t.status !== 'postponed')
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())[0]
+
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-2 py-4 space-y-8">
+        
         <div>
           <h2 className="text-xl mb-2 font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
           <div className="flex flex-wrap gap-4">
@@ -171,10 +178,21 @@ export default async function HomePage() {
         </div>
 
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
-          <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
-            Grand Prix tournaments within the next 60 days.
-          </p>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
+
+          </div>
+          <div className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
+            Grand Prix tournaments within the next 60 days. {nextTournament && (
+              <div className="text-sm">
+                <span className=" text-gray-600">Next Grand Prix tournament starts in: </span>
+                <span className="font-mono font-bold text-gray-900">
+                  <Countdown targetDate={nextTournament.startDate} />
+                </span>
+              </div>
+            )}
+          </div>
+                      
 
           <div className="flex flex-wrap gap-4">
             {upcomingTournaments.map(tournament => (
@@ -317,3 +335,4 @@ export default async function HomePage() {
     </div>
   )
 }
+
