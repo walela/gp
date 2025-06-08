@@ -176,7 +176,7 @@ export default async function HomePage() {
         <div>
           <h2 className="text-xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
           <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
-            Grand Prix tournaments within the next 60 days. Confirmed tournaments are indicated with a green check.
+            Grand Prix tournaments within the next 60 days.
           </p>
 
           <div className="flex flex-wrap gap-4">
