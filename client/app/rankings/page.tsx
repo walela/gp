@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 import { Input } from '@/components/ui/input'
-import { SearchIcon } from 'lucide-react'
+import { SearchIcon, ChevronRight, Crown } from 'lucide-react'
 import { getRankings, getTopPlayers } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
@@ -70,6 +70,14 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   // Get top 9 by best_4 from all data, not just the current page
   const { topPlayers } = await getTopPlayers({ count: 9, sortBy: 'best_4' })
   const top9ByBest4 = new Set(topPlayers.map(p => p.fide_id || p.name))
+  
+  // Find Kenya #1 (highest rated player)
+  const kenyaNumber1 = rankings.reduce((highest, player) => {
+    const playerRating = player.rating || 0
+    const highestRating = highest.rating || 0
+    return playerRating > highestRating ? player : highest
+  }, rankings[0])
+  const kenyaNumber1Id = kenyaNumber1?.fide_id || kenyaNumber1?.name
 
   return (
     <div className="space-y-6">
@@ -77,7 +85,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
           <p className="text-muted-foreground">
-            Current standings based on best tournament performances. Top 9 players by Best 4 Average are highlighted.
+            Current grand prix standings. Top 9 players by Best 4 Average plus current Kenya #1 are highlighted.
           </p>
         </div>
       </div>
@@ -152,7 +160,12 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     : 'bg-white'
                 )}>
                 <CustomTableCell isHeader className="text-right">
-                  {top9ByBest4.has(player.fide_id || player.name) ? (
+                  {(player.fide_id || player.name) === kenyaNumber1Id ? (
+                    <div className="flex items-center justify-end gap-1">
+                      <Crown className="h-3 w-3 text-amber-600" />
+                      <span className="font-semibold text-amber-700">{(page - 1) * 25 + index + 1}</span>
+                    </div>
+                  ) : top9ByBest4.has(player.fide_id || player.name) ? (
                     <span className="font-semibold text-blue-700">{(page - 1) * 25 + index + 1}</span>
                   ) : (
                     (page - 1) * 25 + index + 1
@@ -165,12 +178,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                         href={`/player/${player.fide_id}`}
                         className={cn(
                           'font-medium group flex items-center gap-1',
-                          top9ByBest4.has(player.fide_id) ? 'text-blue-700 hover:text-blue-800' : 'text-blue-600 hover:text-blue-700'
+                          (player.fide_id || player.name) === kenyaNumber1Id 
+                            ? 'text-amber-700 hover:text-amber-800' 
+                            : top9ByBest4.has(player.fide_id) 
+                            ? 'text-blue-700 hover:text-blue-800' 
+                            : 'text-blue-600 hover:text-blue-700'
                         )}
                         title={player.name}>
                         <span className="sm:hidden flex items-center gap-1">
                           {getDisplayName(player.name)}
-                          <span className="text-muted-foreground/50">›</span>
+                          <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-blue-500 transition-colors" />
                         </span>
                         <span className="hidden sm:block group-hover:underline">{getDisplayName(player.name)}</span>
                       </Link>
@@ -178,7 +195,11 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       <span
                         className={cn(
                           'font-medium',
-                          top9ByBest4.has(player.name) ? 'text-blue-700' : ''
+                          (player.fide_id || player.name) === kenyaNumber1Id
+                            ? 'text-amber-700'
+                            : top9ByBest4.has(player.name) 
+                            ? 'text-blue-700' 
+                            : ''
                         )}
                         title={player.name}>
                         {getDisplayName(player.name)}

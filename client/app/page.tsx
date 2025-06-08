@@ -60,9 +60,7 @@ export default async function HomePage() {
     <div className="min-h-screen">
       <div className="container mx-auto px-2 py-4 space-y-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
-          <p className="text-muted-foreground mb-4">Completed tournaments in the 2025 Chess Kenya Grand Prix series</p>
-
+          <h2 className="text-xl mb-2 font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
           <div className="flex flex-wrap gap-4">
             {tournaments.map(tournament => {
               // Determine location based on tournament name
