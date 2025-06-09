@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CalendarDays, MapPin, Hash, Calendar, CheckCircle2, HelpCircle } from 'lucide-react'
+import { CalendarDays, MapPin, Hash, Calendar } from 'lucide-react'
 import { getTournaments } from '@/services/api'
 import { getShortTournamentName, formatTournamentDateWithOrdinals } from '@/utils/tournament'
 import { Countdown } from '@/components/ui/countdown'
@@ -41,28 +41,42 @@ export default async function HomePage() {
       name: '67th NCC Championship',
       month: 'August',
       location: 'Nairobi',
-      tentativeRounds: 6
+      tentativeRounds: 6,
+      confirmed: false
     },
     {
       id: '742161',
       name: '3rd Jumuiya ya Afrika Mashariki Open',
       month: 'September 20-21',
       location: 'Nairobi',
-      tentativeRounds: 6
+      tentativeRounds: 6,
+      confirmed: true
     },
     {
       id: '742162',
       name: 'Mombasa Open 2025',
       month: 'October 10-12',
       location: 'Mombasa',
-      tentativeRounds: 6
+      tentativeRounds: 6,
+      confirmed: true
     },
     {
       id: '742163',
       name: 'Bungoma Open 2025',
-      month: 'November 1-2',
+      startDate: '2025-11-01',
+      endDate: '2025-11-02',
       location: 'Bungoma',
-      tentativeRounds: 6
+      rounds: 6,
+      confirmed: true
+    },
+    {
+      id: '742164',
+      name: 'Chess Through Challenges Open',
+      startDate: '2025-11-20',
+      endDate: '2025-11-23',
+      location: 'Nairobi',
+      rounds: 6,
+      confirmed: true
     },
   ]
 
@@ -174,16 +188,16 @@ export default async function HomePage() {
             <h2 className="text-xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
 
           </div>
-          <div className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
-            Grand Prix tournaments within the next 60 days. {nextTournament && (
-              <div className="text-sm">
-                <span className=" text-gray-600">Next Grand Prix tournament starts in: </span>
-                <span className="font-mono font-bold text-gray-900">
-                  <Countdown targetDate={nextTournament.startDate} />
-                </span>
-              </div>
-            )}
-          </div>
+                     <div className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
+             Tournaments within the next 60 days. {nextTournament && (
+               <span className="text-sm whitespace-nowrap">
+                 <span className="text-gray-600">Next Grand Prix tournament starts in: </span>
+                 <span className="font-mono font-bold text-gray-900">
+                   <Countdown targetDate={nextTournament.startDate} />
+                 </span>
+               </span>
+             )}
+           </div>
                       
 
           <div className="flex flex-wrap gap-4">
@@ -193,17 +207,12 @@ export default async function HomePage() {
                   className={`h-full py-4 gap-2 rounded-lg ${tournament.status === 'postponed' ? 'opacity-75' : ''}`}>
                   <CardHeader className="pb-1 pt-3 px-4">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-1.5">
+                      <CardTitle>
                         <Link 
                           href={`/tournament/${tournament.id}`} 
                           className={tournament.status === 'postponed' ? 'line-through text-gray-500 hover:underline' : 'hover:underline'}>
                           {getShortTournamentName(tournament.name)}
                         </Link>
-                        {tournament.confirmed ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <HelpCircle className="h-4 w-4 text-amber-600" />
-                        )}
                       </CardTitle>
                       {tournament.status === 'postponed' ? (
                         <Badge className="bg-gray-200 text-gray-600 hover:bg-gray-200 whitespace-nowrap">
@@ -286,7 +295,7 @@ export default async function HomePage() {
 
         <div>
           <h2 className="text-xl font-bold tracking-tight text-gray-700">Planned Tournaments</h2>
-          <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">Future tournaments with tentative dates and details</p>
+          <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">Future tournaments with confirmed or tentative dates and details</p>
 
           <div className="flex flex-wrap gap-4">
             {plannedTournaments.map(tournament => (
@@ -295,13 +304,74 @@ export default async function HomePage() {
                   <CardHeader className="pb-1 pt-3 px-4">
                     <div className="flex items-center justify-between">
                       <CardTitle>
-                        {getShortTournamentName(tournament.name)}
+                        {'startDate' in tournament ? (
+                          <Link 
+                            href={`/tournament/${tournament.id}`} 
+                            className="hover:underline">
+                            {getShortTournamentName(tournament.name)}
+                          </Link>
+                        ) : (
+                          getShortTournamentName(tournament.name)
+                        )}
                       </CardTitle>
-                      <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">Planned</Badge>
+                      <Badge className={
+                        tournament.confirmed 
+                          ? "bg-green-100 text-green-700 hover:bg-green-100" 
+                          : "bg-purple-100 text-purple-700 hover:bg-purple-100"
+                      }>
+                        {tournament.confirmed ? 'Confirmed' : 'Planned'}
+                      </Badge>
                     </div>
                     <CardDescription className="flex items-center gap-2 mt-1">
                       <Calendar className="h-4 w-4" />
-                      <span>{tournament.month} 2025</span>
+                      <span>
+                        {'startDate' in tournament && tournament.startDate && tournament.endDate ? (
+                          <>
+                            {new Date(tournament.startDate)
+                              .toLocaleDateString('en-US', {
+                                month: 'long',
+                                day: 'numeric'
+                              })
+                              .replace(/(\d+)/, match => {
+                                const num = parseInt(match)
+                                if (num >= 11 && num <= 13) return num + 'th'
+                                switch (num % 10) {
+                                  case 1:
+                                    return num + 'st'
+                                  case 2:
+                                    return num + 'nd'
+                                  case 3:
+                                    return num + 'rd'
+                                  default:
+                                    return num + 'th'
+                                }
+                              })}{' '}
+                            -{' '}
+                            {new Date(tournament.endDate)
+                              .toLocaleDateString('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                              })
+                              .replace(/(\d+)/, match => {
+                                const num = parseInt(match)
+                                if (num >= 11 && num <= 13) return num + 'th'
+                                switch (num % 10) {
+                                  case 1:
+                                    return num + 'st'
+                                  case 2:
+                                    return num + 'nd'
+                                  case 3:
+                                    return num + 'rd'
+                                  default:
+                                    return num + 'th'
+                                }
+                              })}
+                          </>
+                        ) : (
+                          `${'month' in tournament ? tournament.month : ''} 2025`
+                        )}
+                      </span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="px-4 pt-0 pb-2 flex flex-col gap-2 text-sm">
@@ -310,12 +380,15 @@ export default async function HomePage() {
                         <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                         <span>{tournament.location}</span>
                       </div>
-                      {tournament.tentativeRounds && (
-                        <div className="flex items-center gap-1">
-                          <Hash className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span>~{tournament.tentativeRounds} rounds</span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1">
+                        <Hash className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span>
+                          {'rounds' in tournament 
+                            ? `${tournament.rounds} rounds`
+                            : `~${tournament.tentativeRounds} rounds`
+                          }
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

@@ -1,4 +1,4 @@
-import { getPlayer, PlayerDetails } from '@/services/api'
+import { getPlayer, PlayerDetails, getRankings, PlayerRanking } from '@/services/api'
 import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 
@@ -7,6 +7,7 @@ export default async function PlayerPage({ params }: { params: { id: string } })
   const { id } = await params
 
   let player: PlayerDetails | null = null
+  let playerRanking: PlayerRanking | null = null
   let error: Error | null = null
 
   try {
@@ -14,6 +15,21 @@ export default async function PlayerPage({ params }: { params: { id: string } })
     if (!player) {
       // Optionally handle 'player not found' scenario specifically if API returns null/undefined
       throw new Error('Player not found')
+    }
+
+    // Fetch player ranking data
+    try {
+      const rankingsData = await getRankings({ sort: 'best_4', dir: 'desc' })
+      const rankingIndex = rankingsData.rankings.findIndex(r => r.fide_id === player.fide_id)
+      if (rankingIndex !== -1) {
+        playerRanking = {
+          ...rankingsData.rankings[rankingIndex],
+          currentRank: rankingIndex + 1 // Add 1-based rank position
+        }
+      }
+    } catch (rankingErr) {
+      console.warn('Could not fetch player ranking:', rankingErr)
+      // Continue without ranking data
     }
   } catch (err) {
     console.error('Error fetching player:', err)
@@ -47,5 +63,5 @@ export default async function PlayerPage({ params }: { params: { id: string } })
   }
 
   // Render the client component with the fetched data
-  return <PlayerClientContent player={player} />
+  return <PlayerClientContent player={player} playerRanking={playerRanking} />
 }
