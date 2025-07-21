@@ -121,6 +121,13 @@ class Database:
                 ))
             
             conn.commit()
+
+    def get_all_tournaments(self) -> List[Dict]:
+        """Get all tournaments."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('SELECT id, name, start_date, end_date, short_name FROM tournaments ORDER BY start_date DESC')
+            return c.fetchall()
     
     def get_tournament(self, tournament_id: str) -> Optional[Dict]:
         """Get tournament details and results."""

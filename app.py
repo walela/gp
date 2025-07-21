@@ -15,21 +15,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 db = Database()
 
-# Tournament IDs for 2025 Grand Prix
-TOURNAMENT_NAMES = {
-    "1095243": "Eldoret Open",
-    "1126042": "Mavens Open",
-    "1130967": "Waridi Chess Festival",
-    "1135144": "Kisumu Open",
-    "1165146": "The East Africa Chess Championship Nakuru Grand Prix 2025",
-    "1173578": "Kiambu Open",
-    "1188044": "Nairobi County Open",
-    "1193135": "QUO VADIS OPEN 2025",
-    "1213697": "Mombasa International Chess Festival 2025",
-    "1220011": "KITALE OPEN CHESS TOURNAMENT OPEN",
-}
-
-PLAYERS_PER_PAGE = 25
+PLAYERS_PER_PAGE = 30
 
 
 def get_tournament_data(tournament_id: str):
@@ -60,77 +46,43 @@ def get_tournament_data(tournament_id: str):
         results_dict.append(r)
 
     # Save to database
-    db.save_tournament(tournament_id, TOURNAMENT_NAMES[tournament_id], results_dict)
+    db.save_tournament(tournament_id, name, results_dict)
 
-    return TOURNAMENT_NAMES[tournament_id], results_dict
+    return name, results_dict
 
 
 @app.route("/api/tournaments")
 def tournaments():
     """Get list of all tournaments."""
     tournament_list = []
-    for id, name in TOURNAMENT_NAMES.items():
+    all_db_tournaments = db.get_all_tournaments() # Returns list of tuples (id, name, start_date, end_date, short_name)
+    
+    for t_row in all_db_tournaments:
         try:
-            # Check if tournament exists in DB (implies it's completed/scraped)
-            tournament_exists = db.does_tournament_exist(id)
+            t_id, t_name, t_start_date, t_end_date, t_short_name = t_row
             
-            if tournament_exists:
-                # Get only the count of results
-                results_count = db.get_tournament_results_count(id)
-                
-                # Get tournament info including short_name
-                tournament_info = db.get_tournament_info(id)
-                
-                # Determine rounds based on tournament name
-                rounds = 6  # default
-                if any(keyword in name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
-                    rounds = 8
-                
-                tournament_list.append(
-                    {
-                        "id": id,
-                        "name": tournament_info['name'] if tournament_info else name,
-                        "short_name": tournament_info['short_name'] if tournament_info and tournament_info['short_name'] else name,
-                        "results": results_count, # Use the count
-                        "status": "Completed",
-                        "start_date": tournament_info['start_date'] if tournament_info else None,
-                        "end_date": tournament_info['end_date'] if tournament_info else None,
-                        "rounds": rounds,
-                    }
-                )
-            else:
-                # Tournament doesn't exist in DB, assume Upcoming
-                # Determine rounds based on tournament name
-                rounds = 6  # default
-                if any(keyword in name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
-                    rounds = 8
-                    
-                tournament_list.append(
-                    {
-                        "id": id,
-                        "name": name,
-                        "results": 0, # No results yet
-                        "status": "Upcoming",
-                        "rounds": rounds,
-                    }
-                )
-        except Exception as e:
-            logger.error(f"Error processing tournament {id} ({name}): {e}")
-            # Add entry with error status if needed, or skip
+            results_count = db.get_tournament_results_count(t_id)
+
             # Determine rounds based on tournament name
             rounds = 6  # default
-            if any(keyword in name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
+            if any(keyword in t_name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
                 rounds = 8
-                
+            
             tournament_list.append(
                 {
-                    "id": id,
-                    "name": name,
-                    "results": 0,
-                    "status": "Error", # Indicate an issue processing this one
+                    "id": t_id,
+                    "name": t_name,
+                    "short_name": t_short_name if t_short_name else t_name,
+                    "results": results_count,
+                    "status": "Completed", # Assuming all in DB are completed
+                    "start_date": t_start_date,
+                    "end_date": t_end_date,
                     "rounds": rounds,
                 }
             )
+        except Exception as e:
+            logger.error(f"Error processing tournament from DB {t_row[0] if t_row else 'N/A'}: {e}")
+
     return jsonify(tournament_list)
 
 
@@ -146,13 +98,13 @@ def tournament(tournament_id):
         data = db.get_tournament(tournament_id)
         if not data:
             return jsonify({"error": "Tournament not found"}), 404
-            
+
         tournament_name = data["name"]
         short_name = data.get("short_name", tournament_name)
         start_date = data.get("start_date")
         end_date = data.get("end_date")
         results = data["results"]
-        
+
         # Determine rounds based on tournament name
         rounds = 6  # default
         if any(keyword in tournament_name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
@@ -219,16 +171,16 @@ def get_player_rankings():
     player_rankings = []
     for player_id, results in all_results.items():
         # Filter results by federation and result_status
-        valid_results = [r for r in results if r["player"]["federation"] == "KEN" and 
+        valid_results = [r for r in results if r["player"]["federation"] == "KEN" and
                          (r.get("result_status", "valid") == "valid" or r.get("result_status") is None)]
-        
+
         # Skip players with no valid results
         if not valid_results:
             continue
-            
+
         # Sort by chronological order (start_date) for trend analysis
         chronological_results = sorted(valid_results, key=lambda x: x["tournament"]["start_date"] or "1900-01-01")
-        
+
         # Sort by TPR for best results calculation
         valid_results.sort(key=lambda x: x["tpr"] if x["tpr"] else 0, reverse=True)
 
@@ -306,7 +258,7 @@ def rankings():
                 return (1, player["best_1"])  # Priority 1 (lowest)
             else:
                 return (0, 0)  # No valid data
-        
+
         player_rankings.sort(key=cascading_sort_key, reverse=reverse)
     else:
         # Use original single-column sort for other columns
@@ -359,11 +311,11 @@ def player(fide_id):
         try:
             c.execute(
                 """
-                SELECT 
-                    t.id as tournament_id, 
-                    t.name as tournament_name, 
-                    r.points, 
-                    r.tpr, 
+                SELECT
+                    t.id as tournament_id,
+                    t.name as tournament_name,
+                    r.points,
+                    r.tpr,
                     r.rating as rating_in_tournament,
                     r.start_rank,
                     r.result_status,
@@ -374,7 +326,7 @@ def player(fide_id):
                         ELSE 6
                     END as rounds
                 FROM results r
-                JOIN players p ON r.player_id = p.id 
+                JOIN players p ON r.player_id = p.id
                 JOIN tournaments t ON r.tournament_id = t.id
                 WHERE p.fide_id = ?
                 ORDER BY t.id DESC -- Or however you want to order results
@@ -387,11 +339,11 @@ def player(fide_id):
                 logger.warning("start_rank column not found, using query without it")
                 c.execute(
                     """
-                    SELECT 
-                        t.id as tournament_id, 
-                        t.name as tournament_name, 
-                        r.points, 
-                        r.tpr, 
+                    SELECT
+                        t.id as tournament_id,
+                        t.name as tournament_name,
+                        r.points,
+                        r.tpr,
                         r.rating as rating_in_tournament,
                         r.result_status,
                         CASE
@@ -401,7 +353,7 @@ def player(fide_id):
                             ELSE 6
                         END as rounds
                     FROM results r
-                    JOIN players p ON r.player_id = p.id 
+                    JOIN players p ON r.player_id = p.id
                     JOIN tournaments t ON r.tournament_id = t.id
                     WHERE p.fide_id = ?
                     ORDER BY t.id DESC -- Or however you want to order results
@@ -446,12 +398,12 @@ def export_tournament(tournament_id):
     """Export tournament data as CSV."""
     sort = request.args.get("sort", "points")
     dir = request.args.get("dir", "desc")
-    
+
     try:
         data = db.get_tournament(tournament_id)
         if not data:
             return jsonify({"error": "Tournament not found"}), 404
-            
+
         tournament_name = data["name"]
         results = data["results"]
 
@@ -471,7 +423,7 @@ def export_tournament(tournament_id):
         output = io.StringIO()
         csv_writer = csv.writer(output)
         csv_writer.writerow(["Rank", "Name", "FIDE ID", "Rating", "Federation", "Points", "TPR", "Valid Result"])
-        
+
         for idx, result in enumerate(results, 1):
             csv_writer.writerow([
                 idx,
@@ -499,7 +451,7 @@ def export_rankings():
     sort = request.args.get("sort", "best_4")
     dir = request.args.get("dir", "desc")
     search_query = request.args.get("q")
-    
+
     try:
         player_rankings = get_player_rankings()
         reverse = dir == "desc"
@@ -539,7 +491,7 @@ def export_rankings():
                     return (1, player["best_1"])  # Priority 1 (lowest)
                 else:
                     return (0, 0)  # No valid data
-            
+
             player_rankings.sort(key=cascading_sort_key, reverse=reverse)
         else:
             # Use original single-column sort for other columns
@@ -552,7 +504,7 @@ def export_rankings():
         output = io.StringIO()
         csv_writer = csv.writer(output)
         csv_writer.writerow(["Rank", "Name", "FIDE ID", "Rating", "Tournaments Played", "Best 1 TPR", "Tournament (Best 1)", "Best 2 Avg", "Best 3 Avg", "Best 4 Avg"])
-        
+
         for idx, ranking in enumerate(player_rankings, 1):
             csv_writer.writerow([
                 idx,
@@ -606,11 +558,11 @@ def export_player(fide_id):
         try:
             c.execute(
                 """
-                SELECT 
-                    t.id as tournament_id, 
-                    t.name as tournament_name, 
-                    r.points, 
-                    r.tpr, 
+                SELECT
+                    t.id as tournament_id,
+                    t.name as tournament_name,
+                    r.points,
+                    r.tpr,
                     r.rating as rating_in_tournament,
                     r.start_rank,
                     r.result_status,
@@ -621,7 +573,7 @@ def export_player(fide_id):
                         ELSE 6
                     END as rounds
                 FROM results r
-                JOIN players p ON r.player_id = p.id 
+                JOIN players p ON r.player_id = p.id
                 JOIN tournaments t ON r.tournament_id = t.id
                 WHERE p.fide_id = ?
                 ORDER BY t.id DESC
@@ -637,16 +589,16 @@ def export_player(fide_id):
         # Create CSV content
         output = io.StringIO()
         csv_writer = csv.writer(output)
-        
+
         # Write player info
         csv_writer.writerow([f"Player: {player_details['name']}"])
         csv_writer.writerow([f"FIDE ID: {player_details['fide_id']}"])
         csv_writer.writerow([f"Federation: {player_details['federation']}"])
         csv_writer.writerow([])  # Empty row
-        
+
         # Write tournament results header
         csv_writer.writerow(["Tournament", "Rating", "Points", "Rounds", "TPR", "Status"])
-        
+
         # Write results
         for result in tournament_results:
             csv_writer.writerow([
