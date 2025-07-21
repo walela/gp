@@ -53,6 +53,23 @@ class Database:
                 )
             ''')
             
+            # Create player_rankings table
+            c.execute('''
+                CREATE TABLE IF NOT EXISTS player_rankings (
+                    player_id INTEGER PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    fide_id TEXT,
+                    rating INTEGER,
+                    tournaments_played INTEGER,
+                    best_1 REAL,
+                    tournament_1 TEXT,
+                    best_2 REAL,
+                    best_3 REAL,
+                    best_4 REAL,
+                    FOREIGN KEY (player_id) REFERENCES players(id)
+                )
+            ''')
+            
             conn.commit()
     
     def save_tournament(self, tournament_id: str, tournament_name: str, results: List[Dict]):
@@ -307,6 +324,62 @@ class Database:
                 all_results[player_db_id].append(result_data)
             
             return all_results
+
+    def get_all_player_rankings(self) -> List[Dict]:
+        """Get all player rankings from the pre-computed table."""
+        with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+            c.execute('SELECT * FROM player_rankings')
+            return [dict(row) for row in c.fetchall()]
+
+    def recalculate_rankings(self):
+        """Recalculate and store all player rankings."""
+        all_results = self.get_all_results()
+        player_rankings_data = []
+
+        for player_id, results in all_results.items():
+            valid_results = [r for r in results if r["player"]["federation"] == "KEN" and
+                             (r.get("result_status", "valid") == "valid" or r.get("result_status") is None)]
+
+            if not valid_results:
+                continue
+
+            valid_results.sort(key=lambda x: x["tpr"] if x["tpr"] else 0, reverse=True)
+
+            best_1 = valid_results[0]["tpr"] if len(valid_results) >= 1 else 0
+            tournament_1 = valid_results[0]["tournament"]["name"] if len(valid_results) >= 1 else None
+            best_2 = sum(r["tpr"] for r in valid_results[:2]) / 2 if len(valid_results) >= 2 else 0
+            best_3 = sum(r["tpr"] for r in valid_results[:3]) / 3 if len(valid_results) >= 3 else 0
+            best_4 = sum(r["tpr"] for r in valid_results[:4]) / 4 if len(valid_results) >= 4 else 0
+            
+            player_info = valid_results[0]["player"]
+            player_rankings_data.append(
+                (
+                    player_id,
+                    player_info["name"],
+                    player_info["fide_id"],
+                    player_info["rating"],
+                    len(valid_results),
+                    round(best_1),
+                    tournament_1,
+                    round(best_2),
+                    round(best_3),
+                    round(best_4),
+                )
+            )
+
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('DELETE FROM player_rankings')
+            c.executemany('''
+                INSERT INTO player_rankings 
+                (player_id, name, fide_id, rating, tournaments_played, best_1, tournament_1, best_2, best_3, best_4)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', player_rankings_data)
+            conn.commit()
+            logger.info(f"Recalculated and stored rankings for {c.rowcount} players.")
+
 
     def get_tournament_dates(self, tournament_id: str) -> Tuple[Optional[str], Optional[str]]:
         """Get start and end dates for a tournament."""
