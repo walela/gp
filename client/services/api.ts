@@ -3,6 +3,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onr
 export interface Tournament {
   id: string
   name: string
+  short_name?: string
   results: number
   status: 'Completed' | 'Upcoming'
   start_date?: string
@@ -29,6 +30,7 @@ export interface TournamentResult {
 
 export interface TournamentDetails {
   name: string
+  short_name?: string
   id: string
   results: TournamentResult[]
   total: number

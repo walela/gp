@@ -184,7 +184,9 @@ class ChessResultsScraper:
                 
             # Get player info
             name = cells[headers.index('name')].text.strip()
-            rating = int(cells[headers.index('rtg')].text) if cells[headers.index('rtg')].text.strip() else 0
+            # Handle both 'rtg' and 'rtgi' headers
+            rating_header = 'rtg' if 'rtg' in headers else 'rtgi'
+            rating = int(cells[headers.index(rating_header)].text) if cells[headers.index(rating_header)].text.strip() else 0
             points = float(cells[headers.index('pts.')].text.replace(',', '.'))
             rank = int(cells[headers.index('rk.')].text)
             start_rank = int(cells[headers.index('sno')].text)

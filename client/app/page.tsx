@@ -3,55 +3,39 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { CalendarDays, MapPin, Hash, Calendar } from 'lucide-react'
 import { getTournaments } from '@/services/api'
-import { getShortTournamentName, formatTournamentDateWithOrdinals } from '@/utils/tournament'
+import { formatTournamentDateWithOrdinals } from '@/utils/tournament'
 import { Countdown } from '@/components/ui/countdown'
-
-
 
 type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
 
 export default async function HomePage() {
   const tournaments = await getTournaments()
-  
+
+  console.log(tournaments)
+
   const upcomingTournaments: Array<{
-    id: string;
-    name: string;
-    startDate: string;
-    endDate: string;
-    location: string;
-    rounds: number;
-    confirmed: boolean;
-    status: TournamentStatus;
+    id: string
+    name: string
+    startDate: string
+    endDate: string
+    location: string
+    rounds: number
+    confirmed: boolean
+    status: TournamentStatus
   }> = [
     {
-      id: '1200000',
-      name: 'Kitale Open',
-      startDate: '2025-07-19',
-      endDate: '2025-07-20',
-      location: 'Kitale',
+      id: '742161',
+      name: '3rd Jumuiya Open',
+      startDate: '2025-09-20',
+      endDate: '2025-09-21',
+      location: 'Nairobi',
       rounds: 6,
       confirmed: true,
       status: 'Upcoming' satisfies TournamentStatus
-    },
+    }
   ]
 
   const plannedTournaments = [
-    {
-      id: '742160',
-      name: '67th NCC Championship',
-      month: 'August',
-      location: 'Nairobi',
-      tentativeRounds: 6,
-      confirmed: false
-    },
-    {
-      id: '742161',
-      name: '3rd Jumuiya ya Afrika Mashariki Open',
-      month: 'September 20-21',
-      location: 'Nairobi',
-      tentativeRounds: 6,
-      confirmed: true
-    },
     {
       id: '742162',
       name: 'Mombasa Open 2025',
@@ -71,13 +55,13 @@ export default async function HomePage() {
     },
     {
       id: '742164',
-      name: 'Chess Through Challenges Open',
+      name: 'Chess Through Challenges',
       startDate: '2025-11-20',
       endDate: '2025-11-23',
       location: 'Nairobi',
       rounds: 6,
       confirmed: true
-    },
+    }
   ]
 
   // Find the next upcoming tournament for countdown
@@ -88,7 +72,6 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-2 py-4 space-y-8">
-        
         <div>
           <h2 className="text-xl mb-2 font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
           <div className="flex flex-wrap gap-4">
@@ -124,9 +107,7 @@ export default async function HomePage() {
                   <Card className="h-full gap-2 py-4 rounded-lg">
                     <CardHeader className="pb-1 pt-3 px-4">
                       <div className="flex items-center justify-between">
-                        <CardTitle>
-                          {getShortTournamentName(tournament.name)}
-                        </CardTitle>
+                        <CardTitle>{tournament.short_name || tournament.name}</CardTitle>
                         <Badge
                           className={
                             tournament.status === 'Completed'
@@ -173,7 +154,9 @@ export default async function HomePage() {
                         </div>
                       </div>
                       <div className="pt-2">
-                        <span className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">View details →</span>
+                        <span className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
+                          View details →
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
@@ -186,38 +169,36 @@ export default async function HomePage() {
         <div>
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
-
           </div>
-                     <div className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
-             Tournaments within the next 60 days. {nextTournament && (
-               <span className="text-sm whitespace-nowrap">
-                 <span className="text-gray-600">Next Grand Prix tournament starts in: </span>
-                 <span className="font-mono font-bold text-gray-900">
-                   <Countdown targetDate={nextTournament.startDate} />
-                 </span>
-               </span>
-             )}
-           </div>
-                      
+          <div className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
+            Tournaments within the next 60 days.{' '}
+            {nextTournament && (
+              <span className="text-sm whitespace-nowrap">
+                <span className="text-gray-600">Next Grand Prix tournament starts in: </span>
+                <span className="font-mono font-bold text-gray-900">
+                  <Countdown targetDate={nextTournament.startDate} />
+                </span>
+              </span>
+            )}
+          </div>
 
           <div className="flex flex-wrap gap-4">
             {upcomingTournaments.map(tournament => (
               <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
-                <Card 
-                  className={`h-full py-4 gap-2 rounded-lg ${tournament.status === 'postponed' ? 'opacity-75' : ''}`}>
+                <Card className={`h-full py-4 gap-2 rounded-lg ${tournament.status === 'postponed' ? 'opacity-75' : ''}`}>
                   <CardHeader className="pb-1 pt-3 px-4">
                     <div className="flex items-center justify-between">
                       <CardTitle>
-                        <Link 
-                          href={`/tournament/${tournament.id}`} 
-                          className={tournament.status === 'postponed' ? 'line-through text-gray-500 hover:underline' : 'hover:underline'}>
-                          {getShortTournamentName(tournament.name)}
+                        <Link
+                          href={`/tournament/${tournament.id}`}
+                          className={
+                            tournament.status === 'postponed' ? 'line-through text-gray-500 hover:underline' : 'hover:underline'
+                          }>
+                          {tournament.short_name || tournament.name}
                         </Link>
                       </CardTitle>
                       {tournament.status === 'postponed' ? (
-                        <Badge className="bg-gray-200 text-gray-600 hover:bg-gray-200 whitespace-nowrap">
-                          Postponed
-                        </Badge>
+                        <Badge className="bg-gray-200 text-gray-600 hover:bg-gray-200 whitespace-nowrap">Postponed</Badge>
                       ) : (
                         <Badge
                           className={
@@ -295,7 +276,9 @@ export default async function HomePage() {
 
         <div>
           <h2 className="text-xl font-bold tracking-tight text-gray-700">Planned Tournaments</h2>
-          <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">Future tournaments with confirmed or tentative dates and details</p>
+          <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
+            Future tournaments with confirmed or tentative dates and details
+          </p>
 
           <div className="flex flex-wrap gap-4">
             {plannedTournaments.map(tournament => (
@@ -305,20 +288,19 @@ export default async function HomePage() {
                     <div className="flex items-center justify-between">
                       <CardTitle>
                         {'startDate' in tournament ? (
-                          <Link 
-                            href={`/tournament/${tournament.id}`} 
-                            className="hover:underline">
-                            {getShortTournamentName(tournament.name)}
+                          <Link href={`/tournament/${tournament.id}`} className="hover:underline">
+                            {tournament.short_name || tournament.name}
                           </Link>
                         ) : (
-                          getShortTournamentName(tournament.name)
+                          tournament.short_name || tournament.name
                         )}
                       </CardTitle>
-                      <Badge className={
-                        tournament.confirmed 
-                          ? "bg-green-100 text-green-700 hover:bg-green-100" 
-                          : "bg-purple-100 text-purple-700 hover:bg-purple-100"
-                      }>
+                      <Badge
+                        className={
+                          tournament.confirmed
+                            ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                            : 'bg-purple-100 text-purple-700 hover:bg-purple-100'
+                        }>
                         {tournament.confirmed ? 'Confirmed' : 'Planned'}
                       </Badge>
                     </div>
@@ -383,10 +365,7 @@ export default async function HomePage() {
                       <div className="flex items-center gap-1">
                         <Hash className="h-3.5 w-3.5 text-muted-foreground" />
                         <span>
-                          {'rounds' in tournament 
-                            ? `${tournament.rounds} rounds`
-                            : `~${tournament.tentativeRounds} rounds`
-                          }
+                          {'rounds' in tournament ? `${tournament.rounds} rounds` : `~${tournament.tentativeRounds} rounds`}
                         </span>
                       </div>
                     </div>
@@ -400,4 +379,3 @@ export default async function HomePage() {
     </div>
   )
 }
-

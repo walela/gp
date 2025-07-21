@@ -128,13 +128,14 @@ class Database:
             c = conn.cursor()
             
             # Get tournament name and dates
-            c.execute('SELECT name, start_date, end_date FROM tournaments WHERE id = ?', (tournament_id,))
+            c.execute('SELECT name, start_date, end_date, short_name FROM tournaments WHERE id = ?', (tournament_id,))
             tournament_row = c.fetchone()
             if not tournament_row:
                 return None # Tournament not found
             tournament_name = tournament_row[0]
             start_date = tournament_row[1] if len(tournament_row) > 1 else None
             end_date = tournament_row[2] if len(tournament_row) > 2 else None
+            short_name = tournament_row[3] if len(tournament_row) > 3 else None
             
             # Get results, joining players correctly
             try:
@@ -196,6 +197,7 @@ class Database:
             
             return {
                 'name': tournament_name,
+                'short_name': short_name,
                 'start_date': start_date,
                 'end_date': end_date,
                 'results': results
@@ -308,6 +310,21 @@ class Database:
             if result:
                 return result[0], result[1]
             return None, None
+    
+    def get_tournament_info(self, tournament_id: str) -> Optional[Dict]:
+        """Get tournament info including short_name."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('SELECT name, short_name, start_date, end_date FROM tournaments WHERE id = ?', (tournament_id,))
+            result = c.fetchone()
+            if result:
+                return {
+                    'name': result[0],
+                    'short_name': result[1],
+                    'start_date': result[2],
+                    'end_date': result[3]
+                }
+            return None
             
     def delete_tournament_data(self, tournament_id: str):
         """Delete tournament and its associated results."""

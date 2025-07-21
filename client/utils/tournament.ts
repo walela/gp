@@ -22,7 +22,9 @@ export const SHORT_NAMES: Record<string, string> = {
   'Kiambu Open': 'Kiambu Open',
   'Nairobi County Chess Championship 2025': 'Nairobi County Open',
   'Nairobi County Open': 'Nairobi County Open',
-  'QUO VADIS OPEN 2025': 'Quo Vadis Nyeri Open'
+  'QUO VADIS OPEN 2025': 'Quo Vadis Nyeri Open',
+  'KITALE OPEN CHESS TOURNAMENT OPEN': 'Kitale Open',
+  'Mombasa International Chess Festival 2025': 'Mombasa Chess Festival'
 }
 
 export function getShortTournamentName(name: string): string {

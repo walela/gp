@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:chess-results.com)",
+      "WebFetch(domain:s3.chess-results.com)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(source:*)",
+      "Bash(python3:*)"
+    ],
+    "deny": []
+  }
+}

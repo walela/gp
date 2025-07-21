@@ -25,6 +25,8 @@ TOURNAMENT_NAMES = {
     "1173578": "Kiambu Open",
     "1188044": "Nairobi County Open",
     "1193135": "QUO VADIS OPEN 2025",
+    "1213697": "Mombasa International Chess Festival 2025",
+    "1220011": "KITALE OPEN CHESS TOURNAMENT OPEN",
 }
 
 PLAYERS_PER_PAGE = 25
@@ -76,8 +78,8 @@ def tournaments():
                 # Get only the count of results
                 results_count = db.get_tournament_results_count(id)
                 
-                # Get tournament dates
-                start_date, end_date = db.get_tournament_dates(id)
+                # Get tournament info including short_name
+                tournament_info = db.get_tournament_info(id)
                 
                 # Determine rounds based on tournament name
                 rounds = 6  # default
@@ -87,11 +89,12 @@ def tournaments():
                 tournament_list.append(
                     {
                         "id": id,
-                        "name": name,
+                        "name": tournament_info['name'] if tournament_info else name,
+                        "short_name": tournament_info['short_name'] if tournament_info and tournament_info['short_name'] else name,
                         "results": results_count, # Use the count
                         "status": "Completed",
-                        "start_date": start_date,
-                        "end_date": end_date,
+                        "start_date": tournament_info['start_date'] if tournament_info else None,
+                        "end_date": tournament_info['end_date'] if tournament_info else None,
                         "rounds": rounds,
                     }
                 )
@@ -145,6 +148,7 @@ def tournament(tournament_id):
             return jsonify({"error": "Tournament not found"}), 404
             
         tournament_name = data["name"]
+        short_name = data.get("short_name", tournament_name)
         start_date = data.get("start_date")
         end_date = data.get("end_date")
         results = data["results"]
@@ -189,6 +193,7 @@ def tournament(tournament_id):
         return jsonify(
             {
                 "name": tournament_name,
+                "short_name": short_name,
                 "id": tournament_id,
                 "start_date": start_date,
                 "end_date": end_date,
