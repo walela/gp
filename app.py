@@ -47,6 +47,9 @@ def get_tournament_data(tournament_id: str):
 
     # Save to database
     db.save_tournament(tournament_id, name, results_dict)
+    
+    # Recalculate rankings after new data is saved
+    db.recalculate_rankings()
 
     return name, results_dict
 
@@ -164,53 +167,6 @@ def tournament(tournament_id):
 # Qualification probability calculation removed for performance
 
 
-def get_player_rankings():
-    all_results = db.get_all_results()
-
-    # Calculate best N results for each player
-    player_rankings = []
-    for player_id, results in all_results.items():
-        # Filter results by federation and result_status
-        valid_results = [r for r in results if r["player"]["federation"] == "KEN" and
-                         (r.get("result_status", "valid") == "valid" or r.get("result_status") is None)]
-
-        # Skip players with no valid results
-        if not valid_results:
-            continue
-
-        # Sort by chronological order (start_date) for trend analysis
-        chronological_results = sorted(valid_results, key=lambda x: x["tournament"]["start_date"] or "1900-01-01")
-
-        # Sort by TPR for best results calculation
-        valid_results.sort(key=lambda x: x["tpr"] if x["tpr"] else 0, reverse=True)
-
-        # Get best results
-        best_1 = valid_results[0]["tpr"] if len(valid_results) >= 1 else 0
-        best_2 = sum(r["tpr"] for r in valid_results[:2]) / 2 if len(valid_results) >= 2 else 0
-        best_3 = sum(r["tpr"] for r in valid_results[:3]) / 3 if len(valid_results) >= 3 else 0
-        best_4 = sum(r["tpr"] for r in valid_results[:4]) / 4 if len(valid_results) >= 4 else 0
-
-# Qualification probability calculation removed for performance
-
-        player_rankings.append(
-            {
-                "name": valid_results[0]["player"]["name"],
-                "fide_id": valid_results[0]["player"]["fide_id"],
-                "rating": valid_results[0]["player"]["rating"],
-                "tournaments_played": len(valid_results),
-                "best_1": round(best_1),
-                "tournament_1": (
-                    valid_results[0]["tournament"]["name"] if len(valid_results) >= 1 else None
-                ),
-                "best_2": round(best_2),
-                "best_3": round(best_3),
-                "best_4": round(best_4),
-            }
-        )
-
-    return player_rankings
-
-
 @app.route("/api/rankings")
 def rankings():
     """Get current GP rankings."""
@@ -220,7 +176,7 @@ def rankings():
     search_query = request.args.get("q")  # Get the search query
     per_page = 25
 
-    player_rankings = get_player_rankings()
+    player_rankings = db.get_all_player_rankings()
     reverse = dir == "desc"
 
     # Filter by search query if provided
@@ -453,7 +409,7 @@ def export_rankings():
     search_query = request.args.get("q")
 
     try:
-        player_rankings = get_player_rankings()
+        player_rankings = db.get_all_player_rankings()
         reverse = dir == "desc"
 
         # Filter by search query if provided
