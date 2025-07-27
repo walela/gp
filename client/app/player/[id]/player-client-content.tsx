@@ -18,8 +18,6 @@ import {
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-
-
 interface PlayerClientContentProps {
   player: PlayerDetails
   playerRanking: (PlayerRanking & { currentRank?: number }) | null
@@ -38,11 +36,15 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
     validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
 
   // Use ranking data from API if available
-  const currentRating = playerRanking ? 
-    (playerRanking.tournaments_played >= 4 ? playerRanking.best_4 :
-     playerRanking.tournaments_played >= 3 ? playerRanking.best_3 :
-     playerRanking.tournaments_played >= 2 ? playerRanking.best_2 :
-     playerRanking.best_1) : 0
+  const currentRating = playerRanking
+    ? playerRanking.tournaments_played >= 4
+      ? playerRanking.best_4
+      : playerRanking.tournaments_played >= 3
+        ? playerRanking.best_3
+        : playerRanking.tournaments_played >= 2
+          ? playerRanking.best_2
+          : playerRanking.best_1
+    : 0
   const currentRank = playerRanking?.currentRank ?? null
 
   const handleSort = (field: SortField) => {
@@ -55,8 +57,8 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
   }
 
   const sortedResults = [...player.results].sort((a, b) => {
-    let aValue: any, bValue: any
-    
+    let aValue: string | number, bValue: string | number
+
     switch (sortField) {
       case 'tournament':
         aValue = getShortTournamentName(a.tournament_name)
@@ -79,7 +81,7 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
         bValue = b.tpr || 0
         break
     }
-    
+
     if (sortDirection === 'asc') {
       return aValue > bValue ? 1 : aValue < bValue ? -1 : 0
     } else {
@@ -101,7 +103,7 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
         <div className="bg-gray-50 px-4 py-4 border-b border-gray-200">
           <div className="flex flex-col space-y-3">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{player.name}</h1>
-            
+
             {player.fide_id && (
               <div className="flex items-center gap-2">
                 <a
@@ -160,7 +162,7 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
           <div className="bg-gradient-to-r from-slate-50/95 via-stone-50/90 to-gray-50/95 backdrop-blur-md px-4 py-4 border-b border-gray-300/60">
             <div className="flex flex-col space-y-2">
               <h1 className="text-2xl font-bold text-gray-900 drop-shadow-sm">{player.name}</h1>
-              
+
               {player.fide_id && (
                 <div className="flex items-center gap-2">
                   <a
@@ -217,7 +219,9 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right text-xs px-2" onClick={() => handleSort('tpr')}>
+                  <CustomTableHead
+                    className="cursor-pointer select-none text-right text-xs px-2"
+                    onClick={() => handleSort('tpr')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>TPR</span>
                       <span className="text-muted-foreground">
@@ -225,7 +229,9 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right text-xs px-2" onClick={() => handleSort('points')}>
+                  <CustomTableHead
+                    className="cursor-pointer select-none text-right text-xs px-2"
+                    onClick={() => handleSort('points')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>Points</span>
                       <span className="text-muted-foreground">
@@ -239,14 +245,12 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                 {sortedResults.map((result: PlayerResult, index) => (
                   <CustomTableRow
                     key={result.tournament_id}
-                    className={cn(
-                      index % 2 === 0
-                        ? 'bg-gray-50/50 hover:bg-gray-100/50'
-                        : 'bg-white hover:bg-gray-50/50'
-                    )}>
+                    className={cn(index % 2 === 0 ? 'bg-gray-50/50 hover:bg-gray-100/50' : 'bg-white hover:bg-gray-50/50')}>
                     <CustomTableCell className="px-2 py-3">
                       <div className="flex flex-col gap-1">
-                        <Link href={`/tournament/${result.tournament_id}`} className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 text-sm leading-tight">
+                        <Link
+                          href={`/tournament/${result.tournament_id}`}
+                          className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 text-sm leading-tight">
                           {getShortTournamentName(result.tournament_name)}
                         </Link>
                         <div className="text-xs text-gray-500 space-x-2">
@@ -256,13 +260,12 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                           {result.start_rank && result.player_card_url && (
                             <>
                               <span>•</span>
-                              <a 
-                                href={result.player_card_url} 
-                                target="_blank" 
+                              <a
+                                href={result.player_card_url}
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
-                                title="View player card on chess-results.com"
-                              >
+                                title="View player card on chess-results.com">
                                 Card <ExternalLink className="h-3 w-3" />
                               </a>
                             </>
@@ -283,7 +286,9 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                       )}
                     </CustomTableCell>
                     <CustomTableCell className="text-right tabular-nums px-2 py-3">
-                      <span className="text-sm font-medium">{result.points.toFixed(1)}/{result.rounds}</span>
+                      <span className="text-sm font-medium">
+                        {result.points.toFixed(1)}/{result.rounds}
+                      </span>
                     </CustomTableCell>
                   </CustomTableRow>
                 ))}
@@ -347,19 +352,19 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                 {sortedResults.map((result: PlayerResult, index) => (
                   <CustomTableRow
                     key={result.tournament_id}
-                    className={cn(
-                      index % 2 === 0
-                        ? 'bg-gray-50/50 hover:bg-gray-100/50'
-                        : 'bg-white hover:bg-gray-50/50'
-                    )}>
+                    className={cn(index % 2 === 0 ? 'bg-gray-50/50 hover:bg-gray-100/50' : 'bg-white hover:bg-gray-50/50')}>
                     <CustomTableCell className="whitespace-nowrap">
-                      <Link href={`/tournament/${result.tournament_id}`} className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
+                      <Link
+                        href={`/tournament/${result.tournament_id}`}
+                        className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
                         {getShortTournamentName(result.tournament_name)}
                       </Link>
                     </CustomTableCell>
                     <CustomTableCell className="text-right tabular-nums">{result.start_rank ?? '-'}</CustomTableCell>
                     <CustomTableCell className="text-right tabular-nums">{result.rating_in_tournament}</CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums">{result.points.toFixed(1)}/{result.rounds}</CustomTableCell>
+                    <CustomTableCell className="text-right tabular-nums">
+                      {result.points.toFixed(1)}/{result.rounds}
+                    </CustomTableCell>
                     <CustomTableCell className="text-right tabular-nums">
                       {result.result_status && result.result_status !== 'valid' ? (
                         <div className="flex items-center justify-end space-x-2">
@@ -369,18 +374,17 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                           </span>
                         </div>
                       ) : (
-                        result.tpr ?? '-'
+                        (result.tpr ?? '-')
                       )}
                     </CustomTableCell>
                     <CustomTableCell className="text-center">
                       {result.start_rank && result.player_card_url ? (
-                        <a 
-                          href={result.player_card_url} 
-                          target="_blank" 
+                        <a
+                          href={result.player_card_url}
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:text-blue-800 inline-flex justify-center"
-                          title="View player card on chess-results.com"
-                        >
+                          title="View player card on chess-results.com">
                           <ExternalLink className="h-4 w-4" />
                         </a>
                       ) : (

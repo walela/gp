@@ -238,7 +238,7 @@ export default function HomePage() {
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none min-w-[140px]" onClick={() => handleSort('dates')}>
+                  <CustomTableHead className="cursor-pointer select-none min-w-[140px] hidden sm:table-cell" onClick={() => handleSort('dates')}>
                     <div className="flex items-center gap-1">
                       <span>Dates</span>
                       <span className="text-muted-foreground">
@@ -246,7 +246,7 @@ export default function HomePage() {
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none" onClick={() => handleSort('location')}>
+                  <CustomTableHead className="cursor-pointer select-none hidden md:table-cell" onClick={() => handleSort('location')}>
                     <div className="flex items-center gap-1">
                       <span>Location</span>
                       <span className="text-muted-foreground">
@@ -256,13 +256,14 @@ export default function HomePage() {
                   </CustomTableHead>
                   <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('players')}>
                     <div className="flex items-center gap-1 justify-end">
-                      <span>Valid TPRs</span>
+                      <span className="hidden sm:inline">Valid TPRs</span>
+                      <span className="sm:hidden">TPRs</span>
                       <span className="text-muted-foreground">
                         <SortIcon field="players" />
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('rounds')}>
+                  <CustomTableHead className="cursor-pointer select-none text-right hidden lg:table-cell" onClick={() => handleSort('rounds')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>Rounds</span>
                       <span className="text-muted-foreground">
@@ -272,13 +273,14 @@ export default function HomePage() {
                   </CustomTableHead>
                   <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('avgTop10TPR')}>
                     <div className="flex items-center gap-1 justify-end">
-                      <span>Avg Top 10 TPR</span>
+                      <span className="hidden lg:inline">Avg Top 10 TPR</span>
+                      <span className="lg:hidden">Avg TPR</span>
                       <span className="text-muted-foreground">
                         <SortIcon field="avgTop10TPR" />
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('avgTop24Rating')}>
+                  <CustomTableHead className="cursor-pointer select-none text-right hidden xl:table-cell" onClick={() => handleSort('avgTop24Rating')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>Avg Top 24 Rating</span>
                       <span className="text-muted-foreground">
@@ -307,18 +309,27 @@ export default function HomePage() {
                         key={tournament.id}
                         className={cn(index % 2 === 0 ? 'bg-gray-50/50 hover:bg-gray-100/50' : 'bg-white hover:bg-gray-50/50')}>
                         <CustomTableCell className="whitespace-nowrap">
-                          <Link
-                            href={`/tournament/${tournament.id}`}
-                            className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
-                            {tournament.short_name || tournament.name}
-                          </Link>
+                          <div className="flex flex-col gap-1">
+                            <Link
+                              href={`/tournament/${tournament.id}`}
+                              className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
+                              {tournament.short_name || tournament.name}
+                            </Link>
+                            <div className="text-xs text-gray-500 sm:hidden space-x-2">
+                              <span>{dates}</span>
+                              <span>•</span>
+                              <span>{location}</span>
+                              <span className="lg:hidden">•</span>
+                              <span className="lg:hidden">{rounds}R</span>
+                            </div>
+                          </div>
                         </CustomTableCell>
-                        <CustomTableCell className="whitespace-nowrap">{dates}</CustomTableCell>
-                        <CustomTableCell>{location}</CustomTableCell>
+                        <CustomTableCell className="whitespace-nowrap hidden sm:table-cell">{dates}</CustomTableCell>
+                        <CustomTableCell className="hidden md:table-cell">{location}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums">{tournament.results}</CustomTableCell>
-                        <CustomTableCell className="text-right tabular-nums">{rounds}</CustomTableCell>
+                        <CustomTableCell className="text-right tabular-nums hidden lg:table-cell">{rounds}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums">{stats.avgTop10TPR || '-'}</CustomTableCell>
-                        <CustomTableCell className="text-right tabular-nums">{stats.avgTop24Rating || '-'}</CustomTableCell>
+                        <CustomTableCell className="text-right tabular-nums hidden xl:table-cell">{stats.avgTop24Rating || '-'}</CustomTableCell>
                       </CustomTableRow>
                     )
                   })
