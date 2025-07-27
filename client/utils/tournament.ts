@@ -101,24 +101,22 @@ export function formatTournamentDateWithOrdinals(startDate?: string, endDate?: s
 
   // Format start date with ordinal
   const startDay = formatOrdinal(start.getDate())
-  const startMonth = start.toLocaleDateString('en-US', { month: 'long' })
-  const startYear = start.getFullYear()
+  const startMonth = start.toLocaleDateString('en-US', { month: 'short' })
   
   // If no end date or same as start date, return just start date
   if (!end || startDate === endDate) {
-    return `${startMonth} ${startDay}, ${startYear}`
+    return `${startMonth} ${startDay}`
   }
 
-  // If same month and year, just show the day range
+  // If same month, just show the day range
   if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
     const endDay = formatOrdinal(end.getDate())
-    return `${startMonth} ${startDay}-${endDay}, ${startYear}`
+    return `${startMonth} ${startDay}-${endDay}`
   }
 
-  // Different months or years
+  // Different months
   const endDay = formatOrdinal(end.getDate())
-  const endMonth = end.toLocaleDateString('en-US', { month: 'long' })
-  const endYear = end.getFullYear()
+  const endMonth = end.toLocaleDateString('en-US', { month: 'short' })
   
-  return `${startMonth} ${startDay}, ${startYear} - ${endMonth} ${endDay}, ${endYear}`
+  return `${startMonth} ${startDay} - ${endMonth} ${endDay}`
 }
