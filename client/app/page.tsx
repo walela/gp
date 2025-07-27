@@ -289,7 +289,7 @@ export default function HomePage() {
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('avgTop10TPR')}>
+                  <CustomTableHead className="cursor-pointer select-none text-right hidden sm:table-cell" onClick={() => handleSort('avgTop10TPR')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span className="hidden lg:inline">Avg Top 10 TPR</span>
                       <span className="lg:hidden">Avg TPR</span>
@@ -337,10 +337,8 @@ export default function HomePage() {
                             </Link>
                             <div className="text-xs text-gray-500 sm:hidden space-x-2">
                               <span>{dates}</span>
-                              <span>•</span>
-                              <span>{location}</span>
                               <span className="lg:hidden">•</span>
-                              <span className="lg:hidden">{rounds}R</span>
+                              <span className="lg:hidden">{rounds} rounds</span>
                             </div>
                           </div>
                         </CustomTableCell>
@@ -348,7 +346,7 @@ export default function HomePage() {
                         <CustomTableCell className="hidden md:table-cell">{location}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums">{tournament.results}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums hidden lg:table-cell">{rounds}</CustomTableCell>
-                        <CustomTableCell className="text-right tabular-nums">{stats.avgTop10TPR || '-'}</CustomTableCell>
+                        <CustomTableCell className="text-right tabular-nums hidden sm:table-cell">{stats.avgTop10TPR || '-'}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums hidden xl:table-cell">
                           {stats.avgTop24Rating || '-'}
                         </CustomTableCell>
@@ -366,15 +364,7 @@ export default function HomePage() {
             <h2 className="text-xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
           </div>
           <div className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
-            Tournaments within the next 60 days.{' '}
-            {nextTournament && (
-              <span className="text-sm whitespace-nowrap">
-                <span className="text-gray-600">Next Grand Prix tournament starts in: </span>
-                <span className="font-mono font-bold text-gray-900">
-                  <Countdown targetDate={nextTournament.startDate} />
-                </span>
-              </span>
-            )}
+            Tournaments within the next 60 days.
           </div>
 
           <div className="flex flex-wrap gap-4">
