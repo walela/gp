@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge'
 import { CalendarDays, MapPin, Hash, Calendar, ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from 'lucide-react'
 import { getTournaments, getTournamentAllResults } from '@/services/api'
 import { formatTournamentDateWithOrdinals } from '@/utils/tournament'
-import { Countdown } from '@/components/ui/countdown'
 import {
   CustomTable,
   CustomTableHeader,
@@ -215,11 +214,6 @@ export default function HomePage() {
     }
   ]
 
-  // Find the next upcoming tournament for countdown
-  const nextTournament = upcomingTournaments
-    .filter(t => t.status !== 'postponed')
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())[0]
-
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
       return <ArrowUpDownIcon className="h-4 w-4" />
@@ -289,7 +283,9 @@ export default function HomePage() {
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right hidden sm:table-cell" onClick={() => handleSort('avgTop10TPR')}>
+                  <CustomTableHead
+                    className="cursor-pointer select-none text-right hidden sm:table-cell"
+                    onClick={() => handleSort('avgTop10TPR')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span className="hidden lg:inline">Avg Top 10 TPR</span>
                       <span className="lg:hidden">Avg TPR</span>
@@ -346,7 +342,9 @@ export default function HomePage() {
                         <CustomTableCell className="hidden md:table-cell">{location}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums">{tournament.results}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums hidden lg:table-cell">{rounds}</CustomTableCell>
-                        <CustomTableCell className="text-right tabular-nums hidden sm:table-cell">{stats.avgTop10TPR || '-'}</CustomTableCell>
+                        <CustomTableCell className="text-right tabular-nums hidden sm:table-cell">
+                          {stats.avgTop10TPR || '-'}
+                        </CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums hidden xl:table-cell">
                           {stats.avgTop24Rating || '-'}
                         </CustomTableCell>
