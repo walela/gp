@@ -87,8 +87,21 @@ export default function HomePage() {
     }
   }
 
-  const sortedTournaments = [...tournaments].sort((a, b) => {
-    let aValue: any, bValue: any
+  type SortField = 'name' | 'dates' | 'location' | 'players' | 'rounds' | 'avgTop10TPR' | 'avgTop24Rating'
+  type Tournament = {
+    id: string
+    name: string
+    short_name?: string
+    start_date: string
+    location: string
+    results: number
+    rounds?: number
+    avgTop10TPR?: number
+    avgTop24Rating?: number
+  }
+
+  const sortedTournaments = [...tournaments].sort((a: Tournament, b: Tournament) => {
+    let aValue: string | number, bValue: string | number
 
     switch (sortField) {
       case 'name':
@@ -238,7 +251,9 @@ export default function HomePage() {
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none min-w-[140px] hidden sm:table-cell" onClick={() => handleSort('dates')}>
+                  <CustomTableHead
+                    className="cursor-pointer select-none min-w-[140px] hidden sm:table-cell"
+                    onClick={() => handleSort('dates')}>
                     <div className="flex items-center gap-1">
                       <span>Dates</span>
                       <span className="text-muted-foreground">
@@ -246,7 +261,9 @@ export default function HomePage() {
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none hidden md:table-cell" onClick={() => handleSort('location')}>
+                  <CustomTableHead
+                    className="cursor-pointer select-none hidden md:table-cell"
+                    onClick={() => handleSort('location')}>
                     <div className="flex items-center gap-1">
                       <span>Location</span>
                       <span className="text-muted-foreground">
@@ -263,7 +280,9 @@ export default function HomePage() {
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right hidden lg:table-cell" onClick={() => handleSort('rounds')}>
+                  <CustomTableHead
+                    className="cursor-pointer select-none text-right hidden lg:table-cell"
+                    onClick={() => handleSort('rounds')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>Rounds</span>
                       <span className="text-muted-foreground">
@@ -280,7 +299,9 @@ export default function HomePage() {
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right hidden xl:table-cell" onClick={() => handleSort('avgTop24Rating')}>
+                  <CustomTableHead
+                    className="cursor-pointer select-none text-right hidden xl:table-cell"
+                    onClick={() => handleSort('avgTop24Rating')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>Avg Top 24 Rating</span>
                       <span className="text-muted-foreground">
@@ -329,7 +350,9 @@ export default function HomePage() {
                         <CustomTableCell className="text-right tabular-nums">{tournament.results}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums hidden lg:table-cell">{rounds}</CustomTableCell>
                         <CustomTableCell className="text-right tabular-nums">{stats.avgTop10TPR || '-'}</CustomTableCell>
-                        <CustomTableCell className="text-right tabular-nums hidden xl:table-cell">{stats.avgTop24Rating || '-'}</CustomTableCell>
+                        <CustomTableCell className="text-right tabular-nums hidden xl:table-cell">
+                          {stats.avgTop24Rating || '-'}
+                        </CustomTableCell>
                       </CustomTableRow>
                     )
                   })

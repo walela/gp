@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { PlayerDetails, PlayerResult, PlayerRanking } from '@/services/api'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from 'lucide-react'
 import { getShortTournamentName } from '@/utils/tournament'
 import {
