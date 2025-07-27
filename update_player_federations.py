@@ -14,7 +14,9 @@ PLAYERS_TO_UPDATE = [
     {"name": "Ngony John", "federation": "SSD"},          # South Sudan
     {"name": "Chiman Garang", "federation": "SSD"},       # South Sudan
     {"name": "Garang Chiman", "federation": "SSD"},       # South Sudan
-    {"name": "Chvoro Viacheslav", "federation": "RUS"}    # Russia
+    {"name": "Chvoro Viacheslav", "federation": "RUS"},    # Russia
+    {"name": "Khot, Ajak David", "federation": "SSD"},    # South Sudan
+    {"name": "Atem Gak, Ngong", "federation": "SSD"}      # South Sudan
 ]
 
 def update_player_federations():

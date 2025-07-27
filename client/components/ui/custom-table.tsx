@@ -47,5 +47,5 @@ export function CustomTableCell({ className, isHeader, ...props }: CustomTableCe
       />
     );
   }
-  return <td className={`px-2 py-3 sm:px-4 md:px-6 ${className || ''}`} {...props} />;
+  return <td className={`px-2 py-4 sm:px-4 md:px-6 ${className || ''}`} {...props} />;
 }
