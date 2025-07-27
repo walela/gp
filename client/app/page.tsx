@@ -19,7 +19,6 @@ import {
 import { cn } from '@/lib/utils'
 
 type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
-type SortField = 'name' | 'dates' | 'location' | 'players' | 'rounds' | 'avgTop10TPR' | 'avgTop24Rating'
 
 export default function HomePage() {
   const [tournaments, setTournaments] = useState([])
