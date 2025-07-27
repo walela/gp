@@ -73,7 +73,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-4 space-y-8 max-w-11xl">
+      <div className="container mx-auto sm:px-4 py-4 space-y-8 max-w-11xl">
         <div className="space-y-6">
           <div className="space-y-1">
             <h2 className="text-2xl font-bold tracking-tight text-gray-700">Completed Tournaments</h2>
