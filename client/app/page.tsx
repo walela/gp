@@ -4,72 +4,11 @@ import { Badge } from '@/components/ui/badge'
 import { CalendarDays, MapPin, Hash, Calendar } from 'lucide-react'
 import { getTournamentData } from '@/lib/tournament-data'
 import { TournamentTable } from '@/components/tournament-table'
-
-type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
+import { upcomingTournaments, plannedTournaments } from '@/lib/active-tournaments'
+import dayjs from '@/lib/dayjs'
 
 export default async function HomePage() {
   const tournaments = await getTournamentData()
-
-  const upcomingTournaments: Array<{
-    id: string
-    name: string
-    startDate: string
-    endDate: string
-    location: string
-    rounds: number
-    confirmed: boolean
-    status: TournamentStatus
-  }> = [
-    {
-      id: '742161',
-      name: '3rd Jumuiya Open',
-      startDate: '2025-09-20',
-      endDate: '2025-09-21',
-      location: 'Nairobi',
-      rounds: 6,
-      confirmed: true,
-      status: 'Upcoming' satisfies TournamentStatus
-    }
-  ]
-
-  const plannedTournaments = [
-    {
-      id: '742162',
-      name: 'Mombasa Open 2025',
-      startDate: '2025-10-10',
-      endDate: '2025-10-12',
-      location: 'Mombasa',
-      rounds: 6,
-      confirmed: true
-    },
-    {
-      id: '742165',
-      name: 'Kenya Open 2025',
-      startDate: '2025-10-18',
-      endDate: '2025-10-20',
-      location: 'Nairobi',
-      rounds: 8,
-      confirmed: true
-    },
-    {
-      id: '742163',
-      name: 'Bungoma Open 2025',
-      startDate: '2025-11-01',
-      endDate: '2025-11-02',
-      location: 'Bungoma',
-      rounds: 6,
-      confirmed: true
-    },
-    {
-      id: '742164',
-      name: 'Chess Through Challenges',
-      startDate: '2025-11-20',
-      endDate: '2025-11-23',
-      location: 'Nairobi',
-      rounds: 6,
-      confirmed: true
-    }
-  ]
 
   return (
     <div className="min-h-screen">
@@ -93,9 +32,7 @@ export default async function HomePage() {
 
           <div className="flex flex-wrap gap-4">
             {upcomingTournaments.map(tournament => {
-              const weeksAway = Math.round(
-                (new Date(tournament.startDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24 * 7)
-              )
+              const weeksAway = Math.round(dayjs(tournament.startDate!).diff(dayjs(), 'week', true))
 
               return (
                 <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
@@ -135,46 +72,7 @@ export default async function HomePage() {
                       <CardDescription className="flex items-center gap-2 mt-1">
                         <CalendarDays className="h-4 w-4" />
                         <span>
-                          {new Date(tournament.startDate)
-                            .toLocaleDateString('en-US', {
-                              month: 'long',
-                              day: 'numeric'
-                            })
-                            .replace(/(\d+)/, match => {
-                              const num = parseInt(match)
-                              if (num >= 11 && num <= 13) return num + 'th'
-                              switch (num % 10) {
-                                case 1:
-                                  return num + 'st'
-                                case 2:
-                                  return num + 'nd'
-                                case 3:
-                                  return num + 'rd'
-                                default:
-                                  return num + 'th'
-                              }
-                            })}{' '}
-                          -{' '}
-                          {new Date(tournament.endDate)
-                            .toLocaleDateString('en-US', {
-                              month: 'long',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })
-                            .replace(/(\d+)/, match => {
-                              const num = parseInt(match)
-                              if (num >= 11 && num <= 13) return num + 'th'
-                              switch (num % 10) {
-                                case 1:
-                                  return num + 'st'
-                                case 2:
-                                  return num + 'nd'
-                                case 3:
-                                  return num + 'rd'
-                                default:
-                                  return num + 'th'
-                              }
-                            })}
+                          {dayjs(tournament.startDate!).format('MMMM Do')} - {dayjs(tournament.endDate!).format('MMMM Do, YYYY')}
                         </span>
                       </CardDescription>
                     </CardHeader>
@@ -207,7 +105,7 @@ export default async function HomePage() {
             {plannedTournaments.map(tournament => {
               const weeksAway =
                 'startDate' in tournament && tournament.startDate
-                  ? Math.round((new Date(tournament.startDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24 * 7))
+                  ? Math.round(dayjs(tournament.startDate!).diff(dayjs(), 'week', true))
                   : null
 
               return (
@@ -245,46 +143,7 @@ export default async function HomePage() {
                         <span>
                           {'startDate' in tournament && tournament.startDate && tournament.endDate ? (
                             <>
-                              {new Date(tournament.startDate)
-                                .toLocaleDateString('en-US', {
-                                  month: 'long',
-                                  day: 'numeric'
-                                })
-                                .replace(/(\d+)/, match => {
-                                  const num = parseInt(match)
-                                  if (num >= 11 && num <= 13) return num + 'th'
-                                  switch (num % 10) {
-                                    case 1:
-                                      return num + 'st'
-                                    case 2:
-                                      return num + 'nd'
-                                    case 3:
-                                      return num + 'rd'
-                                    default:
-                                      return num + 'th'
-                                  }
-                                })}{' '}
-                              -{' '}
-                              {new Date(tournament.endDate)
-                                .toLocaleDateString('en-US', {
-                                  month: 'long',
-                                  day: 'numeric',
-                                  year: 'numeric'
-                                })
-                                .replace(/(\d+)/, match => {
-                                  const num = parseInt(match)
-                                  if (num >= 11 && num <= 13) return num + 'th'
-                                  switch (num % 10) {
-                                    case 1:
-                                      return num + 'st'
-                                    case 2:
-                                      return num + 'nd'
-                                    case 3:
-                                      return num + 'rd'
-                                    default:
-                                      return num + 'th'
-                                  }
-                                })}
+                              {dayjs(tournament.startDate!).format('MMM Do')} - {dayjs(tournament.endDate!).format('MMM Do, YYYY')}
                             </>
                           ) : (
                             `${'month' in tournament ? tournament.month : ''} 2025`

@@ -7,6 +7,8 @@
  * @param name The full tournament name
  * @returns A shortened version of the tournament name
  */
+import dayjs from '@/lib/dayjs'
+
 export const SHORT_NAMES: Record<string, string> = {
   'Eldoret Open': 'Eldoret Open',
   'Eldoret  Chess Championships Open': 'Eldoret Open',
@@ -62,28 +64,18 @@ export function formatOrdinal(day: number): string {
 export function formatTournamentDate(startDate?: string, endDate?: string): string {
   if (!startDate) return 'TBD'
 
-  // Parse dates
-  const start = new Date(startDate)
-  const end = endDate ? new Date(endDate) : null
+  const start = dayjs(startDate)
+  const end = endDate ? dayjs(endDate) : null
 
-  // Format options
-  const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric', year: 'numeric' }
-
-  // Format start date
-  const startFormatted = start.toLocaleDateString('en-US', options)
-
-  // If no end date or same as start date, return just start date
-  if (!end || startDate === endDate) {
-    return startFormatted
+  if (!end || start.isSame(end, 'day')) {
+    return start.format('MMMM D, YYYY')
   }
 
-  // If same month and year, just show the day for end date
-  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-    return `${start.toLocaleDateString('en-US', { month: 'long' })} ${start.getDate()}-${end.getDate()}, ${start.getFullYear()}`
+  if (start.isSame(end, 'month')) {
+    return `${start.format('MMMM D')}-${end.format('D')}, ${start.format('YYYY')}`
   }
 
-  // Otherwise show full end date
-  return `${startFormatted} - ${end.toLocaleDateString('en-US', options)}`
+  return `${start.format('MMMM D, YYYY')} - ${end!.format('MMMM D, YYYY')}`
 }
 
 /**
@@ -95,28 +87,16 @@ export function formatTournamentDate(startDate?: string, endDate?: string): stri
 export function formatTournamentDateWithOrdinals(startDate?: string, endDate?: string): string {
   if (!startDate) return 'TBD'
 
-  // Parse dates
-  const start = new Date(startDate)
-  const end = endDate ? new Date(endDate) : null
+  const start = dayjs(startDate)
+  const end = endDate ? dayjs(endDate) : null
 
-  // Format start date with ordinal
-  const startDay = formatOrdinal(start.getDate())
-  const startMonth = start.toLocaleDateString('en-US', { month: 'short' })
-  
-  // If no end date or same as start date, return just start date
-  if (!end || startDate === endDate) {
-    return `${startMonth} ${startDay}`
+  if (!end || start.isSame(end, 'day')) {
+    return start.format('MMM Do')
   }
 
-  // If same month, just show the day range
-  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-    const endDay = formatOrdinal(end.getDate())
-    return `${startMonth} ${startDay}-${endDay}`
+  if (start.isSame(end, 'month')) {
+    return `${start.format('MMM Do')}-${end.format('Do')}`
   }
 
-  // Different months
-  const endDay = formatOrdinal(end.getDate())
-  const endMonth = end.toLocaleDateString('en-US', { month: 'short' })
-  
-  return `${startMonth} ${startDay} - ${endMonth} ${endDay}`
+  return `${start.format('MMM Do')} - ${end!.format('MMM Do')}`
 }
