@@ -50,7 +50,28 @@ export default async function HomePage() {
 
           <div className="flex flex-wrap gap-4">
             {upcomingTournaments.map(tournament => {
-              const weeksAway = Math.round(dayjs(tournament.startDate!).diff(dayjs(), 'week', true))
+              const startDate = dayjs(tournament.startDate!)
+              const now = dayjs()
+              const daysAway = startDate.diff(now, 'day')
+              const weeksAway = Math.floor(daysAway / 7)
+              const remainingDays = daysAway % 7
+              
+              let timeAwayText = ''
+              if (daysAway === 0) {
+                timeAwayText = 'Today'
+              } else if (daysAway === 1) {
+                timeAwayText = 'Tomorrow'
+              } else if (daysAway < 7) {
+                timeAwayText = `${daysAway} days away`
+              } else if (weeksAway === 1 && remainingDays === 0) {
+                timeAwayText = '1 week away'
+              } else if (weeksAway === 1) {
+                timeAwayText = `1 week ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
+              } else if (remainingDays === 0) {
+                timeAwayText = `${weeksAway} weeks away`
+              } else {
+                timeAwayText = `${weeksAway} weeks ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
+              }
 
               return (
                 <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
@@ -59,7 +80,7 @@ export default async function HomePage() {
                     {tournament.status !== 'postponed' && (
                       <div className="px-4">
                         <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                          {weeksAway === 0 ? 'This week' : weeksAway === 1 ? 'Next week' : `${weeksAway} weeks away`}
+                          {timeAwayText}
                         </span>
                       </div>
                     )}
