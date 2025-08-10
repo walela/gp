@@ -1,8 +1,53 @@
 import { getPlayer, PlayerDetails, getRankings, PlayerRanking } from '@/services/api'
 import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
+import { Metadata } from 'next'
 
-export default async function PlayerPage({ params }: { params: { id: string } }) {
+interface PlayerPageProps {
+  params: { id: string }
+}
+
+export async function generateMetadata({ params }: PlayerPageProps): Promise<Metadata> {
+  const { id } = await params
+  
+  try {
+    const player = await getPlayer(id)
+    
+    if (!player) {
+      return {
+        title: 'Player Not Found - Chess Kenya 2025 Grand Prix',
+        description: 'The requested player could not be found.'
+      }
+    }
+
+    const ratingText = player.current_fide_rating ? `FIDE ${player.current_fide_rating}` : 'Unrated'
+    const tournamentsPlayed = player.results.length
+    
+    return {
+      title: `${player.name} - ${ratingText} - Chess Kenya Grand Prix`,
+      description: `View ${player.name}'s chess tournament results, ratings and performance in the Chess Kenya 2025 Grand Prix. ${tournamentsPlayed} tournaments played. ${ratingText} player from ${player.federation}.`,
+      openGraph: {
+        title: `${player.name} - Chess Kenya Player Profile`,
+        description: `${ratingText} chess player from ${player.federation}. View tournament results and performance ratings.`,
+        type: 'profile',
+        siteName: 'Chess Kenya Grand Prix',
+        url: `https://1700chess.vercel.app/player/${id}`
+      },
+      twitter: {
+        card: 'summary',
+        title: `${player.name} - ${ratingText}`,
+        description: `Chess player profile: ${tournamentsPlayed} tournaments in Kenya Grand Prix`
+      }
+    }
+  } catch (error) {
+    return {
+      title: 'Error - Chess Kenya 2025 Grand Prix',
+      description: 'An error occurred while loading player information.'
+    }
+  }
+}
+
+export default async function PlayerPage({ params }: PlayerPageProps) {
   // Properly await params to access its properties
   const { id } = await params
 
@@ -62,6 +107,38 @@ export default async function PlayerPage({ params }: { params: { id: string } })
     )
   }
 
+  // Generate JSON-LD structured data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: player.name,
+    nationality: player.federation === 'KEN' ? 'Kenyan' : player.federation,
+    affiliation: {
+      '@type': 'Organization',
+      name: 'Chess Kenya'
+    },
+    url: `https://1700chess.vercel.app/player/${id}`,
+    ...(player.current_fide_rating && {
+      award: `FIDE Rating: ${player.current_fide_rating}`
+    }),
+    identifier: {
+      '@type': 'PropertyValue',
+      name: 'FIDE ID',
+      value: player.fide_id
+    },
+    sameAs: [
+      `https://ratings.fide.com/profile/${player.fide_id}`
+    ]
+  }
+
   // Render the client component with the fetched data
-  return <PlayerClientContent player={player} playerRanking={playerRanking} />
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <PlayerClientContent player={player} playerRanking={playerRanking} />
+    </>
+  )
 }

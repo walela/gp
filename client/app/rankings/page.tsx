@@ -17,6 +17,24 @@ import { ViewSelector } from '@/components/rankings/view-selector'
 import { SearchForm } from '@/components/rankings/search-form'
 import { Pagination } from '@/components/ui/pagination'
 import { getShortTournamentName } from '@/utils/tournament'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Player Rankings - Chess Kenya 2025 Grand Prix',
+  description: 'View the latest Chess Kenya Grand Prix rankings and standings. Track player performance across tournaments with TPR ratings and points.',
+  openGraph: {
+    title: 'Chess Kenya Grand Prix Rankings',
+    description: 'Official rankings for the Chess Kenya 2025 Grand Prix series. View top players, tournament performances and TPR ratings.',
+    type: 'website',
+    siteName: 'Chess Kenya Grand Prix',
+    url: 'https://1700chess.vercel.app/rankings'
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Chess Kenya GP Rankings',
+    description: 'View the latest Chess Kenya Grand Prix player rankings and standings'
+  }
+}
 
 // Smart name abbreviation function for very long names
 function getDisplayName(fullName: string): string {

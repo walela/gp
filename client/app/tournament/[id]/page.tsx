@@ -15,6 +15,7 @@ import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
 import { getShortTournamentName, formatTournamentDate } from '@/utils/tournament'
 import { ExportButton } from '@/components/ui/export-button'
+import { Metadata } from 'next'
 
 interface TournamentPageProps {
   params: {
@@ -56,6 +57,48 @@ function getTournamentLocation(name: string) {
   return 'Nairobi, Kenya'
 }
 
+// Function to get tournament organizer
+function getTournamentOrganizer(name: string) {
+  const normalizedName = name.trim().toUpperCase()
+  if (normalizedName.includes('ELDORET')) return 'Eldoret Chess Club'
+  if (normalizedName.includes('QUO VADIS')) return 'Quo Vadis Nyeri Chess Club'
+  if (normalizedName.includes('NAIROBI COUNTY')) return 'Black Knights Chess Club'
+  return 'Chess Kenya'
+}
+
+export async function generateMetadata({ params }: TournamentPageProps): Promise<Metadata> {
+  const { id } = await params
+  const tournament = await getTournament(id, { page: 1 })
+  
+  if (!tournament) {
+    return {
+      title: 'Tournament Not Found - Chess Kenya 2025 Grand Prix',
+      description: 'The requested tournament could not be found.'
+    }
+  }
+
+  const location = getTournamentLocation(tournament.name)
+  const shortName = getShortTournamentName(tournament.name)
+  const dateStr = formatTournamentDate(tournament.start_date, tournament.end_date)
+  
+  return {
+    title: `${shortName} Results - Chess Kenya 2025 Grand Prix`,
+    description: `View results, standings and player performances from the ${shortName} chess tournament held ${dateStr} in ${location}. Part of the Chess Kenya 2025 Grand Prix series.`,
+    openGraph: {
+      title: `${shortName} Chess Tournament Results`,
+      description: `${tournament.total} players competed in the ${shortName} tournament. View complete results, TPR ratings and standings.`,
+      type: 'website',
+      siteName: 'Chess Kenya Grand Prix',
+      url: `https://1700chess.vercel.app/tournament/${id}`
+    },
+    twitter: {
+      card: 'summary',
+      title: `${shortName} Results`,
+      description: `View results from the ${shortName} chess tournament with ${tournament.total} players.`
+    }
+  }
+}
+
 export default async function TournamentPage({ params, searchParams }: TournamentPageProps) {
   // Properly await the params and searchParams objects
   const { id } = await params
@@ -81,8 +124,40 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
   // Calculate average TPR of top 10 players using all results
   const averageTopTpr = calculateAverageTopTpr(allResults)
 
+  // Generate JSON-LD structured data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SportsEvent',
+    name: tournament.name,
+    sport: 'Chess',
+    startDate: tournament.start_date,
+    endDate: tournament.end_date,
+    location: {
+      '@type': 'Place',
+      name: getTournamentLocation(tournament.name),
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: getTournamentLocation(tournament.name).split(',')[0],
+        addressCountry: 'KE'
+      }
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: getTournamentOrganizer(tournament.name)
+    },
+    eventStatus: 'https://schema.org/EventCompleted',
+    maximumAttendeeCapacity: tournament.total,
+    url: `https://1700chess.vercel.app/tournament/${id}`,
+    description: `Chess tournament with ${tournament.total} participants, ${tournament.rounds || 6} rounds`
+  }
+
   return (
-    <div className="space-y-6">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="space-y-6">
       <div className="flex flex-col gap-4 md:gap-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-4">
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{getShortTournamentName(tournament.name)}</h1>
@@ -355,5 +430,6 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         />
       )}
     </div>
+    </>
   )
 }

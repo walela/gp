@@ -6,6 +6,24 @@ import { getTournamentData } from '@/lib/tournament-data'
 import { TournamentTable } from '@/components/tournament-table'
 import { upcomingTournaments, plannedTournaments } from '@/lib/active-tournaments'
 import dayjs from '@/lib/dayjs'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Chess Kenya 2025 Grand Prix - Official Tournament Tracker',
+  description: 'Track Chess Kenya Grand Prix tournaments, view results, player rankings and upcoming events. Official standings for the 2025 chess season in Kenya.',
+  openGraph: {
+    title: 'Chess Kenya 2025 Grand Prix',
+    description: 'Official tournament tracker for Chess Kenya Grand Prix. View results, rankings and upcoming chess tournaments across Kenya.',
+    type: 'website',
+    siteName: 'Chess Kenya Grand Prix',
+    url: 'https://1700chess.vercel.app'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Chess Kenya 2025 Grand Prix',
+    description: 'Track chess tournaments, results and rankings for the Kenya Grand Prix series'
+  }
+}
 
 export default async function HomePage() {
   const tournaments = await getTournamentData()
