@@ -12,13 +12,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: BASE_URL,
       lastModified: new Date(),
-      changeFrequency: 'daily' as const,
+      changeFrequency: 'monthly' as const,
       priority: 1,
     },
     {
       url: `${BASE_URL}/rankings`,
       lastModified: new Date(),
-      changeFrequency: 'daily' as const,
+      changeFrequency: 'monthly' as const,
       priority: 0.9,
     },
   ]
@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const tournamentRoutes = tournaments.map((tournament) => ({
     url: `${BASE_URL}/tournament/${tournament.id}`,
     lastModified: tournament.end_date ? new Date(tournament.end_date) : new Date(),
-    changeFrequency: 'weekly' as const,
+    changeFrequency: 'yearly' as const,
     priority: 0.8,
   }))
 

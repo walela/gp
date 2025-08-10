@@ -60,10 +60,16 @@ function getTournamentLocation(name: string) {
 // Function to get tournament organizer
 function getTournamentOrganizer(name: string) {
   const normalizedName = name.trim().toUpperCase()
-  if (normalizedName.includes('ELDORET')) return 'Eldoret Chess Club'
-  if (normalizedName.includes('QUO VADIS')) return 'Quo Vadis Nyeri Chess Club'
-  if (normalizedName.includes('NAIROBI COUNTY')) return 'Black Knights Chess Club'
-  return 'Chess Kenya'
+  let localClub = ''
+  
+  if (normalizedName.includes('ELDORET')) localClub = 'Eldoret Chess Club'
+  else if (normalizedName.includes('QUO VADIS')) localClub = 'Quo Vadis Nyeri Chess Club'
+  else if (normalizedName.includes('NAIROBI COUNTY')) localClub = 'Black Knights Chess Club'
+  else if (normalizedName.includes('MOMBASA')) localClub = 'Lighthouse Chess Club'
+  else if (normalizedName.includes('NAKURU')) localClub = 'Nakuru Chess Club'
+  else if (normalizedName.includes('KISUMU')) localClub = 'Kisumu Chess Club'
+  
+  return localClub ? `Chess Kenya & ${localClub}` : 'Chess Kenya'
 }
 
 export async function generateMetadata({ params }: TournamentPageProps): Promise<Metadata> {
