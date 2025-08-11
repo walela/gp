@@ -81,7 +81,10 @@ export default async function HomePage() {
                     className={`h-full rounded-lg ${tournament.status === 'postponed' ? 'opacity-75' : ''} relative overflow-hidden py-2 gap-4`}>
                     {tournament.status !== 'postponed' && (
                       <div className="px-4">
-                        <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                        <span 
+                          className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded cursor-help"
+                          title={`${daysAway} ${daysAway === 1 ? 'day' : 'days'} away`}
+                        >
                           {timeAwayText}
                         </span>
                       </div>
@@ -144,18 +147,43 @@ export default async function HomePage() {
 
           <div className="flex flex-wrap gap-4">
             {plannedTournaments.map(tournament => {
-              const weeksAway =
-                'startDate' in tournament && tournament.startDate
-                  ? Math.round(dayjs(tournament.startDate!).diff(dayjs(), 'week', true))
-                  : null
+              let timeAwayText = ''
+              let daysAway = 0
+              
+              if ('startDate' in tournament && tournament.startDate) {
+                const startDate = dayjs(tournament.startDate)
+                const now = dayjs()
+                daysAway = startDate.diff(now, 'day')
+                const weeksAway = Math.floor(daysAway / 7)
+                const remainingDays = daysAway % 7
+                
+                if (daysAway === 0) {
+                  timeAwayText = 'Today'
+                } else if (daysAway === 1) {
+                  timeAwayText = 'Tomorrow'
+                } else if (daysAway < 7) {
+                  timeAwayText = `${daysAway} days away`
+                } else if (weeksAway === 1 && remainingDays === 0) {
+                  timeAwayText = '1 week away'
+                } else if (weeksAway === 1) {
+                  timeAwayText = `1 week ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
+                } else if (remainingDays === 0) {
+                  timeAwayText = `${weeksAway} weeks away`
+                } else {
+                  timeAwayText = `${weeksAway} weeks ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
+                }
+              }
 
               return (
                 <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
                   <Card className="h-full rounded-lg relative overflow-hidden gap-4 py-2">
-                    {weeksAway !== null && (
+                    {timeAwayText && (
                       <div className="px-4">
-                        <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                          {weeksAway === 0 ? 'This week' : weeksAway === 1 ? 'Next week' : `${weeksAway} weeks away`}
+                        <span 
+                          className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded cursor-help"
+                          title={`${daysAway} ${daysAway === 1 ? 'day' : 'days'} away`}
+                        >
+                          {timeAwayText}
                         </span>
                       </div>
                     )}
