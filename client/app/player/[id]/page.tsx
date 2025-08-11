@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: PlayerPageProps): Promise<Met
         description: `Chess player profile: ${tournamentsPlayed} tournaments in Kenya Grand Prix`
       }
     }
-  } catch (error) {
+  } catch {
     return {
       title: 'Error - Chess Kenya 2025 Grand Prix',
       description: 'An error occurred while loading player information.'

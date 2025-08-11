@@ -8,6 +8,8 @@ import { upcomingTournaments, plannedTournaments } from '@/lib/active-tournament
 import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Chess Kenya 2025 Grand Prix - Official Tournament Tracker',
   description: 'Track Chess Kenya Grand Prix tournaments, view results, player rankings and upcoming events. Official standings for the 2025 chess season in Kenya.',
