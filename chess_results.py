@@ -191,9 +191,18 @@ class ChessResultsScraper:
             rank = int(cells[headers.index('rk.')].text)
             start_rank = int(cells[headers.index('sno')].text)
             
-            # Calculate TPR
-            tpr_cell = cells[headers.index('rp')]
-            tpr = int(tpr_cell.text) if tpr_cell.text.strip() else 0
+            # Calculate TPR - handle different column names
+            tpr = 0
+            tpr_columns = ['rp', 'tb6', 'tpr', 'perf']
+            for col in tpr_columns:
+                if col in headers:
+                    tpr_cell = cells[headers.index(col)]
+                    if tpr_cell.text.strip() and tpr_cell.text.strip() != '-':
+                        try:
+                            tpr = int(tpr_cell.text.strip())
+                        except ValueError:
+                            tpr = 0
+                    break
             
             # Get FIDE ID if available
             fide_id = self._extract_fide_id(cells[headers.index('name')], tournament_id, start_rank)
