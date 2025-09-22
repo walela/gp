@@ -233,11 +233,11 @@ class Database:
             
             try:
                 c.execute('''
-                    SELECT 
+                    SELECT
                         p.name, p.fide_id, p.federation,
                         r.rating, r.points, r.tpr, r.has_walkover, r.start_rank, r.result_status,
-                        t.id, t.name, t.start_date, t.end_date,
-                        p.id 
+                        t.id, COALESCE(t.short_name, t.name), t.start_date, t.end_date,
+                        p.id
                     FROM results r
                     JOIN players p ON r.player_id = p.id
                     JOIN tournaments t ON r.tournament_id = t.id
@@ -248,11 +248,11 @@ class Database:
                 if 'no such column: r.start_rank' in str(e):
                     logger.warning("start_rank column not found, using query without it")
                     c.execute('''
-                        SELECT 
+                        SELECT
                             p.name, p.fide_id, p.federation,
                             r.rating, r.points, r.tpr, r.has_walkover, r.result_status,
-                            t.id, t.name, t.start_date, t.end_date,
-                            p.id 
+                            t.id, COALESCE(t.short_name, t.name), t.start_date, t.end_date,
+                            p.id
                         FROM results r
                         JOIN players p ON r.player_id = p.id
                         JOIN tournaments t ON r.tournament_id = t.id

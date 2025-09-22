@@ -269,7 +269,7 @@ def player(fide_id):
                 """
                 SELECT
                     t.id as tournament_id,
-                    t.name as tournament_name,
+                    COALESCE(t.short_name, t.name) as tournament_name,
                     r.points,
                     r.tpr,
                     r.rating as rating_in_tournament,
@@ -297,7 +297,7 @@ def player(fide_id):
                     """
                     SELECT
                         t.id as tournament_id,
-                        t.name as tournament_name,
+                        COALESCE(t.short_name, t.name) as tournament_name,
                         r.points,
                         r.tpr,
                         r.rating as rating_in_tournament,

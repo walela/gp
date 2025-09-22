@@ -17,27 +17,14 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: '742161',
-    name: '3rd Jumuiya Open',
-    startDate: '2025-09-20',
-    endDate: '2025-09-21',
-    location: 'Nairobi',
-    rounds: 6,
-    confirmed: true,
-    status: 'Upcoming'
-  }
-]
-
-// Grand-Prix events that have dates or at least confirmed months but are further out in the calendar
-export const plannedTournaments: Tournament[] = [
-  {
     id: '742162',
     name: 'Mombasa Open 2025',
     startDate: '2025-10-10',
     endDate: '2025-10-12',
     location: 'Mombasa',
     rounds: 6,
-    confirmed: true
+    confirmed: true,
+    status: 'Upcoming'
   },
   {
     id: '742165',
@@ -46,8 +33,13 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2025-10-20',
     location: 'Nairobi',
     rounds: 8,
-    confirmed: true
-  },
+    confirmed: true,
+    status: 'Upcoming'
+  }
+]
+
+// Grand-Prix events that have dates or at least confirmed months but are further out in the calendar
+export const plannedTournaments: Tournament[] = [
   {
     id: '742163',
     name: 'Bungoma Open 2025',
