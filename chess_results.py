@@ -71,8 +71,8 @@ class ChessResultsScraper:
         # Use the modified _get_round_count, passing the tournament ID
         round_count = 8 if tournament_id == "1126042" else self._get_round_count(tournament_id)
         
-        # Fetch the final ranking page for the determined round count
-        standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}"
+        # Fetch the final ranking page for the determined round count with complete list
+        standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}&zeilen=99999"
             
         response = self.session.get(standings_url)
         soup = BeautifulSoup(response.text, 'html.parser')
