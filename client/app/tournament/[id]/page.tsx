@@ -13,7 +13,7 @@ import { getTournament, getTournamentAllResults, TournamentResult } from '@/serv
 import { notFound } from 'next/navigation'
 import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
-import { getShortTournamentName, formatTournamentDate } from '@/utils/tournament'
+import { getShortTournamentName, formatTournamentDate, inferTournamentLocation } from '@/utils/tournament'
 import { ExportButton } from '@/components/ui/export-button'
 import { Metadata } from 'next'
 
@@ -45,18 +45,6 @@ function calculateAverageTopTpr(results: TournamentResult[]) {
   return Math.round(top10.reduce((sum, r) => sum + (r.tpr || 0), 0) / top10.length)
 }
 
-
-
-// Function to get tournament location
-function getTournamentLocation(name: string) {
-  const normalizedName = name.trim().toUpperCase()
-  if (normalizedName.includes('ELDORET')) return 'Eldoret, Kenya'
-  if (normalizedName.includes('KISUMU')) return 'Kisumu, Kenya'
-  if (normalizedName.includes('NAKURU')) return 'Nakuru, Kenya'
-  if (normalizedName.includes('QUO VADIS')) return 'Nyeri, Kenya'
-  return 'Nairobi, Kenya'
-}
-
 // Function to get tournament organizer
 function getTournamentOrganizer(name: string) {
   const normalizedName = name.trim().toUpperCase()
@@ -83,13 +71,14 @@ export async function generateMetadata({ params }: TournamentPageProps): Promise
     }
   }
 
-  const location = getTournamentLocation(tournament.name)
+  const rawLocation = tournament.location || inferTournamentLocation(tournament.name)
+  const locationDisplay = rawLocation.includes('Kenya') ? rawLocation : `${rawLocation}, Kenya`
   const shortName = getShortTournamentName(tournament.name)
   const dateStr = formatTournamentDate(tournament.start_date, tournament.end_date)
   
   return {
     title: `${shortName} Results - Chess Kenya 2025 Grand Prix`,
-    description: `View results, standings and player performances from the ${shortName} chess tournament held ${dateStr} in ${location}. Part of the Chess Kenya 2025 Grand Prix series.`,
+    description: `View results, standings and player performances from the ${shortName} chess tournament held ${dateStr} in ${locationDisplay}. Part of the Chess Kenya 2025 Grand Prix series.`,
     openGraph: {
       title: `${shortName} Chess Tournament Results`,
       description: `${tournament.total} players competed in the ${shortName} tournament. View complete results, TPR ratings and standings.`,
@@ -129,6 +118,9 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
 
   // Calculate average TPR of top 10 players using all results
   const averageTopTpr = calculateAverageTopTpr(allResults)
+  const resolvedLocation = tournament.location || inferTournamentLocation(tournament.name)
+  const locationDisplay = resolvedLocation.includes('Kenya') ? resolvedLocation : `${resolvedLocation}, Kenya`
+  const resolvedRounds = tournament.rounds ?? 6
 
   // Generate JSON-LD structured data
   const jsonLd = {
@@ -140,10 +132,10 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
     endDate: tournament.end_date,
     location: {
       '@type': 'Place',
-      name: getTournamentLocation(tournament.name),
+      name: locationDisplay,
       address: {
         '@type': 'PostalAddress',
-        addressLocality: getTournamentLocation(tournament.name).split(',')[0],
+        addressLocality: resolvedLocation,
         addressCountry: 'KE'
       }
     },
@@ -154,7 +146,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
     eventStatus: 'https://schema.org/EventCompleted',
     maximumAttendeeCapacity: tournament.total,
     url: `https://1700chess.vercel.app/tournament/${id}`,
-    description: `Chess tournament with ${tournament.total} participants, ${tournament.rounds || 6} rounds`
+    description: `Chess tournament with ${tournament.total} participants, ${resolvedRounds} rounds`
   }
 
   return (
@@ -189,7 +181,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <MapPin className="h-4 w-4 text-red-600 flex-shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">Location</p>
-                <p className="text-sm font-medium">{getTournamentLocation(tournament.name)}</p>
+                <p className="text-sm font-medium">{locationDisplay}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -203,7 +195,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <Trophy className="h-4 w-4 text-amber-600 flex-shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">Format</p>
-                <p className="text-sm font-medium">{tournament.rounds || 6} rounds</p>
+                <p className="text-sm font-medium">{resolvedRounds} rounds</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -250,7 +242,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               </div>
               <div>
                 <p className="text-xs text-gray-500">Location</p>
-                <p className="font-medium text-sm">{getTournamentLocation(tournament.name)}</p>
+                <p className="font-medium text-sm">{locationDisplay}</p>
               </div>
             </div>
 
@@ -270,7 +262,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               </div>
               <div>
                 <p className="text-xs text-gray-500">Format</p>
-                <p className="font-medium text-sm">{tournament.rounds || 6} rounds</p>
+                <p className="font-medium text-sm">{resolvedRounds} rounds</p>
               </div>
             </div>
 

@@ -34,6 +34,28 @@ export function getShortTournamentName(name: string): string {
 }
 
 /**
+ * Infer a tournament location from its name when explicit metadata is missing.
+ */
+export function inferTournamentLocation(name?: string): string {
+  if (!name) return 'Nairobi'
+
+  const normalizedName = name.trim().toUpperCase()
+
+  if (normalizedName.includes('ELDORET')) return 'Eldoret'
+  if (normalizedName.includes('KISUMU')) return 'Kisumu'
+  if (normalizedName.includes('WARIDI')) return 'Nairobi'
+  if (normalizedName.includes('MAVENS')) return 'Nairobi'
+  if (normalizedName.includes('NAKURU')) return 'Nakuru'
+  if (normalizedName.includes('QUO VADIS')) return 'Nyeri'
+  if (normalizedName.includes('KIAMBU')) return 'Kiambu'
+  if (normalizedName.includes('KITALE')) return 'Kitale'
+  if (normalizedName.includes('MOMBASA')) return 'Mombasa'
+  if (normalizedName.includes('BUNGOMA')) return 'Bungoma'
+
+  return 'Nairobi'
+}
+
+/**
  * Format a day number with ordinal suffix (1st, 2nd, 3rd, etc.)
  * @param day The day number
  * @returns The day with ordinal suffix

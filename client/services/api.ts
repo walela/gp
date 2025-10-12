@@ -9,6 +9,7 @@ export interface Tournament {
   start_date?: string
   end_date?: string
   rounds?: number
+  location?: string
 }
 
 export interface TournamentPlayer {
@@ -39,6 +40,7 @@ export interface TournamentDetails {
   start_date?: string
   end_date?: string
   rounds?: number
+  location?: string
 }
 
 export interface PlayerResult {
@@ -51,6 +53,7 @@ export interface PlayerResult {
   chess_results_url: string
   player_card_url: string
   rounds: number
+  location?: string
   result_status?: 'valid' | 'walkover' | 'incomplete' | 'withdrawn' | string
 }
 

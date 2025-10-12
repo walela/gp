@@ -6,6 +6,7 @@ Example: python scrape_tournament.py 1234567 "Nairobi Open 2025"
 """
 import sys
 import logging
+from typing import Optional
 from chess_results import ChessResultsScraper
 from db import Database
 from result_validator import ResultValidator
@@ -35,7 +36,7 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
                 return None
         
         # Scrape fresh data
-        name, results = scraper.get_tournament_data(tournament_id)
+        name, results, metadata = scraper.get_tournament_data(tournament_id)
         
         # Use the scraped name if no custom name provided
         if tournament_name == "AUTO":
@@ -46,6 +47,13 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
         logger.info(f"Tournament name to save: {tournament_name}")
         logger.info(f"Total results: {len(results)}")
         logger.info(f"Kenyan players: {len([r for r in results if r.player.federation == 'KEN'])}")
+        logger.info(
+            "Metadata -> rounds: %s, start: %s, end: %s, location: %s",
+            metadata.get("rounds"),
+            metadata.get("start_date"),
+            metadata.get("end_date"),
+            metadata.get("location"),
+        )
         
         # Process and validate each player's result
         logger.info("\n=== Validating player results ===")
@@ -100,7 +108,13 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
         
         # Save to database with validation statuses
         logger.info("\nSaving to database...")
-        save_tournament_with_validation(db, tournament_id, tournament_name, processed_results)
+        save_tournament_with_validation(
+            db,
+            tournament_id,
+            tournament_name,
+            processed_results,
+            metadata=metadata,
+        )
         
         logger.info(f"\n✅ Successfully saved tournament: {tournament_name}")
         
@@ -119,59 +133,26 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
         raise
 
 
-def save_tournament_with_validation(db: Database, tournament_id: str, tournament_name: str, results):
-    """Save tournament data with result validation status."""
-    import sqlite3
-    
-    with sqlite3.connect(db.db_file) as conn:
-        c = conn.cursor()
-        
-        # Insert tournament
-        c.execute('INSERT OR REPLACE INTO tournaments (id, name) VALUES (?, ?)', 
-                  (tournament_id, tournament_name))
-        
-        for result in results:
-            # Get or create player
-            player = result["player"]
-            
-            # Check if player exists
-            c.execute('SELECT id FROM players WHERE fide_id = ?', (player["fide_id"],))
-            player_row = c.fetchone()
-            
-            if player_row:
-                player_db_id = player_row[0]
-                # Update player info
-                c.execute('''
-                    UPDATE players 
-                    SET name = ?, federation = ? 
-                    WHERE id = ?
-                ''', (player["name"], player["federation"], player_db_id))
-            else:
-                # Insert new player
-                c.execute('''
-                    INSERT INTO players (name, fide_id, federation) 
-                    VALUES (?, ?, ?)
-                ''', (player["name"], player["fide_id"], player["federation"]))
-                player_db_id = c.lastrowid
-            
-            # Save result with status
-            c.execute('''
-                INSERT OR REPLACE INTO results 
-                (tournament_id, player_id, rating, points, tpr, has_walkover, start_rank, result_status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                tournament_id,
-                player_db_id,
-                player["rating"],
-                result["points"],
-                result["tpr"],
-                result["has_walkover"],
-                result["start_rank"],
-                result["result_status"]
-            ))
-        
-        conn.commit()
-        logger.info(f"Saved tournament {tournament_name} with {len(results)} results")
+def save_tournament_with_validation(
+    db: Database,
+    tournament_id: str,
+    tournament_name: str,
+    results,
+    *,
+    metadata: Optional[dict] = None,
+):
+    """Persist tournament data, including validation metadata, via the database helper."""
+    metadata = metadata or {}
+    db.save_tournament(
+        tournament_id,
+        tournament_name,
+        results,
+        start_date=metadata.get("start_date"),
+        end_date=metadata.get("end_date"),
+        location=metadata.get("location"),
+        rounds=metadata.get("rounds"),
+    )
+    logger.info(f"Saved tournament {tournament_name} with {len(results)} results")
 
 
 def main():

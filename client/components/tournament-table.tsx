@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from 'lucide-react'
-import { formatTournamentDateWithOrdinals } from '@/utils/tournament'
+import { formatTournamentDateWithOrdinals, inferTournamentLocation } from '@/utils/tournament'
 import {
   CustomTable,
   CustomTableHeader,
@@ -35,20 +35,6 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
     }
   }
 
-  function getLocation(tournamentName: string) {
-    const normalizedName = tournamentName.trim().toUpperCase()
-    if (normalizedName.includes('ELDORET')) return 'Eldoret'
-    if (normalizedName.includes('KISUMU')) return 'Kisumu'
-    if (normalizedName.includes('WARIDI')) return 'Nairobi'
-    if (normalizedName.includes('MAVENS')) return 'Nairobi'
-    if (normalizedName.includes('NAKURU')) return 'Nakuru'
-    if (normalizedName.includes('QUO VADIS')) return 'Nyeri'
-    if (normalizedName.includes('KIAMBU')) return 'Kiambu'
-    if (normalizedName.includes('KITALE')) return 'Kitale'
-    if (normalizedName.includes('MOMBASA')) return 'Mombasa'
-    return 'Nairobi'
-  }
-
   const sortedTournaments = [...tournaments].sort((a, b) => {
     let aValue: string | number, bValue: string | number
 
@@ -62,8 +48,8 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
         bValue = new Date(b.start_date || '').getTime()
         break
       case 'location':
-        aValue = getLocation(a.name)
-        bValue = getLocation(b.name)
+        aValue = (a.location || inferTournamentLocation(a.name)).toLowerCase()
+        bValue = (b.location || inferTournamentLocation(b.name)).toLowerCase()
         break
       case 'players':
         aValue = a.results
@@ -174,8 +160,8 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
         </CustomTableHeader>
         <CustomTableBody>
           {sortedTournaments.map((tournament, index) => {
-            const location = getLocation(tournament.name)
-            const rounds = tournament.rounds || 6
+            const location = tournament.location || inferTournamentLocation(tournament.name)
+            const rounds = tournament.rounds ?? 6
             const dates = formatTournamentDateWithOrdinals(tournament?.start_date, tournament?.end_date)
 
             return (

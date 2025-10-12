@@ -24,46 +24,57 @@ A web application to track chess Grand Prix tournaments in Kenya, view player pe
 - Tailwind CSS
 - shadcn/ui components
 
-## Setup
+## Local Setup
 
-### Backend
+### Prerequisites
 
-1. Create a virtual environment:
+- [uv](https://github.com/astral-sh/uv) (Python package/dependency manager)
+- Node.js 18+ and npm
+
+### Quick start (recommended)
+
+1. Make the helper script executable (first time only):
+   ```bash
+   chmod +x dev.sh
+   ```
+2. Run the combined dev environment:
+   ```bash
+   ./dev.sh
+   ```
+   This will:
+   - create/refresh a `.venv` using `uv`
+   - install Python requirements
+   - install frontend dependencies (`client/node_modules`)
+   - start the Flask API on http://127.0.0.1:5004 (logs in `.logs/backend.log`)
+   - start the Next.js dev server on http://localhost:3000
+
+### Manual setup (optional)
+
+If you prefer managing processes yourself, you can still do it manually:
+
+#### Backend
+
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+uv venv
+uv pip install -r requirements.txt
+uv run python app.py  # serves on http://127.0.0.1:5004 by default
 ```
 
-2. Install Python dependencies:
-```bash
-pip install -r requirements.txt
-```
+#### Frontend
 
-3. Start the Flask server:
-```bash
-python app.py
-```
-
-The server will start on http://localhost:5000
-
-### Frontend
-
-1. Navigate to the client directory:
 ```bash
 cd client
-```
-
-2. Install Node.js dependencies:
-```bash
 npm install
+npm run dev  # serves on http://localhost:3000
 ```
 
-3. Start the development server:
-```bash
-npm run dev
-```
+### Frontend environment configuration
 
-The app will be available at http://localhost:3000
+Create `client/.env.local` so the Next.js app talks to your local Flask instance:
+
+```
+NEXT_PUBLIC_API_URL=http://127.0.0.1:5004/api
+```
 
 ## Project Structure
 

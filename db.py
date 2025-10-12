@@ -1,6 +1,8 @@
 import sqlite3
 import logging
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
+
+from tournament_metadata import infer_location, infer_rounds
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +23,21 @@ class Database:
                     name TEXT NOT NULL,
                     start_date DATE,
                     end_date DATE,
+                    short_name TEXT,
+                    location TEXT,
+                    rounds INTEGER,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
+
+            existing_columns = {row[1] for row in c.execute('PRAGMA table_info(tournaments)')}
+            if 'short_name' not in existing_columns:
+                c.execute('ALTER TABLE tournaments ADD COLUMN short_name TEXT')
+                existing_columns.add('short_name')
+            if 'location' not in existing_columns:
+                c.execute('ALTER TABLE tournaments ADD COLUMN location TEXT')
+            if 'rounds' not in existing_columns:
+                c.execute('ALTER TABLE tournaments ADD COLUMN rounds INTEGER')
             
             # Create players table
             c.execute('''
@@ -71,94 +85,186 @@ class Database:
             
             conn.commit()
     
-    def save_tournament(self, tournament_id: str, tournament_name: str, results: List[Dict]):
+    def save_tournament(
+        self,
+        tournament_id: str,
+        tournament_name: str,
+        results: List[Any],
+        *,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        short_name: Optional[str] = None,
+        location: Optional[str] = None,
+        rounds: Optional[int] = None,
+    ):
         """Save tournament data and results."""
         with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
             c = conn.cursor()
-            
-            # Save tournament info
-            c.execute('''
-                INSERT OR REPLACE INTO tournaments (id, name) VALUES (?, ?)
-            ''', (tournament_id, tournament_name))
-            
-            for result in results: # result is a TournamentResult object
-                # Access attributes using dot notation
-                player = result.player # player is a Player object
-                player_fide_id = player.fide_id 
-                player_name = player.name
-                player_federation = player.federation
-                player_rating = player.rating 
 
-                # --- Start: Find or Create Player --- 
+            inferred_location = location or infer_location(tournament_name)
+            inferred_rounds = rounds or infer_rounds(tournament_name)
+            resolved_short_name = short_name or tournament_name
+
+            c.execute(
+                '''
+                INSERT INTO tournaments (id, name, start_date, end_date, short_name, location, rounds)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    name = excluded.name,
+                    start_date = COALESCE(excluded.start_date, tournaments.start_date),
+                    end_date = COALESCE(excluded.end_date, tournaments.end_date),
+                    short_name = COALESCE(excluded.short_name, tournaments.short_name),
+                    location = COALESCE(excluded.location, tournaments.location),
+                    rounds = COALESCE(excluded.rounds, tournaments.rounds)
+                ''',
+                (
+                    tournament_id,
+                    tournament_name,
+                    start_date,
+                    end_date,
+                    resolved_short_name,
+                    inferred_location,
+                    inferred_rounds,
+                ),
+            )
+
+            for result in results:
+                if hasattr(result, "player"):
+                    player_obj = result.player
+                    result_dict = {
+                        "player": {
+                            "name": getattr(player_obj, "name", None),
+                            "fide_id": getattr(player_obj, "fide_id", None),
+                            "federation": getattr(player_obj, "federation", None),
+                            "rating": getattr(player_obj, "rating", None),
+                        },
+                        "points": getattr(result, "points", None),
+                        "tpr": getattr(result, "tpr", None),
+                        "has_walkover": getattr(result, "has_walkover", False),
+                        "start_rank": getattr(result, "start_rank", None),
+                        "rating": getattr(result, "rating", None),
+                        "result_status": getattr(result, "result_status", None),
+                    }
+                else:
+                    result_dict = result
+
+                player_data = result_dict.get("player", {})
+                player_fide_id = player_data.get("fide_id")
+                player_name = player_data.get("name")
+                player_federation = player_data.get("federation")
+                player_rating = result_dict.get("rating") or player_data.get("rating")
+                points = result_dict.get("points")
+                tpr = result_dict.get("tpr")
+                has_walkover = bool(result_dict.get("has_walkover", False))
+                start_rank = result_dict.get("start_rank")
+                result_status = result_dict.get("result_status")
+
+                if not player_name:
+                    logger.warning("Skipping result without player name for tournament %s", tournament_id)
+                    continue
+
                 player_db_id = None
 
-                # 1. Try to find by FIDE ID first
                 if player_fide_id:
                     c.execute('SELECT id FROM players WHERE fide_id = ?', (player_fide_id,))
                     existing_player = c.fetchone()
                     if existing_player:
                         player_db_id = existing_player[0]
-                        # Optional: Update name/federation if changed? For now, assume FIDE ID is master.
-                        # c.execute('UPDATE players SET name = ?, federation = ? WHERE id = ?', 
-                        #           (player_name, player_federation, player_db_id))
 
-                # 2. If no FIDE ID or not found by FIDE ID, try to find by name (case-insensitive)
                 if player_db_id is None:
-                    c.execute('SELECT id FROM players WHERE lower(name) = lower(?) AND fide_id IS NULL', (player_name,))
+                    c.execute(
+                        'SELECT id FROM players WHERE lower(name) = lower(?) AND (fide_id IS NULL OR fide_id = "")',
+                        (player_name,),
+                    )
                     existing_player_by_name = c.fetchone()
                     if existing_player_by_name:
                         player_db_id = existing_player_by_name[0]
-                        # If we found by name, maybe update FIDE ID if it's now available?
                         if player_fide_id:
-                             c.execute('UPDATE players SET fide_id = ? WHERE id = ?', (player_fide_id, player_db_id))
+                            c.execute('UPDATE players SET fide_id = ? WHERE id = ?', (player_fide_id, player_db_id))
 
-                # 3. If still not found, insert new player
                 if player_db_id is None:
-                    c.execute('''
-                        INSERT INTO players (fide_id, name, federation) 
+                    c.execute(
+                        '''
+                        INSERT INTO players (fide_id, name, federation)
                         VALUES (?, ?, ?)
-                    ''', (player_fide_id, player_name, player_federation))
-                    player_db_id = c.lastrowid # Get the ID of the newly inserted player
-                # --- End: Find or Create Player ---
+                        ''',
+                        (player_fide_id, player_name, player_federation),
+                    )
+                    player_db_id = c.lastrowid
 
-                # Save result using the unique player_db_id and dot notation for result attributes
-                c.execute('''
-                    INSERT OR REPLACE INTO results 
-                    (tournament_id, player_id, rating, points, tpr, has_walkover, start_rank)
-                    VALUES (?, ?, ?, ?, ?, ?, ?) 
-                ''', (
-                    tournament_id,
-                    player_db_id, # Use the unique ID
-                    player_rating, # Use rating from player object
-                    result.points,
-                    result.tpr, # Access TPR via dot notation
-                    bool(result.has_walkover), # Access walkover via dot notation
-                    result.start_rank # Access start_rank via dot notation
-                ))
-            
+                c.execute(
+                    '''
+                    INSERT INTO results
+                    (tournament_id, player_id, rating, points, tpr, has_walkover, start_rank, result_status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(tournament_id, player_id) DO UPDATE SET
+                        rating = excluded.rating,
+                        points = excluded.points,
+                        tpr = excluded.tpr,
+                        has_walkover = excluded.has_walkover,
+                        start_rank = COALESCE(excluded.start_rank, results.start_rank),
+                        result_status = COALESCE(excluded.result_status, results.result_status)
+                    ''',
+                    (
+                        tournament_id,
+                        player_db_id,
+                        player_rating,
+                        points,
+                        tpr,
+                        has_walkover,
+                        start_rank,
+                        result_status,
+                    ),
+                )
+
             conn.commit()
 
     def get_all_tournaments(self) -> List[Dict]:
         """Get all tournaments."""
         with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
             c = conn.cursor()
-            c.execute('SELECT id, name, start_date, end_date, short_name FROM tournaments ORDER BY start_date DESC')
-            return c.fetchall()
+            c.execute(
+                '''
+                SELECT
+                    id,
+                    name,
+                    start_date,
+                    end_date,
+                    short_name,
+                    location,
+                    rounds
+                FROM tournaments
+                ORDER BY start_date DESC, name DESC
+                '''
+            )
+            return [dict(row) for row in c.fetchall()]
     
     def get_tournament(self, tournament_id: str) -> Optional[Dict]:
         """Get tournament details and results."""
         with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
             c = conn.cursor()
             
             # Get tournament name and dates
-            c.execute('SELECT name, start_date, end_date, short_name FROM tournaments WHERE id = ?', (tournament_id,))
+            c.execute(
+                '''
+                SELECT name, start_date, end_date, short_name, location, rounds
+                FROM tournaments
+                WHERE id = ?
+                ''',
+                (tournament_id,),
+            )
             tournament_row = c.fetchone()
             if not tournament_row:
-                return None # Tournament not found
-            tournament_name = tournament_row[0]
-            start_date = tournament_row[1] if len(tournament_row) > 1 else None
-            end_date = tournament_row[2] if len(tournament_row) > 2 else None
-            short_name = tournament_row[3] if len(tournament_row) > 3 else None
+                return None  # Tournament not found
+            tournament_name = tournament_row['name']
+            start_date = tournament_row['start_date']
+            end_date = tournament_row['end_date']
+            short_name = tournament_row['short_name']
+            location = tournament_row['location']
+            rounds = tournament_row['rounds']
             
             # Get results, joining players correctly
             try:
@@ -223,105 +329,72 @@ class Database:
                 'short_name': short_name,
                 'start_date': start_date,
                 'end_date': end_date,
+                'location': location,
+                'rounds': rounds,
                 'results': results
             }
     
-    def get_all_results(self) -> Dict[str, List]:
+    def get_all_results(self) -> Dict[int, List]:
         """Get all results grouped by player."""
         with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
             c = conn.cursor()
-            
-            try:
-                c.execute('''
-                    SELECT
-                        p.name, p.fide_id, p.federation,
-                        r.rating, r.points, r.tpr, r.has_walkover, r.start_rank, r.result_status,
-                        t.id, COALESCE(t.short_name, t.name), t.start_date, t.end_date,
-                        p.id
-                    FROM results r
-                    JOIN players p ON r.player_id = p.id
-                    JOIN tournaments t ON r.tournament_id = t.id
-                    ORDER BY r.tpr DESC
-                ''')
-            except sqlite3.OperationalError as e:
-                # If start_rank column doesn't exist or can't be accessed, try without it
-                if 'no such column: r.start_rank' in str(e):
-                    logger.warning("start_rank column not found, using query without it")
-                    c.execute('''
-                        SELECT
-                            p.name, p.fide_id, p.federation,
-                            r.rating, r.points, r.tpr, r.has_walkover, r.result_status,
-                            t.id, COALESCE(t.short_name, t.name), t.start_date, t.end_date,
-                            p.id
-                        FROM results r
-                        JOIN players p ON r.player_id = p.id
-                        JOIN tournaments t ON r.tournament_id = t.id
-                        ORDER BY r.tpr DESC
-                    ''')
-                else:
-                    raise
-            
-            all_results = {}
+
+            c.execute(
+                '''
+                SELECT
+                    p.id AS player_id,
+                    p.name AS player_name,
+                    p.fide_id,
+                    p.federation,
+                    r.rating,
+                    r.points,
+                    r.tpr,
+                    r.has_walkover,
+                    r.start_rank,
+                    r.result_status,
+                    t.id AS tournament_id,
+                    COALESCE(t.short_name, t.name) AS tournament_name,
+                    t.start_date,
+                    t.end_date,
+                    t.location,
+                    t.rounds
+                FROM results r
+                JOIN players p ON r.player_id = p.id
+                JOIN tournaments t ON r.tournament_id = t.id
+                ORDER BY r.tpr DESC
+                '''
+            )
+
+            all_results: Dict[str, List] = {}
             for row in c.fetchall():
-                # Check row length to determine structure
-                has_start_rank = len(row) > 13  # With dates, we have at least 14 columns
-                has_result_status = True  # We always expect result_status now
-                
-                # Calculate offsets based on available columns
-                if has_start_rank:
-                    # Full row with start_rank, result_status, and dates
-                    # [name, fide_id, fed, rating, points, tpr, has_walkover, start_rank, result_status, t_id, t_name, t_start_date, t_end_date, p_id]
-                    player_db_id = row[13]
-                    tournament_id_idx = 9
-                    tournament_name_idx = 10
-                    tournament_start_date_idx = 11
-                    tournament_end_date_idx = 12
-                    result_status_idx = 8
-                    start_rank_idx = 7
-                else:
-                    # Row without start_rank but with result_status and dates
-                    # [name, fide_id, fed, rating, points, tpr, has_walkover, result_status, t_id, t_name, t_start_date, t_end_date, p_id]
-                    player_db_id = row[12]
-                    tournament_id_idx = 8
-                    tournament_name_idx = 9
-                    tournament_start_date_idx = 10
-                    tournament_end_date_idx = 11
-                    result_status_idx = 7
-                    start_rank_idx = None
-                
-                if player_db_id not in all_results:
-                    all_results[player_db_id] = []
-            
+                player_db_id = row['player_id']
+                all_results.setdefault(player_db_id, [])
+
                 result_data = {
                     'player': {
-                        'name': row[0],
-                        'fide_id': row[1],
-                        'federation': row[2],
-                        'rating': row[3]
+                        'name': row['player_name'],
+                        'fide_id': row['fide_id'],
+                        'federation': row['federation'],
+                        'rating': row['rating'],
                     },
-                    'points': row[4],
-                    'tpr': row[5],
-                    'has_walkover': bool(row[6]),
+                    'points': row['points'],
+                    'tpr': row['tpr'],
+                    'has_walkover': bool(row['has_walkover']),
+                    'start_rank': row['start_rank'],
+                    'result_status': row['result_status'] or 'valid',
                     'tournament': {
-                        'id': row[tournament_id_idx],
-                        'name': row[tournament_name_idx],
-                        'start_date': row[tournament_start_date_idx],
-                        'end_date': row[tournament_end_date_idx]
-                    }
+                        'id': row['tournament_id'],
+                        'name': row['tournament_name'],
+                        'start_date': row['start_date'],
+                        'end_date': row['end_date'],
+                        'location': row['location'],
+                        'rounds': row['rounds'],
+                    },
                 }
-                
-                # Add result_status
-                if has_result_status:
-                    result_data['result_status'] = row[result_status_idx]
-                
-                # Add start_rank if available
-                if has_start_rank:
-                    result_data['start_rank'] = row[start_rank_idx]
-                else:
-                    result_data['start_rank'] = None
-                
+
                 all_results[player_db_id].append(result_data)
-            
+
             return all_results
 
     def get_all_player_rankings(self) -> List[Dict]:
@@ -393,15 +466,21 @@ class Database:
     def get_tournament_info(self, tournament_id: str) -> Optional[Dict]:
         """Get tournament info including short_name."""
         with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
             c = conn.cursor()
-            c.execute('SELECT name, short_name, start_date, end_date FROM tournaments WHERE id = ?', (tournament_id,))
+            c.execute(
+                'SELECT name, short_name, start_date, end_date, location, rounds FROM tournaments WHERE id = ?',
+                (tournament_id,),
+            )
             result = c.fetchone()
             if result:
                 return {
-                    'name': result[0],
-                    'short_name': result[1],
-                    'start_date': result[2],
-                    'end_date': result[3]
+                    'name': result['name'],
+                    'short_name': result['short_name'],
+                    'start_date': result['start_date'],
+                    'end_date': result['end_date'],
+                    'location': result['location'],
+                    'rounds': result['rounds'],
                 }
             return None
             

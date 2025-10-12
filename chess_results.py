@@ -3,11 +3,13 @@ Scraper for chess-results.com to collect tournament data and TPRs for Kenyan pla
 """
 import re
 import logging
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict, Any
 from dataclasses import dataclass
 from db import Database
+from tournament_metadata import infer_location
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -46,7 +48,7 @@ class ChessResultsScraper:
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         })
     
-    def get_tournament_data(self, tournament_id: str) -> Tuple[str, List[TournamentResult]]:
+    def get_tournament_data(self, tournament_id: str) -> Tuple[str, List[TournamentResult], Dict[str, Optional[Any]]]:
         """Get tournament data for a given tournament ID."""
         # Fetch tournament info
         tournament_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1"
@@ -68,8 +70,9 @@ class ChessResultsScraper:
         if tournament_name.lower().endswith(suffix_to_remove.lower()):
             tournament_name = tournament_name[:-len(suffix_to_remove)].strip()
 
-        # Use the modified _get_round_count, passing the tournament ID
-        round_count = 8 if tournament_id == "1126042" else self._get_round_count(tournament_id)
+        round_count, start_date, end_date = self._get_round_count_and_dates(tournament_id)
+        if tournament_id == "1126042":
+            round_count = 8
         
         # Fetch the final ranking page for the determined round count with complete list
         standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}&zeilen=99999"
@@ -79,14 +82,23 @@ class ChessResultsScraper:
         
         # Parse standings table
         results = self._parse_standings(soup, round_count, tournament_id)
-        
-        return tournament_name, results
+
+        metadata = {
+            "rounds": round_count,
+            "location": infer_location(tournament_name),
+            "start_date": start_date,
+            "end_date": end_date,
+        }
+
+        return tournament_name, results, metadata
     
-    def _get_round_count(self, tournament_id: str) -> int:
-        """Extract total number of rounds from the tournament details page, handling button click if necessary."""
+    def _get_round_count_and_dates(self, tournament_id: str) -> Tuple[int, Optional[str], Optional[str]]:
+        """Extract total number of rounds and tournament dates from the details page."""
         details_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&flag=30&turdet=YES"
         round_count = None
         details_soup = None
+        start_date_iso: Optional[str] = None
+        end_date_iso: Optional[str] = None
         
         try:
             # Initial GET request
@@ -141,9 +153,8 @@ class ChessResultsScraper:
                 if found:
                     break # Exit outer loop once found
 
-            if round_count is None:
-                 # Raise the error if not found after checking all tables/rows
-                 raise ValueError("Could not find 'Number of rounds' row in any table.")
+            if details_soup:
+                start_date_iso, end_date_iso = self._extract_dates(details_soup)
                  
         except requests.exceptions.RequestException as e:
             logger.error(f"HTTP Error accessing details page {details_url}: {e}")
@@ -153,9 +164,36 @@ class ChessResultsScraper:
         if round_count is None:
             # Default to 9 rounds if we failed to find/parse it
             logger.warning(f"Could not find round count for {tournament_id}, defaulting to 9")
-            return 9
+            round_count = 9
             
-        return round_count
+        return round_count, start_date_iso, end_date_iso
+
+    def _extract_dates(self, details_soup: BeautifulSoup) -> Tuple[Optional[str], Optional[str]]:
+        """Extract start and end dates from the details soup."""
+        date_pattern = re.compile(r'\b(\d{2})\.(\d{2})\.(\d{4})\b')
+        text_content = details_soup.get_text(" ", strip=True)
+        matches = date_pattern.findall(text_content)
+
+        unique_matches = []
+        for match in matches:
+            date_str = ".".join(match)
+            if date_str not in unique_matches:
+                unique_matches.append(date_str)
+
+        if not unique_matches:
+            return None, None
+
+        start_iso = self._to_iso(unique_matches[0])
+        end_iso = self._to_iso(unique_matches[1]) if len(unique_matches) > 1 else start_iso
+        return start_iso, end_iso
+
+    @staticmethod
+    def _to_iso(raw_date: str) -> Optional[str]:
+        """Convert dd.mm.yyyy to ISO date."""
+        try:
+            return datetime.strptime(raw_date, "%d.%m.%Y").date().isoformat()
+        except ValueError:
+            return None
     
     def _parse_standings(self, soup: BeautifulSoup, total_rounds: int, tournament_id: str = None) -> List[TournamentResult]:
         """Parse the standings table and return list of tournament results."""

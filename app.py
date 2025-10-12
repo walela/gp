@@ -9,6 +9,8 @@ import csv
 import io
 from flask import Response
 
+from tournament_metadata import infer_location, infer_rounds
+
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
@@ -27,7 +29,7 @@ def get_tournament_data(tournament_id: str):
 
     # Not in database, scrape it
     scraper = ChessResultsScraper()
-    name, results = scraper.get_tournament_data(tournament_id)
+    name, results, metadata = scraper.get_tournament_data(tournament_id)
 
     # Convert to dict for storage
     results_dict = []
@@ -46,7 +48,15 @@ def get_tournament_data(tournament_id: str):
         results_dict.append(r)
 
     # Save to database
-    db.save_tournament(tournament_id, name, results_dict)
+    db.save_tournament(
+        tournament_id,
+        name,
+        results_dict,
+        start_date=metadata.get("start_date"),
+        end_date=metadata.get("end_date"),
+        location=metadata.get("location"),
+        rounds=metadata.get("rounds"),
+    )
     
     # Recalculate rankings after new data is saved
     db.recalculate_rankings()
@@ -58,18 +68,22 @@ def get_tournament_data(tournament_id: str):
 def tournaments():
     """Get list of all tournaments."""
     tournament_list = []
-    all_db_tournaments = db.get_all_tournaments() # Returns list of tuples (id, name, start_date, end_date, short_name)
-    
-    for t_row in all_db_tournaments:
+    all_db_tournaments = db.get_all_tournaments()
+
+    for t_data in all_db_tournaments:
         try:
-            t_id, t_name, t_start_date, t_end_date, t_short_name = t_row
-            
+            t_id = t_data["id"]
+            t_name = t_data["name"]
+            t_start_date = t_data.get("start_date")
+            t_end_date = t_data.get("end_date")
+            t_short_name = t_data.get("short_name")
+            t_location = t_data.get("location")
+            t_rounds = t_data.get("rounds")
+
             results_count = db.get_tournament_results_count(t_id)
 
-            # Determine rounds based on tournament name
-            rounds = 6  # default
-            if any(keyword in t_name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
-                rounds = 8
+            rounds = t_rounds or infer_rounds(t_name)
+            location = t_location or infer_location(t_name)
             
             tournament_list.append(
                 {
@@ -80,11 +94,12 @@ def tournaments():
                     "status": "Completed", # Assuming all in DB are completed
                     "start_date": t_start_date,
                     "end_date": t_end_date,
+                    "location": location,
                     "rounds": rounds,
                 }
             )
         except Exception as e:
-            logger.error(f"Error processing tournament from DB {t_row[0] if t_row else 'N/A'}: {e}")
+            logger.error(f"Error processing tournament from DB {t_data.get('id', 'N/A')}: {e}")
 
     return jsonify(tournament_list)
 
@@ -106,12 +121,11 @@ def tournament(tournament_id):
         short_name = data.get("short_name", tournament_name)
         start_date = data.get("start_date")
         end_date = data.get("end_date")
+        location = data.get("location")
         results = data["results"]
 
-        # Determine rounds based on tournament name
-        rounds = 6  # default
-        if any(keyword in tournament_name.upper() for keyword in ['MAVENS', 'NAIROBI COUNTY', 'QUO VADIS']):
-            rounds = 8
+        rounds = data.get("rounds") or infer_rounds(tournament_name)
+        location = location or infer_location(tournament_name)
 
         # Sort results
         if sort == "name":
@@ -131,6 +145,7 @@ def tournament(tournament_id):
                     "id": tournament_id,
                     "start_date": start_date,
                     "end_date": end_date,
+                    "location": location,
                     "rounds": rounds,
                     "results": results,
                     "total": len(results),
@@ -152,6 +167,7 @@ def tournament(tournament_id):
                 "id": tournament_id,
                 "start_date": start_date,
                 "end_date": end_date,
+                "location": location,
                 "rounds": rounds,
                 "results": paginated_results,
                 "total": len(results),
@@ -270,17 +286,13 @@ def player(fide_id):
                 SELECT
                     t.id as tournament_id,
                     COALESCE(t.short_name, t.name) as tournament_name,
+                    t.location,
+                    t.rounds,
                     r.points,
                     r.tpr,
                     r.rating as rating_in_tournament,
                     r.start_rank,
-                    r.result_status,
-                    CASE
-                        WHEN t.name LIKE '%Mavens%' THEN 8
-                        WHEN t.name LIKE '%Nairobi County%' THEN 8
-                        WHEN t.name LIKE '%Quo Vadis%' THEN 8
-                        ELSE 6
-                    END as rounds
+                    r.result_status
                 FROM results r
                 JOIN players p ON r.player_id = p.id
                 JOIN tournaments t ON r.tournament_id = t.id
@@ -298,16 +310,12 @@ def player(fide_id):
                     SELECT
                         t.id as tournament_id,
                         COALESCE(t.short_name, t.name) as tournament_name,
+                        t.location,
+                        t.rounds,
                         r.points,
                         r.tpr,
                         r.rating as rating_in_tournament,
-                        r.result_status,
-                        CASE
-                            WHEN t.name LIKE '%Mavens%' THEN 8
-                            WHEN t.name LIKE '%Nairobi County%' THEN 8
-                            WHEN t.name LIKE '%Quo Vadis%' THEN 8
-                            ELSE 6
-                        END as rounds
+                        r.result_status
                     FROM results r
                     JOIN players p ON r.player_id = p.id
                     JOIN tournaments t ON r.tournament_id = t.id
@@ -332,11 +340,12 @@ def player(fide_id):
                 {
                     "tournament_id": result["tournament_id"],
                     "tournament_name": result["tournament_name"],
+                    "location": result.get("location") or infer_location(result["tournament_name"]),
                     "points": result["points"],
                     "tpr": result["tpr"],
                     "rating_in_tournament": result["rating_in_tournament"],
                     "start_rank": result.get("start_rank"),
-                    "rounds": result.get("rounds"),
+                    "rounds": result.get("rounds") or infer_rounds(result["tournament_name"]),
                     "result_status": result.get("result_status", "valid"),
                     "chess_results_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1",
                     "player_card_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1&art=9&snr={result.get('start_rank', '')}" if result.get("start_rank") else None
@@ -517,17 +526,13 @@ def export_player(fide_id):
                 SELECT
                     t.id as tournament_id,
                     t.name as tournament_name,
+                    t.location,
+                    t.rounds,
                     r.points,
                     r.tpr,
                     r.rating as rating_in_tournament,
                     r.start_rank,
-                    r.result_status,
-                    CASE
-                        WHEN t.name LIKE '%Mavens%' THEN 8
-                        WHEN t.name LIKE '%Nairobi County%' THEN 8
-                        WHEN t.name LIKE '%Quo Vadis%' THEN 8
-                        ELSE 6
-                    END as rounds
+                    r.result_status
                 FROM results r
                 JOIN players p ON r.player_id = p.id
                 JOIN tournaments t ON r.tournament_id = t.id
@@ -561,7 +566,7 @@ def export_player(fide_id):
                 result["tournament_name"],
                 result["rating_in_tournament"] or "Unrated",
                 result["points"],
-                result["rounds"],
+                result.get("rounds") or infer_rounds(result["tournament_name"]),
                 result["tpr"] or "-",
                 result.get("result_status", "valid")
             ])

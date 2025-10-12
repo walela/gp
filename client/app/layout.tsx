@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-              <body className={`${inter.variable} ${inter.className}`}>
+      <body className={`${inter.variable} ${inter.className}`}>
         {/* Chess-themed background with subtle checkerboard pattern */}
         <div className="fixed inset-0 -z-10 overflow-hidden">
           {/* Enhanced gradient background */}
