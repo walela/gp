@@ -88,6 +88,15 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
     }
   })
 
+  const countingTournamentIds = (() => {
+    const eligible = player.results
+      .filter(result => (result.result_status ?? 'valid') === 'valid')
+      .sort((a, b) => (b.tpr || 0) - (a.tpr || 0))
+      .slice(0, 4)
+
+    return new Set(eligible.map(result => result.tournament_id))
+  })()
+
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
       return <ArrowUpDownIcon className="h-4 w-4" />
@@ -241,56 +250,77 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                 </CustomTableRow>
               </CustomTableHeader>
               <CustomTableBody>
-                {sortedResults.map((result: PlayerResult, index) => (
-                  <CustomTableRow
-                    key={result.tournament_id}
-                    className={cn(index % 2 === 0 ? 'bg-gray-50/50 hover:bg-gray-100/50' : 'bg-white hover:bg-gray-50/50')}>
-                    <CustomTableCell className="px-2 py-3">
-                      <div className="flex flex-col gap-1">
-                        <Link
-                          href={`/tournament/${result.tournament_id}`}
-                          className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 text-sm leading-tight">
-                          {getShortTournamentName(result.tournament_name)}
-                        </Link>
-                        <div className="text-xs text-gray-500 space-x-2">
-                          <span>Rank: {result.start_rank ?? '-'}</span>
-                          <span>•</span>
-                          <span>Rating: {result.rating_in_tournament}</span>
-                          {result.start_rank && result.player_card_url && (
-                            <>
-                              <span>•</span>
-                              <a
-                                href={result.player_card_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
-                                title="View player card on chess-results.com">
-                                Card <ExternalLink className="h-3 w-3" />
-                              </a>
-                            </>
-                          )}
+                {sortedResults.map((result: PlayerResult, index) => {
+                  const isCounting = countingTournamentIds.has(result.tournament_id)
+                  const isInvalid = result.result_status && result.result_status !== 'valid'
+                  return (
+                    <CustomTableRow
+                      key={`${result.tournament_id}-${index}`}
+                      className={cn(
+                        'transition-colors',
+                        isCounting
+                          ? 'bg-blue-50/70 border-l-4 border-blue-500 hover:bg-blue-100/70'
+                          : index % 2 === 0
+                            ? 'bg-gray-50/50 hover:bg-gray-100/50'
+                            : 'bg-white hover:bg-gray-50/50',
+                        isInvalid ? 'opacity-70' : ''
+                      )}>
+                      <CustomTableCell className="px-2 py-3">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            <Link
+                              href={`/tournament/${result.tournament_id}`}
+                              className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 text-sm leading-tight">
+                              {getShortTournamentName(result.tournament_name)}
+                            </Link>
+                            {isCounting && (
+                              <span
+                                className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-green-500/10 text-green-600 text-xs font-semibold"
+                                title="Counts toward Best 4">
+                                ✓
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center flex-wrap gap-2 text-[11px] text-gray-500">
+                            <span>Rank: {result.start_rank ?? '-'}</span>
+                            <span className="text-gray-400">•</span>
+                            <span>Rating: {result.rating_in_tournament}</span>
+                            {result.start_rank && result.player_card_url && (
+                              <>
+                                <span className="text-gray-400">•</span>
+                                <a
+                                  href={result.player_card_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+                                  title="View player card on chess-results.com">
+                                  Card <ExternalLink className="h-3 w-3" />
+                                </a>
+                              </>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums px-2 py-3">
-                      {result.result_status && result.result_status !== 'valid' ? (
-                        <div className="flex flex-col items-end space-y-1">
-                          <span className="text-gray-400 line-through text-sm">{result.tpr ?? '-'}</span>
-                          <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded">
-                            Invalid
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-sm font-medium">{result.tpr ?? '-'}</span>
-                      )}
-                    </CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums px-2 py-3">
-                      <span className="text-sm font-medium">
-                        {result.points.toFixed(1)}/{result.rounds}
-                      </span>
-                    </CustomTableCell>
-                  </CustomTableRow>
-                ))}
+                      </CustomTableCell>
+                      <CustomTableCell className="text-right tabular-nums px-2 py-3">
+                        {isInvalid ? (
+                          <div className="flex flex-col items-end space-y-1">
+                            <span className="text-gray-400 line-through text-sm">{result.tpr ?? '-'}</span>
+                            <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded">
+                              Invalid
+                            </span>
+                          </div>
+                        ) : (
+                          <span className={cn('text-sm font-medium', isCounting ? 'text-blue-700' : '')}>{result.tpr ?? '-'}</span>
+                        )}
+                      </CustomTableCell>
+                      <CustomTableCell className="text-right tabular-nums px-2 py-3">
+                        <span className={cn('text-sm font-medium', isCounting ? 'text-blue-700' : '')}>
+                          {result.points.toFixed(1)}/{result.rounds}
+                        </span>
+                      </CustomTableCell>
+                    </CustomTableRow>
+                  )
+                })}
               </CustomTableBody>
             </CustomTable>
           </Card>
@@ -348,50 +378,72 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
                 </CustomTableRow>
               </CustomTableHeader>
               <CustomTableBody>
-                {sortedResults.map((result: PlayerResult, index) => (
-                  <CustomTableRow
-                    key={result.tournament_id}
-                    className={cn(index % 2 === 0 ? 'bg-gray-50/50 hover:bg-gray-100/50' : 'bg-white hover:bg-gray-50/50')}>
-                    <CustomTableCell className="whitespace-nowrap">
-                      <Link
-                        href={`/tournament/${result.tournament_id}`}
-                        className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
-                        {getShortTournamentName(result.tournament_name)}
-                      </Link>
-                    </CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums">{result.start_rank ?? '-'}</CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums">{result.rating_in_tournament}</CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums">
-                      {result.points.toFixed(1)}/{result.rounds}
-                    </CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums">
-                      {result.result_status && result.result_status !== 'valid' ? (
-                        <div className="flex items-center justify-end space-x-2">
-                          <span className="text-gray-400 line-through">{result.tpr ?? '-'}</span>
-                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md border border-red-200">
-                            Invalid
-                          </span>
-                        </div>
-                      ) : (
-                        (result.tpr ?? '-')
-                      )}
-                    </CustomTableCell>
-                    <CustomTableCell className="text-center">
-                      {result.start_rank && result.player_card_url ? (
-                        <a
-                          href={result.player_card_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 inline-flex justify-center"
-                          title="View player card on chess-results.com">
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      ) : (
-                        <span className="text-gray-300">-</span>
-                      )}
-                    </CustomTableCell>
-                  </CustomTableRow>
-                ))}
+                {sortedResults.map((result: PlayerResult, index) => {
+                  const isCounting = countingTournamentIds.has(result.tournament_id)
+                  const isInvalid = result.result_status && result.result_status !== 'valid'
+
+                  return (
+                    <CustomTableRow
+                      key={`${result.tournament_id}-${index}`}
+                      className={cn(
+                        'transition-colors',
+                        isCounting
+                          ? 'bg-blue-50/70 border-l-4 border-blue-500 hover:bg-blue-100/70'
+                          : index % 2 === 0
+                            ? 'bg-gray-50/50 hover:bg-gray-100/50'
+                            : 'bg-white hover:bg-gray-50/50',
+                        isInvalid ? 'opacity-70' : ''
+                      )}>
+                      <CustomTableCell className="whitespace-nowrap">
+                        <Link
+                          href={`/tournament/${result.tournament_id}`}
+                          className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 inline-flex items-center gap-2">
+                          {getShortTournamentName(result.tournament_name)}
+                          {isCounting && (
+                            <span
+                              className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-green-500/10 text-green-600 text-xs font-semibold"
+                              title="Counts toward Best 4">
+                              ✓
+                            </span>
+                          )}
+                        </Link>
+                      </CustomTableCell>
+                      <CustomTableCell className="text-right tabular-nums">{result.start_rank ?? '-'}</CustomTableCell>
+                      <CustomTableCell className="text-right tabular-nums">{result.rating_in_tournament}</CustomTableCell>
+                      <CustomTableCell className="text-right tabular-nums">
+                        <span className={cn('font-medium', isCounting ? 'text-blue-700' : '')}>
+                          {result.points.toFixed(1)}/{result.rounds}
+                        </span>
+                      </CustomTableCell>
+                      <CustomTableCell className="text-right tabular-nums">
+                        {isInvalid ? (
+                          <div className="flex items-center justify-end space-x-2">
+                            <span className="text-gray-400 line-through">{result.tpr ?? '-'}</span>
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md border border-red-200">
+                              Invalid
+                            </span>
+                          </div>
+                        ) : (
+                          <span className={cn('font-medium', isCounting ? 'text-blue-700' : '')}>{result.tpr ?? '-'}</span>
+                        )}
+                      </CustomTableCell>
+                      <CustomTableCell className="text-center">
+                        {result.start_rank && result.player_card_url ? (
+                          <a
+                            href={result.player_card_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 inline-flex justify-center"
+                            title="View player card on chess-results.com">
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        ) : (
+                          <span className="text-gray-300">-</span>
+                        )}
+                      </CustomTableCell>
+                    </CustomTableRow>
+                  )
+                })}
               </CustomTableBody>
             </CustomTable>
           </Card>

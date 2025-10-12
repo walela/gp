@@ -46,6 +46,8 @@ export interface TournamentDetails {
 export interface PlayerResult {
   tournament_id: string
   tournament_name: string
+  start_date?: string
+  end_date?: string
   points: number
   tpr: number | null
   rating_in_tournament: number | null

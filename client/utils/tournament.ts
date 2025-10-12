@@ -26,6 +26,7 @@ export const SHORT_NAMES: Record<string, string> = {
   'Nairobi County Open': 'Nairobi County Open',
   'QUO VADIS OPEN 2025': 'Quo Vadis Nyeri Open',
   'KITALE OPEN CHESS TOURNAMENT OPEN': 'Kitale Open',
+  'Mombasa Open Chess Championship 2025 Open': 'Mombasa Open',
   'Mombasa International Chess Festival 2025': 'Mombasa Chess Festival'
 }
 

@@ -288,6 +288,8 @@ def player(fide_id):
                     COALESCE(t.short_name, t.name) as tournament_name,
                     t.location,
                     t.rounds,
+                    t.start_date,
+                    t.end_date,
                     r.points,
                     r.tpr,
                     r.rating as rating_in_tournament,
@@ -297,7 +299,7 @@ def player(fide_id):
                 JOIN players p ON r.player_id = p.id
                 JOIN tournaments t ON r.tournament_id = t.id
                 WHERE p.fide_id = ?
-                ORDER BY t.id DESC -- Or however you want to order results
+                ORDER BY COALESCE(t.start_date, '0000-00-00') ASC, t.id ASC
             """,
                 (fide_id,),
             )
@@ -312,6 +314,8 @@ def player(fide_id):
                         COALESCE(t.short_name, t.name) as tournament_name,
                         t.location,
                         t.rounds,
+                        t.start_date,
+                        t.end_date,
                         r.points,
                         r.tpr,
                         r.rating as rating_in_tournament,
@@ -320,7 +324,7 @@ def player(fide_id):
                     JOIN players p ON r.player_id = p.id
                     JOIN tournaments t ON r.tournament_id = t.id
                     WHERE p.fide_id = ?
-                    ORDER BY t.id DESC -- Or however you want to order results
+                    ORDER BY COALESCE(t.start_date, '0000-00-00') ASC, t.id ASC
                 """,
                     (fide_id,),
                 )
@@ -341,6 +345,8 @@ def player(fide_id):
                     "tournament_id": result["tournament_id"],
                     "tournament_name": result["tournament_name"],
                     "location": result.get("location") or infer_location(result["tournament_name"]),
+                    "start_date": result.get("start_date"),
+                    "end_date": result.get("end_date"),
                     "points": result["points"],
                     "tpr": result["tpr"],
                     "rating_in_tournament": result["rating_in_tournament"],
