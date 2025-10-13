@@ -86,13 +86,29 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
     q: search
   })
 
-  // Get top 9 by best_4 from all data, not just the current page
-  const { topPlayers } = await getTopPlayers({ count: 9, sortBy: 'best_4' })
-  const top9ByBest4 = new Set(topPlayers.map(p => p.fide_id || p.name))
+  const highlightCount = 9
+  const { topPlayers } = await getTopPlayers({ count: highlightCount + 1, sortBy: 'best_4' })
+  const topPlayerIds = topPlayers.map(p => p.fide_id || p.name)
 
-  // Kenya #1 is Jadon
-  const kenyaNumber1Player = rankings.find(player => player.name.toLowerCase().includes('jadon'))
+  const kenyaNumber1Player = [...rankings, ...topPlayers].find(player =>
+    player.name.toLowerCase().includes('jadon')
+  )
   const kenyaNumber1Id = kenyaNumber1Player?.fide_id || kenyaNumber1Player?.name
+
+  const automaticQualifierIds = new Set(
+    topPlayers.slice(0, highlightCount).map(player => player.fide_id || player.name)
+  )
+
+  const kenyaNumber1IsAutomatic = kenyaNumber1Id ? automaticQualifierIds.has(kenyaNumber1Id) : false
+  const provisionalQualifierId =
+    kenyaNumber1IsAutomatic && topPlayers.length > highlightCount ? topPlayerIds[highlightCount] : null
+
+  const highlightedQualifierIds = new Set(automaticQualifierIds)
+  if (provisionalQualifierId) {
+    highlightedQualifierIds.add(provisionalQualifierId)
+  }
+
+  const juniorChampionId = '10831533'
 
   return (
     <div className="space-y-6">
@@ -100,7 +116,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
           <p className="text-pretty text-gray-600 text-sm tracking-wide leading-tighter">
-            Provisional standings. Top 9 players by Best 4 Average and the current Kenya #1 are highlighted.
+            Provisional standings. The current Kenya #1, automatic GP qualifiers (Top 9), provisional call-ups when Kenya #1 is already in that group, and the National Junior Champion are highlighted.
           </p>
         </div>
       </div>
@@ -174,101 +190,129 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 </CustomTableCell>
               </CustomTableRow>
             ) : (
-              rankings.map((player, index) => (
-                <CustomTableRow
-                  key={player.fide_id || player.name}
-                  className={cn(
-                    (player.fide_id || player.name) === kenyaNumber1Id
-                      ? 'bg-amber-50/50 border-l-2 border-l-amber-500 hover:bg-amber-100/50'
-                      : top9ByBest4.has(player.fide_id || player.name)
-                        ? 'bg-blue-50/50 border-l-2 border-l-blue-500 hover:bg-blue-100/50'
-                        : index % 2 === 0
-                          ? 'bg-gray-50/50 hover:bg-gray-100/50'
-                          : 'bg-white hover:bg-gray-50/50'
-                  )}>
-                  <CustomTableCell isHeader className="text-right">
-                    {(player.fide_id || player.name) === kenyaNumber1Id ? (
-                      <div className="flex items-center justify-end gap-1">
-                        <Crown className="h-3 w-3 text-amber-600" />
-                        <span className="font-semibold text-amber-700">{(page - 1) * 25 + index + 1}</span>
-                      </div>
-                    ) : top9ByBest4.has(player.fide_id || player.name) ? (
-                      <span className="font-semibold text-blue-700">{(page - 1) * 25 + index + 1}</span>
-                    ) : (
-                      (page - 1) * 25 + index + 1
-                    )}
-                  </CustomTableCell>
-                  <CustomTableCell>
-                    <div className="truncate">
-                      {player.fide_id ? (
-                        <Link
-                          href={`/player/${player.fide_id}`}
-                          className={cn(
-                            'font-medium group flex items-center gap-1',
-                            (player.fide_id || player.name) === kenyaNumber1Id
-                              ? 'text-amber-700 hover:text-amber-800'
-                              : top9ByBest4.has(player.fide_id)
-                                ? 'text-blue-700 hover:text-blue-800'
-                                : 'text-blue-600 hover:text-blue-700'
-                          )}
-                          title={player.name}>
-                          <span className="sm:hidden flex items-center gap-1">
-                            {getDisplayName(player.name)}
-                            <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-blue-500 transition-colors" />
-                          </span>
-                          <span className="hidden sm:block group-hover:underline">{getDisplayName(player.name)}</span>
-                        </Link>
-                      ) : (
-                        <span
-                          className={cn(
-                            'font-medium',
-                            (player.fide_id || player.name) === kenyaNumber1Id
-                              ? 'text-amber-700'
-                              : top9ByBest4.has(player.name)
-                                ? 'text-blue-700'
-                                : ''
-                          )}
-                          title={player.name}>
-                          {getDisplayName(player.name)}
-                        </span>
-                      )}
-                    </div>
-                  </CustomTableCell>
-                  <CustomTableCell className="hidden md:table-cell text-right tabular-nums">
-                    {player.rating || 'Unrated'}
-                  </CustomTableCell>
-                  <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">
-                    {player.tournaments_played}
-                  </CustomTableCell>
-                  <CustomTableCell
-                    className={cn('text-right tabular-nums', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
-                    <div className="flex flex-col items-end gap-1">
-                      <div className="tabular-nums font-medium">{player.best_1}</div>
-                      {player.tournament_1 && (
-                        <div className="hidden sm:block text-xs text-muted-foreground truncate max-w-[140px]">
-                          {getShortTournamentName(player.tournament_1)}
+              rankings.map((player, index) => {
+                const playerId = player.fide_id || player.name
+                const isKenyaNumber1 = kenyaNumber1Id ? playerId === kenyaNumber1Id : false
+                const isAutomaticQualifier = automaticQualifierIds.has(playerId)
+                const isProvisionalQualifier = provisionalQualifierId === playerId
+                const isHighlightedQualifier = highlightedQualifierIds.has(playerId)
+                const isJuniorChampion =
+                  player.fide_id === juniorChampionId || player.name.toLowerCase().includes('kyle kuka')
+                const tableRank = (page - 1) * 25 + index + 1
+
+                return (
+                  <CustomTableRow
+                    key={playerId}
+                    className={cn(
+                      isKenyaNumber1
+                        ? 'bg-amber-50/50 border-l-2 border-l-amber-500 hover:bg-amber-100/50'
+                        : isProvisionalQualifier
+                          ? 'bg-teal-50/50 border-l-2 border-l-teal-500 hover:bg-teal-100/50'
+                          : isAutomaticQualifier
+                            ? 'bg-blue-50/50 border-l-2 border-l-blue-500 hover:bg-blue-100/50'
+                            : index % 2 === 0
+                              ? 'bg-gray-50/50 hover:bg-gray-100/50'
+                              : 'bg-white hover:bg-gray-50/50',
+                      isJuniorChampion ? 'ring-1 ring-inset ring-emerald-200' : ''
+                    )}>
+                    <CustomTableCell isHeader className="text-right">
+                      {isKenyaNumber1 ? (
+                        <div className="flex items-center justify-end gap-1">
+                          <Crown className="h-3 w-3 text-amber-600" />
+                          <span className="font-semibold text-amber-700">{tableRank}</span>
                         </div>
+                      ) : isProvisionalQualifier ? (
+                        <span className="font-semibold text-teal-700">{tableRank}</span>
+                      ) : isAutomaticQualifier ? (
+                        <span className="font-semibold text-blue-700">{tableRank}</span>
+                      ) : isJuniorChampion ? (
+                        <span className="font-semibold text-emerald-700">{tableRank}</span>
+                      ) : (
+                        tableRank
                       )}
-                    </div>
-                  </CustomTableCell>
-                  <CustomTableCell
-                    className={cn('text-right tabular-nums', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
-                    {player.best_2}
-                  </CustomTableCell>
-                  <CustomTableCell
-                    className={cn('text-right tabular-nums', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
-                    {player.best_3}
-                  </CustomTableCell>
-                  <CustomTableCell
-                    className={cn('text-right tabular-nums', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
-                    {top9ByBest4.has(player.fide_id || player.name) ? (
-                      <span className="font-semibold text-blue-700">{player.best_4}</span>
-                    ) : (
-                      player.best_4
-                    )}
-                  </CustomTableCell>
-                </CustomTableRow>
-              ))
+                    </CustomTableCell>
+                    <CustomTableCell>
+                      <div className="truncate">
+                        {player.fide_id ? (
+                          <Link
+                            href={`/player/${player.fide_id}`}
+                            className={cn(
+                              'font-medium group flex items-center gap-2',
+                              isKenyaNumber1
+                                ? 'text-amber-700 hover:text-amber-800'
+                                : isProvisionalQualifier
+                                  ? 'text-teal-700 hover:text-teal-800'
+                                  : isAutomaticQualifier
+                                    ? 'text-blue-700 hover:text-blue-800'
+                                    : isJuniorChampion
+                                      ? 'text-emerald-700 hover:text-emerald-800'
+                                      : 'text-blue-600 hover:text-blue-700'
+                            )}
+                            title={player.name}>
+                            <span className="sm:hidden flex items-center gap-1">
+                              {getDisplayName(player.name)}
+                              <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-blue-500 transition-colors" />
+                            </span>
+                            <span className="hidden sm:block group-hover:underline">{getDisplayName(player.name)}</span>
+                          </Link>
+                        ) : (
+                          <span
+                            className={cn(
+                              'font-medium flex items-center gap-2',
+                              isKenyaNumber1
+                                ? 'text-amber-700'
+                                : isProvisionalQualifier
+                                  ? 'text-teal-700'
+                                  : isAutomaticQualifier
+                                    ? 'text-blue-700'
+                                    : isJuniorChampion
+                                ? 'text-emerald-700'
+                                : ''
+                            )}
+                            title={player.name}>
+                            {getDisplayName(player.name)}
+                          </span>
+                        )}
+                      </div>
+                    </CustomTableCell>
+                    <CustomTableCell className="hidden md:table-cell text-right tabular-nums">
+                      {player.rating || 'Unrated'}
+                    </CustomTableCell>
+                    <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">
+                      {player.tournaments_played}
+                    </CustomTableCell>
+                    <CustomTableCell
+                      className={cn('text-right tabular-nums', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="tabular-nums font-medium">{player.best_1}</div>
+                        {player.tournament_1 && (
+                          <div className="hidden sm:block text-xs text-muted-foreground truncate max-w-[140px]">
+                            {getShortTournamentName(player.tournament_1)}
+                          </div>
+                        )}
+                      </div>
+                    </CustomTableCell>
+                    <CustomTableCell
+                      className={cn('text-right tabular-nums', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
+                      {player.best_2}
+                    </CustomTableCell>
+                    <CustomTableCell
+                      className={cn('text-right tabular-nums', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
+                      {player.best_3}
+                    </CustomTableCell>
+                    <CustomTableCell
+                      className={cn('text-right tabular-nums', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
+                      {isHighlightedQualifier ? (
+                        <span className={cn('font-semibold', isProvisionalQualifier ? 'text-teal-700' : 'text-blue-700')}>
+                          {player.best_4}
+                        </span>
+                      ) : (
+                        player.best_4
+                      )}
+                    </CustomTableCell>
+                  </CustomTableRow>
+                )
+              })
             )}
           </CustomTableBody>
         </CustomTable>

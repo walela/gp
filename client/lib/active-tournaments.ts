@@ -25,11 +25,7 @@ export const upcomingTournaments: Tournament[] = [
     rounds: 8,
     confirmed: true,
     status: 'Upcoming'
-  }
-]
-
-// Grand-Prix events that have dates or at least confirmed months but are further out in the calendar
-export const plannedTournaments: Tournament[] = [
+  },
   {
     id: '742163',
     name: 'Bungoma Open 2025',
@@ -37,7 +33,8 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2025-11-02',
     location: 'Bungoma',
     rounds: 6,
-    confirmed: true
+    confirmed: true,
+    status: 'Upcoming'
   },
   {
     id: '742164',
@@ -46,6 +43,10 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2025-11-23',
     location: 'Nairobi',
     rounds: 6,
-    confirmed: true
+    confirmed: true,
+    status: 'Upcoming'
   }
 ]
+
+// No tournaments currently outside the 60-day window
+export const plannedTournaments: Tournament[] = []

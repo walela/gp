@@ -139,107 +139,109 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-700">Planned Tournaments</h2>
-          <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
-            Future tournaments with confirmed or tentative dates and details
-          </p>
+        {plannedTournaments.length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-gray-700">Planned Tournaments</h2>
+            <p className="text-pretty text-gray-600 mb-4 text-sm tracking-wide leading-tighter">
+              Future tournaments with confirmed or tentative dates and details
+            </p>
 
-          <div className="flex flex-wrap gap-4">
-            {plannedTournaments.map(tournament => {
-              let timeAwayText = ''
-              let daysAway = 0
-              
-              if ('startDate' in tournament && tournament.startDate) {
-                const startDate = dayjs(tournament.startDate)
-                const now = dayjs()
-                daysAway = startDate.diff(now, 'day')
-                const weeksAway = Math.floor(daysAway / 7)
-                const remainingDays = daysAway % 7
-                
-                if (daysAway === 0) {
-                  timeAwayText = 'Today'
-                } else if (daysAway === 1) {
-                  timeAwayText = 'Tomorrow'
-                } else if (daysAway < 7) {
-                  timeAwayText = `${daysAway} days away`
-                } else if (weeksAway === 1 && remainingDays === 0) {
-                  timeAwayText = '1 week away'
-                } else if (weeksAway === 1) {
-                  timeAwayText = `1 week ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
-                } else if (remainingDays === 0) {
-                  timeAwayText = `${weeksAway} weeks away`
-                } else {
-                  timeAwayText = `${weeksAway} weeks ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
+            <div className="flex flex-wrap gap-4">
+              {plannedTournaments.map(tournament => {
+                let timeAwayText = ''
+                let daysAway = 0
+
+                if ('startDate' in tournament && tournament.startDate) {
+                  const startDate = dayjs(tournament.startDate)
+                  const now = dayjs()
+                  daysAway = startDate.diff(now, 'day')
+                  const weeksAway = Math.floor(daysAway / 7)
+                  const remainingDays = daysAway % 7
+
+                  if (daysAway === 0) {
+                    timeAwayText = 'Today'
+                  } else if (daysAway === 1) {
+                    timeAwayText = 'Tomorrow'
+                  } else if (daysAway < 7) {
+                    timeAwayText = `${daysAway} days away`
+                  } else if (weeksAway === 1 && remainingDays === 0) {
+                    timeAwayText = '1 week away'
+                  } else if (weeksAway === 1) {
+                    timeAwayText = `1 week ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
+                  } else if (remainingDays === 0) {
+                    timeAwayText = `${weeksAway} weeks away`
+                  } else {
+                    timeAwayText = `${weeksAway} weeks ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
+                  }
                 }
-              }
 
-              return (
-                <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
-                  <Card className="h-full rounded-lg relative overflow-hidden gap-4 py-2">
-                    {timeAwayText && (
-                      <div className="px-4">
-                        <span 
-                          className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded cursor-help"
-                          title={`${daysAway} ${daysAway === 1 ? 'day' : 'days'} away`}
-                        >
-                          {timeAwayText}
-                        </span>
-                      </div>
-                    )}
-                    <CardHeader className="px-4">
-                      <div className="flex items-center justify-between">
-                        <CardTitle>
-                          {'startDate' in tournament ? (
-                            <Link href={`/tournament/${tournament.id}`} className="hover:underline">
-                              {tournament.short_name || tournament.name}
-                            </Link>
-                          ) : (
-                            tournament.short_name || tournament.name
-                          )}
-                        </CardTitle>
-                        <Badge
-                          className={
-                            tournament.confirmed
-                              ? 'bg-green-100 text-green-700 hover:bg-green-100'
-                              : 'bg-purple-100 text-purple-700 hover:bg-purple-100'
-                          }>
-                          {tournament.confirmed ? 'Confirmed' : 'Planned'}
-                        </Badge>
-                      </div>
-                      <CardDescription className="flex items-center gap-2 mt-1">
-                        <Calendar className="h-4 w-4" />
-                        <span>
-                          {'startDate' in tournament && tournament.startDate && tournament.endDate ? (
-                            <>
-                              {dayjs(tournament.startDate!).format('MMM Do')} - {dayjs(tournament.endDate!).format('MMM Do, YYYY')}
-                            </>
-                          ) : (
-                            `${'month' in tournament ? tournament.month : ''} 2025`
-                          )}
-                        </span>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="px-4 pt-0 pb-2 flex flex-col gap-2 text-sm">
-                      <div className="flex justify-between">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span>{tournament.location}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Hash className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span>
-                            {'rounds' in tournament ? `${tournament.rounds} rounds` : `~${tournament.tentativeRounds} rounds`}
+                return (
+                  <div key={tournament.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]">
+                    <Card className="h-full rounded-lg relative overflow-hidden gap-4 py-2">
+                      {timeAwayText && (
+                        <div className="px-4">
+                          <span
+                            className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded cursor-help"
+                            title={`${daysAway} ${daysAway === 1 ? 'day' : 'days'} away`}>
+                            {timeAwayText}
                           </span>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )
-            })}
+                      )}
+                      <CardHeader className="px-4">
+                        <div className="flex items-center justify-between">
+                          <CardTitle>
+                            {'startDate' in tournament ? (
+                              <Link href={`/tournament/${tournament.id}`} className="hover:underline">
+                                {tournament.short_name || tournament.name}
+                              </Link>
+                            ) : (
+                              tournament.short_name || tournament.name
+                            )}
+                          </CardTitle>
+                          <Badge
+                            className={
+                              tournament.confirmed
+                                ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                                : 'bg-purple-100 text-purple-700 hover:bg-purple-100'
+                            }>
+                            {tournament.confirmed ? 'Confirmed' : 'Planned'}
+                          </Badge>
+                        </div>
+                        <CardDescription className="flex items-center gap-2 mt-1">
+                          <Calendar className="h-4 w-4" />
+                          <span>
+                            {'startDate' in tournament && tournament.startDate && tournament.endDate ? (
+                              <>
+                                {dayjs(tournament.startDate!).format('MMM Do')} -{' '}
+                                {dayjs(tournament.endDate!).format('MMM Do, YYYY')}
+                              </>
+                            ) : (
+                              `${'month' in tournament ? tournament.month : ''} 2025`
+                            )}
+                          </span>
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="px-4 pt-0 pb-2 flex flex-col gap-2 text-sm">
+                        <div className="flex justify-between">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span>{tournament.location}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Hash className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span>
+                              {'rounds' in tournament ? `${tournament.rounds} rounds` : `~${tournament.tentativeRounds} rounds`}
+                            </span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

@@ -1,0 +1,33 @@
+ * Serving Flask app 'app'
+ * Debug mode: off
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5004
+ * Running on http://100.64.180.100:5004
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournaments HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1268826?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1213697?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1165146?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1193135?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1135144?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1220011?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1188044?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1173578?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1130967?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1095243?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1126042?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:41] "GET /api/tournament/1255540?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:46:47] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:47:32] "GET /api/rankings?sort=best_4&dir=desc&page=1&q=kuka HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:47:32] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:47:45] "GET /api/rankings?sort=best_4&dir=desc&page=1&q=kuka HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:47:45] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:47:48] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:48:31] "GET /api/rankings?sort=best_1&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:48:31] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:48:37] "GET /api/rankings?sort=best_1&dir=desc&page=2 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:48:37] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:48:46] "GET /api/rankings?sort=best_4&dir=desc&page=2 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:48:46] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [13/Oct/2025 12:48:49] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
