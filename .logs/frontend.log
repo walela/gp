@@ -24,3 +24,17 @@
  GET /rankings?view=best_4&sort=best_4 200 in 103ms
  ✓ Compiled in 455ms
  GET /rankings?view=best_4&sort=best_4 200 in 116ms
+ GET /player/10801952 200 in 73ms
+ GET /rankings?view=best_3&sort=best_3 200 in 86ms
+ GET /rankings?view=best_4&sort=best_4 200 in 108ms
+ GET /player/10813420 200 in 43ms
+ GET /rankings 200 in 81ms
+ GET /player/10818677 200 in 35ms
+ GET /player/10816593 200 in 45ms
+ GET /rankings?view=best_3&sort=best_3 200 in 105ms
+ GET /player/10814078 200 in 48ms
+ GET /rankings 200 in 81ms
+ GET /rankings?view=best_2&sort=best_2 200 in 87ms
+ GET /player/10836012 200 in 35ms
+ ✓ Compiled / in 12ms
+ GET / 200 in 255ms
