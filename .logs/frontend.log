@@ -1,0 +1,26 @@
+
+> gp-tracker@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.2.4 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.100.197:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 777ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.2s
+ GET / 200 in 2584ms
+ ✓ Compiled /favicon.ico in 210ms
+ GET /favicon.ico?favicon.45db1c09.ico 200 in 247ms
+ ✓ Compiled /rankings in 313ms
+ GET /rankings 200 in 395ms
+ ✓ Compiled /_not-found/page in 485ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 529ms
+ ✓ Compiled /player/[id] in 326ms
+ GET /player/10814582 200 in 704ms
+ GET /rankings?view=best_3&sort=best_3 200 in 91ms
+ GET /rankings?view=best_4&sort=best_4 200 in 103ms
+ ✓ Compiled in 455ms
+ GET /rankings?view=best_4&sort=best_4 200 in 116ms

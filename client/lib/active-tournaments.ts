@@ -17,16 +17,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: '742165',
-    name: 'Kenya Open 2025',
-    startDate: '2025-10-18',
-    endDate: '2025-10-20',
-    location: 'Nairobi',
-    rounds: 8,
-    confirmed: true,
-    status: 'Upcoming'
-  },
-  {
     id: '742163',
     name: 'Bungoma Open 2025',
     startDate: '2025-11-01',
