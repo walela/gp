@@ -65,6 +65,7 @@ export interface PlayerDetails {
   federation: string
   current_fide_rating: number | null
   latest_tournament_rating: number | null
+  ranking: (PlayerRanking & { current_rank?: number }) | null
   results: PlayerResult[]
 }
 
@@ -78,6 +79,7 @@ export interface PlayerRanking {
   best_2: number
   best_3: number
   best_4: number
+  current_rank?: number
 }
 
 export interface RankingsResponse {

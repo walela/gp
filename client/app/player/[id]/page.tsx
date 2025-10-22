@@ -62,19 +62,29 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       throw new Error('Player not found')
     }
 
-    // Fetch player ranking data
-    try {
-      const rankingsData = await getRankings({ sort: 'best_4', dir: 'desc' })
-      const rankingIndex = rankingsData.rankings.findIndex(r => r.fide_id === player.fide_id)
-      if (rankingIndex !== -1) {
-        playerRanking = {
-          ...rankingsData.rankings[rankingIndex],
-          currentRank: rankingIndex + 1 // Add 1-based rank position
-        }
+    if (player.ranking) {
+      const { current_rank, ...restRanking } = player.ranking
+      playerRanking = {
+        ...restRanking,
+        currentRank: current_rank ?? undefined
       }
-    } catch (rankingErr) {
-      console.warn('Could not fetch player ranking:', rankingErr)
-      // Continue without ranking data
+    }
+
+    // Fallback: fetch ranking page if player ranking data is missing (e.g. legacy API)
+    if (!playerRanking) {
+      try {
+        const rankingsData = await getRankings({ sort: 'best_4', dir: 'desc' })
+        const rankingIndex = rankingsData.rankings.findIndex(r => r.fide_id === player.fide_id)
+        if (rankingIndex !== -1) {
+          playerRanking = {
+            ...rankingsData.rankings[rankingIndex],
+            currentRank: rankingIndex + 1 // Add 1-based rank position
+          }
+        }
+      } catch (rankingErr) {
+        console.warn('Could not fetch player ranking:', rankingErr)
+        // Continue without ranking data
+      }
     }
   } catch (err) {
     console.error('Error fetching player:', err)

@@ -259,6 +259,7 @@ def player(fide_id):
     """Get player tournament history."""
     player_details = None
     tournament_results = []
+    player_ranking = None
 
     with sqlite3.connect(db.db_file) as conn:
         conn.row_factory = sqlite3.Row  # Return rows as dictionary-like objects
@@ -334,12 +335,69 @@ def player(fide_id):
         results_rows = c.fetchall()
         tournament_results = [dict(row) for row in results_rows]
 
+        # Fetch precomputed ranking data for the player
+        c.execute(
+            """
+            SELECT player_id, name, fide_id, rating, tournaments_played,
+                   best_1, tournament_1, best_2, best_3, best_4
+            FROM player_rankings
+            WHERE fide_id = ?
+            """,
+            (fide_id,),
+        )
+        ranking_row = c.fetchone()
+        if ranking_row:
+            player_ranking = dict(ranking_row)
+            player_ranking.pop("player_id", None)
+
+    if player_ranking:
+        # Calculate cascading rank consistent with rankings endpoint
+        player_rankings = db.get_all_player_rankings()
+
+        def cascading_sort_key(player):
+            if player["tournaments_played"] >= 4 and player["best_4"] > 0:
+                return (4, player["best_4"])
+            elif player["tournaments_played"] >= 3 and player["best_3"] > 0:
+                return (3, player["best_3"])
+            elif player["tournaments_played"] >= 2 and player["best_2"] > 0:
+                return (2, player["best_2"])
+            elif player["tournaments_played"] >= 1 and player["best_1"] > 0:
+                return (1, player["best_1"])
+            else:
+                return (0, 0)
+
+        player_rankings.sort(key=cascading_sort_key, reverse=True)
+
+        current_rank = next(
+            (
+                idx
+                for idx, ranking in enumerate(player_rankings, start=1)
+                if ranking.get("fide_id") == fide_id
+            ),
+            None,
+        )
+
+        if current_rank is not None:
+            player_ranking["current_rank"] = current_rank
+
+    latest_tournament_rating = next(
+        (
+            result.get("rating_in_tournament")
+            for result in reversed(tournament_results)
+            if result.get("rating_in_tournament") is not None
+        ),
+        None,
+    )
+
     # Combine player details and results into the response
     return jsonify(
         {
             "name": player_details["name"],
             "fide_id": player_details["fide_id"],
             "federation": player_details["federation"],
+            "current_fide_rating": player_ranking.get("rating") if player_ranking else None,
+            "latest_tournament_rating": latest_tournament_rating,
+            "ranking": player_ranking,
             "results": [
                 {
                     "tournament_id": result["tournament_id"],
@@ -358,8 +416,6 @@ def player(fide_id):
                 }
                 for result in tournament_results
             ],
-            # Note: 'rating' (current rating) isn't stored directly on players table
-            # Could calculate from latest 'rating_in_tournament' if needed
         }
     )
 

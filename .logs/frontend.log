@@ -38,3 +38,5 @@
  GET /player/10836012 200 in 35ms
  ✓ Compiled / in 12ms
  GET / 200 in 255ms
+ ✓ Compiled in 471ms
+ ✓ Compiled in 458ms
