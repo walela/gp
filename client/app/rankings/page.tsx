@@ -342,7 +342,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             National Junior Champion
           </span>
           <span className="inline-flex items-center gap-1.5 text-green-700">
-            <CircleCheckBig className="h-3.5 w-3.5 text-green-600" strokeWidth={1.75} />
+            <span className="inline-flex h-4 items-center justify-center rounded-sm bg-green-100 px-1.5 text-[11px] font-semibold leading-tight text-green-700 sm:hidden">
+              Q
+            </span>
+            <CircleCheckBig className="hidden sm:inline-block h-3.5 w-3.5 text-green-600" strokeWidth={1.75} />
             Confirmed Qualifier
           </span>
         </div>
