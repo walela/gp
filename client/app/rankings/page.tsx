@@ -155,12 +155,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
-        </div>
-      </div>
-
       <div className="flex flex-col gap-4 mb-6">
         <SearchForm defaultValue={search} />
       </div>

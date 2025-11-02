@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="relative flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">
-            <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">{children}</div>
+            <div className="container mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 py-4">{children}</div>
           </main>
           <Footer />
         </div>
