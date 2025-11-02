@@ -33,17 +33,20 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
   const validTprResults = player.results.filter(r => r.tpr && (!r.result_status || r.result_status === 'valid'))
   const averageTpr =
     validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
-
-  // Use ranking data from API if available
-  const currentRating = playerRanking
-    ? playerRanking.tournaments_played >= 4
-      ? playerRanking.best_4
-      : playerRanking.tournaments_played >= 3
-        ? playerRanking.best_3
-        : playerRanking.tournaments_played >= 2
-          ? playerRanking.best_2
-          : playerRanking.best_1
-    : 0
+  const best4Average =
+    playerRanking && playerRanking.tournaments_played >= 4 && playerRanking.best_4 > 0 ? playerRanking.best_4 : null
+  const bestAverageInfo = playerRanking
+    ? playerRanking.tournaments_played >= 4 && playerRanking.best_4 > 0
+      ? { label: 'Best 4', value: playerRanking.best_4 }
+      : playerRanking.tournaments_played >= 3 && playerRanking.best_3 > 0
+        ? { label: 'Best 3', value: playerRanking.best_3 }
+        : playerRanking.tournaments_played >= 2 && playerRanking.best_2 > 0
+          ? { label: 'Best 2', value: playerRanking.best_2 }
+          : playerRanking.tournaments_played >= 1 && playerRanking.best_1 > 0
+            ? { label: 'Best 1', value: playerRanking.best_1 }
+            : null
+    : null
+  const bestAverageValue = bestAverageInfo?.value ?? null
   const currentRank = playerRanking?.currentRank ?? null
 
   const handleSort = (field: SortField) => {
@@ -141,7 +144,12 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
           <div className="flex flex-col items-center">
             <Star className="h-4 w-4 text-blue-500 mb-1" />
             <span className="text-xs text-muted-foreground uppercase tracking-wide">Best 4</span>
-            <p className="font-semibold text-lg">{currentRating || '-'}</p>
+            <p className="font-semibold text-lg">{best4Average ?? '-'}</p>
+            {bestAverageInfo && bestAverageInfo.label !== 'Best 4' && bestAverageValue !== null && (
+              <span className="text-[11px] text-muted-foreground">
+                ({bestAverageInfo.label}: {bestAverageValue})
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col items-center">
@@ -194,11 +202,16 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
               <p className="font-bold text-lg text-gray-900 drop-shadow-sm">{bestTpr}</p>
             </div>
 
-            <div className="flex flex-col items-center bg-white/30 backdrop-blur-sm rounded-lg p-3 border border-white/40 shadow-sm">
-              <Star className="h-4 w-4 text-blue-500 mb-1 drop-shadow-sm" />
-              <span className="text-xs text-gray-700 uppercase tracking-wide font-semibold">Best 4</span>
-              <p className="font-bold text-lg text-gray-900 drop-shadow-sm">{currentRating || '-'}</p>
-            </div>
+          <div className="flex flex-col items-center bg-white/30 backdrop-blur-sm rounded-lg p-3 border border-white/40 shadow-sm">
+            <Star className="h-4 w-4 text-blue-500 mb-1 drop-shadow-sm" />
+            <span className="text-xs text-gray-700 uppercase tracking-wide font-semibold">Best 4</span>
+            <p className="font-bold text-lg text-gray-900 drop-shadow-sm">{best4Average ?? '-'}</p>
+            {bestAverageInfo && bestAverageInfo.label !== 'Best 4' && bestAverageValue !== null && (
+              <span className="text-[11px] text-gray-600">
+                ({bestAverageInfo.label}: {bestAverageValue})
+              </span>
+            )}
+          </div>
 
             <div className="flex flex-col items-center bg-white/30 backdrop-blur-sm rounded-lg p-3 border border-white/40 shadow-sm">
               <Trophy className="h-4 w-4 text-green-500 mb-1 drop-shadow-sm" />

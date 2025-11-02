@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
-import { ChevronRight, Crown } from 'lucide-react'
+import { CircleCheckBig, ChevronRight, Crown } from 'lucide-react'
 import { getRankings, getTopPlayers } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
@@ -115,9 +115,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">Grand Prix Rankings</h1>
-          <p className="text-pretty text-gray-600 text-sm tracking-wide leading-tighter">
-            Provisional standings. The current Kenya #1, automatic GP qualifiers (Top 9), provisional call-ups when Kenya #1 is already in that group, and the National Junior Champion are highlighted.
-          </p>
         </div>
       </div>
 
@@ -141,15 +138,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow>
-              <CustomTableHead className="w-[30px] sm:w-[40px] text-right">
+              <CustomTableHead className="w-[36px] text-right">
                 <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-full hidden sm:block" />
                 <SortableHeader column="rank" label="#" basePath="/rankings" className="w-full sm:hidden" />
               </CustomTableHead>
               <CustomTableHead className="min-w-[120px]">
                 <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />
               </CustomTableHead>
-              <CustomTableHead className="hidden md:table-cell text-right">
-                <SortableHeader column="rating" label="Rating" align="right" basePath="/rankings" className="w-full" />
+              <CustomTableHead className="w-[60px] text-center sm:hidden">Qualified</CustomTableHead>
+              <CustomTableHead className="w-[40px] text-center hidden sm:table-cell">
+                Qualified
               </CustomTableHead>
               <CustomTableHead className="hidden sm:table-cell text-right">
                 <SortableHeader
@@ -177,7 +175,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           <CustomTableBody>
             {rankings.length === 0 ? (
               <CustomTableRow>
-                <CustomTableCell colSpan={8} className="text-center py-12">
+                <CustomTableCell colSpan={9} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
                       <Crown className="h-5 w-5" />
@@ -200,6 +198,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                   player.fide_id === juniorChampionId || player.name.toLowerCase().includes('kyle kuka')
                 const tableRank = (page - 1) * 25 + index + 1
 
+                const isDefinitelyQualified = isKenyaNumber1 || isJuniorChampion
+
                 return (
                   <CustomTableRow
                     key={playerId}
@@ -207,13 +207,13 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       isKenyaNumber1
                         ? 'bg-amber-50/50 border-l-2 border-l-amber-500 hover:bg-amber-100/50'
                         : isProvisionalQualifier
-                          ? 'bg-teal-50/50 border-l-2 border-l-teal-500 hover:bg-teal-100/50'
-                          : isAutomaticQualifier
-                            ? 'bg-blue-50/50 border-l-2 border-l-blue-500 hover:bg-blue-100/50'
+                          ? 'bg-teal-50/80 border-l-2 border-l-teal-600 hover:bg-teal-100'
+                        : isAutomaticQualifier
+                            ? 'bg-blue-50/70 border-l-2 border-l-blue-600 hover:bg-blue-100'
                             : index % 2 === 0
                               ? 'bg-gray-50/50 hover:bg-gray-100/50'
                               : 'bg-white hover:bg-gray-50/50',
-                      isJuniorChampion ? 'ring-1 ring-inset ring-emerald-200' : ''
+                      isJuniorChampion ? 'ring-1 ring-inset ring-purple-200' : ''
                     )}>
                     <CustomTableCell isHeader className="text-right">
                       {isKenyaNumber1 ? (
@@ -226,7 +226,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       ) : isAutomaticQualifier ? (
                         <span className="font-semibold text-blue-700">{tableRank}</span>
                       ) : isJuniorChampion ? (
-                        <span className="font-semibold text-emerald-700">{tableRank}</span>
+                        <span className="font-semibold text-purple-700">{tableRank}</span>
                       ) : (
                         tableRank
                       )}
@@ -245,7 +245,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                                   : isAutomaticQualifier
                                     ? 'text-blue-700 hover:text-blue-800'
                                     : isJuniorChampion
-                                      ? 'text-emerald-700 hover:text-emerald-800'
+                                      ? 'text-purple-700 hover:text-purple-800'
                                       : 'text-blue-600 hover:text-blue-700'
                             )}
                             title={player.name}>
@@ -253,7 +253,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                               {getDisplayName(player.name)}
                               <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-blue-500 transition-colors" />
                             </span>
-                            <span className="hidden sm:block group-hover:underline">{getDisplayName(player.name)}</span>
+                            <span className="hidden sm:flex items-center gap-2 group-hover:underline">
+                              {getDisplayName(player.name)}
+                            </span>
                           </Link>
                         ) : (
                           <span
@@ -266,8 +268,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                                   : isAutomaticQualifier
                                     ? 'text-blue-700'
                                     : isJuniorChampion
-                                ? 'text-emerald-700'
-                                : ''
+                                      ? 'text-purple-700'
+                                      : ''
                             )}
                             title={player.name}>
                             {getDisplayName(player.name)}
@@ -275,22 +277,22 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                         )}
                       </div>
                     </CustomTableCell>
-                    <CustomTableCell className="hidden md:table-cell text-right tabular-nums">
-                      {player.rating || 'Unrated'}
+                    <CustomTableCell className="text-center sm:hidden">
+                      {isDefinitelyQualified ? (
+                        <CircleCheckBig className="h-4 w-4 text-green-600 mx-auto" strokeWidth={2} />
+                      ) : null}
+                    </CustomTableCell>
+                    <CustomTableCell className="hidden sm:table-cell text-center">
+                      {isDefinitelyQualified ? (
+                        <CircleCheckBig className="h-5 w-5 text-green-600 mx-auto" strokeWidth={1.75} />
+                      ) : null}
                     </CustomTableCell>
                     <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">
                       {player.tournaments_played}
                     </CustomTableCell>
                     <CustomTableCell
                       className={cn('text-right tabular-nums', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="tabular-nums font-medium">{player.best_1}</div>
-                        {player.tournament_1 && (
-                          <div className="hidden sm:block text-xs text-muted-foreground truncate max-w-[140px]">
-                            {getShortTournamentName(player.tournament_1)}
-                          </div>
-                        )}
-                      </div>
+                      <div className="tabular-nums font-medium">{player.best_1}</div>
                     </CustomTableCell>
                     <CustomTableCell
                       className={cn('text-right tabular-nums', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
@@ -317,6 +319,31 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           </CustomTableBody>
         </CustomTable>
       </Card>
+
+      <div className="border border-gray-200 bg-white/95 shadow-sm">
+        <div className="px-4 py-3 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-700">
+          <span className="inline-flex items-center gap-1.5 text-amber-700">
+            <Crown className="h-3.5 w-3.5 text-amber-600" />
+            Kenya #1
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-blue-700">
+            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-blue-600 bg-blue-50" />
+            Top 9 Qualifier
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-teal-700">
+            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-teal-600 bg-teal-50" />
+            Alternate Qualifier
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-purple-700">
+            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-purple-500 bg-purple-50" />
+            National Junior Champion
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-green-700">
+            <CircleCheckBig className="h-3.5 w-3.5 text-green-600" strokeWidth={1.75} />
+            Confirmed Qualifier
+          </span>
+        </div>
+      </div>
 
       {total_pages > 1 && (
         <Pagination
