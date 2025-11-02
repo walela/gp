@@ -20,20 +20,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: '742163',
-    name: 'Bungoma Open Chess Championship 2025',
-    short_name: 'Bungoma Open',
-    startDate: '2025-11-01',
-    endDate: '2025-11-02',
-    location: 'Bungoma',
-    rounds: 6,
-    confirmed: true,
-    status: 'Upcoming',
-    registrationDeadline: '2025-10-30',
-    registrationUrl: 'https://forms.gle/odf5bn2j4rXfC9T68',
-    detailsUrl: 'https://s2.chess-results.com/tnr1277313.aspx?lan=1&SNode=S0'
-  },
-  {
     id: 'nakuru-open-2025',
     name: 'Nakuru Open Chess Championship 2025',
     short_name: 'Nakuru Open',
