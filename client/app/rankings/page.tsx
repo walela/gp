@@ -141,10 +141,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-full hidden sm:block" />
                 <SortableHeader column="rank" label="#" basePath="/rankings" className="w-full sm:hidden" />
               </CustomTableHead>
-              <CustomTableHead className="min-w-[120px]">
+              <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">
                 <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />
               </CustomTableHead>
-              <CustomTableHead className="w-[60px] text-center sm:hidden">Qualified</CustomTableHead>
+              <CustomTableHead className="w-[40px] text-center font-semibold text-gray-500 sm:hidden">Q</CustomTableHead>
               <CustomTableHead className="w-[40px] text-center hidden sm:table-cell">
                 Qualified
               </CustomTableHead>
