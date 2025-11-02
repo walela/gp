@@ -1,8 +1,9 @@
 import sqlite3
 import logging
+from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
 
-from tournament_metadata import infer_location, infer_rounds
+from tournament_metadata import infer_location, infer_rounds, infer_short_name
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +83,26 @@ class Database:
                     FOREIGN KEY (player_id) REFERENCES players(id)
                 )
             ''')
+
+            c.execute('''
+                CREATE TABLE IF NOT EXISTS ranking_snapshots (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    snapshot_time TEXT NOT NULL,
+                    player_id INTEGER NOT NULL,
+                    fide_id TEXT,
+                    rank INTEGER NOT NULL,
+                    tournaments_played INTEGER,
+                    best_4 REAL,
+                    FOREIGN KEY (player_id) REFERENCES players(id)
+                )
+            ''')
+            snapshot_columns = {row[1] for row in c.execute('PRAGMA table_info(ranking_snapshots)')}
+            if 'tournaments_played' not in snapshot_columns:
+                c.execute('ALTER TABLE ranking_snapshots ADD COLUMN tournaments_played INTEGER')
+            if 'best_4' not in snapshot_columns:
+                c.execute('ALTER TABLE ranking_snapshots ADD COLUMN best_4 REAL')
+            c.execute('CREATE INDEX IF NOT EXISTS idx_ranking_snapshots_time ON ranking_snapshots(snapshot_time)')
+            c.execute('CREATE INDEX IF NOT EXISTS idx_ranking_snapshots_player ON ranking_snapshots(player_id)')
             
             conn.commit()
     
@@ -104,7 +125,8 @@ class Database:
 
             inferred_location = location or infer_location(tournament_name)
             inferred_rounds = rounds or infer_rounds(tournament_name)
-            resolved_short_name = short_name or tournament_name
+            inferred_short_name = infer_short_name(tournament_name)
+            resolved_short_name = short_name or inferred_short_name or tournament_name
 
             c.execute(
                 '''
@@ -405,10 +427,173 @@ class Database:
             c.execute('SELECT * FROM player_rankings')
             return [dict(row) for row in c.fetchall()]
 
+    @staticmethod
+    def _ranking_priority(player: Dict[str, Any]) -> Tuple[int, float, float]:
+        """Generate a sort key matching the cascading best-N priority used for GP rankings."""
+        tournaments = player.get("tournaments_played", 0) or 0
+        best_1 = player.get("best_1") or 0
+        best_2 = player.get("best_2") or 0
+        best_3 = player.get("best_3") or 0
+        best_4 = player.get("best_4") or 0
+
+        if tournaments >= 4 and best_4 > 0:
+            return (4, best_4, best_3)
+        if tournaments >= 3 and best_3 > 0:
+            return (3, best_3, best_2)
+        if tournaments >= 2 and best_2 > 0:
+            return (2, best_2, best_1)
+        if tournaments >= 1 and best_1 > 0:
+            return (1, best_1, 0)
+        return (0, 0, 0)
+
+    def _store_ranking_snapshot(self, ranking_records: List[Dict[str, Any]]):
+        """Persist a snapshot of the current ranking order for change tracking."""
+        if not ranking_records:
+            return
+
+        sorted_records = sorted(
+            ranking_records,
+            key=self._ranking_priority,
+            reverse=True,
+        )
+
+        snapshot_time = datetime.utcnow().isoformat()
+        snapshot_rows = [
+            (
+                snapshot_time,
+                record["player_id"],
+                record.get("fide_id"),
+                index + 1,
+                record.get("tournaments_played"),
+                record.get("best_4"),
+            )
+            for index, record in enumerate(sorted_records)
+        ]
+
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.executemany(
+                '''
+                INSERT INTO ranking_snapshots (snapshot_time, player_id, fide_id, rank, tournaments_played, best_4)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ''',
+                snapshot_rows,
+            )
+            conn.commit()
+
+    def get_rank_changes(self, top_n: int = 25) -> Dict[int, Dict[str, Optional[int]]]:
+        """Compute rank deltas for players in the latest snapshot compared to the previous snapshot."""
+        with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+
+            c.execute(
+                '''
+                SELECT DISTINCT snapshot_time
+                FROM ranking_snapshots
+                ORDER BY snapshot_time DESC
+                LIMIT 10
+                '''
+            )
+            snapshot_times = [row["snapshot_time"] for row in c.fetchall()]
+
+            if len(snapshot_times) < 2:
+                return {}
+
+            def fetch_rows(snapshot_time: str) -> List[sqlite3.Row]:
+                c.execute(
+                    '''
+                    SELECT player_id, rank, tournaments_played, best_4
+                    FROM ranking_snapshots
+                    WHERE snapshot_time = ?
+                    ''',
+                    (snapshot_time,),
+                )
+                return c.fetchall()
+
+            latest_time = snapshot_times[0]
+            latest_rows = fetch_rows(latest_time)
+            latest_top_signature = sorted(
+                (row["rank"], row["player_id"])
+                for row in latest_rows
+                if row["rank"] <= top_n
+            )
+
+            previous_rows: Optional[List[sqlite3.Row]] = None
+            previous_time: Optional[str] = None
+
+            for candidate_time in snapshot_times[1:]:
+                candidate_rows = fetch_rows(candidate_time)
+                candidate_signature = sorted(
+                    (row["rank"], row["player_id"])
+                    for row in candidate_rows
+                    if row["rank"] <= top_n
+                )
+                if candidate_signature != latest_top_signature:
+                    previous_rows = candidate_rows
+                    previous_time = candidate_time
+                    break
+
+            if previous_rows is None or previous_time is None:
+                return {}
+
+            previous_map = {
+                row["player_id"]: (
+                    row["rank"],
+                    row["tournaments_played"],
+                    row["best_4"],
+                )
+                for row in previous_rows
+            }
+
+            changes: Dict[int, Dict[str, Optional[int]]] = {}
+            for row in latest_rows:
+                current_rank = row["rank"]
+                if current_rank > top_n:
+                    continue
+
+                player_id = row["player_id"]
+                previous_entry = previous_map.get(player_id)
+
+                latest_tournaments = row["tournaments_played"]
+                latest_best4 = row["best_4"]
+                has_latest_best4 = (latest_tournaments or 0) >= 4 and (latest_best4 or 0) > 0
+
+                if previous_entry is None:
+                    changes[player_id] = {
+                        "rank_change": None,
+                        "previous_rank": None,
+                        "is_new": True,
+                    }
+                    continue
+
+                previous_rank, prev_tournaments, prev_best4 = previous_entry
+                prev_has_best4 = (prev_tournaments or 0) >= 4 and (prev_best4 or 0) > 0
+                prev_has_data = prev_tournaments is not None or prev_best4 is not None
+
+                is_new = has_latest_best4 and prev_has_data and not prev_has_best4
+                if is_new:
+                    changes[player_id] = {
+                        "rank_change": None,
+                        "previous_rank": previous_rank,
+                        "is_new": True,
+                    }
+                    continue
+
+                rank_change = previous_rank - current_rank
+                changes[player_id] = {
+                    "rank_change": rank_change,
+                    "previous_rank": previous_rank,
+                    "is_new": False,
+                }
+
+            return changes
+
     def recalculate_rankings(self):
         """Recalculate and store all player rankings."""
         all_results = self.get_all_results()
-        player_rankings_data = []
+        player_rankings_insert_data = []
+        ranking_records: List[Dict[str, Any]] = []
 
         for player_id, results in all_results.items():
             valid_results = [r for r in results if r["player"]["federation"] == "KEN" and
@@ -426,7 +611,7 @@ class Database:
             best_4 = sum(r["tpr"] for r in valid_results[:4]) / 4 if len(valid_results) >= 4 else 0
             
             player_info = valid_results[0]["player"]
-            player_rankings_data.append(
+            player_rankings_insert_data.append(
                 (
                     player_id,
                     player_info["name"],
@@ -440,6 +625,19 @@ class Database:
                     round(best_4),
                 )
             )
+            ranking_records.append(
+                {
+                    "player_id": player_id,
+                    "name": player_info["name"],
+                    "fide_id": player_info["fide_id"],
+                    "rating": player_info["rating"],
+                    "tournaments_played": len(valid_results),
+                    "best_1": round(best_1),
+                    "best_2": round(best_2),
+                    "best_3": round(best_3),
+                    "best_4": round(best_4),
+                }
+            )
 
         with sqlite3.connect(self.db_file) as conn:
             c = conn.cursor()
@@ -448,9 +646,11 @@ class Database:
                 INSERT INTO player_rankings 
                 (player_id, name, fide_id, rating, tournaments_played, best_1, tournament_1, best_2, best_3, best_4)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', player_rankings_data)
+            ''', player_rankings_insert_data)
             conn.commit()
             logger.info(f"Recalculated and stored rankings for {c.rowcount} players.")
+
+        self._store_ranking_snapshot(ranking_records)
 
 
     def get_tournament_dates(self, tournament_id: str) -> Tuple[Optional[str], Optional[str]]:

@@ -39,20 +39,39 @@ class TournamentResult:
     start_rank: int
 
 class ChessResultsScraper:
-    BASE_URL = "https://chess-results.com"
-    
     def __init__(self):
         self.session = requests.Session()
         # Add headers to mimic browser behavior
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         })
+        self.base_urls = [
+            "https://chess-results.com",
+            "https://s1.chess-results.com",
+            "https://s2.chess-results.com",
+        ]
+
+    def _request(self, method: str, path: str, *, params=None, data=None) -> requests.Response:
+        """Attempt a request against the known chess-results mirrors."""
+        last_exc: Optional[Exception] = None
+        normalized_path = path.lstrip("/")
+
+        for base in self.base_urls:
+            url = f"{base}/{normalized_path}"
+            try:
+                response = self.session.request(method, url, params=params, data=data, timeout=20)
+                response.raise_for_status()
+                return response
+            except requests.RequestException as exc:
+                last_exc = exc
+                logger.warning("Request to %s failed: %s", url, exc)
+
+        raise requests.RequestException(f"All chess-results mirrors failed for {path}") from last_exc
     
     def get_tournament_data(self, tournament_id: str) -> Tuple[str, List[TournamentResult], Dict[str, Optional[Any]]]:
         """Get tournament data for a given tournament ID."""
         # Fetch tournament info
-        tournament_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1"
-        response = self.session.get(tournament_url)
+        response = self._request("GET", f"tnr{tournament_id}.aspx", params={"lan": 1})
         soup = BeautifulSoup(response.text, 'html.parser')
         
         # Get tournament name and round count
@@ -75,9 +94,11 @@ class ChessResultsScraper:
             round_count = 8
         
         # Fetch the final ranking page for the determined round count with complete list
-        standings_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=1&rd={round_count}&zeilen=99999"
-            
-        response = self.session.get(standings_url)
+        response = self._request(
+            "GET",
+            f"tnr{tournament_id}.aspx",
+            params={"lan": 1, "art": 1, "rd": round_count, "zeilen": 99999},
+        )
         soup = BeautifulSoup(response.text, 'html.parser')
         
         # Parse standings table
@@ -94,7 +115,7 @@ class ChessResultsScraper:
     
     def _get_round_count_and_dates(self, tournament_id: str) -> Tuple[int, Optional[str], Optional[str]]:
         """Extract total number of rounds and tournament dates from the details page."""
-        details_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&flag=30&turdet=YES"
+        details_path = f"tnr{tournament_id}.aspx"
         round_count = None
         details_soup = None
         start_date_iso: Optional[str] = None
@@ -102,8 +123,12 @@ class ChessResultsScraper:
         
         try:
             # Initial GET request
-            logger.info(f"Fetching initial details page: {details_url}")
-            get_response = self.session.get(details_url)
+            logger.info(f"Fetching initial details page for tournament {tournament_id}")
+            get_response = self._request(
+                "GET",
+                details_path,
+                params={"lan": 1, "flag": 30, "turdet": "YES"},
+            )
             get_response.raise_for_status()
             initial_soup = BeautifulSoup(get_response.text, 'html.parser')
 
@@ -126,7 +151,11 @@ class ChessResultsScraper:
                         form_data[name] = value
                 
                 # Make the POST request to 'click' the button
-                post_response = self.session.post(details_url, data=form_data)
+                post_response = self._request(
+                    "POST",
+                    details_path,
+                    data=form_data,
+                )
                 post_response.raise_for_status()
                 details_soup = BeautifulSoup(post_response.text, 'html.parser')
             else:
@@ -147,7 +176,7 @@ class ChessResultsScraper:
                     cells = row.find_all('td') # Find all td cells, regardless of class
                     if len(cells) >= 2 and cells[0].text.strip().lower() == 'number of rounds': # Case-insensitive compare
                         round_count = int(cells[1].text.strip())
-                        logger.info(f"Found round count ({round_count}) from details page: {details_url}")
+                        logger.info(f"Found round count ({round_count}) for tournament {tournament_id}")
                         found = True
                         break # Exit inner loop once found
                 if found:
@@ -277,9 +306,19 @@ class ChessResultsScraper:
     def _extract_fide_id(self, cell, tournament_id: str, start_rank: int) -> Optional[str]:
         """Extract FIDE ID from player cell."""
         # Construct player details URL using starting rank
-        player_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=9&fed=KEN&turdet=YES&flag=30&snr={start_rank}"
         try:
-            response = self.session.get(player_url)
+            response = self._request(
+                "GET",
+                f"tnr{tournament_id}.aspx",
+                params={
+                    "lan": 1,
+                    "art": 9,
+                    "fed": "KEN",
+                    "turdet": "YES",
+                    "flag": 30,
+                    "snr": start_rank,
+                },
+            )
             player_soup = BeautifulSoup(response.text, 'html.parser')
             
             # Look for FIDE ID in player details
@@ -308,9 +347,19 @@ class ChessResultsScraper:
         This is a simplified check - ideally we'd look at individual games.
         """
         # If points are not a multiple of 0.5, there might have been a walkover/forfeit
-        player_url = f"{self.BASE_URL}/tnr{tournament_id}.aspx?lan=1&art=9&fed=KEN&turdet=YES&flag=30&snr={start_rank}"
         try:
-            response = self.session.get(player_url)
+            response = self._request(
+                "GET",
+                f"tnr{tournament_id}.aspx",
+                params={
+                    "lan": 1,
+                    "art": 9,
+                    "fed": "KEN",
+                    "turdet": "YES",
+                    "flag": 30,
+                    "snr": start_rank,
+                },
+            )
             player_soup = BeautifulSoup(response.text, 'html.parser')
             
             # Find all tables with class CRs1

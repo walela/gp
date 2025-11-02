@@ -54,3 +54,31 @@ def infer_rounds(name: Optional[str], default: int = 6) -> int:
         return 8
 
     return default
+
+
+def infer_short_name(name: Optional[str]) -> Optional[str]:
+    """Return a concise tournament short name when possible."""
+    if not name:
+        return None
+
+    normalized = name.strip().upper()
+
+    short_name_map = [
+        ("BUNGOMA", "Bungoma Open"),
+        ("KISUMU", "Kisumu Open"),
+        ("ELDORET", "Eldoret Open"),
+        ("MAVENS", "Mavens Open"),
+        ("WARIDI", "Waridi Chess Festival"),
+        ("KIAMBU", "Kiambu Open"),
+        ("NAIROBI COUNTY", "Nairobi County Open"),
+        ("NAKURU", "Nakuru Open"),
+        ("QUO VADIS", "Quo Vadis Nyeri Open"),
+        ("KITALE", "Kitale Open"),
+        ("MOMBASA", "Mombasa Chess Festival"),
+    ]
+
+    for keyword, short in short_name_map:
+        if keyword in normalized:
+            return short
+
+    return None

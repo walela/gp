@@ -195,6 +195,8 @@ def rankings():
     player_rankings = db.get_all_player_rankings()
     reverse = dir == "desc"
 
+    rank_change_map = db.get_rank_changes(top_n=25)
+
     # Filter by search query if provided
     if search_query:
         search_query_lower = search_query.lower()
@@ -243,6 +245,12 @@ def rankings():
     start = (page - 1) * per_page
     end = start + per_page
     current_page_rankings = player_rankings[start:end]
+
+    for player in current_page_rankings:
+        change_info = rank_change_map.get(player.get("player_id")) if player.get("player_id") is not None else None
+        player["rank_change"] = change_info.get("rank_change") if change_info else None
+        player["previous_rank"] = change_info.get("previous_rank") if change_info else None
+        player["is_new"] = change_info.get("is_new") if change_info else False
 
     return jsonify(
         {

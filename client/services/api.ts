@@ -79,6 +79,10 @@ export interface PlayerRanking {
   best_2: number
   best_3: number
   best_4: number
+  player_id?: number
+  rank_change?: number | null
+  previous_rank?: number | null
+  is_new?: boolean
   current_rank?: number
 }
 

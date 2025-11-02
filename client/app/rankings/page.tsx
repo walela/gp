@@ -11,7 +11,7 @@ import {
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
 import { CircleCheckBig, ChevronRight, Crown } from 'lucide-react'
-import { getRankings, getTopPlayers } from '@/services/api'
+import { getRankings, getTopPlayers, type PlayerRanking } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { SearchForm } from '@/components/rankings/search-form'
@@ -54,6 +54,50 @@ function getDisplayName(fullName: string): string {
 
   // Single name that's too long - just truncate
   return fullName.substring(0, 20) + '...'
+}
+
+function getRankMovement(player: PlayerRanking): {
+  label: string
+  className: string
+  ariaLabel: string
+} | null {
+  const change = player.rank_change ?? null
+  const isNew = player.is_new ?? false
+
+  if (isNew) {
+    return {
+      label: 'NEW',
+      className: 'bg-purple-100 text-purple-700',
+      ariaLabel: 'New entrant in top rankings'
+    }
+  }
+
+  if (change === null) {
+    return null
+  }
+
+  if (change > 0) {
+    return {
+      label: `↑${change}`,
+      className: 'bg-green-100 text-green-700',
+      ariaLabel: `Moved up ${change} ${change === 1 ? 'spot' : 'spots'}`
+    }
+  }
+
+  const magnitude = Math.abs(change)
+  if (magnitude === 0) {
+    return {
+      label: '-',
+      className: 'text-gray-500',
+      ariaLabel: 'No change in ranking'
+    }
+  }
+
+  return {
+    label: `↓${magnitude}`,
+    className: 'bg-red-100 text-red-700',
+    ariaLabel: `Moved down ${magnitude} ${magnitude === 1 ? 'spot' : 'spots'}`
+  }
 }
 
 interface RankingsPageProps {
@@ -200,6 +244,25 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 const tableRank = (page - 1) * 25 + index + 1
 
                 const isDefinitelyQualified = isKenyaNumber1 || isJuniorChampion
+                const movement = view === 'best_4' ? getRankMovement(player) : null
+                const movementBadge = !isDefinitelyQualified && movement ? (
+                  <span
+                    aria-label={movement.ariaLabel}
+                    className={cn(
+                      'rounded-sm px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+                      movement.className
+                    )}>
+                    {movement.label}
+                  </span>
+                ) : null
+                const qualifierBadgeMobile = isDefinitelyQualified ? (
+                  <span className="inline-block rounded-sm bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-green-700">
+                    Q
+                  </span>
+                ) : null
+                const qualifierBadgeDesktop = isDefinitelyQualified ? (
+                  <CircleCheckBig className="h-5 w-5 text-green-600" strokeWidth={1.75} />
+                ) : null
 
                 return (
                   <CustomTableRow
@@ -279,15 +342,17 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       </div>
                     </CustomTableCell>
                     <CustomTableCell className="text-center sm:hidden">
-                      {isDefinitelyQualified ? (
-                        <span className="inline-block rounded-sm bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-green-700">
-                          Q
-                        </span>
+                      {movementBadge || qualifierBadgeMobile ? (
+                        <div className="flex items-center justify-center gap-1">
+                          {qualifierBadgeMobile || movementBadge}
+                        </div>
                       ) : null}
                     </CustomTableCell>
                     <CustomTableCell className="hidden sm:table-cell text-center">
-                      {isDefinitelyQualified ? (
-                        <CircleCheckBig className="h-5 w-5 text-green-600 mx-auto" strokeWidth={1.75} />
+                      {movementBadge || qualifierBadgeDesktop ? (
+                        <div className="flex items-center justify-center gap-1">
+                          {qualifierBadgeDesktop || movementBadge}
+                        </div>
                       ) : null}
                     </CustomTableCell>
                     <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">
