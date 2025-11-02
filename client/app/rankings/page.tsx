@@ -175,8 +175,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
       <Card
         className={cn(
-          'rounded-bl-lg rounded-br-lg rounded-tr-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0',
-          'rounded-tl-none'
+          'w-full border-0 shadow-none rounded-none bg-white/95 p-0',
+          'sm:rounded-bl-lg sm:rounded-br-lg sm:rounded-tr-lg sm:shadow-sm'
         )}>
         <CustomTable className="h-full">
           <CustomTableHeader>

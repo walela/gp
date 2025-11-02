@@ -2,8 +2,8 @@ import React from 'react';
 
 export function CustomTable({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="w-full h-full overflow-hidden shadow-md rounded-lg">
-      <div className="w-full h-full overflow-x-auto rounded-t-lg">
+    <div className="w-full h-full overflow-hidden shadow-none rounded-none sm:shadow-md sm:rounded-lg">
+      <div className="w-full h-full overflow-x-auto">
         <table className={`w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse ${className || ''}`} {...props} />
       </div>
     </div>
@@ -21,7 +21,7 @@ export function CustomTableBody({ className, ...props }: React.HTMLAttributes<HT
 export function CustomTableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
   return (
     <tr
-      className={`odd:bg-white odd:dark:bg-gray-900 even:bg-gray-200/70 even:dark:bg-gray-700/70 border-b dark:border-gray-700 border-gray-200 ${
+      className={`odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100/80 sm:even:bg-gray-200/70 even:dark:bg-gray-700/70 border-b dark:border-gray-700 border-gray-200 ${
         className || ''
       }`}
       {...props}
