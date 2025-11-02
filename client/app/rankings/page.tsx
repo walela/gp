@@ -144,7 +144,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">
                 <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />
               </CustomTableHead>
-              <CustomTableHead className="w-[40px] text-center font-semibold text-gray-500 sm:hidden">Q</CustomTableHead>
+              <CustomTableHead className="w-[40px] text-center sm:hidden">
+                <span className="sr-only">Qualified</span>
+              </CustomTableHead>
               <CustomTableHead className="w-[40px] text-center hidden sm:table-cell">
                 Qualified
               </CustomTableHead>
@@ -278,7 +280,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     </CustomTableCell>
                     <CustomTableCell className="text-center sm:hidden">
                       {isDefinitelyQualified ? (
-                        <CircleCheckBig className="h-4 w-4 text-green-600 mx-auto" strokeWidth={2} />
+                        <span className="inline-block rounded-sm bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-green-700">
+                          Q
+                        </span>
                       ) : null}
                     </CustomTableCell>
                     <CustomTableCell className="hidden sm:table-cell text-center">
