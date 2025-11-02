@@ -16,7 +16,6 @@ import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { SearchForm } from '@/components/rankings/search-form'
 import { Pagination } from '@/components/ui/pagination'
-import { getShortTournamentName } from '@/utils/tournament'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
