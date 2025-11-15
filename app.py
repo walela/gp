@@ -111,6 +111,8 @@ def tournament(tournament_id):
     page = int(request.args.get("page", "1"))
     per_page = 25
     all_results = request.args.get("all_results", "false").lower() == "true"
+    # New: filter by federation (defaults to KEN for backwards compatibility)
+    federation_filter = request.args.get("federation", "KEN")
 
     try:
         data = db.get_tournament(tournament_id)
@@ -122,7 +124,13 @@ def tournament(tournament_id):
         start_date = data.get("start_date")
         end_date = data.get("end_date")
         location = data.get("location")
-        results = data["results"]
+        all_results_data = data["results"]
+
+        # Filter by federation if specified
+        if federation_filter and federation_filter.upper() != "ALL":
+            results = [r for r in all_results_data if r["player"].get("federation") == federation_filter.upper()]
+        else:
+            results = all_results_data
 
         rounds = data.get("rounds") or infer_rounds(tournament_name)
         location = location or infer_location(tournament_name)
@@ -433,6 +441,8 @@ def export_tournament(tournament_id):
     """Export tournament data as CSV."""
     sort = request.args.get("sort", "points")
     dir = request.args.get("dir", "desc")
+    # New: filter by federation (defaults to KEN for backwards compatibility)
+    federation_filter = request.args.get("federation", "KEN")
 
     try:
         data = db.get_tournament(tournament_id)
@@ -440,7 +450,13 @@ def export_tournament(tournament_id):
             return jsonify({"error": "Tournament not found"}), 404
 
         tournament_name = data["name"]
-        results = data["results"]
+        all_results = data["results"]
+
+        # Filter by federation if specified
+        if federation_filter and federation_filter.upper() != "ALL":
+            results = [r for r in all_results if r["player"].get("federation") == federation_filter.upper()]
+        else:
+            results = all_results
 
         # Sort results based on parameters
         if sort == "name":

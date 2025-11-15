@@ -244,11 +244,10 @@ class ChessResultsScraper:
             cells = row.find_all('td')
             if len(cells) < len(headers):
                 continue
-            
-            # Use standard parsing logic for all tournaments (art=1 view)
-            if 'KEN' not in cells[headers.index('fed')].text:
-                continue
-                
+
+            # Get federation
+            federation = cells[headers.index('fed')].text.strip()
+
             # Get player info
             name = cells[headers.index('name')].text.strip()
             # Handle both 'rtg' and 'rtgi' headers
@@ -273,24 +272,24 @@ class ChessResultsScraper:
             
             # Get FIDE ID if available
             fide_id = self._extract_fide_id(cells[headers.index('name')], tournament_id, start_rank)
-        
+
             # Create player and result objects
-            player = Player(name=name, fide_id=fide_id, federation="KEN", rating=rating)
+            player = Player(name=name, fide_id=fide_id, federation=federation, rating=rating)
             result = TournamentResult(
                 player=player,
                 games_played=total_rounds,
                 total_rounds=total_rounds,
                 points=points,
                 tpr=tpr,
-                has_walkover=False,  # Will be updated later
+                has_walkover=False,  # Will be updated later for KEN players
                 rank=rank,
                 start_rank=start_rank
             )
-            
-            # Check for walkovers
-            if tournament_id:
+
+            # Only check for walkovers for Kenyan players (to avoid N+1 for all players)
+            if tournament_id and federation == "KEN":
                 result.has_walkover = self._check_for_walkover(tournament_id, start_rank, name)
-            
+
             results.append(result)
             
         return results

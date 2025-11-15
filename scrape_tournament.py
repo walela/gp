@@ -58,13 +58,18 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
         # Process and validate each player's result
         logger.info("\n=== Validating player results ===")
         processed_results = []
-        
+
         for i, result in enumerate(results):
-            if i % 10 == 0:
-                logger.info(f"Validating player {i+1}/{len(results)}: {result.player.name}")
-            
-            # Get player's game results and status
-            game_results, status = validator.get_player_game_results(tournament_id, result.start_rank)
+            # Only validate Kenyan players in detail (to avoid N+1 for all players)
+            if result.player.federation == "KEN":
+                if i % 10 == 0:
+                    logger.info(f"Validating player {i+1}/{len(results)}: {result.player.name}")
+
+                # Get player's game results and status
+                game_results, status = validator.get_player_game_results(tournament_id, result.start_rank)
+            else:
+                # For non-Kenyan players, mark as valid without detailed validation
+                status = "valid"
             
             # Create a modified result with status
             result_dict = {
