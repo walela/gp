@@ -35,7 +35,7 @@ function formatCountdown(targetDate: string) {
   parts.push(`${minutes}m`)
   parts.push(`${seconds}s`)
 
-  return `${parts.join(' ')} away`
+  return parts.join(' ')
 }
 
 export function CountdownBadge({ targetDate, className, title }: CountdownBadgeProps) {

@@ -7,6 +7,7 @@ import { TournamentTable } from '@/components/tournament-table'
 import { upcomingTournaments, plannedTournaments } from '@/lib/active-tournaments'
 import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
+import { CountdownBadge } from '@/components/countdown-badge'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,11 +80,7 @@ export default async function HomePage() {
                     {(tournament.status !== 'postponed' || tournament.registrationUrl) && (
                       <div className="px-4 flex items-center justify-between gap-3">
                         {tournament.status !== 'postponed' ? (
-                          <span
-                            className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded cursor-help"
-                            title={timeAwayText}>
-                            {timeAwayText}
-                          </span>
+                          <CountdownBadge targetDate={tournament.startDate} title={timeAwayText} />
                         ) : (
                           <span />
                         )}
@@ -183,11 +180,10 @@ export default async function HomePage() {
                     <Card className="h-full rounded-lg relative overflow-hidden gap-4 py-2">
                       {timeAwayText && (
                         <div className="px-4">
-                          <span
-                            className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded cursor-help"
-                            title={timeAwayText}>
-                            {timeAwayText}
-                          </span>
+                          <CountdownBadge
+                            targetDate={tournament.startDate as string}
+                            title={timeAwayText}
+                          />
                         </div>
                       )}
 
