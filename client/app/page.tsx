@@ -102,98 +102,98 @@ function recomputeBest4(currentBest3: number, currentBest4: number, liveTpr: num
 }
 
 const liveTprs = [
-  { name: 'Magana Ben', tpr: 2203 },
-  { name: 'Okonga Hugh Misiko', tpr: 2120 },
-  { name: 'Kaloki Hawi', tpr: 2134 },
-  { name: 'Madol Garang Panthou Joh', tpr: 2075 },
-  { name: 'Nhial Jeremiah Machar', tpr: 1825 },
-  { name: 'Ngony John Thon', tpr: 1951 },
-  { name: 'Njuki Gabriel', tpr: 2032 },
-  { name: 'Karani Ezekiel', tpr: 1982 },
-  { name: 'Kiplangat Baraka', tpr: 1642 },
-  { name: 'Cheruiyot Elly', tpr: 1908 },
-  { name: 'Adrian Kariuki', tpr: 1688 },
-  { name: 'Mongeli Sasha', tpr: 1765 },
-  { name: 'Wanjiru Chrisphinus', tpr: 1873 },
-  { name: 'Chumba Allan', tpr: 1879 },
-  { name: 'Chege Kairu', tpr: 1852 },
-  { name: 'Mugambi Christian Mwamba', tpr: 1717 },
-  { name: 'Omondi Stanley', tpr: 1798 },
-  { name: 'Nicole Albright', tpr: 1720 },
-  { name: 'Kelly Mwaniki', tpr: 1768 },
-  { name: 'Shile Lenny Mataiga', tpr: 1806 },
-  { name: 'Mathenge Gichuga', tpr: 1709 },
-  { name: 'Nthiga Blair Wema', tpr: 1708 },
-  { name: 'Waweru Davidson Mugo', tpr: 1639 },
-  { name: 'Nashipae Bella', tpr: 1702 },
-  { name: 'Mubi Hillary', tpr: 1606 },
-  { name: 'Amwai Tom', tpr: 1809 },
-  { name: 'Kyalo Cynthia Wayua', tpr: 1606 },
-  { name: 'Omolo Kenneth', tpr: 1863 },
-  { name: 'Kagambi Lawrence', tpr: 1793 },
-  { name: 'Akhanyinya Bryan Toboso', tpr: 1834 },
-  { name: 'Mulaga Geoffrey', tpr: 1872 },
-  { name: 'Mitei Cosmas', tpr: 1683 },
-  { name: 'Kaloki Zuri', tpr: 1778 },
-  { name: 'Chagwaya Brenda', tpr: 1740 },
-  { name: 'Ndirangu Joyce Nyaruai', tpr: 1775 },
-  { name: 'Sagwa Hillary', tpr: 1874 },
-  { name: 'Kimani Wanjiru', tpr: 1703 },
-  { name: 'Jasmine Akinyi Ochieng', tpr: 1575 },
-  { name: 'Kagambi Samuel', tpr: 1691 },
-  { name: 'Gwada James', tpr: 1679 },
-  { name: 'Waweru Trevor Kipngetich', tpr: 1606 },
+  { name: 'Magana Ben', tpr: 2279 },
+  { name: 'Okonga Hugh Misiko', tpr: 2059 },
+  { name: 'Kaloki Hawi', tpr: 2083 },
+  { name: 'Madol Garang Panthou Joh', tpr: 2051 },
+  { name: 'Nhial Jeremiah Machar', tpr: 1771 },
+  { name: 'Ngony John Thon', tpr: 1879 },
+  { name: 'Njuki Gabriel', tpr: 1893 },
+  { name: 'Karani Ezekiel', tpr: 1975 },
+  { name: 'Kiplangat Baraka', tpr: 1592 },
+  { name: 'Cheruiyot Elly', tpr: 1994 },
+  { name: 'Adrian Kariuki', tpr: 1652 },
+  { name: 'Mongeli Sasha', tpr: 1669 },
+  { name: 'Wanjiru Chrisphinus', tpr: 1877 },
+  { name: 'Chumba Allan', tpr: 1849 },
+  { name: 'Chege Kairu', tpr: 1867 },
+  { name: 'Mugambi Christian Mwamba', tpr: 1685 },
+  { name: 'Omondi Stanley', tpr: 1811 },
+  { name: 'Nicole Albright', tpr: 1751 },
+  { name: 'Kelly Mwaniki', tpr: 1576 },
+  { name: 'Shile Lenny Mataiga', tpr: 1871 },
+  { name: 'Mathenge Gichuga', tpr: 1665 },
+  { name: 'Nthiga Blair Wema', tpr: 1653 },
+  { name: 'Waweru Davidson Mugo', tpr: 1699 },
+  { name: 'Nashipae Bella', tpr: 1708 },
+  { name: 'Mubi Hillary', tpr: 1564 },
+  { name: 'Amwai Tom', tpr: 1894 },
+  { name: 'Kyalo Cynthia Wayua', tpr: 1727 },
+  { name: 'Omolo Kenneth', tpr: 1862 },
+  { name: 'Kagambi Lawrence', tpr: 1792 },
+  { name: 'Akhanyinya Bryan Toboso', tpr: 1838 },
+  { name: 'Mulaga Geoffrey', tpr: 1871 },
+  { name: 'Mitei Cosmas', tpr: 1702 },
+  { name: 'Kaloki Zuri', tpr: 1787 },
+  { name: 'Chagwaya Brenda', tpr: 1685 },
+  { name: 'Ndirangu Joyce Nyaruai', tpr: 1783 },
+  { name: 'Sagwa Hillary', tpr: 1860 },
+  { name: 'Kimani Wanjiru', tpr: 1714 },
+  { name: 'Jasmine Akinyi Ochieng', tpr: 1540 },
+  { name: 'Kagambi Samuel', tpr: 1708 },
+  { name: 'Gwada James', tpr: 1698 },
+  { name: 'Waweru Trevor Kipngetich', tpr: 1565 },
   { name: 'Remiel Ahadi', tpr: 1568 },
-  { name: 'Ochieng James', tpr: 1706 },
-  { name: 'Onyango Shirlyn Gathoni', tpr: 1583 },
-  { name: 'James Mungai', tpr: 1575 },
-  { name: 'Ann Nakieny', tpr: 1566 },
-  { name: 'Jacob Mandela', tpr: 1611 },
-  { name: 'Tyron Gaya', tpr: 1819 },
-  { name: 'Isaac Bahati', tpr: 1474 },
-  { name: 'Baden Fred Eric', tpr: 1702 },
-  { name: 'Getange Johnpaul', tpr: 1671 },
-  { name: 'Salma Nkatha Mwenda', tpr: 1575 },
-  { name: 'Osundwa Ihabi', tpr: 1385 },
-  { name: 'Gilana Angel Muthoni', tpr: 1385 },
-  { name: 'Muli Faraja Mumo', tpr: 1587 },
-  { name: 'Elias Cheruiyot', tpr: 1575 },
-  { name: 'Hillary Mukabwa', tpr: 1399 },
-  { name: 'Kitongamirriam', tpr: 1503 },
-  { name: 'Dancun Silali', tpr: 1452 },
-  { name: 'Kipkoech Hekima', tpr: 1492 },
-  { name: 'Ayabei Shadrack', tpr: 1473 },
-  { name: 'Kayden Sankau Oloitiptip', tpr: 1275 },
-  { name: 'Kamoni Elvin', tpr: 1586 },
-  { name: 'Maiyani Oloitiptip Trevor', tpr: 1275 },
-  { name: 'Lehman Okoyo', tpr: 1418 },
-  { name: 'Okello John', tpr: 1403 },
+  { name: 'Ochieng James', tpr: 1573 },
+  { name: 'Onyango Shirlyn Gathoni', tpr: 1631 },
+  { name: 'James Mungai', tpr: 1518 },
+  { name: 'Ann Nakieny', tpr: 1502 },
+  { name: 'Jacob Mandela', tpr: 1641 },
+  { name: 'Tyron Gaya', tpr: 1648 },
+  { name: 'Isaac Bahati', tpr: 1480 },
+  { name: 'Baden Fred Eric', tpr: 1651 },
+  { name: 'Getange Johnpaul', tpr: 1689 },
+  { name: 'Salma Nkatha Mwenda', tpr: 1526 },
+  { name: 'Osundwa Ihabi', tpr: 1395 },
+  { name: 'Gilana Angel Muthoni', tpr: 1397 },
+  { name: 'Muli Faraja Mumo', tpr: 1622 },
+  { name: 'Elias Cheruiyot', tpr: 1576 },
+  { name: 'Hillary Mukabwa', tpr: 1328 },
+  { name: 'Kitongamirriam', tpr: 1491 },
+  { name: 'Dancun Silali', tpr: 1563 },
+  { name: 'Kipkoech Hekima', tpr: 1545 },
+  { name: 'Ayabei Shadrack', tpr: 1444 },
+  { name: 'Kayden Sankau Oloitiptip', tpr: 1285 },
+  { name: 'Kamoni Elvin', tpr: 1545 },
+  { name: 'Maiyani Oloitiptip Trevor', tpr: 1313 },
+  { name: 'Lehman Okoyo', tpr: 1389 },
+  { name: 'Okello John', tpr: 1423 },
   { name: 'Methu Joseph Muragu', tpr: 1768 },
-  { name: 'Miriti Angela Kendi', tpr: 1496 },
-  { name: 'Chepkoiwo Blessing Jerutich', tpr: 1267 },
-  { name: 'Manuel Mwine Bujara', tpr: 1406 },
+  { name: 'Miriti Angela Kendi', tpr: 1548 },
+  { name: 'Chepkoiwo Blessing Jerutich', tpr: 1418 },
+  { name: 'Manuel Mwine Bujara', tpr: 1325 },
   { name: 'Jayden Kiogora Mwenda', tpr: 1460 },
-  { name: 'Njuguna Lisa Wanjiru', tpr: 1485 },
-  { name: 'Shannon Bulimo', tpr: 1471 },
-  { name: 'Kagambi Jeremiah', tpr: 1488 },
-  { name: 'Gichuga Wanjiru Wanjiku', tpr: 1480 },
-  { name: 'Chepkoiwo Patience Jepkemoi', tpr: 1267 },
-  { name: 'Kamoni Elsie Wambui', tpr: 644 },
-  { name: 'Brian Ayodi', tpr: 1269 },
+  { name: 'Njuguna Lisa Wanjiru', tpr: 1388 },
+  { name: 'Shannon Bulimo', tpr: 1539 },
+  { name: 'Kagambi Jeremiah', tpr: 1553 },
+  { name: 'Gichuga Wanjiru Wanjiku', tpr: 1378 },
+  { name: 'Chepkoiwo Patience Jepkemoi', tpr: 1208 },
+  { name: 'Kamoni Elsie Wambui', tpr: 1240 },
+  { name: 'Brian Ayodi', tpr: 1398 },
   { name: 'Kagambi Angel', tpr: 1486 },
-  { name: 'Oscar Jesus', tpr: 1237 },
+  { name: 'Oscar Jesus', tpr: 1275 },
   { name: 'Jeremy Nganga', tpr: 1367 },
-  { name: 'Gloria Wakoli', tpr: 1250 },
-  { name: 'Kamau Kange', tpr: 1302 },
-  { name: 'Mark Kisia', tpr: 1214 },
+  { name: 'Gloria Wakoli', tpr: 1229 },
+  { name: 'Kamau Kange', tpr: 1463 },
+  { name: 'Mark Kisia', tpr: 1166 },
   { name: 'Precious Makena', tpr: 706 },
-  { name: 'Josphat Wanambisi', tpr: 630 },
-  { name: 'Levi Marco', tpr: 1288 },
+  { name: 'Josphat Wanambisi', tpr: 665 },
+  { name: 'Levi Marco', tpr: 1217 },
   { name: 'Deng Deng', tpr: 1380 },
-  { name: 'Anger Deng', tpr: 1275 },
+  { name: 'Anger Deng', tpr: 1400 },
   { name: 'Clement Onyango', tpr: 2200 },
-  { name: 'Kioko Keith', tpr: 2200 },
-  { name: 'Belyse Uwitonze', tpr: 632 },
+  { name: 'Kioko Keith', tpr: 1400 },
+  { name: 'Belyse Uwitonze', tpr: 1186 },
   { name: 'Palanga Boston', tpr: 803 },
   { name: 'Yvonne Kageha Khanari', tpr: 625 },
   { name: 'Lisa Shanie Edemba', tpr: 600 },
@@ -210,7 +210,7 @@ const liveTprMap: Record<string, number | null> = liveTprs.reduce((acc, entry) =
 function getLiveTpr(name: string): number | null {
   return liveTprMap[normalizeName(name)] ?? null
 }
-const liveRoundLabel = 4
+const liveRoundLabel = 5
 
 export default async function HomePage() {
   const tournaments = await getTournamentData()
@@ -260,22 +260,26 @@ export default async function HomePage() {
           ? dropFromHistory
           : getDropScoreFromAverages(player)
         : null
-      // Build adjusted Best 4 using precise top-4 when available
-      const baseTop4 = preciseTop4Map[playerId]
+      // Build adjusted Best 4 using precise top-4 when available (only adjust if playing)
       let adjustedBest4: number
-      if (baseTop4 && baseTop4.length) {
-        const top4 = [...baseTop4]
-        if (liveTpr !== null) {
-          top4.push(liveTpr)
-        }
-        const sorted = top4.sort((a, b) => b - a).slice(0, 4)
-        const avg = sorted.reduce((sum, val) => sum + val, 0) / sorted.length
-        adjustedBest4 = Math.round(avg)
+      if (!isPlaying) {
+        adjustedBest4 = player.best_4
       } else {
-        adjustedBest4 =
-          liveTpr !== null
-            ? recomputeBest4(player.best_3, player.best_4, liveTpr)
-            : player.best_4
+        const baseTop4 = preciseTop4Map[playerId]
+        if (baseTop4 && baseTop4.length) {
+          const top4 = [...baseTop4]
+          if (liveTpr !== null) {
+            top4.push(liveTpr)
+          }
+          const sorted = top4.sort((a, b) => b - a).slice(0, 4)
+          const avg = sorted.reduce((sum, val) => sum + val, 0) / sorted.length
+          adjustedBest4 = Math.round(avg)
+        } else {
+          adjustedBest4 =
+            liveTpr !== null
+              ? recomputeBest4(player.best_3, player.best_4, liveTpr)
+              : player.best_4
+        }
       }
 
       return {
@@ -306,7 +310,7 @@ export default async function HomePage() {
               <div className="px-4 py-3 border-b border-gray-200 flex items-center gap-2">
                 <Activity className="h-4 w-4 text-blue-600" />
                 <Link
-                  href="https://s1.chess-results.com/tnr1297454.aspx?lan=1&art=1&rd=4&SNode=S0"
+                  href="https://s1.chess-results.com/tnr1297454.aspx?lan=1&art=1&rd=5&SNode=S0"
                   className="text-sm font-semibold text-gray-800 hover:text-blue-700 hover:underline inline-flex items-center gap-1"
                   target="_blank"
                   rel="noreferrer">
