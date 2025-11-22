@@ -352,7 +352,7 @@ export default async function HomePage() {
                             {row.status.dotClass ? (
                               <span
                                 title={row.status.label}
-                                className={`ml-2 inline-flex h-2 w-2 rounded-full ${row.status.dotClass} ${row.status.animate}`}
+                                className={`ml-2 inline-flex h-2 w-2 rounded-full ${row.status.dotClass} ${row.status.animate} align-middle`}
                                 aria-label={row.status.label}
                               />
                             ) : null}
