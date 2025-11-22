@@ -1,10 +1,17 @@
 import React from 'react';
 
-export function CustomTable({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) {
+type CustomTableProps = React.HTMLAttributes<HTMLTableElement> & {
+  containerClassName?: string;
+};
+
+export function CustomTable({ className, containerClassName, ...props }: CustomTableProps) {
   return (
-    <div className="w-full h-full overflow-hidden shadow-none rounded-none sm:shadow-md sm:rounded-lg">
+    <div className={`w-full h-full overflow-hidden shadow-none rounded-none sm:shadow-md sm:rounded-lg ${containerClassName || ''}`}>
       <div className="w-full h-full overflow-x-auto">
-        <table className={`w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse ${className || ''}`} {...props} />
+        <table
+          className={`w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse ${className || ''}`}
+          {...props}
+        />
       </div>
     </div>
   );

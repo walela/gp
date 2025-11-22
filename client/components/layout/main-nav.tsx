@@ -15,6 +15,11 @@ export function MainNav() {
 
   const routes = [
     {
+      href: '/#live-standings',
+      label: 'Live',
+      active: pathname === '/'
+    },
+    {
       href: '/',
       label: 'Tournaments',
       active: pathname === '/'
@@ -33,7 +38,15 @@ export function MainNav() {
           <NavigationMenuItem key={route.href}>
             <Link href={route.href} legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()} active={route.active}>
-                {route.label}
+                <span className="relative inline-flex items-center gap-2">
+                  {route.label}
+                  {route.label === 'Live' ? (
+                    <span
+                      className="absolute -right-1.5 -top-1 inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                </span>
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
@@ -46,8 +59,16 @@ export function MainNav() {
           <Link
             key={route.href}
             href={route.href}
-            className={`text-sm font-medium ${route.active ? 'text-primary' : 'text-muted-foreground'}`}>
-            {route.label}
+            className={`text-sm font-medium inline-flex items-center gap-2 relative ${
+              route.active ? 'text-primary' : 'text-muted-foreground'
+            }`}>
+            <span>{route.label}</span>
+            {route.label === 'Live' ? (
+              <span
+                className="absolute -right-1.5 -top-0.5 inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"
+                aria-hidden="true"
+              />
+            ) : null}
           </Link>
         ))}
       </div>

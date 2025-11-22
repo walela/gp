@@ -9,161 +9,73 @@ import {
   CustomTableCell
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
-
-import { CircleCheckBig, ChevronRight, Crown, Activity } from 'lucide-react'
-import { getRankings, getTopPlayers, type PlayerRanking } from '@/services/api'
-import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { SearchForm } from '@/components/rankings/search-form'
 import { Pagination } from '@/components/ui/pagination'
-import { Metadata } from 'next'
+import { CircleCheckBig, ChevronRight, Crown } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import type { PlayerRanking } from '@/services/api'
+import { getDisplayName, getRankMovement } from '@/components/rankings/utils'
 
-export const metadata: Metadata = {
-  title: 'Player Rankings - Chess Kenya 2025 Grand Prix',
-  description: 'View the latest Chess Kenya Grand Prix rankings and standings. Track player performance across tournaments with TPR ratings and points.',
-  openGraph: {
-    title: 'Chess Kenya Grand Prix Rankings',
-    description: 'Official rankings for the Chess Kenya 2025 Grand Prix series. View top players, tournament performances and TPR ratings.',
-    type: 'website',
-    siteName: 'Chess Kenya Grand Prix',
-    url: 'https://1700chess.vercel.app/rankings'
-  },
-  twitter: {
-    card: 'summary',
-    title: 'Chess Kenya GP Rankings',
-    description: 'View the latest Chess Kenya Grand Prix player rankings and standings'
-  }
+interface QualifierConfig {
+  kenyaNumber1Id?: string | null
+  automaticQualifierIds?: Set<string>
+  provisionalQualifierId?: string | null
+  alternateQualifierIds?: Set<string>
+  highlightedQualifierIds?: Set<string>
+  juniorChampionMatcher?: (player: PlayerRanking) => boolean
+  showLegend?: boolean
 }
 
-// Smart name abbreviation function for very long names
-function getDisplayName(fullName: string): string {
-  // If name is reasonably short, return as-is
-  if (fullName.length <= 22) {
-    return fullName
-  }
-
-  // For very long names, abbreviate only the last word
-  const parts = fullName.trim().split(' ')
-  if (parts.length >= 2) {
-    // Keep everything except the last part, then abbreviate the last part
-    const allButLast = parts.slice(0, -1).join(' ')
-    const lastPart = parts[parts.length - 1]
-
-    return `${allButLast} ${lastPart.charAt(0)}.`
-  }
-
-  // Single name that's too long - just truncate
-  return fullName.substring(0, 20) + '...'
+interface RankingsViewProps {
+  basePath: string
+  rankings: PlayerRanking[]
+  sort: string
+  dir: 'asc' | 'desc'
+  page: number
+  view: string
+  search: string
+  totalPages: number
+  exportUrl: string
+  exportFilename: string
+  qualifierConfig?: QualifierConfig
+  searchPlaceholder?: string
 }
 
-function getRankMovement(player: PlayerRanking): {
-  label: string
-  className: string
-  ariaLabel: string
-} | null {
-  const change = player.rank_change ?? null
-  const isNew = player.is_new ?? false
-
-  if (isNew) {
-    return {
-      label: 'NEW',
-      className: 'bg-purple-100 text-purple-700',
-      ariaLabel: 'New entrant in top rankings'
-    }
-  }
-
-  if (change === null) {
-    return null
-  }
-
-  if (change > 0) {
-    return {
-      label: `↑${change}`,
-      className: 'bg-green-100 text-green-700',
-      ariaLabel: `Moved up ${change} ${change === 1 ? 'spot' : 'spots'}`
-    }
-  }
-
-  const magnitude = Math.abs(change)
-  if (magnitude === 0) {
-    return {
-      label: '-',
-      className: 'text-gray-500',
-      ariaLabel: 'No change in ranking'
-    }
-  }
-
-  return {
-    label: `↓${magnitude}`,
-    className: 'bg-red-100 text-red-700',
-    ariaLabel: `Moved down ${magnitude} ${magnitude === 1 ? 'spot' : 'spots'}`
-  }
-}
-
-interface RankingsPageProps {
-  searchParams: {
-    sort?: string
-    dir?: 'asc' | 'desc'
-    page?: string
-    view?: string
-    q?: string
-  }
-}
-
-export default async function RankingsPage({ searchParams }: RankingsPageProps) {
-  // Properly await the searchParams object
-  const params = await searchParams
-
-  // Now we can safely access the properties
-  const sort = params.sort || 'best_4'
-  const dir = params.dir || 'desc'
-  const page = Number(params.page || '1')
-  const view = params.view || 'best_4'
-  const search = params.q || ''
-
-  // Pass search query to the backend for filtering
-  const { rankings, total_pages } = await getRankings({
-    sort,
-    dir,
-    page,
-    q: search
-  })
-
-  const highlightCount = 9
-  const { topPlayers } = await getTopPlayers({ count: highlightCount + 1, sortBy: 'best_4' })
-  const topPlayerIds = topPlayers.map(p => p.fide_id || p.name)
-
-  const kenyaNumber1Player = [...rankings, ...topPlayers].find(player =>
-    player.name.toLowerCase().includes('jadon')
-  )
-  const kenyaNumber1Id = kenyaNumber1Player?.fide_id || kenyaNumber1Player?.name
-
-  const automaticQualifierIds = new Set(
-    topPlayers.slice(0, highlightCount).map(player => player.fide_id || player.name)
-  )
-
-  const kenyaNumber1IsAutomatic = kenyaNumber1Id ? automaticQualifierIds.has(kenyaNumber1Id) : false
-  const provisionalQualifierId =
-    kenyaNumber1IsAutomatic && topPlayers.length > highlightCount ? topPlayerIds[highlightCount] : null
-
-  const highlightedQualifierIds = new Set(automaticQualifierIds)
-  if (provisionalQualifierId) {
-    highlightedQualifierIds.add(provisionalQualifierId)
-  }
-
-  const juniorChampionId = '10831533'
+export function RankingsView({
+  basePath,
+  rankings,
+  sort,
+  dir,
+  page,
+  view,
+  search,
+  totalPages,
+  exportUrl,
+  exportFilename,
+  qualifierConfig,
+  searchPlaceholder
+}: RankingsViewProps) {
+  const automaticQualifierIds = qualifierConfig?.automaticQualifierIds ?? new Set<string>()
+  const highlightedQualifierIds = qualifierConfig?.highlightedQualifierIds ?? new Set<string>()
+  const provisionalQualifierId = qualifierConfig?.provisionalQualifierId ?? null
+  const alternateQualifierIds = qualifierConfig?.alternateQualifierIds ?? new Set<string>()
+  const kenyaNumber1Id = qualifierConfig?.kenyaNumber1Id ?? null
+  const juniorChampionMatcher = qualifierConfig?.juniorChampionMatcher
+  const showLegend = qualifierConfig?.showLegend ?? false
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 mb-6">
-        <SearchForm defaultValue={search} />
+        <SearchForm defaultValue={search} basePath={basePath} placeholder={searchPlaceholder} />
       </div>
 
       <div className="mb-0 w-full">
         <ViewSelector
+          basePath={basePath}
           view={view}
-          exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
-          exportFilename={`GP_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
+          exportUrl={exportUrl}
+          exportFilename={exportFilename}
         />
       </div>
 
@@ -176,11 +88,11 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           <CustomTableHeader>
             <CustomTableRow>
               <CustomTableHead className="w-[36px] text-right">
-                <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-full hidden sm:block" />
-                <SortableHeader column="rank" label="#" basePath="/rankings" className="w-full sm:hidden" />
+                <SortableHeader column="rank" label="Rank" basePath={basePath} className="w-full hidden sm:block" />
+                <SortableHeader column="rank" label="#" basePath={basePath} className="w-full sm:hidden" />
               </CustomTableHead>
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">
-                <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />
+                <SortableHeader column="name" label="Name" basePath={basePath} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className="w-[40px] text-center sm:hidden">
                 <span className="sr-only">Qualified</span>
@@ -193,21 +105,21 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                   column="tournaments_played"
                   label="Tournaments"
                   align="right"
-                  basePath="/rankings"
+                  basePath={basePath}
                   className="w-full"
                 />
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader column="best_1" label="Best TPR" align="right" basePath="/rankings" className="w-full" />
+                <SortableHeader column="best_1" label="Best TPR" align="right" basePath={basePath} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader column="best_2" label="Best 2" align="right" basePath="/rankings" className="w-full" />
+                <SortableHeader column="best_2" label="Best 2" align="right" basePath={basePath} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader column="best_3" label="Best 3" align="right" basePath="/rankings" className="w-full" />
+                <SortableHeader column="best_3" label="Best 3" align="right" basePath={basePath} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader column="best_4" label="Best 4" align="right" basePath="/rankings" className="w-full" />
+                <SortableHeader column="best_4" label="Best 4" align="right" basePath={basePath} className="w-full" />
               </CustomTableHead>
             </CustomTableRow>
           </CustomTableHeader>
@@ -229,16 +141,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             ) : (
               rankings.map((player, index) => {
                 const playerId = player.fide_id || player.name
+                const tableRank = (page - 1) * 25 + index + 1
                 const isKenyaNumber1 = kenyaNumber1Id ? playerId === kenyaNumber1Id : false
                 const isAutomaticQualifier = automaticQualifierIds.has(playerId)
-                const isProvisionalQualifier = provisionalQualifierId === playerId
+                const isAlternateQualifier =
+                  (provisionalQualifierId && provisionalQualifierId === playerId) || alternateQualifierIds.has(playerId)
                 const isHighlightedQualifier = highlightedQualifierIds.has(playerId)
-                const isJuniorChampion =
-                  player.fide_id === juniorChampionId || player.name.toLowerCase().includes('kyle kuka')
-                const tableRank = (page - 1) * 25 + index + 1
-
-                const isDefinitelyQualified = isKenyaNumber1 || isJuniorChampion
+                const isJuniorChampion = juniorChampionMatcher ? juniorChampionMatcher(player) : false
+                const isDefinitelyQualified = Boolean(isKenyaNumber1 || isJuniorChampion)
                 const movement = view === 'best_4' ? getRankMovement(player) : null
+
                 const movementBadge = !isDefinitelyQualified && movement ? (
                   <span
                     aria-label={movement.ariaLabel}
@@ -249,6 +161,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     {movement.label}
                   </span>
                 ) : null
+
                 const qualifierBadgeMobile = isDefinitelyQualified ? (
                   <span className="inline-block rounded-sm bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-green-700">
                     Q
@@ -264,9 +177,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     className={cn(
                       isKenyaNumber1
                         ? 'bg-amber-50/50 border-l-2 border-l-amber-500 hover:bg-amber-100/50'
-                        : isProvisionalQualifier
+                        : isAlternateQualifier
                           ? 'bg-teal-50/80 border-l-2 border-l-teal-600 hover:bg-teal-100'
-                        : isAutomaticQualifier
+                          : isAutomaticQualifier
                             ? 'bg-blue-50/70 border-l-2 border-l-blue-600 hover:bg-blue-100'
                             : index % 2 === 0
                               ? 'bg-gray-50/50 hover:bg-gray-100/50'
@@ -279,7 +192,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                           <Crown className="h-3 w-3 text-amber-600" />
                           <span className="font-semibold text-amber-700">{tableRank}</span>
                         </div>
-                      ) : isProvisionalQualifier ? (
+                      ) : isAlternateQualifier ? (
                         <span className="font-semibold text-teal-700">{tableRank}</span>
                       ) : isAutomaticQualifier ? (
                         <span className="font-semibold text-blue-700">{tableRank}</span>
@@ -290,7 +203,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       )}
                     </CustomTableCell>
                     <CustomTableCell>
-                      <div className="truncate">
+                      <div className="truncate space-y-1">
                         {player.fide_id ? (
                           <Link
                             href={`/player/${player.fide_id}`}
@@ -298,7 +211,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                               'font-medium group flex items-center gap-2',
                               isKenyaNumber1
                                 ? 'text-amber-700 hover:text-amber-800'
-                                : isProvisionalQualifier
+                                : isAlternateQualifier
                                   ? 'text-teal-700 hover:text-teal-800'
                                   : isAutomaticQualifier
                                     ? 'text-blue-700 hover:text-blue-800'
@@ -321,7 +234,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                               'font-medium flex items-center gap-2',
                               isKenyaNumber1
                                 ? 'text-amber-700'
-                                : isProvisionalQualifier
+                                : isAlternateQualifier
                                   ? 'text-teal-700'
                                   : isAutomaticQualifier
                                     ? 'text-blue-700'
@@ -367,7 +280,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     <CustomTableCell
                       className={cn('text-right tabular-nums', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
                       {isHighlightedQualifier ? (
-                        <span className={cn('font-semibold', isProvisionalQualifier ? 'text-teal-700' : 'text-blue-700')}>
+                        <span className={cn('font-semibold', isAlternateQualifier ? 'text-teal-700' : 'text-blue-700')}>
                           {player.best_4}
                         </span>
                       ) : (
@@ -382,39 +295,41 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         </CustomTable>
       </Card>
 
-      <div className="border border-gray-200 bg-white/95 shadow-sm">
-        <div className="px-4 py-3 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-700">
-          <span className="inline-flex items-center gap-1.5 text-amber-700">
-            <Crown className="h-3.5 w-3.5 text-amber-600" />
-            Kenya #1
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-blue-700">
-            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-blue-600 bg-blue-50" />
-            Top 9 Qualifier
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-teal-700">
-            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-teal-600 bg-teal-50" />
-            Alternate Qualifier
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-purple-700">
-            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-purple-500 bg-purple-50" />
-            National Junior Champion
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-green-700">
-            <span className="inline-flex h-4 items-center justify-center rounded-sm bg-green-100 px-1.5 text-[11px] font-semibold leading-tight text-green-700 sm:hidden">
-              Q
+      {showLegend && (
+        <div className="border border-gray-200 bg-white/95 shadow-sm">
+          <div className="px-4 py-3 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-700">
+            <span className="inline-flex items-center gap-1.5 text-amber-700">
+              <Crown className="h-3.5 w-3.5 text-amber-600" />
+              Kenya #1
             </span>
-            <CircleCheckBig className="hidden sm:inline-block h-3.5 w-3.5 text-green-600" strokeWidth={1.75} />
-            Confirmed Qualifier
-          </span>
+            <span className="inline-flex items-center gap-1.5 text-blue-700">
+              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-blue-600 bg-blue-50" />
+              Top 9 Qualifier
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-teal-700">
+              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-teal-600 bg-teal-50" />
+              Alternate Qualifier
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-purple-700">
+              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-purple-500 bg-purple-50" />
+              National Junior Champion
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-green-700">
+              <span className="inline-flex h-4 items-center justify-center rounded-sm bg-green-100 px-1.5 text-[11px] font-semibold leading-tight text-green-700 sm:hidden">
+                Q
+              </span>
+              <CircleCheckBig className="hidden sm:inline-block h-3.5 w-3.5 text-green-600" strokeWidth={1.75} />
+              Confirmed Qualifier
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
-      {total_pages > 1 && (
+      {totalPages > 1 && (
         <Pagination
           currentPage={page}
-          totalPages={total_pages}
-          basePath="/rankings"
+          totalPages={totalPages}
+          basePath={basePath}
           queryParams={{
             sort,
             dir,

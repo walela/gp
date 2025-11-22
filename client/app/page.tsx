@@ -1,13 +1,15 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CalendarDays, MapPin, Hash, Calendar } from 'lucide-react'
+import { CalendarDays, MapPin, Hash, Calendar, Activity } from 'lucide-react'
 import { getTournamentData } from '@/lib/tournament-data'
 import { TournamentTable } from '@/components/tournament-table'
+import { CustomTable, CustomTableHead, CustomTableHeader, CustomTableRow, CustomTableBody, CustomTableCell } from '@/components/ui/custom-table'
 import { upcomingTournaments, plannedTournaments } from '@/lib/active-tournaments'
 import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 import { CountdownBadge } from '@/components/countdown-badge'
+import { getPlayer, getRankings } from '@/services/api'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,12 +47,317 @@ function formatTimeAway(startDateIso: string) {
   return `${weeksAway} weeks ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
 }
 
+function getBubbleStatus(name: string) {
+  const lower = name.toLowerCase()
+  const isFelix = lower.includes('felix')
+  const isMethu = lower.includes('methu')
+
+  if (isFelix) {
+    return { label: 'Not playing', dotClass: 'bg-gray-300 ring-gray-200', animate: '' }
+  }
+  if (isMethu) {
+    return { label: 'Not playing', dotClass: 'bg-gray-300 ring-gray-200', animate: '' }
+  }
+  return { label: 'Playing live', dotClass: 'bg-emerald-500 ring-emerald-200', animate: 'animate-pulse' }
+}
+
+function normalizeName(name: string) {
+  const cleaned = name.replace(/\s+/g, ' ').trim().toLowerCase()
+  const titlePrefixes = ['cm', 'wfm', 'wcm', 'wgm', 'agm', 'aim', 'im', 'fm', 'gm', 'aim', 'aim']
+  const parts = cleaned.split(' ')
+  const stripped = titlePrefixes.includes(parts[0]) ? parts.slice(1).join(' ') : cleaned
+  return stripped.replace(/[^\w\s.-]/g, '').trim()
+}
+
+function getDropScoreFromAverages(player: { best_1: number; best_2: number; best_3: number; best_4: number }) {
+  // Reconstruct the four scores from rounded averages to reduce rounding drift
+  const s1 = player.best_1
+  const s2 = 2 * player.best_2 - s1
+  const s3 = 3 * player.best_3 - s1 - s2
+  const s4 = 4 * player.best_4 - s1 - s2 - s3
+  const ordered = [s1, s2, s3, s4].sort((a, b) => b - a)
+  // Bias slightly upward to counteract double-rounding drift from stored averages
+  return Math.round(ordered[3] + 0.5)
+}
+
+function recomputeBest4(currentBest3: number, currentBest4: number, liveTpr: number | null): number {
+  if (liveTpr === null || Number.isNaN(liveTpr)) return currentBest4
+  // Derive existing 4th best from stored averages and replace if the live TPR is better
+  const currentFourth = 4 * currentBest4 - 3 * currentBest3
+  const improvedFourth = Math.max(liveTpr, currentFourth)
+  return Math.round((3 * currentBest3 + improvedFourth) / 4)
+}
+
+const liveTprs = [
+  { name: 'Magana Ben', tpr: 2203 },
+  { name: 'Okonga Hugh Misiko', tpr: 2120 },
+  { name: 'Kaloki Hawi', tpr: 2134 },
+  { name: 'Madol Garang Panthou Joh', tpr: 2075 },
+  { name: 'Nhial Jeremiah Machar', tpr: 1825 },
+  { name: 'Ngony John Thon', tpr: 1951 },
+  { name: 'Njuki Gabriel', tpr: 2032 },
+  { name: 'Karani Ezekiel', tpr: 1982 },
+  { name: 'Kiplangat Baraka', tpr: 1642 },
+  { name: 'Cheruiyot Elly', tpr: 1908 },
+  { name: 'Adrian Kariuki', tpr: 1688 },
+  { name: 'Mongeli Sasha', tpr: 1765 },
+  { name: 'Wanjiru Chrisphinus', tpr: 1873 },
+  { name: 'Chumba Allan', tpr: 1879 },
+  { name: 'Chege Kairu', tpr: 1852 },
+  { name: 'Mugambi Christian Mwamba', tpr: 1717 },
+  { name: 'Omondi Stanley', tpr: 1798 },
+  { name: 'Nicole Albright', tpr: 1720 },
+  { name: 'Kelly Mwaniki', tpr: 1768 },
+  { name: 'Shile Lenny Mataiga', tpr: 1806 },
+  { name: 'Mathenge Gichuga', tpr: 1709 },
+  { name: 'Nthiga Blair Wema', tpr: 1708 },
+  { name: 'Waweru Davidson Mugo', tpr: 1639 },
+  { name: 'Nashipae Bella', tpr: 1702 },
+  { name: 'Mubi Hillary', tpr: 1606 },
+  { name: 'Amwai Tom', tpr: 1809 },
+  { name: 'Kyalo Cynthia Wayua', tpr: 1606 },
+  { name: 'Omolo Kenneth', tpr: 1863 },
+  { name: 'Kagambi Lawrence', tpr: 1793 },
+  { name: 'Akhanyinya Bryan Toboso', tpr: 1834 },
+  { name: 'Mulaga Geoffrey', tpr: 1872 },
+  { name: 'Mitei Cosmas', tpr: 1683 },
+  { name: 'Kaloki Zuri', tpr: 1778 },
+  { name: 'Chagwaya Brenda', tpr: 1740 },
+  { name: 'Ndirangu Joyce Nyaruai', tpr: 1775 },
+  { name: 'Sagwa Hillary', tpr: 1874 },
+  { name: 'Kimani Wanjiru', tpr: 1703 },
+  { name: 'Jasmine Akinyi Ochieng', tpr: 1575 },
+  { name: 'Kagambi Samuel', tpr: 1691 },
+  { name: 'Gwada James', tpr: 1679 },
+  { name: 'Waweru Trevor Kipngetich', tpr: 1606 },
+  { name: 'Remiel Ahadi', tpr: 1568 },
+  { name: 'Ochieng James', tpr: 1706 },
+  { name: 'Onyango Shirlyn Gathoni', tpr: 1583 },
+  { name: 'James Mungai', tpr: 1575 },
+  { name: 'Ann Nakieny', tpr: 1566 },
+  { name: 'Jacob Mandela', tpr: 1611 },
+  { name: 'Tyron Gaya', tpr: 1819 },
+  { name: 'Isaac Bahati', tpr: 1474 },
+  { name: 'Baden Fred Eric', tpr: 1702 },
+  { name: 'Getange Johnpaul', tpr: 1671 },
+  { name: 'Salma Nkatha Mwenda', tpr: 1575 },
+  { name: 'Osundwa Ihabi', tpr: 1385 },
+  { name: 'Gilana Angel Muthoni', tpr: 1385 },
+  { name: 'Muli Faraja Mumo', tpr: 1587 },
+  { name: 'Elias Cheruiyot', tpr: 1575 },
+  { name: 'Hillary Mukabwa', tpr: 1399 },
+  { name: 'Kitongamirriam', tpr: 1503 },
+  { name: 'Dancun Silali', tpr: 1452 },
+  { name: 'Kipkoech Hekima', tpr: 1492 },
+  { name: 'Ayabei Shadrack', tpr: 1473 },
+  { name: 'Kayden Sankau Oloitiptip', tpr: 1275 },
+  { name: 'Kamoni Elvin', tpr: 1586 },
+  { name: 'Maiyani Oloitiptip Trevor', tpr: 1275 },
+  { name: 'Lehman Okoyo', tpr: 1418 },
+  { name: 'Okello John', tpr: 1403 },
+  { name: 'Methu Joseph Muragu', tpr: 1768 },
+  { name: 'Miriti Angela Kendi', tpr: 1496 },
+  { name: 'Chepkoiwo Blessing Jerutich', tpr: 1267 },
+  { name: 'Manuel Mwine Bujara', tpr: 1406 },
+  { name: 'Jayden Kiogora Mwenda', tpr: 1460 },
+  { name: 'Njuguna Lisa Wanjiru', tpr: 1485 },
+  { name: 'Shannon Bulimo', tpr: 1471 },
+  { name: 'Kagambi Jeremiah', tpr: 1488 },
+  { name: 'Gichuga Wanjiru Wanjiku', tpr: 1480 },
+  { name: 'Chepkoiwo Patience Jepkemoi', tpr: 1267 },
+  { name: 'Kamoni Elsie Wambui', tpr: 644 },
+  { name: 'Brian Ayodi', tpr: 1269 },
+  { name: 'Kagambi Angel', tpr: 1486 },
+  { name: 'Oscar Jesus', tpr: 1237 },
+  { name: 'Jeremy Nganga', tpr: 1367 },
+  { name: 'Gloria Wakoli', tpr: 1250 },
+  { name: 'Kamau Kange', tpr: 1302 },
+  { name: 'Mark Kisia', tpr: 1214 },
+  { name: 'Precious Makena', tpr: 706 },
+  { name: 'Josphat Wanambisi', tpr: 630 },
+  { name: 'Levi Marco', tpr: 1288 },
+  { name: 'Deng Deng', tpr: 1380 },
+  { name: 'Anger Deng', tpr: 1275 },
+  { name: 'Clement Onyango', tpr: 2200 },
+  { name: 'Kioko Keith', tpr: 2200 },
+  { name: 'Belyse Uwitonze', tpr: 632 },
+  { name: 'Palanga Boston', tpr: 803 },
+  { name: 'Yvonne Kageha Khanari', tpr: 625 },
+  { name: 'Lisa Shanie Edemba', tpr: 600 },
+  { name: 'Mbaabu Cyprian', tpr: 0 },
+  { name: 'Opon Nicodemus', tpr: 0 },
+  { name: 'Andrew Kuria', tpr: 0 },
+  { name: 'Arnold Wekesa', tpr: 0 },
+  { name: 'Emmanuel Wekesa', tpr: 0 }
+]
+const liveTprMap: Record<string, number | null> = liveTprs.reduce((acc, entry) => {
+  acc[normalizeName(entry.name)] = entry.tpr
+  return acc
+}, {} as Record<string, number | null>)
+function getLiveTpr(name: string): number | null {
+  return liveTprMap[normalizeName(name)] ?? null
+}
+const liveRoundLabel = 4
+
 export default async function HomePage() {
   const tournaments = await getTournamentData()
+  // Grab the top page, then re-rank locally using live TPRs
+  const { rankings: latestTop } = await getRankings({ sort: 'best_4', dir: 'desc', page: 1 })
+
+  // Pull precise drop scores (4th best TPR) and top-4 from player histories when possible
+  const preciseDropMap: Record<string, number> = {}
+  const preciseTop4Map: Record<string, number[]> = {}
+  await Promise.all(
+    latestTop.map(async player => {
+      const playerId = player.fide_id || player.name
+      if (!player.fide_id) return
+      try {
+        const details = await getPlayer(player.fide_id)
+        const eligible = (details.results || [])
+          .filter(r => (r.result_status ?? 'valid') === 'valid' && r.tpr !== null)
+          .map(r => r.tpr as number)
+          .sort((a, b) => b - a)
+        if (eligible.length >= 4) {
+          preciseDropMap[playerId] = eligible[3]
+          preciseTop4Map[playerId] = eligible.slice(0, 4)
+        } else if (eligible.length > 0) {
+          preciseTop4Map[playerId] = eligible
+        }
+      } catch {
+        // Ignore fetch errors; fallback to reconstructed drop
+      }
+    })
+  )
+
+  const adjustedStandings = latestTop
+    .map(player => {
+      const playerId = player.fide_id || player.name
+      const liveTprRaw = getLiveTpr(player.name)
+      const isMethu = normalizeName(player.name).includes('methu')
+      const liveTpr = isMethu ? null : liveTprRaw
+      const baseStatus = getBubbleStatus(player.name)
+      const isPlaying = liveTpr !== null && baseStatus.label !== 'Not playing'
+      const status = isPlaying
+        ? { label: 'Playing live', dotClass: 'bg-emerald-500 ring-emerald-200', animate: 'animate-pulse' }
+        : { label: 'Not playing', dotClass: '', animate: '' }
+      const currentTpr = liveTpr ?? (player as any).current_tpr ?? (player as any).tpr ?? '-'
+      const dropFromHistory = preciseDropMap[playerId]
+      const dropScore = isPlaying
+        ? dropFromHistory !== undefined
+          ? dropFromHistory
+          : getDropScoreFromAverages(player)
+        : null
+      // Build adjusted Best 4 using precise top-4 when available
+      const baseTop4 = preciseTop4Map[playerId]
+      let adjustedBest4: number
+      if (baseTop4 && baseTop4.length) {
+        const top4 = [...baseTop4]
+        if (liveTpr !== null) {
+          top4.push(liveTpr)
+        }
+        const sorted = top4.sort((a, b) => b - a).slice(0, 4)
+        const avg = sorted.reduce((sum, val) => sum + val, 0) / sorted.length
+        adjustedBest4 = Math.round(avg)
+      } else {
+        adjustedBest4 =
+          liveTpr !== null
+            ? recomputeBest4(player.best_3, player.best_4, liveTpr)
+            : player.best_4
+      }
+
+      return {
+        player,
+        playerId,
+        status,
+        liveTpr,
+        currentTpr,
+        dropScore,
+        adjustedBest4
+      }
+    })
+    .sort((a, b) => b.adjustedBest4 - a.adjustedBest4)
+    .map((row, idx) => ({
+      ...row,
+      overallRank: idx + 1,
+      isQualifier: idx + 1 <= 10
+    }))
+
+  const bubbleWatch = adjustedStandings.slice(0, 15)
 
   return (
     <div className="min-h-screen">
       <div className="container mx-auto sm:px-4 py-4 space-y-8 max-w-11xl">
+        {bubbleWatch.length > 0 && (
+          <section id="live-standings">
+            <Card className="border border-gray-200 shadow-sm bg-white/95 p-0 py-0 gap-0 rounded-md sm:rounded-lg">
+              <div className="px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+                <Activity className="h-4 w-4 text-blue-600" />
+                <Link
+                  href="https://s1.chess-results.com/tnr1297454.aspx?lan=1&art=1&rd=4&SNode=S0"
+                  className="text-sm font-semibold text-gray-800 hover:text-blue-700 hover:underline inline-flex items-center gap-1"
+                  target="_blank"
+                  rel="noreferrer">
+                  <span>Live standings after round {liveRoundLabel}</span>
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+              <div className="p-0">
+                <CustomTable className="text-xs sm:text-sm" containerClassName="shadow-none rounded-none">
+                  <CustomTableHeader>
+                    <CustomTableRow>
+                      <CustomTableHead className="w-[48px] text-center">#</CustomTableHead>
+                      <CustomTableHead>Player</CustomTableHead>
+                      <CustomTableHead className="text-right">Drop score</CustomTableHead>
+                      <CustomTableHead className="text-right">TPR</CustomTableHead>
+                      <CustomTableHead className="text-right">Best 4</CustomTableHead>
+                    </CustomTableRow>
+                  </CustomTableHeader>
+                  <CustomTableBody>
+                    {bubbleWatch.map(row => (
+                        <CustomTableRow
+                          key={row.playerId}
+                          className={
+                            row.isQualifier
+                              ? 'border-l-2 border-l-blue-600 bg-blue-50/60 hover:bg-blue-100/80'
+                              : ''
+                          }>
+                          <CustomTableCell className="text-center font-semibold tabular-nums">#{row.overallRank}</CustomTableCell>
+                          <CustomTableCell className="font-semibold text-gray-900">
+                            {row.player.fide_id ? (
+                              <Link
+                                href={`/player/${row.player.fide_id}`}
+                                className="truncate text-blue-600 hover:text-blue-700 hover:underline">
+                                {row.player.name}
+                              </Link>
+                            ) : (
+                              <span className="truncate text-gray-900">{row.player.name}</span>
+                            )}
+                            {row.status.dotClass ? (
+                              <span
+                                title={row.status.label}
+                                className={`ml-2 inline-flex h-2 w-2 rounded-full ${row.status.dotClass} ${row.status.animate}`}
+                                aria-label={row.status.label}
+                              />
+                            ) : null}
+                          </CustomTableCell>
+                          <CustomTableCell className="text-right tabular-nums text-gray-700">
+                            {row.dropScore === null ? '-' : row.dropScore}
+                          </CustomTableCell>
+                          <CustomTableCell className="text-right tabular-nums font-semibold text-gray-900">
+                            {row.currentTpr}
+                          </CustomTableCell>
+                          <CustomTableCell className="text-right tabular-nums font-semibold text-gray-900">
+                            {row.adjustedBest4}
+                          </CustomTableCell>
+                        </CustomTableRow>
+                      ))}
+                  </CustomTableBody>
+                </CustomTable>
+              </div>
+            </Card>
+          </section>
+        )}
+
         <section>
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-2xl font-bold tracking-tight text-gray-700">Upcoming Tournaments</h2>
