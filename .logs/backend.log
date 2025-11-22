@@ -1296,3 +1296,147 @@ Traceback (most recent call last):
     self._selector = select.kqueue()
                      ~~~~~~~~~~~~~^^
 OSError: [Errno 24] Too many open files
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:07] "GET /api/tournaments HTTP/1.1" 200 -
+ERROR:__main__:Error getting tournament 1220011: unable to open database file
+ERROR:__main__:Error getting tournament 1292319: unable to open database file
+ERROR:__main__:Error getting tournament 1188044: unable to open database file
+ERROR:__main__:Error getting tournament 1268826: unable to open database file
+ERROR:__main__:Error getting tournament 1260527: unable to open database file
+ERROR:__main__:Error getting tournament 1255540: unable to open database file
+ERROR:__main__:Error getting tournament 1213697: unable to open database file
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1220011?all_results=true HTTP/1.1[0m" 500 -
+ERROR:__main__:Error getting tournament 1283544: unable to open database file
+ERROR:__main__:Error getting tournament 1193135: unable to open database file
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1292319?all_results=true HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1188044?all_results=true HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1268826?all_results=true HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1260527?all_results=true HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1255540?all_results=true HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1213697?all_results=true HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1283544?all_results=true HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "[35m[1mGET /api/tournament/1193135?all_results=true HTTP/1.1[0m" 500 -
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+ERROR:werkzeug:Error on request:
+Traceback (most recent call last):
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gardenspider/Desktop/gp/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 338, in execute
+    selector = selectors.DefaultSelector()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 493, in __init__
+    self._selector = select.kqueue()
+                     ~~~~~~~~~~~~~^^
+OSError: [Errno 24] Too many open files
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:08] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10841741 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10808868 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10805796 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10836012 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10823875 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10802886 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10831940 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10804714 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10816127 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10818383 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10815406 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10808655 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10801693 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10814582 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10802088 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10800123 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10818677 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10802185 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10800999 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10814078 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10801952 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10824014 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10800166 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10816593 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Nov/2025 15:29:09] "GET /api/player/10813420 HTTP/1.1" 200 -

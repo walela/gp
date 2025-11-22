@@ -340,22 +340,24 @@ export default async function HomePage() {
                           }>
                           <CustomTableCell className="text-center font-semibold tabular-nums">#{row.overallRank}</CustomTableCell>
                           <CustomTableCell className="font-semibold text-gray-900">
-                            {row.player.fide_id ? (
-                              <Link
-                                href={`/player/${row.player.fide_id}`}
-                                className="truncate text-blue-600 hover:text-blue-700 hover:underline">
-                                {getDisplayName(row.player.name)}
-                              </Link>
-                            ) : (
-                              <span className="truncate text-gray-900">{getDisplayName(row.player.name)}</span>
-                            )}
-                            {row.status.dotClass ? (
-                              <span
-                                title={row.status.label}
-                                className={`ml-2 inline-flex h-2 w-2 rounded-full ${row.status.dotClass} ${row.status.animate} align-middle`}
-                                aria-label={row.status.label}
-                              />
-                            ) : null}
+                            <span className="relative inline-flex items-center max-w-full pr-2">
+                              {row.player.fide_id ? (
+                                <Link
+                                  href={`/player/${row.player.fide_id}`}
+                                  className="truncate text-blue-600 hover:text-blue-700 hover:underline">
+                                  {getDisplayName(row.player.name)}
+                                </Link>
+                              ) : (
+                                <span className="truncate text-gray-900">{getDisplayName(row.player.name)}</span>
+                              )}
+                              {row.status.dotClass ? (
+                                <span
+                                  title={row.status.label}
+                                  className={`absolute right-0 top-0 inline-flex h-[6px] w-[6px] rounded-full ring-1 ring-white ${row.status.dotClass} ${row.status.animate}`}
+                                  aria-label={row.status.label}
+                                />
+                              ) : null}
+                            </span>
                           </CustomTableCell>
                           <CustomTableCell className="text-right tabular-nums text-gray-700">
                             {row.dropScore === null ? '-' : row.dropScore}
