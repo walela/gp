@@ -37,7 +37,7 @@ export function MainNav() {
         {routes.map(route => (
           <NavigationMenuItem key={route.href}>
             <Link href={route.href} legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()} active={route.active}>
+              <NavigationMenuLink className={`${navigationMenuTriggerStyle()} text-sm sm:text-[13px]`} active={route.active}>
                 <span className="relative inline-flex items-center gap-2">
                   {route.label}
                   {route.label === 'Live' ? (
@@ -59,7 +59,7 @@ export function MainNav() {
           <Link
             key={route.href}
             href={route.href}
-            className={`text-sm font-medium inline-flex items-center gap-2 relative ${
+            className={`text-[13px] font-medium inline-flex items-center gap-2 relative ${
               route.active ? 'text-primary' : 'text-muted-foreground'
             }`}>
             <span>{route.label}</span>

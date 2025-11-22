@@ -1,4 +1,4 @@
-export type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed'
+export type TournamentStatus = 'Upcoming' | 'Completed' | 'postponed' | 'Ongoing'
 
 export interface Tournament {
   id: string
@@ -27,7 +27,7 @@ export const upcomingTournaments: Tournament[] = [
     location: 'Nairobi',
     rounds: 8,
     confirmed: true,
-    status: 'Upcoming',
+    status: 'Ongoing',
     registrationUrl: 'https://blackknights.co.ke/event/15',
     detailsUrl: 'https://blackknights.co.ke/event/15'
   }

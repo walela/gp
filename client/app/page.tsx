@@ -11,6 +11,19 @@ import { Metadata } from 'next'
 import { CountdownBadge } from '@/components/countdown-badge'
 import { getPlayer, getRankings } from '@/services/api'
 
+// Smart name abbreviation (mirrors rankings page with shorter threshold for the live table)
+function getDisplayName(fullName: string): string {
+  const trimmed = fullName.trim()
+  const parts = trimmed.split(' ')
+  if (parts.length >= 3) {
+    const firstTwo = parts.slice(0, 2).join(' ')
+    const lastPart = parts[parts.length - 1]
+    const abbreviatedLast = lastPart.length > 1 ? `${lastPart[0]}.` : lastPart
+    return `${firstTwo} ${abbreviatedLast}`
+  }
+  return trimmed
+}
+
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
@@ -327,10 +340,10 @@ export default async function HomePage() {
                               <Link
                                 href={`/player/${row.player.fide_id}`}
                                 className="truncate text-blue-600 hover:text-blue-700 hover:underline">
-                                {row.player.name}
+                                {getDisplayName(row.player.name)}
                               </Link>
                             ) : (
-                              <span className="truncate text-gray-900">{row.player.name}</span>
+                              <span className="truncate text-gray-900">{getDisplayName(row.player.name)}</span>
                             )}
                             {row.status.dotClass ? (
                               <span
