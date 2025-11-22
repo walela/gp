@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
-import { CircleCheckBig, ChevronRight, Crown, Activity } from 'lucide-react'
+import { CircleCheckBig, ChevronRight, Crown } from 'lucide-react'
 import { getRankings, getTopPlayers, type PlayerRanking } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
