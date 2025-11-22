@@ -240,7 +240,7 @@ export default async function HomePage() {
       const status = isPlaying
         ? { label: 'Playing live', dotClass: 'bg-emerald-500 ring-emerald-200', animate: 'animate-pulse' }
         : { label: 'Not playing', dotClass: '', animate: '' }
-      const currentTpr = liveTpr ?? (player as any).current_tpr ?? (player as any).tpr ?? '-'
+      const currentTpr = liveTpr ?? (player as { current_tpr?: number; tpr?: number }).current_tpr ?? (player as { current_tpr?: number; tpr?: number }).tpr ?? '-'
       const dropFromHistory = preciseDropMap[playerId]
       const dropScore = isPlaying
         ? dropFromHistory !== undefined
