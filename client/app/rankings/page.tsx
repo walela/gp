@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
-import { CircleCheckBig, ChevronRight, Crown } from 'lucide-react'
+import { ChevronRight, Crown } from 'lucide-react'
 import { getRankings, getTopPlayers, type PlayerRanking } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
@@ -238,8 +238,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 const tableRank = (page - 1) * 25 + index + 1
 
                 const isDefinitelyQualified = isKenyaNumber1 || isJuniorChampion
+                const hasQualified = isHighlightedQualifier || isDefinitelyQualified
                 const movement = view === 'best_4' ? getRankMovement(player) : null
-                const movementBadge = !isDefinitelyQualified && movement ? (
+                const movementBadge = !hasQualified && movement ? (
                   <span
                     aria-label={movement.ariaLabel}
                     className={cn(
@@ -249,13 +250,27 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     {movement.label}
                   </span>
                 ) : null
-                const qualifierBadgeMobile = isDefinitelyQualified ? (
-                  <span className="inline-block rounded-sm bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-green-700">
-                    Q
+                const qualifierBadgeMobile = hasQualified ? (
+                  <span
+                    className={cn(
+                      'inline-block rounded-sm px-1.5 py-0.5 text-[10px] font-semibold uppercase',
+                      isProvisionalQualifier && !isDefinitelyQualified
+                        ? 'bg-teal-100 text-teal-700'
+                        : 'bg-green-100 text-green-700'
+                    )}>
+                    {isProvisionalQualifier && !isDefinitelyQualified ? '?' : 'Q'}
                   </span>
                 ) : null
-                const qualifierBadgeDesktop = isDefinitelyQualified ? (
-                  <CircleCheckBig className="h-5 w-5 text-green-600" strokeWidth={1.75} />
+                const qualifierBadgeDesktop = hasQualified ? (
+                  isProvisionalQualifier && !isDefinitelyQualified ? (
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-teal-600 bg-teal-50 text-[11px] font-semibold text-teal-700">
+                      ?
+                    </span>
+                  ) : (
+                    <span className="inline-flex h-5 items-center justify-center rounded-full border border-green-600 bg-green-50 px-2 text-[11px] font-semibold leading-tight text-green-700">
+                      Q
+                    </span>
+                  )
                 ) : null
 
                 return (
@@ -406,6 +421,15 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             </span>
             <CircleCheckBig className="hidden sm:inline-block h-3.5 w-3.5 text-green-600" strokeWidth={1.75} />
             Confirmed Qualifier
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-teal-700">
+            <span className="inline-flex h-4 items-center justify-center rounded-sm bg-teal-100 px-1.5 text-[11px] font-semibold leading-tight text-teal-700 sm:hidden">
+              ?
+            </span>
+            <span className="hidden sm:inline-flex h-4 w-4 items-center justify-center rounded-full border border-teal-600 bg-teal-50 text-[11px] font-semibold leading-tight text-teal-700">
+              ?
+            </span>
+            Provisional Qualifier (pending Kenya #1)
           </span>
         </div>
       </div>
