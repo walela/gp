@@ -260,7 +260,8 @@ class ChessResultsScraper:
             
             # Calculate TPR - handle different column names
             tpr = 0
-            tpr_columns = ['rp', 'tb6', 'tpr', 'perf']
+            # Some events tuck performance under alternative tie-break columns (e.g., tb5)
+            tpr_columns = ['rp', 'tb6', 'tb5', 'tpr', 'perf']
             for col in tpr_columns:
                 if col in headers:
                     tpr_cell = cells[headers.index(col)]
