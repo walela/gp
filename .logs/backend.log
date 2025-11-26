@@ -99,3 +99,5 @@ INFO:werkzeug:127.0.0.1 - - [26/Nov/2025 14:00:17] "GET /api/tournament/1126042?
 INFO:werkzeug:127.0.0.1 - - [26/Nov/2025 14:00:17] "GET /api/tournament/1130967?all_results=true HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [26/Nov/2025 14:00:17] "GET /api/tournament/1260527?all_results=true HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [26/Nov/2025 14:00:17] "GET /api/tournament/1255540?all_results=true HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Nov/2025 14:00:36] "GET /api/rankings?sort=best_4&dir=desc&page=1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Nov/2025 14:02:30] "GET /api/player/10802886 HTTP/1.1" 200 -

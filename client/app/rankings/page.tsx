@@ -403,10 +403,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             <Crown className="h-3.5 w-3.5 text-amber-600" />
             Kenya #1
           </span>
-          <span className="inline-flex items-center gap-1.5 text-blue-700">
-            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-blue-600 bg-blue-50" />
-            Top 9 Qualifier
-          </span>
           <span className="inline-flex items-center gap-1.5 text-teal-700">
             <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-teal-600 bg-teal-50" />
             Alternate Qualifier
@@ -419,7 +415,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             <span className="inline-flex h-4 items-center justify-center rounded-sm bg-green-100 px-1.5 text-[11px] font-semibold leading-tight text-green-700 sm:hidden">
               Q
             </span>
-            <CircleCheckBig className="hidden sm:inline-block h-3.5 w-3.5 text-green-600" strokeWidth={1.75} />
+            <span className="hidden sm:inline-flex h-4 items-center justify-center rounded-full border border-green-600 bg-green-50 px-2 text-[11px] font-semibold leading-tight text-green-700">
+              Q
+            </span>
             Confirmed Qualifier
           </span>
           <span className="inline-flex items-center gap-1.5 text-teal-700">
