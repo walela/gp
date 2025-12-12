@@ -8,9 +8,6 @@ primary_region = 'jnb'
 
 [build]
 
-[deploy]
-  release_command = "cp /app/gp_tracker.db /data/gp_tracker.db"
-
 [env]
   DB_PATH = '/data/gp_tracker.db'
   PORT = '8080'
