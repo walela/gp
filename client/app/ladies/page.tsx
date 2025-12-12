@@ -84,7 +84,7 @@ export default async function LadiesRankingsPage({ searchParams }: LadiesRanking
     showLegend: true
   }
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'
   const exportUrl = `${apiBase}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}&gender=f`
   const exportFilename = `GP_ladies_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`
 

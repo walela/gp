@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+ENV/
+.git
+.gitignore
+*.md
+client/
+.logs/
+*.db-journal
+*.db-wal
+dev.sh

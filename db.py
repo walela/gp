@@ -1,5 +1,6 @@
 import sqlite3
 import logging
+import os
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
 
@@ -8,7 +9,10 @@ from tournament_metadata import infer_location, infer_rounds, infer_short_name
 logger = logging.getLogger(__name__)
 
 class Database:
-    def __init__(self, db_file: str = 'gp_tracker.db'):
+    def __init__(self, db_file: str = None):
+        # Use DB_PATH env var if set (for Fly.io), otherwise use default
+        if db_file is None:
+            db_file = os.environ.get('DB_PATH', 'gp_tracker.db')
         self.db_file = db_file
         self._init_db()
     

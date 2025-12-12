@@ -160,7 +160,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-4">
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{getShortTournamentName(tournament.name)}</h1>
           <ExportButton 
-            url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/tournament/${id}/export?sort=${sort}&dir=${dir}`}
+            url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/tournament/${id}/export?sort=${sort}&dir=${dir}`}
             filename={`${getShortTournamentName(tournament.name)}_results.csv`}
           />
         </div>

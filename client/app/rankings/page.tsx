@@ -162,7 +162,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       <div className="mb-0 w-full">
         <ViewSelector
           view={view}
-          exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-backend-viuj.onrender.com/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+          exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
           exportFilename={`GP_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
         />
       </div>
