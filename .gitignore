@@ -14,3 +14,10 @@ node_modules/
 .next/
 .vercel/
 .env*.local
+
+# Backend
+backend/.env
+backend/.venv/
+backend/ck-gp*
+__pycache__/
+*.pyc

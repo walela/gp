@@ -155,6 +155,7 @@ CREATE TABLE seasons (
 CREATE TABLE events (
     id          TEXT PRIMARY KEY,
     name        TEXT NOT NULL,      -- "Eldoret Chess Championships 2025"
+    short_name  TEXT NOT NULL,      -- "Eldoret" (admin enters manually)
     season_id   TEXT REFERENCES seasons(id)
 );
 
@@ -164,7 +165,6 @@ CREATE TABLE tournaments (
     event_id        TEXT REFERENCES events(id),
     season_id       TEXT REFERENCES seasons(id),
     name            TEXT NOT NULL,
-    short_name      TEXT,
     section_type    TEXT,           -- 'open', 'ladies', 'juniors', NULL
     location        TEXT,
     rounds          INTEGER,
@@ -198,7 +198,7 @@ CREATE TABLE results (
 );
 
 -- Pre-computed rankings (per season)
-CREATE TABLE player_rankings (
+CREATE TABLE rankings (
     player_id           INTEGER REFERENCES players(id),
     season_id           TEXT REFERENCES seasons(id),
     name                TEXT NOT NULL,
@@ -219,6 +219,7 @@ CREATE INDEX idx_results_player ON results(player_id);
 CREATE INDEX idx_tournaments_season ON tournaments(season_id);
 CREATE INDEX idx_players_federation ON players(federation);
 CREATE INDEX idx_players_sex ON players(sex);
+CREATE INDEX idx_events_season ON events(season_id);
 ```
 
 ### Key Changes from Current
@@ -285,7 +286,7 @@ Group by player, calculate best 1/2/3/4 TPR
     ↓
 Calculate new ranks (cascading sort)
     ↓
-UPDATE player_rankings:
+UPDATE rankings:
     → previous_rank = current_rank (before update)
     → current_rank = new rank
     → best_1, best_2, etc.
@@ -300,7 +301,7 @@ Rank change = current_rank - previous_rank
 
 ```
 GET /api/rankings?season=2026
-    → Fetch from player_rankings where season_id = '2026'
+    → Fetch from rankings where season_id = '2026'
     → Apply cascading sort
     → Return JSON
 
