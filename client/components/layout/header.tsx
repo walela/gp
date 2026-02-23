@@ -8,10 +8,9 @@ export function Header() {
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between gap-4">
           <Link href="/" className="flex items-center min-w-0">
-            <span className="font-bold truncate">
-              <span className="hidden sm:inline">Chess Kenya </span>
-              <span className="sm:hidden">CK GP</span>
-              <span className="hidden sm:inline">Grand Prix Tracker</span>
+            <span className="font-bold truncate text-sm sm:text-base">
+              <span className="hidden sm:inline">Chess Kenya Grand Prix Tracker</span>
+              <span className="sm:hidden">Chess Kenya GP 2026</span>
             </span>
           </Link>
           <MainNav />
