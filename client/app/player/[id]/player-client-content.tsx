@@ -121,7 +121,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden sm:block hidden">
         <div className="bg-gray-50 px-4 py-4 border-b border-gray-200">
           <div className="flex flex-col space-y-3">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{player.name}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{player.name}</h1>
 
             {player.fide_id && (
               <div className="flex items-center gap-2">
@@ -185,7 +185,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
         <div className="bg-white/95 border border-gray-200/60 rounded-lg shadow-sm overflow-hidden">
           <div className="bg-gray-50/80 px-4 py-3 border-b border-gray-200/60">
             <div className="flex flex-col space-y-2">
-              <h1 className="text-2xl font-bold text-gray-900 drop-shadow-sm">{player.name}</h1>
+              <h1 className="text-xl font-bold text-gray-900">{player.name}</h1>
 
               {player.fide_id && (
                 <div className="flex items-center gap-2">
@@ -235,10 +235,24 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
         <h2 className="text-lg font-semibold">Tournament History</h2>
 
         {totalTournaments === 0 ? (
-          <div className="rounded-lg border border-gray-200/60 bg-white/95 p-8 text-center">
-            <p className="text-gray-500">No tournaments played in {currentSeason}</p>
-            <p className="text-sm text-gray-400 mt-1">Try selecting a different season</p>
-          </div>
+          <Card className="rounded-lg border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
+            <CustomTable>
+              <CustomTableHeader>
+                <CustomTableRow>
+                  <CustomTableHead className="text-xs">Tournament</CustomTableHead>
+                  <CustomTableHead className="text-right text-xs">TPR</CustomTableHead>
+                  <CustomTableHead className="text-right text-xs">Points</CustomTableHead>
+                </CustomTableRow>
+              </CustomTableHeader>
+              <CustomTableBody>
+                <CustomTableRow>
+                  <CustomTableCell colSpan={3} className="text-center py-8 text-gray-400">
+                    No tournaments in {currentSeason}
+                  </CustomTableCell>
+                </CustomTableRow>
+              </CustomTableBody>
+            </CustomTable>
+          </Card>
         ) : (
         <>
         {/* Mobile View */}
