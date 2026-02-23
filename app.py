@@ -398,7 +398,7 @@ def player(fide_id):
         c.execute(
             """
             SELECT player_id, name, fide_id, rating, tournaments_played,
-                   best_1, tournament_1, best_2, best_3, best_4
+                   best_1, tournament_1, best_2, best_3, best_4, rank
             FROM player_rankings
             WHERE fide_id = ? AND season = ? AND gender IS NULL
             """,
@@ -410,34 +410,9 @@ def player(fide_id):
             player_ranking.pop("player_id", None)
 
     if player_ranking:
-        # Calculate cascading rank consistent with rankings endpoint
-        player_rankings = db.get_all_player_rankings(season=season, gender=None)
-
-        def cascading_sort_key(player):
-            if player["tournaments_played"] >= 4 and player["best_4"] > 0:
-                return (4, player["best_4"])
-            elif player["tournaments_played"] >= 3 and player["best_3"] > 0:
-                return (3, player["best_3"])
-            elif player["tournaments_played"] >= 2 and player["best_2"] > 0:
-                return (2, player["best_2"])
-            elif player["tournaments_played"] >= 1 and player["best_1"] > 0:
-                return (1, player["best_1"])
-            else:
-                return (0, 0)
-
-        player_rankings.sort(key=cascading_sort_key, reverse=True)
-
-        current_rank = next(
-            (
-                idx
-                for idx, ranking in enumerate(player_rankings, start=1)
-                if ranking.get("fide_id") == fide_id
-            ),
-            None,
-        )
-
-        if current_rank is not None:
-            player_ranking["current_rank"] = current_rank
+        # Rank is stored directly in player_rankings
+        if player_ranking.get("rank"):
+            player_ranking["current_rank"] = player_ranking["rank"]
 
     latest_tournament_rating = next(
         (

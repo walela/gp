@@ -99,12 +99,14 @@ class Database:
                 )
             ''')
 
-            # Add season and gender columns if missing
+            # Add columns if missing
             ranking_columns = {row[1] for row in c.execute('PRAGMA table_info(player_rankings)')}
             if 'season' not in ranking_columns:
                 c.execute('ALTER TABLE player_rankings ADD COLUMN season INTEGER')
             if 'gender' not in ranking_columns:
                 c.execute('ALTER TABLE player_rankings ADD COLUMN gender TEXT')
+            if 'rank' not in ranking_columns:
+                c.execute('ALTER TABLE player_rankings ADD COLUMN rank INTEGER')
 
             c.execute('''
                 CREATE TABLE IF NOT EXISTS ranking_snapshots (
@@ -128,7 +130,15 @@ class Database:
             c.execute('CREATE INDEX IF NOT EXISTS idx_ranking_snapshots_time ON ranking_snapshots(snapshot_time)')
             c.execute('CREATE INDEX IF NOT EXISTS idx_ranking_snapshots_player ON ranking_snapshots(player_id)')
             c.execute('CREATE INDEX IF NOT EXISTS idx_ranking_snapshots_season ON ranking_snapshots(season)')
-            
+
+            # Performance indexes
+            c.execute('CREATE INDEX IF NOT EXISTS idx_results_tournament_id ON results(tournament_id)')
+            c.execute('CREATE INDEX IF NOT EXISTS idx_results_tournament_tpr ON results(tournament_id, tpr DESC)')
+            c.execute('CREATE INDEX IF NOT EXISTS idx_players_fide_id ON players(fide_id)')
+            c.execute('CREATE INDEX IF NOT EXISTS idx_tournaments_start_date ON tournaments(start_date)')
+            c.execute('CREATE INDEX IF NOT EXISTS idx_player_rankings_season ON player_rankings(season)')
+            c.execute('CREATE INDEX IF NOT EXISTS idx_player_rankings_season_gender ON player_rankings(season, gender)')
+
             conn.commit()
     
     def save_tournament(
@@ -707,15 +717,34 @@ class Database:
             all_results = self.get_all_results(season=current_season)
             ladies_rankings = self._calculate_rankings_from_results(all_results, current_season, gender_filter='F')
 
-            # Store rankings
-            all_rankings = open_rankings + ladies_rankings
+            # Sort and assign ranks to each category
+            def cascading_sort_key(player_tuple):
+                # player_tuple: 4=tournaments_played, 5=best_1, 7=best_2, 8=best_3, 9=best_4
+                tp = player_tuple[4]
+                if tp >= 4 and player_tuple[9] > 0:
+                    return (4, player_tuple[9])
+                elif tp >= 3 and player_tuple[8] > 0:
+                    return (3, player_tuple[8])
+                elif tp >= 2 and player_tuple[7] > 0:
+                    return (2, player_tuple[7])
+                elif tp >= 1 and player_tuple[5] > 0:
+                    return (1, player_tuple[5])
+                return (0, 0)
+
+            open_rankings.sort(key=cascading_sort_key, reverse=True)
+            ladies_rankings.sort(key=cascading_sort_key, reverse=True)
+
+            # Add rank to each tuple
+            open_with_rank = [t + (i,) for i, t in enumerate(open_rankings, 1)]
+            ladies_with_rank = [t + (i,) for i, t in enumerate(ladies_rankings, 1)]
+            all_rankings = open_with_rank + ladies_with_rank
 
             with sqlite3.connect(self.db_file) as conn:
                 c = conn.cursor()
                 c.executemany('''
                     INSERT INTO player_rankings
-                    (player_id, name, fide_id, rating, tournaments_played, best_1, tournament_1, best_2, best_3, best_4, season, gender)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (player_id, name, fide_id, rating, tournaments_played, best_1, tournament_1, best_2, best_3, best_4, season, gender, rank)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''', all_rankings)
                 conn.commit()
                 logger.info(f"Recalculated and stored rankings for {c.rowcount} players in season {current_season}.")
@@ -867,24 +896,60 @@ class Database:
             }
 
     def get_all_tournament_stats(self, season: int = None) -> Dict[str, Dict]:
-        """Get stats for all tournaments in one query."""
+        """Get stats for all tournaments using window functions (single query)."""
         with sqlite3.connect(self.db_file) as conn:
             c = conn.cursor()
 
-            # Get tournament IDs for the season
+            season_filter = f"AND t.start_date LIKE '{season}%'" if season else ""
+
+            # Get avg top 10 TPR per tournament
+            c.execute(f'''
+                WITH ranked_tpr AS (
+                    SELECT r.tournament_id, r.tpr,
+                        ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.tpr DESC) as rn
+                    FROM results r
+                    JOIN tournaments t ON r.tournament_id = t.id
+                    WHERE r.tpr IS NOT NULL
+                    AND (r.result_status IS NULL OR r.result_status = 'valid')
+                    {season_filter}
+                )
+                SELECT tournament_id, ROUND(AVG(tpr)) as avg_top10_tpr
+                FROM ranked_tpr
+                WHERE rn <= 10
+                GROUP BY tournament_id
+            ''')
+            tpr_stats = {row[0]: row[1] for row in c.fetchall()}
+
+            # Get avg top 24 rating per tournament
+            c.execute(f'''
+                WITH ranked_rating AS (
+                    SELECT r.tournament_id, r.rating,
+                        ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.rating DESC) as rn
+                    FROM results r
+                    JOIN tournaments t ON r.tournament_id = t.id
+                    WHERE r.rating IS NOT NULL
+                    {season_filter}
+                )
+                SELECT tournament_id, ROUND(AVG(rating)) as avg_top24_rating
+                FROM ranked_rating
+                WHERE rn <= 24
+                GROUP BY tournament_id
+            ''')
+            rating_stats = {row[0]: row[1] for row in c.fetchall()}
+
+            # Get all tournament IDs
             if season:
-                c.execute('''
-                    SELECT id FROM tournaments
-                    WHERE start_date LIKE ?
-                ''', (f'{season}%',))
+                c.execute('SELECT id FROM tournaments WHERE start_date LIKE ?', (f'{season}%',))
             else:
                 c.execute('SELECT id FROM tournaments')
 
-            tournament_ids = [row[0] for row in c.fetchall()]
-
             stats = {}
-            for t_id in tournament_ids:
-                stats[t_id] = self.get_tournament_stats(t_id)
+            for row in c.fetchall():
+                t_id = row[0]
+                stats[t_id] = {
+                    'avg_top10_tpr': tpr_stats.get(t_id, 0) or 0,
+                    'avg_top24_rating': rating_stats.get(t_id, 0) or 0
+                }
 
             return stats
 
