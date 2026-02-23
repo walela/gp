@@ -32,7 +32,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   // Calculate performance metrics
   const totalTournaments = player.results.length
-  const bestTpr = totalTournaments > 0 ? Math.max(...player.results.map(r => r.tpr || 0)) : 0
+  const bestTpr = totalTournaments > 0 ? Math.max(...player.results.map(r => r.tpr || 0)) : null
   const validTprResults = player.results.filter(r => r.tpr && (!r.result_status || r.result_status === 'valid'))
   const averageTpr =
     validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
@@ -144,8 +144,8 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
             <Star className="h-4 w-4 text-amber-500 mb-1" />
             <span className="text-xs text-muted-foreground uppercase tracking-wide">Best</span>
             <p className="font-semibold text-lg flex items-center gap-1">
-              {bestTpr}
-              {bestTpr >= 2000 && <Trophy className="h-3 w-3 text-amber-500" />}
+              {bestTpr ?? '-'}
+              {bestTpr && bestTpr >= 2000 && <Trophy className="h-3 w-3 text-amber-500" />}
             </p>
           </div>
 
@@ -207,7 +207,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
             <div className="flex flex-col items-center bg-white rounded px-2.5 py-3 border border-gray-100">
               <Star className="h-4 w-4 text-amber-500 mb-1" />
               <span className="text-xs text-gray-500 uppercase tracking-wide">Best</span>
-              <p className="font-bold text-lg text-gray-900">{bestTpr}</p>
+              <p className="font-bold text-lg text-gray-900">{bestTpr ?? '-'}</p>
             </div>
 
             <div className="flex flex-col items-center bg-white rounded px-2.5 py-3 border border-gray-100">
