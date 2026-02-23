@@ -866,6 +866,28 @@ class Database:
                 logger.error(f"Error counting results for tournament {tournament_id}: {e}")
                 return 0 # Return 0 if table/column missing or other SQL error
 
+    def get_all_tournament_results_counts(self, season: int = None) -> Dict[str, int]:
+        """Get results counts for all tournaments in a single query."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            if season:
+                c.execute('''
+                    SELECT r.tournament_id, COUNT(*) as count
+                    FROM results r
+                    JOIN tournaments t ON r.tournament_id = t.id
+                    WHERE t.start_date LIKE ?
+                    AND (r.result_status IS NULL OR r.result_status = 'valid')
+                    GROUP BY r.tournament_id
+                ''', (f'{season}%',))
+            else:
+                c.execute('''
+                    SELECT tournament_id, COUNT(*) as count
+                    FROM results
+                    WHERE result_status IS NULL OR result_status = 'valid'
+                    GROUP BY tournament_id
+                ''')
+            return {row[0]: row[1] for row in c.fetchall()}
+
     def get_tournament_stats(self, tournament_id: str) -> Dict:
         """Get tournament stats: avgTop10TPR and avgTop24Rating."""
         with sqlite3.connect(self.db_file) as conn:
@@ -900,41 +922,70 @@ class Database:
         with sqlite3.connect(self.db_file) as conn:
             c = conn.cursor()
 
-            season_filter = f"AND t.start_date LIKE '{season}%'" if season else ""
-
             # Get avg top 10 TPR per tournament
-            c.execute(f'''
-                WITH ranked_tpr AS (
-                    SELECT r.tournament_id, r.tpr,
-                        ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.tpr DESC) as rn
-                    FROM results r
-                    JOIN tournaments t ON r.tournament_id = t.id
-                    WHERE r.tpr IS NOT NULL
-                    AND (r.result_status IS NULL OR r.result_status = 'valid')
-                    {season_filter}
-                )
-                SELECT tournament_id, ROUND(AVG(tpr)) as avg_top10_tpr
-                FROM ranked_tpr
-                WHERE rn <= 10
-                GROUP BY tournament_id
-            ''')
+            if season:
+                c.execute('''
+                    WITH ranked_tpr AS (
+                        SELECT r.tournament_id, r.tpr,
+                            ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.tpr DESC) as rn
+                        FROM results r
+                        JOIN tournaments t ON r.tournament_id = t.id
+                        WHERE r.tpr IS NOT NULL
+                        AND (r.result_status IS NULL OR r.result_status = 'valid')
+                        AND t.start_date LIKE ?
+                    )
+                    SELECT tournament_id, ROUND(AVG(tpr)) as avg_top10_tpr
+                    FROM ranked_tpr
+                    WHERE rn <= 10
+                    GROUP BY tournament_id
+                ''', (f'{season}%',))
+            else:
+                c.execute('''
+                    WITH ranked_tpr AS (
+                        SELECT r.tournament_id, r.tpr,
+                            ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.tpr DESC) as rn
+                        FROM results r
+                        JOIN tournaments t ON r.tournament_id = t.id
+                        WHERE r.tpr IS NOT NULL
+                        AND (r.result_status IS NULL OR r.result_status = 'valid')
+                    )
+                    SELECT tournament_id, ROUND(AVG(tpr)) as avg_top10_tpr
+                    FROM ranked_tpr
+                    WHERE rn <= 10
+                    GROUP BY tournament_id
+                ''')
             tpr_stats = {row[0]: row[1] for row in c.fetchall()}
 
             # Get avg top 24 rating per tournament
-            c.execute(f'''
-                WITH ranked_rating AS (
-                    SELECT r.tournament_id, r.rating,
-                        ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.rating DESC) as rn
-                    FROM results r
-                    JOIN tournaments t ON r.tournament_id = t.id
-                    WHERE r.rating IS NOT NULL
-                    {season_filter}
-                )
-                SELECT tournament_id, ROUND(AVG(rating)) as avg_top24_rating
-                FROM ranked_rating
-                WHERE rn <= 24
-                GROUP BY tournament_id
-            ''')
+            if season:
+                c.execute('''
+                    WITH ranked_rating AS (
+                        SELECT r.tournament_id, r.rating,
+                            ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.rating DESC) as rn
+                        FROM results r
+                        JOIN tournaments t ON r.tournament_id = t.id
+                        WHERE r.rating IS NOT NULL
+                        AND t.start_date LIKE ?
+                    )
+                    SELECT tournament_id, ROUND(AVG(rating)) as avg_top24_rating
+                    FROM ranked_rating
+                    WHERE rn <= 24
+                    GROUP BY tournament_id
+                ''', (f'{season}%',))
+            else:
+                c.execute('''
+                    WITH ranked_rating AS (
+                        SELECT r.tournament_id, r.rating,
+                            ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.rating DESC) as rn
+                        FROM results r
+                        JOIN tournaments t ON r.tournament_id = t.id
+                        WHERE r.rating IS NOT NULL
+                    )
+                    SELECT tournament_id, ROUND(AVG(rating)) as avg_top24_rating
+                    FROM ranked_rating
+                    WHERE rn <= 24
+                    GROUP BY tournament_id
+                ''')
             rating_stats = {row[0]: row[1] for row in c.fetchall()}
 
             # Get all tournament IDs

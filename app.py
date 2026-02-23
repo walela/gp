@@ -84,8 +84,9 @@ def tournaments():
     tournament_list = []
     all_db_tournaments = db.get_all_tournaments(season=season)
 
-    # Get all tournament stats in batch
+    # Get all tournament stats and results counts in batch
     all_stats = db.get_all_tournament_stats(season=season)
+    all_results_counts = db.get_all_tournament_results_counts(season=season)
 
     for t_data in all_db_tournaments:
         try:
@@ -97,7 +98,7 @@ def tournaments():
             t_location = t_data.get("location")
             t_rounds = t_data.get("rounds")
 
-            results_count = db.get_tournament_results_count(t_id)
+            results_count = all_results_counts.get(t_id, 0)
             stats = all_stats.get(t_id, {'avg_top10_tpr': 0, 'avg_top24_rating': 0})
 
             rounds = t_rounds or infer_rounds(t_name)
