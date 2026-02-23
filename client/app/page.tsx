@@ -6,7 +6,7 @@ import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
-import { CalendarDays, MapPin, ArrowRight } from 'lucide-react'
+import { CalendarDays, MapPin, ArrowRight, RotateCw } from 'lucide-react'
 
 export const revalidate = 86400 // cache for 24 hours
 
@@ -88,8 +88,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`px-4 py-3 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      className={`px-4 py-2.5 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
+                      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0">
                           {detailHref ? (
                             <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
@@ -100,7 +100,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                               {tournament.short_name || tournament.name}
                             </span>
                           )}
-                          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                          <div className="mt-1.5 flex items-center gap-x-3 text-xs text-gray-500">
                             <span className="inline-flex items-center gap-1">
                               <CalendarDays className="h-3 w-3" />
                               {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
@@ -110,6 +110,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                               <span className="truncate">{tournament.location}</span>
                             </span>
                           </div>
+                          {tournament.rounds && (
+                            <div className="mt-1.5 text-xs text-gray-500">
+                              <span className="inline-flex items-center gap-1">
+                                <RotateCw className="h-3 w-3" />
+                                {tournament.rounds} rounds
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center justify-between sm:justify-end gap-3">
                           <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">

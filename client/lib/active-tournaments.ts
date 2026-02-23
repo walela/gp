@@ -26,6 +26,7 @@ export const upcomingTournaments: Tournament[] = [
     startDate: '2026-03-07',
     endDate: '2026-03-08',
     location: 'Mama Grace Onyango Social Hall, Kisumu',
+    rounds: 6,
     confirmed: true,
     registrationUrl: 'https://forms.gle/gqHvBQ1ohFJ5jnEM7',
     detailsUrl: null
@@ -37,6 +38,7 @@ export const upcomingTournaments: Tournament[] = [
     startDate: '2026-03-20',
     endDate: '2026-03-22',
     location: 'ALX The Piano, Westlands',
+    rounds: 8,
     confirmed: true,
     registrationUrl: 'https://mavens.co.ke/event/register/16',
     detailsUrl: null
@@ -48,6 +50,7 @@ export const upcomingTournaments: Tournament[] = [
     startDate: '2026-04-03',
     endDate: '2026-04-06',
     location: 'TBA',
+    rounds: 8,
     confirmed: true,
     detailsUrl: null
   },
