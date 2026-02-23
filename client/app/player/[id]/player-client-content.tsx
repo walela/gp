@@ -309,7 +309,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                               rel="noopener noreferrer"
                               className="text-[11px] text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 w-fit"
                               title="View player card on chess-results.com">
-                              Card <ExternalLink className="h-3 w-3" />
+                              View on Chess-Results <ExternalLink className="h-3 w-3" />
                             </a>
                           )}
                         </div>
