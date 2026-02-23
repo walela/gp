@@ -148,7 +148,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
   const highlightCount = 9
   const { topPlayers } = await getTopPlayers({ count: highlightCount + 1, sortBy: 'best_4', season, gender })
-  const topPlayerIds = topPlayers.map(p => p.fide_id || p.name)
 
   const kenyaNumber1Name = season === currentYear ? 'kaloki' : 'mcligeyo'
   const kenyaNumber1Player = [...rankings, ...topPlayers].find(player =>
