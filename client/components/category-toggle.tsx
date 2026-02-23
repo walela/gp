@@ -5,15 +5,21 @@ import { cn } from '@/lib/utils'
 
 interface CategoryToggleProps {
   currentCategory: 'open' | 'ladies'
+  currentSeason: number
   className?: string
 }
 
-export function CategoryToggle({ currentCategory, className }: CategoryToggleProps) {
+export function CategoryToggle({ currentCategory, currentSeason, className }: CategoryToggleProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
+  // Ladies data only available from 2026 onwards
+  const ladiesDisabled = currentSeason < 2026
+
   const handleCategoryChange = (category: 'open' | 'ladies') => {
+    if (category === 'ladies' && ladiesDisabled) return
+
     const params = new URLSearchParams(searchParams.toString())
     if (category === 'open') {
       params.delete('category')
@@ -39,11 +45,14 @@ export function CategoryToggle({ currentCategory, className }: CategoryTogglePro
       </button>
       <button
         onClick={() => handleCategoryChange('ladies')}
+        disabled={ladiesDisabled}
         className={cn(
           'rounded-md px-4 py-1.5 text-sm font-medium transition-colors',
           currentCategory === 'ladies'
             ? 'bg-white text-gray-900 shadow-sm'
-            : 'text-gray-600 hover:text-gray-900'
+            : ladiesDisabled
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'text-gray-600 hover:text-gray-900'
         )}>
         Ladies
       </button>
