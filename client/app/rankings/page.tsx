@@ -150,8 +150,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const { topPlayers } = await getTopPlayers({ count: highlightCount + 1, sortBy: 'best_4', season, gender })
   const topPlayerIds = topPlayers.map(p => p.fide_id || p.name)
 
+  const kenyaNumber1Name = season === currentYear ? 'kaloki' : 'jadon'
   const kenyaNumber1Player = [...rankings, ...topPlayers].find(player =>
-    player.name.toLowerCase().includes('jadon')
+    player.name.toLowerCase().includes(kenyaNumber1Name)
   )
   const kenyaNumber1Id = kenyaNumber1Player?.fide_id || kenyaNumber1Player?.name
 
@@ -430,40 +431,42 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
         </CustomTable>
       </Card>
 
-      <div className="border border-gray-200 bg-white/95 shadow-sm">
-        <div className="px-4 py-3 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-700">
-          <span className="inline-flex items-center gap-1.5 text-amber-700">
-            <Crown className="h-3.5 w-3.5 text-amber-600" />
-            Kenya #1
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-teal-700">
-            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-teal-600 bg-teal-50" />
-            Alternate Qualifier
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-purple-700">
-            <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-purple-500 bg-purple-50" />
-            National Junior Champion
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-green-700">
-            <span className="inline-flex h-4 items-center justify-center rounded-sm bg-green-100 px-1.5 text-[11px] font-semibold leading-tight text-green-700 sm:hidden">
-              Q
+      {season !== currentYear && (
+        <div className="border border-gray-200 bg-white/95 shadow-sm">
+          <div className="px-4 py-3 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-700">
+            <span className="inline-flex items-center gap-1.5 text-amber-700">
+              <Crown className="h-3.5 w-3.5 text-amber-600" />
+              Kenya #1
             </span>
-            <span className="hidden sm:inline-flex h-4 items-center justify-center rounded-full border border-green-600 bg-green-50 px-2 text-[11px] font-semibold leading-tight text-green-700">
-              Q
+            <span className="inline-flex items-center gap-1.5 text-teal-700">
+              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-teal-600 bg-teal-50" />
+              Alternate Qualifier
             </span>
-            Confirmed Qualifier
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-teal-700">
-            <span className="inline-flex h-4 items-center justify-center rounded-sm bg-teal-100 px-1.5 text-[11px] font-semibold leading-tight text-teal-700 sm:hidden">
-              ?
+            <span className="inline-flex items-center gap-1.5 text-purple-700">
+              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-purple-500 bg-purple-50" />
+              National Junior Champion
             </span>
-            <span className="hidden sm:inline-flex h-4 w-4 items-center justify-center rounded-full border border-teal-600 bg-teal-50 text-[11px] font-semibold leading-tight text-teal-700">
-              ?
+            <span className="inline-flex items-center gap-1.5 text-green-700">
+              <span className="inline-flex h-4 items-center justify-center rounded-sm bg-green-100 px-1.5 text-[11px] font-semibold leading-tight text-green-700 sm:hidden">
+                Q
+              </span>
+              <span className="hidden sm:inline-flex h-4 items-center justify-center rounded-full border border-green-600 bg-green-50 px-2 text-[11px] font-semibold leading-tight text-green-700">
+                Q
+              </span>
+              Confirmed Qualifier
             </span>
-            Provisional Qualifier (pending Kenya #1)
-          </span>
+            <span className="inline-flex items-center gap-1.5 text-teal-700">
+              <span className="inline-flex h-4 items-center justify-center rounded-sm bg-teal-100 px-1.5 text-[11px] font-semibold leading-tight text-teal-700 sm:hidden">
+                ?
+              </span>
+              <span className="hidden sm:inline-flex h-4 w-4 items-center justify-center rounded-full border border-teal-600 bg-teal-50 text-[11px] font-semibold leading-tight text-teal-700">
+                ?
+              </span>
+              Provisional Qualifier (pending Kenya #1)
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {total_pages > 1 && (
         <Pagination
