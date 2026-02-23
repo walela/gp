@@ -3,6 +3,8 @@ import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 import { Metadata } from 'next'
 
+export const revalidate = 60
+
 interface PlayerPageProps {
   params: { id: string }
   searchParams: { season?: string }

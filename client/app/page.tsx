@@ -7,7 +7,7 @@ import { Metadata } from 'next'
 import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60 // cache for 60 seconds
 
 export const metadata: Metadata = {
   title: 'Chess Kenya Grand Prix - Official Tournament Tracker',

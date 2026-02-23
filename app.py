@@ -19,6 +19,13 @@ db = Database()
 
 PLAYERS_PER_PAGE = 30
 
+@app.after_request
+def add_cache_headers(response):
+    """Add cache headers to GET requests."""
+    if request.method == 'GET' and response.status_code == 200:
+        response.headers['Cache-Control'] = 'public, max-age=60'
+    return response
+
 
 def get_tournament_data(tournament_id: str):
     """Get tournament data from database or scrape if needed."""
