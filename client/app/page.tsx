@@ -6,6 +6,7 @@ import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
+import { CalendarDays, MapPin, ArrowRight } from 'lucide-react'
 
 export const revalidate = 86400 // cache for 24 hours
 
@@ -61,19 +62,19 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto sm:px-4 py-4 space-y-8 max-w-11xl">
+      <div className="container mx-auto px-3 sm:px-4 py-4 space-y-8 max-w-11xl">
         {upcomingTournaments.length > 0 && season === currentYear && (
           <section>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 gap-3">
               <div className="flex items-center gap-3">
                 <h2 className="text-sm font-bold tracking-tight text-gray-800">UPCOMING</h2>
                 <span className="text-sm text-gray-400">{upcomingTournaments.length} events</span>
               </div>
-              <SeasonSelector seasons={seasons} currentSeason={season} />
+              <SeasonSelector seasons={seasons} currentSeason={season} className="h-10 px-4 text-base sm:h-auto sm:px-3 sm:text-sm" />
             </div>
 
-            <div className="bg-white/95 rounded-lg shadow-sm overflow-hidden">
-              <div className="divide-y divide-gray-100">
+            <div className="bg-white/95 border border-gray-200/80 rounded-xl shadow-sm overflow-hidden">
+              <div className="divide-y divide-gray-200/70">
                 {upcomingTournaments.map((tournament, index) => {
                   if (!tournament.startDate || !tournament.endDate) return null
 
@@ -87,25 +88,45 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
-                      <div className="min-w-0">
+                      className={`px-4 py-3.5 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-slate-50 transition-colors`}>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0">
                         {detailHref ? (
-                          <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
+                          <Link href={detailHref} className="text-lg sm:text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-semibold sm:font-medium leading-tight">
                             {tournament.short_name || tournament.name}
                           </Link>
                         ) : (
-                          <span className="text-sm text-blue-600 font-medium">
+                          <span className="text-lg sm:text-sm text-blue-600 font-semibold sm:font-medium leading-tight">
                             {tournament.short_name || tournament.name}
                           </span>
                         )}
-                        <p className="text-xs text-gray-500 mt-1">
-                          {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
-                          <span className="mx-1.5">•</span>
-                          {tournament.location}
-                        </p>
-                      </div>
-                      <div className="flex-shrink-0 ml-4 text-xs text-gray-500">
-                        {formatTimeAway(tournament.startDate)}
+                        </div>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm sm:text-xs text-gray-600">
+                            <span className="inline-flex items-center gap-1.5">
+                              <CalendarDays className="h-3.5 w-3.5 text-gray-500" />
+                              {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 min-w-0">
+                              <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
+                              <span className="truncate">{tournament.location}</span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between sm:justify-end sm:items-end gap-3">
+                          <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                            {formatTimeAway(tournament.startDate)}
+                          </span>
+                          {tournament.registrationUrl && (
+                            <a
+                              href={tournament.registrationUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition-colors">
+                              Register
+                              <ArrowRight className="h-3.5 w-3.5" />
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )
@@ -136,8 +157,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <span className="text-sm text-gray-400">{plannedTournaments.length} events</span>
             </div>
 
-            <div className="bg-white/95 rounded-lg shadow-sm overflow-hidden">
-              <div className="divide-y divide-gray-100">
+            <div className="bg-white/95 border border-gray-200/80 rounded-xl shadow-sm overflow-hidden">
+              <div className="divide-y divide-gray-200/70">
                 {plannedTournaments.map((tournament, index) => {
                   const hasDates = Boolean(tournament.startDate && tournament.endDate)
 
@@ -151,27 +172,29 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
-                      <div className="min-w-0">
+                      className={`px-4 py-3.5 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-slate-50 transition-colors`}>
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
                         {detailHref ? (
-                          <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
+                          <Link href={detailHref} className="text-lg sm:text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-semibold sm:font-medium leading-tight">
                             {tournament.short_name || tournament.name}
                           </Link>
                         ) : (
-                          <span className="text-sm text-blue-600 font-medium">
+                          <span className="text-lg sm:text-sm text-blue-600 font-semibold sm:font-medium leading-tight">
                             {tournament.short_name || tournament.name}
                           </span>
                         )}
-                        <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-sm sm:text-xs text-gray-600 mt-1">
                           {hasDates
                             ? `${dayjs(tournament.startDate!).format('MMM Do')}-${dayjs(tournament.endDate!).format('Do')}`
                             : tournament.month ?? 'TBA'}
                           <span className="mx-1.5">•</span>
                           {tournament.location}
                         </p>
-                      </div>
-                      <div className="flex-shrink-0 ml-4 text-xs text-gray-400">
-                        TBC
+                        </div>
+                        <div className="flex-shrink-0 ml-4 text-xs font-medium text-gray-500 rounded-full bg-gray-100 px-2.5 py-1">
+                          TBC
+                        </div>
                       </div>
                     </div>
                   )

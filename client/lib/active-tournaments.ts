@@ -21,22 +21,24 @@ export interface Tournament {
 export const upcomingTournaments: Tournament[] = [
   {
     id: 'kisumu-open-2026',
-    name: 'Kisumu Open 1st Edition - Grand Prix',
+    name: '2nd Edition Kisumu Open Chess Championship - Grand Prix',
     short_name: 'Kisumu Open',
     startDate: '2026-03-07',
     endDate: '2026-03-08',
-    location: 'Kisumu Social Hall',
+    location: 'Mama Grace Onyango Social Hall, Kisumu',
     confirmed: true,
+    registrationUrl: 'https://forms.gle/gqHvBQ1ohFJ5jnEM7',
     detailsUrl: null
   },
   {
     id: 'mavens-2026',
-    name: 'Mavens International Chess Championships - Grand Prix',
+    name: 'Mavens International Open 2026 - Grand Prix',
     short_name: 'Mavens Open',
     startDate: '2026-03-20',
     endDate: '2026-03-22',
-    location: 'The Piano, Westlands',
+    location: 'ALX The Piano, Westlands',
     confirmed: true,
+    registrationUrl: 'https://mavens.co.ke/event/register/16',
     detailsUrl: null
   },
   {
