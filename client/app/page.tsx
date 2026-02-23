@@ -87,7 +87,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-50/50' : 'bg-white'} hover:bg-gray-100/50 transition-colors`}>
+                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
                       <div className="min-w-0">
                         {detailHref ? (
                           <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
@@ -151,7 +151,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-50/50' : 'bg-white'} hover:bg-gray-100/50 transition-colors`}>
+                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
                       <div className="min-w-0">
                         {detailHref ? (
                           <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
