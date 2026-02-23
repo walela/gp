@@ -17,7 +17,7 @@ import { getShortTournamentName, formatTournamentDate, inferTournamentLocation }
 import { ExportButton } from '@/components/ui/export-button'
 import { Metadata } from 'next'
 
-export const revalidate = 60
+export const revalidate = 3600 // cache for 1 hour
 
 interface TournamentPageProps {
   params: {
