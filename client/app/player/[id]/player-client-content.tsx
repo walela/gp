@@ -302,24 +302,16 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center flex-wrap gap-2 text-[11px] text-gray-500">
-                            <span>Rank: {result.start_rank ?? '-'}</span>
-                            <span className="text-gray-400">•</span>
-                            <span>Rating: {result.rating_in_tournament}</span>
-                            {result.start_rank && result.player_card_url && (
-                              <>
-                                <span className="text-gray-400">•</span>
-                                <a
-                                  href={result.player_card_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
-                                  title="View player card on chess-results.com">
-                                  Card <ExternalLink className="h-3 w-3" />
-                                </a>
-                              </>
-                            )}
-                          </div>
+                          {result.player_card_url && (
+                            <a
+                              href={result.player_card_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[11px] text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 w-fit"
+                              title="View player card on chess-results.com">
+                              Card <ExternalLink className="h-3 w-3" />
+                            </a>
+                          )}
                         </div>
                       </CustomTableCell>
                       <CustomTableCell className="text-right tabular-nums px-2 py-3">
