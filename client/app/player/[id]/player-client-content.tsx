@@ -32,7 +32,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   // Calculate performance metrics
   const totalTournaments = player.results.length
-  const bestTpr = Math.max(...player.results.map(r => r.tpr || 0))
+  const bestTpr = totalTournaments > 0 ? Math.max(...player.results.map(r => r.tpr || 0)) : 0
   const validTprResults = player.results.filter(r => r.tpr && (!r.result_status || r.result_status === 'valid'))
   const averageTpr =
     validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
@@ -234,6 +234,13 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
       <div className="space-y-2">
         <h2 className="text-lg font-semibold">Tournament History</h2>
 
+        {totalTournaments === 0 ? (
+          <div className="rounded-lg border border-gray-200/60 bg-white/95 p-8 text-center">
+            <p className="text-gray-500">No tournaments played in {currentSeason}</p>
+            <p className="text-sm text-gray-400 mt-1">Try selecting a different season</p>
+          </div>
+        ) : (
+        <>
         {/* Mobile View */}
         <div className="block sm:hidden">
           <Card className="rounded-lg border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
@@ -461,6 +468,8 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
             </CustomTable>
           </Card>
         </div>
+        </>
+        )}
       </div>
     </div>
   )
