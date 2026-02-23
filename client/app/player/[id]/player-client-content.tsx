@@ -16,15 +16,18 @@ import {
 } from '@/components/ui/custom-table'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { SeasonSelector } from '@/components/season-selector'
 
 interface PlayerClientContentProps {
   player: PlayerDetails
   playerRanking: (PlayerRanking & { currentRank?: number }) | null
+  seasons: number[]
+  currentSeason: number
 }
 
 type SortField = 'tournament' | 'start_rank' | 'rating' | 'points' | 'tpr'
 
-export default function PlayerClientContent({ player, playerRanking }: PlayerClientContentProps) {
+export default function PlayerClientContent({ player, playerRanking, seasons, currentSeason }: PlayerClientContentProps) {
   const [sortField, setSortField] = useState<SortField>('tpr')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   // Calculate performance metrics
@@ -109,6 +112,11 @@ export default function PlayerClientContent({ player, playerRanking }: PlayerCli
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8 max-w-6xl">
+      {/* Season Selector */}
+      <div className="flex justify-end">
+        <SeasonSelector seasons={seasons} currentSeason={currentSeason} />
+      </div>
+
       {/* Player Header */}
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden sm:block hidden">
         <div className="bg-gray-50 px-4 py-4 border-b border-gray-200">

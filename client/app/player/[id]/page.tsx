@@ -1,10 +1,11 @@
-import { getPlayer, PlayerDetails, getRankings, PlayerRanking } from '@/services/api'
+import { getPlayer, PlayerDetails, getRankings, PlayerRanking, getSeasons } from '@/services/api'
 import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 import { Metadata } from 'next'
 
 interface PlayerPageProps {
   params: { id: string }
+  searchParams: { season?: string }
 }
 
 export async function generateMetadata({ params }: PlayerPageProps): Promise<Metadata> {
@@ -47,16 +48,22 @@ export async function generateMetadata({ params }: PlayerPageProps): Promise<Met
   }
 }
 
-export default async function PlayerPage({ params }: PlayerPageProps) {
+export default async function PlayerPage({ params, searchParams }: PlayerPageProps) {
   // Properly await params to access its properties
   const { id } = await params
+  const resolvedSearchParams = await searchParams
+
+  // Get available seasons
+  const { seasons } = await getSeasons()
+  const currentYear = new Date().getFullYear()
+  const season = resolvedSearchParams.season ? Number(resolvedSearchParams.season) : (seasons[0] || currentYear)
 
   let player: PlayerDetails | null = null
   let playerRanking: PlayerRanking | null = null
   let error: Error | null = null
 
   try {
-    player = await getPlayer(id)
+    player = await getPlayer(id, { season })
     if (!player) {
       // Optionally handle 'player not found' scenario specifically if API returns null/undefined
       throw new Error('Player not found')
@@ -73,7 +80,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     // Fallback: fetch ranking page if player ranking data is missing (e.g. legacy API)
     if (!playerRanking) {
       try {
-        const rankingsData = await getRankings({ sort: 'best_4', dir: 'desc' })
+        const rankingsData = await getRankings({ sort: 'best_4', dir: 'desc', season })
         const rankingIndex = rankingsData.rankings.findIndex(r => r.fide_id === player.fide_id)
         if (rankingIndex !== -1) {
           playerRanking = {
@@ -148,7 +155,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PlayerClientContent player={player} playerRanking={playerRanking} />
+      <PlayerClientContent player={player} playerRanking={playerRanking} seasons={seasons} currentSeason={season} />
     </>
   )
 }

@@ -56,6 +56,7 @@ def get_tournament_data(tournament_id: str):
         end_date=metadata.get("end_date"),
         location=metadata.get("location"),
         rounds=metadata.get("rounds"),
+        section=metadata.get("section", "open"),
     )
     
     # Recalculate rankings after new data is saved
@@ -67,8 +68,14 @@ def get_tournament_data(tournament_id: str):
 @app.route("/api/tournaments")
 def tournaments():
     """Get list of all tournaments."""
+    # Get season filter (optional)
+    from datetime import datetime
+    season = request.args.get("season")
+    if season:
+        season = int(season)
+
     tournament_list = []
-    all_db_tournaments = db.get_all_tournaments()
+    all_db_tournaments = db.get_all_tournaments(season=season)
 
     for t_data in all_db_tournaments:
         try:
@@ -96,6 +103,7 @@ def tournaments():
                     "end_date": t_end_date,
                     "location": location,
                     "rounds": rounds,
+                    "section": t_data.get("section", "open"),
                 }
             )
         except Exception as e:
@@ -183,6 +191,13 @@ def tournament(tournament_id):
 # Qualification probability calculation removed for performance
 
 
+@app.route("/api/seasons")
+def seasons():
+    """Get available seasons."""
+    available_seasons = db.get_available_seasons()
+    return jsonify({"seasons": available_seasons})
+
+
 @app.route("/api/rankings")
 def rankings():
     """Get current GP rankings."""
@@ -192,10 +207,22 @@ def rankings():
     search_query = request.args.get("q")  # Get the search query
     per_page = 25
 
-    player_rankings = db.get_all_player_rankings()
+    # Get season (default to current year)
+    from datetime import datetime
+    current_year = datetime.now().year
+    season = request.args.get("season")
+    if season:
+        season = int(season)
+    else:
+        season = current_year
+
+    # Get gender filter ('f' for ladies, None for all/open)
+    gender = request.args.get("gender")
+
+    player_rankings = db.get_all_player_rankings(season=season, gender=gender)
     reverse = dir == "desc"
 
-    rank_change_map = db.get_rank_changes(top_n=25)
+    rank_change_map = db.get_rank_changes(top_n=25, season=season)
 
     # Filter by search query if provided
     if search_query:
@@ -265,6 +292,15 @@ def rankings():
 @app.route("/api/player/<fide_id>")
 def player(fide_id):
     """Get player tournament history."""
+    # Get season filter (default to current year)
+    from datetime import datetime
+    current_year = datetime.now().year
+    season = request.args.get("season")
+    if season:
+        season = int(season)
+    else:
+        season = current_year
+
     player_details = None
     tournament_results = []
     player_ranking = None
@@ -288,7 +324,7 @@ def player(fide_id):
 
         # 2. Fetch tournament results for this player using the correct JOIN
         # We join results -> players (on player_id) and results -> tournaments (on tournament_id)
-        # We filter by players.fide_id
+        # We filter by players.fide_id and season (year from start_date)
         try:
             c.execute(
                 """
@@ -308,9 +344,10 @@ def player(fide_id):
                 JOIN players p ON r.player_id = p.id
                 JOIN tournaments t ON r.tournament_id = t.id
                 WHERE p.fide_id = ?
+                AND CAST(strftime('%Y', t.start_date) AS INTEGER) = ?
                 ORDER BY COALESCE(t.start_date, '0000-00-00') ASC, t.id ASC
             """,
-                (fide_id,),
+                (fide_id, season),
             )
         except sqlite3.OperationalError as e:
             # If start_rank column doesn't exist or can't be accessed, try without it
@@ -333,9 +370,10 @@ def player(fide_id):
                     JOIN players p ON r.player_id = p.id
                     JOIN tournaments t ON r.tournament_id = t.id
                     WHERE p.fide_id = ?
+                    AND CAST(strftime('%Y', t.start_date) AS INTEGER) = ?
                     ORDER BY COALESCE(t.start_date, '0000-00-00') ASC, t.id ASC
                 """,
-                    (fide_id,),
+                    (fide_id, season),
                 )
             else:
                 raise
@@ -343,15 +381,15 @@ def player(fide_id):
         results_rows = c.fetchall()
         tournament_results = [dict(row) for row in results_rows]
 
-        # Fetch precomputed ranking data for the player
+        # Fetch precomputed ranking data for the player (filtered by season)
         c.execute(
             """
             SELECT player_id, name, fide_id, rating, tournaments_played,
                    best_1, tournament_1, best_2, best_3, best_4
             FROM player_rankings
-            WHERE fide_id = ?
+            WHERE fide_id = ? AND season = ? AND gender IS NULL
             """,
-            (fide_id,),
+            (fide_id, season),
         )
         ranking_row = c.fetchone()
         if ranking_row:
@@ -360,7 +398,7 @@ def player(fide_id):
 
     if player_ranking:
         # Calculate cascading rank consistent with rankings endpoint
-        player_rankings = db.get_all_player_rankings()
+        player_rankings = db.get_all_player_rankings(season=season, gender=None)
 
         def cascading_sort_key(player):
             if player["tournaments_played"] >= 4 and player["best_4"] > 0:
@@ -487,8 +525,20 @@ def export_rankings():
     dir = request.args.get("dir", "desc")
     search_query = request.args.get("q")
 
+    # Get season (default to current year)
+    from datetime import datetime
+    current_year = datetime.now().year
+    season = request.args.get("season")
+    if season:
+        season = int(season)
+    else:
+        season = current_year
+
+    # Get gender filter
+    gender = request.args.get("gender")
+
     try:
-        player_rankings = db.get_all_player_rankings()
+        player_rankings = db.get_all_player_rankings(season=season, gender=gender)
         reverse = dir == "desc"
 
         # Filter by search query if provided

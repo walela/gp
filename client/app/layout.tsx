@@ -12,8 +12,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Chess Kenya 2025 Grand Prix',
-  description: 'Track Chess Kenya Grand Prix tournaments and rankings for the 2025 season'
+  title: 'Chess Kenya Grand Prix',
+  description: 'Track Chess Kenya Grand Prix tournaments and rankings'
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

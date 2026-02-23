@@ -68,10 +68,78 @@ class ChessResultsScraper:
 
         raise requests.RequestException(f"All chess-results mirrors failed for {path}") from last_exc
     
-    def get_tournament_data(self, tournament_id: str) -> Tuple[str, List[TournamentResult], Dict[str, Optional[Any]]]:
-        """Get tournament data for a given tournament ID."""
+    def get_available_sections(self, tournament_id: str) -> List[Dict[str, str]]:
+        """
+        Get available sections for a tournament.
+        Returns list of dicts with 'name', 'tournament_id', and 'is_ladies' keys.
+
+        Note: On chess-results, different sections are often separate tournaments
+        with different IDs, linked via the "Tournament selection" row.
+        """
+        response = self._request("GET", f"tnr{tournament_id}.aspx", params={"lan": 1, "flag": 30})
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        sections = []
+
+        # Find the "Tournament selection" row in the table
+        for row in soup.find_all('tr'):
+            cells = row.find_all('td')
+            if len(cells) >= 2:
+                first_cell_text = cells[0].get_text(strip=True).lower()
+                if 'tournament selection' in first_cell_text:
+                    # Found the row, parse the second cell
+                    second_cell = cells[1]
+
+                    # Check for bold/italic text (current section)
+                    current_section = second_cell.find(['b', 'i'])
+                    if current_section:
+                        section_name = current_section.get_text(strip=True)
+                        sections.append({
+                            'name': section_name,
+                            'tournament_id': tournament_id,
+                            'is_ladies': 'ladies' in section_name.lower() or 'women' in section_name.lower()
+                        })
+
+                    # Get links to other sections (different tournament IDs)
+                    links = second_cell.find_all('a')
+                    for link in links:
+                        section_name = link.get_text(strip=True)
+                        href = link.get('href', '')
+
+                        # Extract tournament ID from href like "tnr1339860.aspx?..."
+                        import re
+                        match = re.search(r'tnr(\d+)\.aspx', href)
+                        if match:
+                            section_tournament_id = match.group(1)
+                            sections.append({
+                                'name': section_name,
+                                'tournament_id': section_tournament_id,
+                                'is_ladies': 'ladies' in section_name.lower() or 'women' in section_name.lower()
+                            })
+                    break
+
+        # If no sections found, assume it's a single-section tournament (Open)
+        if not sections:
+            sections.append({'name': 'Open Section', 'tournament_id': tournament_id, 'is_ladies': False})
+
+        return sections
+
+    def get_tournament_data(self, tournament_id: str, section_param: str = '') -> Tuple[str, List[TournamentResult], Dict[str, Optional[Any]]]:
+        """
+        Get tournament data for a given tournament ID and optional section.
+        section_param: URL parameter for specific section (e.g., 'wi=1' for ladies)
+        """
+        # Build params
+        params = {"lan": 1}
+        if section_param:
+            # Parse section_param like 'wi=1' into dict
+            for param in section_param.split('&'):
+                if '=' in param:
+                    key, value = param.split('=', 1)
+                    params[key] = value
+
         # Fetch tournament info
-        response = self._request("GET", f"tnr{tournament_id}.aspx", params={"lan": 1})
+        response = self._request("GET", f"tnr{tournament_id}.aspx", params=params)
         soup = BeautifulSoup(response.text, 'html.parser')
         
         # Get tournament name and round count
@@ -84,23 +152,39 @@ class ChessResultsScraper:
             # Fallback if title format is unexpected
             tournament_name = title_parts[-1].strip()
             
-        # Remove common redundant suffixes like "Open Section"
-        suffix_to_remove = "Open Section"
-        if tournament_name.lower().endswith(suffix_to_remove.lower()):
-            tournament_name = tournament_name[:-len(suffix_to_remove)].strip()
+        # Remove common redundant suffixes
+        is_ladies_section = False
+        for suffix in ["Open Section", "Ladies Section", "Women Section"]:
+            if tournament_name.lower().endswith(suffix.lower()):
+                if 'ladies' in suffix.lower() or 'women' in suffix.lower():
+                    is_ladies_section = True
+                tournament_name = tournament_name[:-len(suffix)].strip()
+                break
 
-        round_count, start_date, end_date = self._get_round_count_and_dates(tournament_id)
+        # Also check section_param for ladies indicator
+        if 'wi=' in section_param:
+            is_ladies_section = True
+
+        round_count, start_date, end_date = self._get_round_count_and_dates(tournament_id, section_param)
         if tournament_id == "1126042":
             round_count = 8
-        
+
         # Fetch the final ranking page for the determined round count with complete list
+        ranking_params = {"lan": 1, "art": 1, "rd": round_count, "zeilen": 99999}
+        # Add section params
+        if section_param:
+            for param in section_param.split('&'):
+                if '=' in param:
+                    key, value = param.split('=', 1)
+                    ranking_params[key] = value
+
         response = self._request(
             "GET",
             f"tnr{tournament_id}.aspx",
-            params={"lan": 1, "art": 1, "rd": round_count, "zeilen": 99999},
+            params=ranking_params,
         )
         soup = BeautifulSoup(response.text, 'html.parser')
-        
+
         # Parse standings table
         results = self._parse_standings(soup, round_count, tournament_id)
 
@@ -109,11 +193,12 @@ class ChessResultsScraper:
             "location": infer_location(tournament_name),
             "start_date": start_date,
             "end_date": end_date,
+            "section": "ladies" if is_ladies_section else "open",
         }
 
         return tournament_name, results, metadata
-    
-    def _get_round_count_and_dates(self, tournament_id: str) -> Tuple[int, Optional[str], Optional[str]]:
+
+    def _get_round_count_and_dates(self, tournament_id: str, section_param: str = '') -> Tuple[int, Optional[str], Optional[str]]:
         """Extract total number of rounds and tournament dates from the details page."""
         details_path = f"tnr{tournament_id}.aspx"
         round_count = None
@@ -124,10 +209,17 @@ class ChessResultsScraper:
         try:
             # Initial GET request
             logger.info(f"Fetching initial details page for tournament {tournament_id}")
+            details_params = {"lan": 1, "flag": 30, "turdet": "YES"}
+            # Add section params
+            if section_param:
+                for param in section_param.split('&'):
+                    if '=' in param:
+                        key, value = param.split('=', 1)
+                        details_params[key] = value
             get_response = self._request(
                 "GET",
                 details_path,
-                params={"lan": 1, "flag": 30, "turdet": "YES"},
+                params=details_params,
             )
             get_response.raise_for_status()
             initial_soup = BeautifulSoup(get_response.text, 'html.parser')

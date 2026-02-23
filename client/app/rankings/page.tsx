@@ -11,19 +11,21 @@ import {
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
 import { ChevronRight, Crown } from 'lucide-react'
-import { getRankings, getTopPlayers, type PlayerRanking } from '@/services/api'
+import { getRankings, getTopPlayers, getSeasons, type PlayerRanking } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { SearchForm } from '@/components/rankings/search-form'
 import { Pagination } from '@/components/ui/pagination'
+import { SeasonSelector } from '@/components/season-selector'
+import { CategoryToggle } from '@/components/category-toggle'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Player Rankings - Chess Kenya 2025 Grand Prix',
+  title: 'Player Rankings - Chess Kenya Grand Prix',
   description: 'View the latest Chess Kenya Grand Prix rankings and standings. Track player performance across tournaments with TPR ratings and points.',
   openGraph: {
     title: 'Chess Kenya Grand Prix Rankings',
-    description: 'Official rankings for the Chess Kenya 2025 Grand Prix series. View top players, tournament performances and TPR ratings.',
+    description: 'Official rankings for the Chess Kenya Grand Prix series. View top players, tournament performances and TPR ratings.',
     type: 'website',
     siteName: 'Chess Kenya Grand Prix',
     url: 'https://1700chess.vercel.app/rankings'
@@ -34,6 +36,8 @@ export const metadata: Metadata = {
     description: 'View the latest Chess Kenya Grand Prix player rankings and standings'
   }
 }
+
+export const dynamic = 'force-dynamic'
 
 // Smart name abbreviation function for very long names
 function getDisplayName(fullName: string): string {
@@ -107,6 +111,8 @@ interface RankingsPageProps {
     page?: string
     view?: string
     q?: string
+    season?: string
+    category?: 'open' | 'ladies'
   }
 }
 
@@ -114,23 +120,34 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   // Properly await the searchParams object
   const params = await searchParams
 
-  // Now we can safely access the properties
-  const sort = params.sort || 'best_4'
+  // Get available seasons first to determine defaults
+  const { seasons } = await getSeasons()
+  const currentYear = new Date().getFullYear()
+  const season = params.season ? Number(params.season) : (seasons[0] || currentYear)
+
+  // Default to best_1 (Best TPR) for current year (few tournaments), best_4 for past seasons
+  const defaultSort = season === currentYear ? 'best_1' : 'best_4'
+
+  const sort = params.sort || defaultSort
   const dir = params.dir || 'desc'
   const page = Number(params.page || '1')
-  const view = params.view || 'best_4'
+  const view = params.view || defaultSort
   const search = params.q || ''
+  const category = params.category || 'open'
+  const gender = category === 'ladies' ? 'f' as const : undefined
 
   // Pass search query to the backend for filtering
   const { rankings, total_pages } = await getRankings({
     sort,
     dir,
     page,
-    q: search
+    q: search,
+    season,
+    gender
   })
 
   const highlightCount = 9
-  const { topPlayers } = await getTopPlayers({ count: highlightCount + 1, sortBy: 'best_4' })
+  const { topPlayers } = await getTopPlayers({ count: highlightCount + 1, sortBy: 'best_4', season, gender })
   const topPlayerIds = topPlayers.map(p => p.fide_id || p.name)
 
   const kenyaNumber1Player = [...rankings, ...topPlayers].find(player =>
@@ -155,15 +172,19 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <CategoryToggle currentCategory={category} />
+          <SeasonSelector seasons={seasons} currentSeason={season} />
+        </div>
         <SearchForm defaultValue={search} />
       </div>
 
       <div className="mb-0 w-full">
         <ViewSelector
           view={view}
-          exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/rankings/export?sort=${sort}&dir=${dir}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
-          exportFilename={`GP_rankings${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
+          exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/rankings/export?sort=${sort}&dir=${dir}&season=${season}${gender ? `&gender=${gender}` : ''}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+          exportFilename={`GP_${category}_rankings_${season}${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
         />
       </div>
 
@@ -182,12 +203,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">
                 <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />
               </CustomTableHead>
-              <CustomTableHead className="w-[40px] text-center sm:hidden">
-                <span className="sr-only">Qualified</span>
-              </CustomTableHead>
-              <CustomTableHead className="w-[40px] text-center hidden sm:table-cell">
-                Qualified
-              </CustomTableHead>
+              {season !== currentYear && (
+                <>
+                  <CustomTableHead className="w-[40px] text-center sm:hidden">
+                    <span className="sr-only">Qualified</span>
+                  </CustomTableHead>
+                  <CustomTableHead className="w-[40px] text-center hidden sm:table-cell">
+                    Qualified
+                  </CustomTableHead>
+                </>
+              )}
               <CustomTableHead className="hidden sm:table-cell text-right">
                 <SortableHeader
                   column="tournaments_played"
@@ -350,43 +375,51 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                         )}
                       </div>
                     </CustomTableCell>
-                    <CustomTableCell className="text-center sm:hidden">
-                      {movementBadge || qualifierBadgeMobile ? (
-                        <div className="flex items-center justify-center gap-1">
-                          {qualifierBadgeMobile || movementBadge}
-                        </div>
-                      ) : null}
-                    </CustomTableCell>
-                    <CustomTableCell className="hidden sm:table-cell text-center">
-                      {movementBadge || qualifierBadgeDesktop ? (
-                        <div className="flex items-center justify-center gap-1">
-                          {qualifierBadgeDesktop || movementBadge}
-                        </div>
-                      ) : null}
-                    </CustomTableCell>
+                    {season !== currentYear && (
+                      <>
+                        <CustomTableCell className="text-center sm:hidden">
+                          {movementBadge || qualifierBadgeMobile ? (
+                            <div className="flex items-center justify-center gap-1">
+                              {qualifierBadgeMobile || movementBadge}
+                            </div>
+                          ) : null}
+                        </CustomTableCell>
+                        <CustomTableCell className="hidden sm:table-cell text-center">
+                          {movementBadge || qualifierBadgeDesktop ? (
+                            <div className="flex items-center justify-center gap-1">
+                              {qualifierBadgeDesktop || movementBadge}
+                            </div>
+                          ) : null}
+                        </CustomTableCell>
+                      </>
+                    )}
                     <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">
                       {player.tournaments_played}
                     </CustomTableCell>
                     <CustomTableCell
                       className={cn('text-right tabular-nums', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
-                      <div className="tabular-nums font-medium">{player.best_1}</div>
+                      <div className="tabular-nums font-medium">{player.best_1 || '—'}</div>
                     </CustomTableCell>
                     <CustomTableCell
                       className={cn('text-right tabular-nums', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
-                      {player.best_2}
+                      {player.tournaments_played >= 2 ? player.best_2 : <span className="text-gray-400">—</span>}
                     </CustomTableCell>
                     <CustomTableCell
                       className={cn('text-right tabular-nums', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
-                      {player.best_3}
+                      {player.tournaments_played >= 3 ? player.best_3 : <span className="text-gray-400">—</span>}
                     </CustomTableCell>
                     <CustomTableCell
                       className={cn('text-right tabular-nums', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
-                      {isHighlightedQualifier ? (
-                        <span className={cn('font-semibold', isProvisionalQualifier ? 'text-teal-700' : 'text-blue-700')}>
-                          {player.best_4}
-                        </span>
+                      {player.tournaments_played >= 4 ? (
+                        isHighlightedQualifier ? (
+                          <span className={cn('font-semibold', isProvisionalQualifier ? 'text-teal-700' : 'text-blue-700')}>
+                            {player.best_4}
+                          </span>
+                        ) : (
+                          player.best_4
+                        )
                       ) : (
-                        player.best_4
+                        <span className="text-gray-400">—</span>
                       )}
                     </CustomTableCell>
                   </CustomTableRow>
@@ -441,6 +474,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             sort,
             dir,
             view,
+            season: season.toString(),
+            ...(category !== 'open' ? { category } : {}),
             ...(search ? { q: search } : {})
           }}
           className="mt-4"

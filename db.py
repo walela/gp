@@ -43,6 +43,8 @@ class Database:
                 c.execute('ALTER TABLE tournaments ADD COLUMN location TEXT')
             if 'rounds' not in existing_columns:
                 c.execute('ALTER TABLE tournaments ADD COLUMN rounds INTEGER')
+            if 'section' not in existing_columns:
+                c.execute("ALTER TABLE tournaments ADD COLUMN section TEXT DEFAULT 'open'")
             
             # Create players table
             c.execute('''
@@ -50,9 +52,15 @@ class Database:
                     id INTEGER PRIMARY KEY,
                     fide_id TEXT,
                     name TEXT NOT NULL,
-                    federation TEXT
+                    federation TEXT,
+                    gender TEXT
                 )
             ''')
+
+            # Add gender column if missing
+            player_columns = {row[1] for row in c.execute('PRAGMA table_info(players)')}
+            if 'gender' not in player_columns:
+                c.execute('ALTER TABLE players ADD COLUMN gender TEXT')
             
             # Create results table
             c.execute('''
@@ -74,7 +82,7 @@ class Database:
             # Create player_rankings table
             c.execute('''
                 CREATE TABLE IF NOT EXISTS player_rankings (
-                    player_id INTEGER PRIMARY KEY,
+                    player_id INTEGER,
                     name TEXT NOT NULL,
                     fide_id TEXT,
                     rating INTEGER,
@@ -84,9 +92,19 @@ class Database:
                     best_2 REAL,
                     best_3 REAL,
                     best_4 REAL,
+                    season INTEGER,
+                    gender TEXT,
+                    PRIMARY KEY (player_id, season),
                     FOREIGN KEY (player_id) REFERENCES players(id)
                 )
             ''')
+
+            # Add season and gender columns if missing
+            ranking_columns = {row[1] for row in c.execute('PRAGMA table_info(player_rankings)')}
+            if 'season' not in ranking_columns:
+                c.execute('ALTER TABLE player_rankings ADD COLUMN season INTEGER')
+            if 'gender' not in ranking_columns:
+                c.execute('ALTER TABLE player_rankings ADD COLUMN gender TEXT')
 
             c.execute('''
                 CREATE TABLE IF NOT EXISTS ranking_snapshots (
@@ -105,8 +123,11 @@ class Database:
                 c.execute('ALTER TABLE ranking_snapshots ADD COLUMN tournaments_played INTEGER')
             if 'best_4' not in snapshot_columns:
                 c.execute('ALTER TABLE ranking_snapshots ADD COLUMN best_4 REAL')
+            if 'season' not in snapshot_columns:
+                c.execute('ALTER TABLE ranking_snapshots ADD COLUMN season INTEGER')
             c.execute('CREATE INDEX IF NOT EXISTS idx_ranking_snapshots_time ON ranking_snapshots(snapshot_time)')
             c.execute('CREATE INDEX IF NOT EXISTS idx_ranking_snapshots_player ON ranking_snapshots(player_id)')
+            c.execute('CREATE INDEX IF NOT EXISTS idx_ranking_snapshots_season ON ranking_snapshots(season)')
             
             conn.commit()
     
@@ -121,6 +142,7 @@ class Database:
         short_name: Optional[str] = None,
         location: Optional[str] = None,
         rounds: Optional[int] = None,
+        section: str = "open",
     ):
         """Save tournament data and results."""
         with sqlite3.connect(self.db_file) as conn:
@@ -134,15 +156,16 @@ class Database:
 
             c.execute(
                 '''
-                INSERT INTO tournaments (id, name, start_date, end_date, short_name, location, rounds)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO tournaments (id, name, start_date, end_date, short_name, location, rounds, section)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(id) DO UPDATE SET
                     name = excluded.name,
                     start_date = COALESCE(excluded.start_date, tournaments.start_date),
                     end_date = COALESCE(excluded.end_date, tournaments.end_date),
                     short_name = COALESCE(excluded.short_name, tournaments.short_name),
                     location = COALESCE(excluded.location, tournaments.location),
-                    rounds = COALESCE(excluded.rounds, tournaments.rounds)
+                    rounds = COALESCE(excluded.rounds, tournaments.rounds),
+                    section = COALESCE(excluded.section, tournaments.section)
                 ''',
                 (
                     tournament_id,
@@ -152,8 +175,12 @@ class Database:
                     resolved_short_name,
                     inferred_location,
                     inferred_rounds,
+                    section,
                 ),
             )
+
+            # If saving a ladies section, mark all players as female
+            is_ladies_section = section == "ladies"
 
             for result in results:
                 if hasattr(result, "player"):
@@ -212,12 +239,15 @@ class Database:
                 if player_db_id is None:
                     c.execute(
                         '''
-                        INSERT INTO players (fide_id, name, federation)
-                        VALUES (?, ?, ?)
+                        INSERT INTO players (fide_id, name, federation, gender)
+                        VALUES (?, ?, ?, ?)
                         ''',
-                        (player_fide_id, player_name, player_federation),
+                        (player_fide_id, player_name, player_federation, 'F' if is_ladies_section else None),
                     )
                     player_db_id = c.lastrowid
+                elif is_ladies_section:
+                    # Mark existing player as female if in ladies section
+                    c.execute('UPDATE players SET gender = ? WHERE id = ?', ('F', player_db_id))
 
                 c.execute(
                     '''
@@ -246,13 +276,13 @@ class Database:
 
             conn.commit()
 
-    def get_all_tournaments(self) -> List[Dict]:
-        """Get all tournaments."""
+    def get_all_tournaments(self, season: Optional[int] = None) -> List[Dict]:
+        """Get all tournaments, optionally filtered by season."""
         with sqlite3.connect(self.db_file) as conn:
             conn.row_factory = sqlite3.Row
             c = conn.cursor()
-            c.execute(
-                '''
+
+            query = '''
                 SELECT
                     id,
                     name,
@@ -260,11 +290,17 @@ class Database:
                     end_date,
                     short_name,
                     location,
-                    rounds
+                    rounds,
+                    section
                 FROM tournaments
-                ORDER BY start_date DESC, name DESC
-                '''
-            )
+            '''
+            params = []
+            if season:
+                query += ' WHERE strftime("%Y", start_date) = ?'
+                params.append(str(season))
+            query += ' ORDER BY start_date DESC, name DESC'
+
+            c.execute(query, params)
             return [dict(row) for row in c.fetchall()]
     
     def get_tournament(self, tournament_id: str) -> Optional[Dict]:
@@ -276,7 +312,7 @@ class Database:
             # Get tournament name and dates
             c.execute(
                 '''
-                SELECT name, start_date, end_date, short_name, location, rounds
+                SELECT name, start_date, end_date, short_name, location, rounds, section
                 FROM tournaments
                 WHERE id = ?
                 ''',
@@ -291,6 +327,7 @@ class Database:
             short_name = tournament_row['short_name']
             location = tournament_row['location']
             rounds = tournament_row['rounds']
+            section = tournament_row['section'] if 'section' in tournament_row.keys() else 'open'
             
             # Get results, joining players correctly
             try:
@@ -357,22 +394,23 @@ class Database:
                 'end_date': end_date,
                 'location': location,
                 'rounds': rounds,
+                'section': section,
                 'results': results
             }
     
-    def get_all_results(self) -> Dict[int, List]:
-        """Get all results grouped by player."""
+    def get_all_results(self, season: Optional[int] = None, section: Optional[str] = None) -> Dict[int, List]:
+        """Get all results grouped by player, optionally filtered by season and section."""
         with sqlite3.connect(self.db_file) as conn:
             conn.row_factory = sqlite3.Row
             c = conn.cursor()
 
-            c.execute(
-                '''
+            query = '''
                 SELECT
                     p.id AS player_id,
                     p.name AS player_name,
                     p.fide_id,
                     p.federation,
+                    p.gender,
                     r.rating,
                     r.points,
                     r.tpr,
@@ -384,13 +422,23 @@ class Database:
                     t.start_date,
                     t.end_date,
                     t.location,
-                    t.rounds
+                    t.rounds,
+                    t.section
                 FROM results r
                 JOIN players p ON r.player_id = p.id
                 JOIN tournaments t ON r.tournament_id = t.id
-                ORDER BY r.tpr DESC
-                '''
-            )
+                WHERE 1=1
+            '''
+            params = []
+            if season:
+                query += ' AND strftime("%Y", t.start_date) = ?'
+                params.append(str(season))
+            if section:
+                query += ' AND t.section = ?'
+                params.append(section)
+            query += ' ORDER BY r.tpr DESC'
+
+            c.execute(query, params)
 
             all_results: Dict[str, List] = {}
             for row in c.fetchall():
@@ -403,6 +451,7 @@ class Database:
                         'fide_id': row['fide_id'],
                         'federation': row['federation'],
                         'rating': row['rating'],
+                        'gender': row['gender'],
                     },
                     'points': row['points'],
                     'tpr': row['tpr'],
@@ -416,6 +465,7 @@ class Database:
                         'end_date': row['end_date'],
                         'location': row['location'],
                         'rounds': row['rounds'],
+                        'section': row['section'],
                     },
                 }
 
@@ -423,12 +473,33 @@ class Database:
 
             return all_results
 
-    def get_all_player_rankings(self) -> List[Dict]:
-        """Get all player rankings from the pre-computed table."""
+    def get_all_player_rankings(self, season: Optional[int] = None, gender: Optional[str] = None) -> List[Dict]:
+        """Get all player rankings from the pre-computed table, filtered by season and gender.
+
+        Args:
+            season: Filter by season year
+            gender: 'F' for Ladies rankings, None for Open rankings (gender IS NULL)
+        """
         with sqlite3.connect(self.db_file) as conn:
             conn.row_factory = sqlite3.Row
             c = conn.cursor()
-            c.execute('SELECT * FROM player_rankings')
+
+            query = 'SELECT * FROM player_rankings WHERE 1=1'
+            params = []
+
+            if season:
+                query += ' AND season = ?'
+                params.append(season)
+
+            if gender:
+                # Ladies rankings: filter for female players
+                query += ' AND gender = ?'
+                params.append(gender.upper())
+            else:
+                # Open rankings: filter for NULL gender (Open section only)
+                query += ' AND gender IS NULL'
+
+            c.execute(query, params)
             return [dict(row) for row in c.fetchall()]
 
     @staticmethod
@@ -450,7 +521,7 @@ class Database:
             return (1, best_1, 0)
         return (0, 0, 0)
 
-    def _store_ranking_snapshot(self, ranking_records: List[Dict[str, Any]]):
+    def _store_ranking_snapshot(self, ranking_records: List[Dict[str, Any]], season: Optional[int] = None):
         """Persist a snapshot of the current ranking order for change tracking."""
         if not ranking_records:
             return
@@ -470,6 +541,7 @@ class Database:
                 index + 1,
                 record.get("tournaments_played"),
                 record.get("best_4"),
+                season or record.get("season"),
             )
             for index, record in enumerate(sorted_records)
         ]
@@ -478,27 +550,30 @@ class Database:
             c = conn.cursor()
             c.executemany(
                 '''
-                INSERT INTO ranking_snapshots (snapshot_time, player_id, fide_id, rank, tournaments_played, best_4)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO ranking_snapshots (snapshot_time, player_id, fide_id, rank, tournaments_played, best_4, season)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''',
                 snapshot_rows,
             )
             conn.commit()
 
-    def get_rank_changes(self, top_n: int = 25) -> Dict[int, Dict[str, Optional[int]]]:
+    def get_rank_changes(self, top_n: int = 25, season: Optional[int] = None) -> Dict[int, Dict[str, Optional[int]]]:
         """Compute rank deltas for players in the latest snapshot compared to the previous snapshot."""
         with sqlite3.connect(self.db_file) as conn:
             conn.row_factory = sqlite3.Row
             c = conn.cursor()
 
-            c.execute(
-                '''
+            query = '''
                 SELECT DISTINCT snapshot_time
                 FROM ranking_snapshots
-                ORDER BY snapshot_time DESC
-                LIMIT 10
-                '''
-            )
+            '''
+            params = []
+            if season:
+                query += ' WHERE season = ?'
+                params.append(season)
+            query += ' ORDER BY snapshot_time DESC LIMIT 10'
+
+            c.execute(query, params)
             snapshot_times = [row["snapshot_time"] for row in c.fetchall()]
 
             if len(snapshot_times) < 2:
@@ -593,18 +668,80 @@ class Database:
 
             return changes
 
-    def recalculate_rankings(self):
-        """Recalculate and store all player rankings."""
-        all_results = self.get_all_results()
+    def get_available_seasons(self) -> List[int]:
+        """Get list of seasons (years) that have tournament data."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('''
+                SELECT DISTINCT CAST(strftime('%Y', start_date) AS INTEGER) as season
+                FROM tournaments
+                WHERE start_date IS NOT NULL
+                ORDER BY season DESC
+            ''')
+            return [row[0] for row in c.fetchall() if row[0]]
+
+    def recalculate_rankings(self, season: Optional[int] = None):
+        """Recalculate and store player rankings for specified season or all seasons.
+
+        Creates two sets of rankings per season:
+        - Open rankings (gender=NULL): Results from Open section tournaments only
+        - Ladies rankings (gender='F'): Female players' results from all sections
+        """
+        seasons_to_process = [season] if season else self.get_available_seasons()
+
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            # Clear rankings for seasons being recalculated
+            if season:
+                c.execute('DELETE FROM player_rankings WHERE season = ?', (season,))
+            else:
+                c.execute('DELETE FROM player_rankings')
+            conn.commit()
+
+        for current_season in seasons_to_process:
+            # Calculate Open rankings (only Open section results)
+            open_results = self.get_all_results(season=current_season, section='open')
+            open_rankings = self._calculate_rankings_from_results(open_results, current_season, gender_filter=None)
+
+            # Calculate Ladies rankings (female players from all sections)
+            all_results = self.get_all_results(season=current_season)
+            ladies_rankings = self._calculate_rankings_from_results(all_results, current_season, gender_filter='F')
+
+            # Store rankings
+            all_rankings = open_rankings + ladies_rankings
+
+            with sqlite3.connect(self.db_file) as conn:
+                c = conn.cursor()
+                c.executemany('''
+                    INSERT INTO player_rankings
+                    (player_id, name, fide_id, rating, tournaments_played, best_1, tournament_1, best_2, best_3, best_4, season, gender)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', all_rankings)
+                conn.commit()
+                logger.info(f"Recalculated and stored rankings for {c.rowcount} players in season {current_season}.")
+
+    def _calculate_rankings_from_results(self, all_results: Dict[int, List], season: int, gender_filter: Optional[str]) -> List[tuple]:
+        """Calculate rankings from results, optionally filtering by gender."""
         player_rankings_insert_data = []
-        ranking_records: List[Dict[str, Any]] = []
 
         for player_id, results in all_results.items():
+            # Filter for KEN federation and valid results
             valid_results = [r for r in results if r["player"]["federation"] == "KEN" and
                              (r.get("result_status", "valid") == "valid" or r.get("result_status") is None)]
 
             if not valid_results:
                 continue
+
+            player_info = valid_results[0]["player"]
+            player_gender = player_info.get("gender")
+
+            # For ladies rankings, only include female players
+            if gender_filter == 'F':
+                # Include if player is female OR result is from ladies section
+                valid_results = [r for r in valid_results if
+                                 player_gender == 'F' or r["tournament"].get("section") == "ladies"]
+                if not valid_results:
+                    continue
 
             valid_results.sort(key=lambda x: x["tpr"] if x["tpr"] else 0, reverse=True)
 
@@ -613,8 +750,10 @@ class Database:
             best_2 = sum(r["tpr"] for r in valid_results[:2]) / 2 if len(valid_results) >= 2 else 0
             best_3 = sum(r["tpr"] for r in valid_results[:3]) / 3 if len(valid_results) >= 3 else 0
             best_4 = sum(r["tpr"] for r in valid_results[:4]) / 4 if len(valid_results) >= 4 else 0
-            
-            player_info = valid_results[0]["player"]
+
+            # For storage: NULL gender = open rankings, 'F' = ladies rankings
+            stored_gender = 'F' if gender_filter == 'F' else None
+
             player_rankings_insert_data.append(
                 (
                     player_id,
@@ -627,34 +766,12 @@ class Database:
                     round(best_2),
                     round(best_3),
                     round(best_4),
+                    season,
+                    stored_gender,
                 )
             )
-            ranking_records.append(
-                {
-                    "player_id": player_id,
-                    "name": player_info["name"],
-                    "fide_id": player_info["fide_id"],
-                    "rating": player_info["rating"],
-                    "tournaments_played": len(valid_results),
-                    "best_1": round(best_1),
-                    "best_2": round(best_2),
-                    "best_3": round(best_3),
-                    "best_4": round(best_4),
-                }
-            )
 
-        with sqlite3.connect(self.db_file) as conn:
-            c = conn.cursor()
-            c.execute('DELETE FROM player_rankings')
-            c.executemany('''
-                INSERT INTO player_rankings 
-                (player_id, name, fide_id, rating, tournaments_played, best_1, tournament_1, best_2, best_3, best_4)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', player_rankings_insert_data)
-            conn.commit()
-            logger.info(f"Recalculated and stored rankings for {c.rowcount} players.")
-
-        self._store_ranking_snapshot(ranking_records)
+        return player_rankings_insert_data
 
 
     def get_tournament_dates(self, tournament_id: str) -> Tuple[Optional[str], Optional[str]]:

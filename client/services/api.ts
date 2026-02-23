@@ -10,6 +10,7 @@ export interface Tournament {
   end_date?: string
   rounds?: number
   location?: string
+  section?: 'open' | 'ladies'
 }
 
 export interface TournamentPlayer {
@@ -98,15 +99,27 @@ export async function getTournaments(
     sort?: string
     dir?: 'asc' | 'desc'
     page?: number
+    season?: number
   } = {}
 ): Promise<Tournament[]> {
   const searchParams = new URLSearchParams()
   if (params.sort) searchParams.set('sort', params.sort)
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
+  if (params.season) searchParams.set('season', params.season.toString())
 
   const response = await fetch(`${API_BASE}/tournaments?${searchParams}`)
   if (!response.ok) throw new Error('Failed to fetch tournaments')
+  return response.json()
+}
+
+export interface SeasonsResponse {
+  seasons: number[]
+}
+
+export async function getSeasons(): Promise<SeasonsResponse> {
+  const response = await fetch(`${API_BASE}/seasons`)
+  if (!response.ok) throw new Error('Failed to fetch seasons')
   return response.json()
 }
 
@@ -132,24 +145,38 @@ export async function getRankings({
   sort = 'best_4',
   dir = 'desc',
   page = 1,
-  q
+  q,
+  season,
+  gender
 }: {
   sort?: string
   dir?: 'asc' | 'desc'
   page?: number
   q?: string
+  season?: number
+  gender?: 'f' | 'm'
 } = {}) {
   let url = `${API_BASE}/rankings?sort=${sort}&dir=${dir}&page=${page}`
   if (q) {
     url += `&q=${encodeURIComponent(q)}`
+  }
+  if (season) {
+    url += `&season=${season}`
+  }
+  if (gender) {
+    url += `&gender=${gender}`
   }
   const res = await fetch(url)
   const data = await res.json()
   return data as RankingsResponse
 }
 
-export async function getPlayer(id: string): Promise<PlayerDetails> {
-  const res = await fetch(`${API_BASE}/player/${id}`)
+export async function getPlayer(id: string, params: { season?: number } = {}): Promise<PlayerDetails> {
+  const searchParams = new URLSearchParams()
+  if (params.season) searchParams.set('season', params.season.toString())
+  const queryString = searchParams.toString()
+  const url = queryString ? `${API_BASE}/player/${id}?${queryString}` : `${API_BASE}/player/${id}`
+  const res = await fetch(url)
   const data = await res.json()
   return data as PlayerDetails
 }
@@ -186,15 +213,19 @@ export async function getTopPlayers({
   count = 9,
   sortBy = 'best_4',
   dir = 'desc',
-  q = ''
+  q = '',
+  season,
+  gender
 }: {
   count?: number
   sortBy?: string
   dir?: 'asc' | 'desc'
   q?: string
+  season?: number
+  gender?: 'f' | 'm'
 } = {}): Promise<TopPlayersResponse> {
   // Get first page with all top players
-  const data = await getRankings({ sort: sortBy, dir, page: 1, q })
+  const data = await getRankings({ sort: sortBy, dir, page: 1, q, season, gender })
 
   return {
     topPlayers: data.rankings.slice(0, count)

@@ -5,8 +5,8 @@ export interface TournamentWithStats extends Tournament {
   avgTop24Rating: number
 }
 
-export async function getTournamentData(): Promise<TournamentWithStats[]> {
-  const tournaments = await getTournaments()
+export async function getTournamentData(season?: number): Promise<TournamentWithStats[]> {
+  const tournaments = await getTournaments({ season })
   
   // Fetch detailed results for each tournament to compute averages
   const stats: Record<string, { avgTop10TPR: number; avgTop24Rating: number }> = {}
