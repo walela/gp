@@ -150,7 +150,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const { topPlayers } = await getTopPlayers({ count: highlightCount + 1, sortBy: 'best_4', season, gender })
   const topPlayerIds = topPlayers.map(p => p.fide_id || p.name)
 
-  const kenyaNumber1Name = season === currentYear ? 'kaloki' : 'jadon'
+  const kenyaNumber1Name = season === currentYear ? 'kaloki' : 'mcligeyo'
   const kenyaNumber1Player = [...rankings, ...topPlayers].find(player =>
     player.name.toLowerCase().includes(kenyaNumber1Name)
   )
@@ -438,10 +438,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <Crown className="h-3.5 w-3.5 text-amber-600" />
               Kenya #1
             </span>
-            <span className="inline-flex items-center gap-1.5 text-teal-700">
-              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-teal-600 bg-teal-50" />
-              Alternate Qualifier
-            </span>
             <span className="inline-flex items-center gap-1.5 text-purple-700">
               <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-purple-500 bg-purple-50" />
               National Junior Champion
@@ -453,7 +449,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <span className="hidden sm:inline-flex h-4 items-center justify-center rounded-full border border-green-600 bg-green-50 px-2 text-[11px] font-semibold leading-tight text-green-700">
                 Q
               </span>
-              Confirmed Qualifier
+              Qualifier
             </span>
           </div>
         </div>

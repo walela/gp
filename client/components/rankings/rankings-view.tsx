@@ -302,14 +302,6 @@ export function RankingsView({
               <Crown className="h-3.5 w-3.5 text-amber-600" />
               Kenya #1
             </span>
-            <span className="inline-flex items-center gap-1.5 text-blue-700">
-              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-blue-600 bg-blue-50" />
-              Top 9 Qualifier
-            </span>
-            <span className="inline-flex items-center gap-1.5 text-teal-700">
-              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-teal-600 bg-teal-50" />
-              Alternate Qualifier
-            </span>
             <span className="inline-flex items-center gap-1.5 text-purple-700">
               <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-purple-500 bg-purple-50" />
               National Junior Champion
@@ -319,7 +311,7 @@ export function RankingsView({
                 Q
               </span>
               <CircleCheckBig className="hidden sm:inline-block h-3.5 w-3.5 text-green-600" strokeWidth={1.75} />
-              Confirmed Qualifier
+              Qualifier
             </span>
           </div>
         </div>
