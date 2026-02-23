@@ -84,6 +84,9 @@ def tournaments():
     tournament_list = []
     all_db_tournaments = db.get_all_tournaments(season=season)
 
+    # Get all tournament stats in batch
+    all_stats = db.get_all_tournament_stats(season=season)
+
     for t_data in all_db_tournaments:
         try:
             t_id = t_data["id"]
@@ -95,10 +98,11 @@ def tournaments():
             t_rounds = t_data.get("rounds")
 
             results_count = db.get_tournament_results_count(t_id)
+            stats = all_stats.get(t_id, {'avg_top10_tpr': 0, 'avg_top24_rating': 0})
 
             rounds = t_rounds or infer_rounds(t_name)
             location = t_location or infer_location(t_name)
-            
+
             tournament_list.append(
                 {
                     "id": t_id,
@@ -111,6 +115,8 @@ def tournaments():
                     "location": location,
                     "rounds": rounds,
                     "section": t_data.get("section", "open"),
+                    "avgTop10TPR": stats['avg_top10_tpr'],
+                    "avgTop24Rating": stats['avg_top24_rating'],
                 }
             )
         except Exception as e:

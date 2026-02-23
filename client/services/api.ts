@@ -11,6 +11,8 @@ export interface Tournament {
   rounds?: number
   location?: string
   section?: 'open' | 'ladies'
+  avgTop10TPR?: number
+  avgTop24Rating?: number
 }
 
 export interface TournamentPlayer {

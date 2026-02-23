@@ -837,6 +837,57 @@ class Database:
                 logger.error(f"Error counting results for tournament {tournament_id}: {e}")
                 return 0 # Return 0 if table/column missing or other SQL error
 
+    def get_tournament_stats(self, tournament_id: str) -> Dict:
+        """Get tournament stats: avgTop10TPR and avgTop24Rating."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+
+            # Get top 10 TPRs (excluding invalid results)
+            c.execute('''
+                SELECT tpr FROM results
+                WHERE tournament_id = ? AND tpr IS NOT NULL
+                AND (result_status IS NULL OR result_status = 'valid')
+                ORDER BY tpr DESC LIMIT 10
+            ''', (tournament_id,))
+            top10_tprs = [row[0] for row in c.fetchall()]
+            avg_top10_tpr = round(sum(top10_tprs) / len(top10_tprs)) if top10_tprs else 0
+
+            # Get top 24 ratings
+            c.execute('''
+                SELECT rating FROM results
+                WHERE tournament_id = ? AND rating IS NOT NULL
+                ORDER BY rating DESC LIMIT 24
+            ''', (tournament_id,))
+            top24_ratings = [row[0] for row in c.fetchall()]
+            avg_top24_rating = round(sum(top24_ratings) / len(top24_ratings)) if top24_ratings else 0
+
+            return {
+                'avg_top10_tpr': avg_top10_tpr,
+                'avg_top24_rating': avg_top24_rating
+            }
+
+    def get_all_tournament_stats(self, season: int = None) -> Dict[str, Dict]:
+        """Get stats for all tournaments in one query."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+
+            # Get tournament IDs for the season
+            if season:
+                c.execute('''
+                    SELECT id FROM tournaments
+                    WHERE start_date LIKE ?
+                ''', (f'{season}%',))
+            else:
+                c.execute('SELECT id FROM tournaments')
+
+            tournament_ids = [row[0] for row in c.fetchall()]
+
+            stats = {}
+            for t_id in tournament_ids:
+                stats[t_id] = self.get_tournament_stats(t_id)
+
+            return stats
+
     def update_tournament_dates(self, tournament_id: str, start_date: str, end_date: str):
         """Update tournament start and end dates."""
         with sqlite3.connect(self.db_file) as conn:
