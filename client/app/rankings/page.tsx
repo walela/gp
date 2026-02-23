@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   }
 }
 
-export const revalidate = 3600 // cache for 1 hour
+export const revalidate = 86400 // cache for 24 hours
 
 // Smart name abbreviation function for very long names
 function getDisplayName(fullName: string): string {
@@ -160,9 +160,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
     topPlayers.slice(0, highlightCount).map(player => player.fide_id || player.name)
   )
 
-  const kenyaNumber1IsAutomatic = kenyaNumber1Id ? automaticQualifierIds.has(kenyaNumber1Id) : false
-  const provisionalQualifierId =
-    kenyaNumber1IsAutomatic && topPlayers.length > highlightCount ? topPlayerIds[highlightCount] : null
+  // For past seasons, no provisional - results are final
+  // Kenya #1 takes their own slot, so no one gets bumped up
+  const provisionalQualifierId = null
 
   const highlightedQualifierIds = new Set(automaticQualifierIds)
   if (provisionalQualifierId) {
@@ -454,15 +454,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 Q
               </span>
               Confirmed Qualifier
-            </span>
-            <span className="inline-flex items-center gap-1.5 text-teal-700">
-              <span className="inline-flex h-4 items-center justify-center rounded-sm bg-teal-100 px-1.5 text-[11px] font-semibold leading-tight text-teal-700 sm:hidden">
-                ?
-              </span>
-              <span className="hidden sm:inline-flex h-4 w-4 items-center justify-center rounded-full border border-teal-600 bg-teal-50 text-[11px] font-semibold leading-tight text-teal-700">
-                ?
-              </span>
-              Provisional Qualifier (pending Kenya #1)
             </span>
           </div>
         </div>

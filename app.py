@@ -23,7 +23,7 @@ PLAYERS_PER_PAGE = 30
 def add_cache_headers(response):
     """Add cache headers to GET requests."""
     if request.method == 'GET' and response.status_code == 200:
-        response.headers['Cache-Control'] = 'public, max-age=3600'
+        response.headers['Cache-Control'] = 'public, max-age=86400'
     return response
 
 
