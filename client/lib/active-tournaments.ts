@@ -25,7 +25,7 @@ export const upcomingTournaments: Tournament[] = [
     short_name: 'Kisumu Open',
     startDate: '2026-03-07',
     endDate: '2026-03-08',
-    location: 'Mama Grace Onyango Social Hall, Kisumu',
+    location: 'Kisumu Social Hall',
     rounds: 6,
     confirmed: true,
     registrationUrl: 'https://forms.gle/gqHvBQ1ohFJ5jnEM7',
