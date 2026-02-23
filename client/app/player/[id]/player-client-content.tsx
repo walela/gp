@@ -111,7 +111,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-4 space-y-4 max-w-6xl">
       {/* Season Selector */}
       <div className="flex justify-end">
         <SeasonSelector seasons={seasons} currentSeason={currentSeason} />
@@ -181,9 +181,9 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
       </div>
 
       {/* Mobile Player Header */}
-      <div className="sm:hidden -mx-4">
-        <div className="bg-gradient-to-br from-white/95 via-white/90 to-white/85 backdrop-blur-md border-0 border-b border-gray-200/50 rounded-none shadow-lg">
-          <div className="bg-gradient-to-r from-slate-50/95 via-stone-50/90 to-gray-50/95 backdrop-blur-md px-4 py-4 border-b border-gray-300/60">
+      <div className="sm:hidden">
+        <div className="bg-white/95 border border-gray-200/60 rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-gray-50/80 px-4 py-3 border-b border-gray-200/60">
             <div className="flex flex-col space-y-2">
               <h1 className="text-2xl font-bold text-gray-900 drop-shadow-sm">{player.name}</h1>
 
@@ -203,36 +203,36 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
           </div>
 
           {/* Simplified Mobile Stats */}
-          <div className="p-4 grid grid-cols-3 gap-4 bg-gradient-to-b from-white/85 via-white/75 to-white/70 backdrop-blur-lg">
-            <div className="flex flex-col items-center bg-white/30 backdrop-blur-sm rounded-lg p-3 border border-white/40 shadow-sm">
-              <Star className="h-4 w-4 text-amber-500 mb-1 drop-shadow-sm" />
-              <span className="text-xs text-gray-700 uppercase tracking-wide font-semibold">Best</span>
-              <p className="font-bold text-lg text-gray-900 drop-shadow-sm">{bestTpr}</p>
+          <div className="p-3 grid grid-cols-3 gap-3 bg-gray-50/50">
+            <div className="flex flex-col items-center bg-white rounded-lg p-2.5 border border-gray-100">
+              <Star className="h-4 w-4 text-amber-500 mb-1" />
+              <span className="text-xs text-gray-500 uppercase tracking-wide">Best</span>
+              <p className="font-bold text-lg text-gray-900">{bestTpr}</p>
             </div>
 
-          <div className="flex flex-col items-center bg-white/30 backdrop-blur-sm rounded-lg p-3 border border-white/40 shadow-sm">
-            <Star className="h-4 w-4 text-blue-500 mb-1 drop-shadow-sm" />
-            <span className="text-xs text-gray-700 uppercase tracking-wide font-semibold">Best 4</span>
-            <p className="font-bold text-lg text-gray-900 drop-shadow-sm">{best4Average ?? '-'}</p>
-            {bestAverageInfo && bestAverageInfo.label !== 'Best 4' && bestAverageValue !== null && (
-              <span className="text-[11px] text-gray-600">
-                ({bestAverageInfo.label}: {bestAverageValue})
-              </span>
-            )}
-          </div>
+            <div className="flex flex-col items-center bg-white rounded-lg p-2.5 border border-gray-100">
+              <Star className="h-4 w-4 text-blue-500 mb-1" />
+              <span className="text-xs text-gray-500 uppercase tracking-wide">Best 4</span>
+              <p className="font-bold text-lg text-gray-900">{best4Average ?? '-'}</p>
+              {bestAverageInfo && bestAverageInfo.label !== 'Best 4' && bestAverageValue !== null && (
+                <span className="text-[10px] text-gray-500">
+                  ({bestAverageInfo.label}: {bestAverageValue})
+                </span>
+              )}
+            </div>
 
-            <div className="flex flex-col items-center bg-white/30 backdrop-blur-sm rounded-lg p-3 border border-white/40 shadow-sm">
-              <Trophy className="h-4 w-4 text-green-500 mb-1 drop-shadow-sm" />
-              <span className="text-xs text-gray-700 uppercase tracking-wide font-semibold">Ranking</span>
-              <p className="font-bold text-lg text-gray-900 drop-shadow-sm">#{currentRank || '-'}</p>
+            <div className="flex flex-col items-center bg-white rounded-lg p-2.5 border border-gray-100">
+              <Trophy className="h-4 w-4 text-green-500 mb-1" />
+              <span className="text-xs text-gray-500 uppercase tracking-wide">Ranking</span>
+              <p className="font-bold text-lg text-gray-900">#{currentRank || '-'}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Tournament History */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold -mx-4 sm:mx-0">Tournament History</h2>
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold">Tournament History</h2>
 
         {/* Mobile View */}
         <div className="block sm:hidden">
