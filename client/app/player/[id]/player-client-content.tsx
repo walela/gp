@@ -182,7 +182,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
 
       {/* Mobile Player Header */}
       <div className="sm:hidden">
-        <div className="bg-white/95 border border-gray-200/60 rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white/95 border border-gray-200/60 rounded-lg shadow-sm overflow-hidden">
           <div className="bg-gray-50/80 px-4 py-3 border-b border-gray-200/60">
             <div className="flex flex-col space-y-2">
               <h1 className="text-2xl font-bold text-gray-900 drop-shadow-sm">{player.name}</h1>
@@ -236,7 +236,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
 
         {/* Mobile View */}
         <div className="block sm:hidden">
-          <Card className="rounded-xl border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
+          <Card className="rounded-lg border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>
@@ -349,7 +349,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
 
         {/* Desktop View */}
         <div className="hidden sm:block">
-          <Card className="rounded-xl border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
+          <Card className="rounded-lg border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>
