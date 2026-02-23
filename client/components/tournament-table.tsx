@@ -167,7 +167,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
             return (
               <CustomTableRow
                 key={tournament.id}
-                className={cn(index % 2 === 0 ? 'bg-gray-100 hover:bg-gray-200' : 'bg-white hover:bg-gray-100')}>
+                className={cn(index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-gray-50/60 hover:bg-slate-50')}>
                 <CustomTableCell className="whitespace-nowrap">
                   <div className="flex flex-col gap-1">
                     <Link
@@ -175,7 +175,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
                       className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
                       {tournament.short_name || tournament.name}
                     </Link>
-                    <div className="text-xs text-gray-500 sm:hidden space-x-2">
+                    <div className="text-sm text-gray-600 sm:hidden space-x-2">
                       <span>{dates}</span>
                       <span className="lg:hidden">•</span>
                       <span className="lg:hidden">{rounds} rounds</span>
