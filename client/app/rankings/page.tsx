@@ -175,7 +175,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <CategoryToggle currentCategory={category} />
-          <SeasonSelector seasons={seasons} currentSeason={season} />
+          <SeasonSelector
+            seasons={category === 'ladies' ? seasons.filter(s => s >= 2026) : seasons}
+            currentSeason={season}
+          />
         </div>
         <SearchForm defaultValue={search} />
       </div>
