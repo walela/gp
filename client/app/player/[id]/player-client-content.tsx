@@ -235,8 +235,8 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
         <h2 className="text-xl font-semibold -mx-4 sm:mx-0">Tournament History</h2>
 
         {/* Mobile View */}
-        <div className="block sm:hidden -mx-4">
-          <Card className="rounded-none border-l-0 border-r-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0">
+        <div className="block sm:hidden">
+          <Card className="rounded-xl border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>
@@ -280,7 +280,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                       className={cn(
                         'transition-colors',
                         isCounting
-                          ? 'bg-blue-50/70 border-l-4 border-blue-500 hover:bg-blue-100/70'
+                          ? 'bg-blue-50/70 border-l-2 border-blue-400 hover:bg-blue-100/70'
                           : index % 2 === 0
                             ? 'bg-gray-50/50 hover:bg-gray-100/50'
                             : 'bg-white hover:bg-gray-50/50',
@@ -349,7 +349,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
 
         {/* Desktop View */}
         <div className="hidden sm:block">
-          <Card className="rounded-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0">
+          <Card className="rounded-xl border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>
@@ -409,7 +409,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                       className={cn(
                         'transition-colors',
                         isCounting
-                          ? 'bg-blue-50/70 border-l-4 border-blue-500 hover:bg-blue-100/70'
+                          ? 'bg-blue-50/70 border-l-2 border-blue-400 hover:bg-blue-100/70'
                           : index % 2 === 0
                             ? 'bg-gray-50/50 hover:bg-gray-100/50'
                             : 'bg-white hover:bg-gray-50/50',
