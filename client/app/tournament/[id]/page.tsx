@@ -380,7 +380,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                 </CustomTableCell>
                 <CustomTableCell className="text-right py-2 px-3 sm:py-4 sm:px-6 font-medium text-gray-700 tabular-nums">
                   <div className="flex items-center justify-end gap-1">
-                    {result.result_status !== 'valid' && result.tpr && (
+                    {result.result_status && result.result_status !== 'valid' && result.tpr && (
                       <span className="md:hidden" title={`Invalid: ${result.result_status}`}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -391,7 +391,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   </div>
                 </CustomTableCell>
                 <CustomTableCell className="text-center py-2 px-3 sm:py-4 sm:px-6 font-medium tabular-nums hidden md:table-cell">
-                  {result.result_status === 'valid' ? (
+                  {(!result.result_status || result.result_status === 'valid') ? (
                     <div className="flex items-center justify-center">
                       <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
