@@ -204,13 +204,13 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
 
           {/* Simplified Mobile Stats */}
           <div className="p-3 grid grid-cols-3 gap-3 bg-gray-50/50">
-            <div className="flex flex-col items-center bg-white rounded-lg p-2.5 border border-gray-100">
+            <div className="flex flex-col items-center bg-white rounded p-2.5 border border-gray-100">
               <Star className="h-4 w-4 text-amber-500 mb-1" />
               <span className="text-xs text-gray-500 uppercase tracking-wide">Best</span>
               <p className="font-bold text-lg text-gray-900">{bestTpr}</p>
             </div>
 
-            <div className="flex flex-col items-center bg-white rounded-lg p-2.5 border border-gray-100">
+            <div className="flex flex-col items-center bg-white rounded p-2.5 border border-gray-100">
               <Star className="h-4 w-4 text-blue-500 mb-1" />
               <span className="text-xs text-gray-500 uppercase tracking-wide">Best 4</span>
               <p className="font-bold text-lg text-gray-900">{best4Average ?? '-'}</p>
@@ -221,7 +221,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
               )}
             </div>
 
-            <div className="flex flex-col items-center bg-white rounded-lg p-2.5 border border-gray-100">
+            <div className="flex flex-col items-center bg-white rounded p-2.5 border border-gray-100">
               <Trophy className="h-4 w-4 text-green-500 mb-1" />
               <span className="text-xs text-gray-500 uppercase tracking-wide">Ranking</span>
               <p className="font-bold text-lg text-gray-900">#{currentRank || '-'}</p>
