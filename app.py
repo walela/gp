@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_compress import Compress
 from flask_cors import CORS
 from chess_results import ChessResultsScraper
 from db import Database
@@ -14,6 +15,7 @@ from tournament_metadata import infer_location, infer_rounds
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+Compress(app)
 CORS(app)  # Enable CORS for all routes
 db = Database()
 
