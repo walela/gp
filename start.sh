@@ -8,5 +8,5 @@ if [ ! -f /data/gp_tracker.db ] || [ /app/gp_tracker.db -nt /data/gp_tracker.db 
     echo "Database synced."
 fi
 
-# Start gunicorn
-exec gunicorn --bind 0.0.0.0:8080 app:app
+# Start gunicorn with moderate concurrency for shared-1x-cpu@512MB
+exec gunicorn --bind 0.0.0.0:8080 --workers 2 --threads 4 app:app
