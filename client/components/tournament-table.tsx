@@ -84,7 +84,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
   }
 
   return (
-    <Card className="rounded-lg border-0 shadow-sm overflow-hidden bg-white/90 backdrop-blur-sm p-0">
+    <Card className="rounded-lg border-0 shadow-elevation-low overflow-hidden bg-white/90 backdrop-blur-sm p-0">
       <CustomTable className="h-full">
         <CustomTableHeader>
           <CustomTableRow>
@@ -167,7 +167,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
             return (
               <CustomTableRow
                 key={tournament.id}
-                className={cn(index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-gray-50/60 hover:bg-slate-50')}>
+                className={cn(index % 2 === 0 ? 'bg-white hover:bg-gray-200 transition-colors' : 'bg-gray-200/50 hover:bg-gray-200 transition-colors')}>
                 <CustomTableCell className="whitespace-nowrap">
                   <div className="flex flex-col gap-1">
                     <Link

@@ -118,7 +118,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
       </div>
 
       {/* Player Header */}
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden sm:block hidden">
+      <div className="bg-white border border-gray-200 rounded-lg shadow-elevation-low overflow-hidden sm:block hidden">
         <div className="bg-gray-50 px-3 py-3 sm:px-4 sm:py-4 border-b border-gray-200">
           <div className="flex flex-col space-y-3">
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{player.name}</h1>
@@ -182,7 +182,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
 
       {/* Mobile Player Header */}
       <div className="sm:hidden">
-        <div className="bg-white/95 border border-gray-200/60 rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white/95 border border-gray-200/60 rounded-lg shadow-elevation-low overflow-hidden">
           <div className="bg-gray-50/80 px-3 py-2.5 border-b border-gray-200/60">
             <div className="flex flex-col space-y-2">
               <h1 className="text-xl font-bold text-gray-900">{player.name}</h1>
@@ -235,7 +235,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
         <h2 className="text-lg font-semibold">Tournament History</h2>
 
         {totalTournaments === 0 ? (
-          <Card className="rounded-lg border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
+          <Card className="rounded-lg border border-gray-200/60 shadow-elevation-low overflow-hidden bg-white/95 p-0">
             <CustomTable>
               <CustomTableHeader>
                 <CustomTableRow>
@@ -257,7 +257,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
         <>
         {/* Mobile View */}
         <div className="block sm:hidden">
-          <Card className="rounded-lg border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
+          <Card className="rounded-lg border border-gray-200/60 shadow-elevation-low overflow-hidden bg-white/95 p-0">
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>
@@ -362,7 +362,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
 
         {/* Desktop View */}
         <div className="hidden sm:block">
-          <Card className="rounded-lg border border-gray-200/60 shadow-sm overflow-hidden bg-white/95 p-0">
+          <Card className="rounded-lg border border-gray-200/60 shadow-elevation-low overflow-hidden bg-white/95 p-0">
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>

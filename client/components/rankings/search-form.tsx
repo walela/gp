@@ -40,7 +40,7 @@ export function SearchForm({ defaultValue = '' }: SearchFormProps) {
           placeholder="Search player list..." 
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          className="pr-16 pl-4 h-11 bg-white/80 backdrop-blur-sm border-gray-200 transition-all duration-200 shadow-sm hover:shadow-md group-focus-within:shadow-md rounded-l-[0.625rem]" 
+          className="pr-16 pl-4 h-11 bg-white/80 backdrop-blur-sm border-gray-200 transition-shadow duration-200 shadow-elevation-low hover:shadow-elevation-mid group-focus-within:shadow-elevation-mid rounded-l-[0.625rem]" 
         />
         <button 
           type="submit" 

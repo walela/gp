@@ -170,7 +170,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
 
       {/* Tournament Metadata - Optimized for mobile */}
       <div className="md:hidden">
-        <Card className="p-4 rounded-lg shadow-sm">
+        <Card className="p-4 rounded-lg shadow-elevation-low">
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-2">
               <CalendarDays className="h-4 w-4 text-blue-600 flex-shrink-0" />
@@ -226,7 +226,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
 
       {/* Tournament Metadata - Desktop version */}
       <div className="hidden md:block">
-        <Card className="p-4 rounded-lg shadow-sm border-0 bg-white/95 mb-6">
+        <Card className="p-4 rounded-lg shadow-elevation-low border-0 bg-white/95 mb-6">
           <div className="grid grid-cols-5 gap-4">
             <div className="flex items-center gap-3">
               <div className="bg-blue-50 p-2 rounded-full flex-shrink-0">
@@ -298,7 +298,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         </Card>
       </div>
 
-      <Card className="rounded-lg border-0 shadow-sm overflow-hidden bg-white/95 backdrop-blur-sm p-0">
+      <Card className="rounded-lg border-0 shadow-elevation-low overflow-hidden bg-white/95 backdrop-blur-sm p-0">
         <CustomTable className="h-full">
           <CustomTableHeader>
             <CustomTableRow className="bg-gray-50 border-b">

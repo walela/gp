@@ -82,7 +82,7 @@ export function RankingsView({
       <Card
         className={cn(
           'w-full border-0 shadow-none rounded-none bg-white/95 p-0',
-          'sm:rounded-bl-lg sm:rounded-br-lg sm:rounded-tr-lg sm:shadow-sm'
+          'sm:rounded-bl-lg sm:rounded-br-lg sm:rounded-tr-lg sm:shadow-elevation-low'
         )}>
         <CustomTable className="h-full">
           <CustomTableHeader>
@@ -296,7 +296,7 @@ export function RankingsView({
       </Card>
 
       {showLegend && (
-        <div className="border border-gray-200 bg-white/95 shadow-sm">
+        <div className="border border-gray-200 bg-white/95 shadow-elevation-low">
           <div className="px-4 py-3 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-700">
             <span className="inline-flex items-center gap-1.5 text-amber-700">
               <Crown className="h-3.5 w-3.5 text-amber-600" />

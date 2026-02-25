@@ -73,7 +73,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <SeasonSelector seasons={seasons} currentSeason={season} />
             </div>
 
-            <div className="bg-white/95 rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white/95 rounded-lg shadow-elevation-low overflow-hidden">
               <div className="divide-y divide-gray-100">
                 {upcomingTournaments.map((tournament, index) => {
                   if (!tournament.startDate || !tournament.endDate) return null
@@ -88,8 +88,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`px-4 py-2.5 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
-                      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+                      className={`px-4 py-2 ${index === upcomingTournaments.length - 1 ? 'pb-4' : ''} ${index % 2 === 0 ? 'bg-gray-200/50' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0">
                           {detailHref ? (
                             <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
@@ -164,7 +164,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <span className="text-sm text-gray-400">{plannedTournaments.length} events</span>
             </div>
 
-            <div className="bg-white/95 rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white/95 rounded-lg shadow-elevation-low overflow-hidden">
               <div className="divide-y divide-gray-100">
                 {plannedTournaments.map((tournament, index) => {
                   const hasDates = Boolean(tournament.startDate && tournament.endDate)
@@ -179,7 +179,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
+                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-200/50' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
                       <div className="min-w-0">
                         {detailHref ? (
                           <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">

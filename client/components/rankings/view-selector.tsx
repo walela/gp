@@ -30,7 +30,7 @@ export function ViewSelector({ view, exportUrl, exportFilename }: ViewSelectorPr
   
   return (
     <div className="flex items-center justify-between gap-2 w-full">
-      <div className="inline-flex rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-sm">
+      <div className="inline-flex rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-elevation-low">
         {viewOptions.map(option => {
           const isActive = view === option.value;
           return (

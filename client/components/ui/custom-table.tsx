@@ -6,7 +6,7 @@ type CustomTableProps = React.HTMLAttributes<HTMLTableElement> & {
 
 export function CustomTable({ className, containerClassName, ...props }: CustomTableProps) {
   return (
-    <div className={`w-full h-full overflow-hidden shadow-none rounded-none sm:shadow-md sm:rounded-lg ${containerClassName || ''}`}>
+    <div className={`w-full h-full overflow-hidden shadow-none rounded-none sm:shadow-elevation-mid sm:rounded-lg ${containerClassName || ''}`}>
       <div className="w-full h-full overflow-x-auto">
         <table
           className={`w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse ${className || ''}`}
@@ -28,7 +28,7 @@ export function CustomTableBody({ className, ...props }: React.HTMLAttributes<HT
 export function CustomTableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
   return (
     <tr
-      className={`odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100/80 sm:even:bg-gray-200/70 even:dark:bg-gray-700/70 border-b dark:border-gray-700 border-gray-200 ${
+      className={`odd:bg-white odd:dark:bg-gray-900 even:bg-gray-200/50 even:dark:bg-gray-700/70 border-b dark:border-gray-700 border-gray-200 ${
         className || ''
       }`}
       {...props}
