@@ -9,7 +9,7 @@ interface CategoryToggleProps {
   className?: string
 }
 
-export function CategoryToggle({ currentCategory, currentSeason, className }: CategoryToggleProps) {
+export function CategoryToggle({ currentCategory, className }: CategoryToggleProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
