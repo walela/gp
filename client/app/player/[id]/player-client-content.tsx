@@ -261,6 +261,9 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>
+                  <CustomTableHead className="w-[28px] px-1 text-center text-xs">
+                    <span className="sr-only">Counted</span>
+                  </CustomTableHead>
                   <CustomTableHead className="cursor-pointer select-none text-xs px-2" onClick={() => handleSort('tournament')}>
                     <div className="flex items-center gap-1">
                       <span>Tournament</span>
@@ -278,9 +281,6 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                         <SortIcon field="tpr" />
                       </span>
                     </div>
-                  </CustomTableHead>
-                  <CustomTableHead className="w-[28px] px-1 text-center text-xs">
-                    <span className="sr-only">Counted</span>
                   </CustomTableHead>
                   <CustomTableHead
                     className="cursor-pointer select-none text-right text-xs px-2"
@@ -311,6 +311,11 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           : 'bg-white hover:bg-gray-50/50',
                         isInvalid ? 'opacity-70' : ''
                       )}>
+                      <CustomTableCell className="px-1 py-3 text-center w-[28px]">
+                        {isCounting && (
+                          <div className="h-4 w-4 rounded-full bg-emerald-600 flex items-center justify-center mx-auto"><Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
+                        )}
+                      </CustomTableCell>
                       <CustomTableCell className="px-2 py-3">
                         <Link
                           href={`/tournament/${result.tournament_id}`}
@@ -328,11 +333,6 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           </div>
                         ) : (
                           <span className={cn('text-sm font-medium', isCounting ? 'text-blue-700' : '')}>{result.tpr ?? '-'}</span>
-                        )}
-                      </CustomTableCell>
-                      <CustomTableCell className="px-1 py-3 text-center w-[28px]">
-                        {isCounting && (
-                          <div className="h-4 w-4 rounded-full bg-emerald-600 flex items-center justify-center mx-auto"><Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
                         )}
                       </CustomTableCell>
                       <CustomTableCell className="text-right tabular-nums px-2 py-3">
@@ -367,6 +367,9 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>
+                  <CustomTableHead className="w-[40px] text-center">
+                    <span className="sr-only">Counted</span>
+                  </CustomTableHead>
                   <CustomTableHead className="cursor-pointer select-none min-w-[200px]" onClick={() => handleSort('tournament')}>
                     <div className="flex items-center gap-1">
                       <span>Tournament</span>
@@ -407,9 +410,6 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="w-[40px] text-center">
-                    <span className="sr-only">Counted</span>
-                  </CustomTableHead>
                   <CustomTableHead className="text-center">
                     <span>Link</span>
                   </CustomTableHead>
@@ -430,6 +430,11 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           : 'bg-white hover:bg-gray-50/50',
                         isInvalid ? 'opacity-70' : ''
                       )}>
+                      <CustomTableCell className="text-center w-[40px]">
+                        {isCounting && (
+                          <div className="h-4 w-4 rounded-full bg-emerald-600 flex items-center justify-center mx-auto"><Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
+                        )}
+                      </CustomTableCell>
                       <CustomTableCell className="whitespace-nowrap">
                         <Link
                           href={`/tournament/${result.tournament_id}`}
@@ -454,11 +459,6 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           </div>
                         ) : (
                           <span className={cn('font-medium', isCounting ? 'text-blue-700' : '')}>{result.tpr ?? '-'}</span>
-                        )}
-                      </CustomTableCell>
-                      <CustomTableCell className="text-center w-[40px]">
-                        {isCounting && (
-                          <div className="h-4 w-4 rounded-full bg-emerald-600 flex items-center justify-center mx-auto"><Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
                         )}
                       </CustomTableCell>
                       <CustomTableCell className="text-center">
