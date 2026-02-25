@@ -39,15 +39,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
         </div>
         <SpeedInsights />
-        <Script 
-          defer 
-          data-domain="1700chess.vercel.app" 
-          data-api="https://grandprix2025.walerunni.workers.dev/data/event"
-          src="https://grandprix2025.walerunni.workers.dev/static/script.file-downloads.hash.outbound-links.tagged-events.js" 
+        <Script
+          defer
+          data-domain="1700chess.sh"
+          data-api="https://gp-tracker.walerunni.workers.dev/data/event"
+          src="https://gp-tracker.walerunni.workers.dev/static/script.js"
         />
-        <Script id="plausible-init" strategy="afterInteractive">
-          {`window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }`}
-        </Script>
       </body>
     </html>
   )
