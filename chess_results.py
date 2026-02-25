@@ -4,6 +4,7 @@ Scraper for chess-results.com to collect tournament data and TPRs for Kenyan pla
 import re
 import logging
 from datetime import datetime
+from urllib.parse import parse_qsl, urlparse
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Optional, Tuple, Dict, Any
@@ -68,10 +69,14 @@ class ChessResultsScraper:
 
         raise requests.RequestException(f"All chess-results mirrors failed for {path}") from last_exc
     
-    def get_available_sections(self, tournament_id: str) -> List[Dict[str, str]]:
+    def get_available_sections(self, tournament_id: str) -> List[Dict[str, Any]]:
         """
         Get available sections for a tournament.
-        Returns list of dicts with 'name', 'tournament_id', and 'is_ladies' keys.
+        Returns list of dicts with:
+        - name: section name
+        - tournament_id: target tournament id for this section
+        - url_param: optional querystring needed for this section (e.g. wi=1)
+        - is_ladies: whether section appears to be ladies/women
 
         Note: On chess-results, different sections are often separate tournaments
         with different IDs, linked via the "Tournament selection" row.
@@ -97,6 +102,7 @@ class ChessResultsScraper:
                         sections.append({
                             'name': section_name,
                             'tournament_id': tournament_id,
+                            'url_param': '',
                             'is_ladies': 'ladies' in section_name.lower() or 'women' in section_name.lower()
                         })
 
@@ -111,16 +117,25 @@ class ChessResultsScraper:
                         match = re.search(r'tnr(\d+)\.aspx', href)
                         if match:
                             section_tournament_id = match.group(1)
+                            parsed_href = urlparse(href)
+                            # Keep section-specific params; drop generic display params.
+                            filtered_params = [
+                                (k, v)
+                                for k, v in parse_qsl(parsed_href.query, keep_blank_values=True)
+                                if k not in {"lan", "flag"}
+                            ]
+                            section_param = "&".join(f"{k}={v}" for k, v in filtered_params)
                             sections.append({
                                 'name': section_name,
                                 'tournament_id': section_tournament_id,
+                                'url_param': section_param,
                                 'is_ladies': 'ladies' in section_name.lower() or 'women' in section_name.lower()
                             })
                     break
 
         # If no sections found, assume it's a single-section tournament (Open)
         if not sections:
-            sections.append({'name': 'Open Section', 'tournament_id': tournament_id, 'is_ladies': False})
+            sections.append({'name': 'Open Section', 'tournament_id': tournament_id, 'url_param': '', 'is_ladies': False})
 
         return sections
 

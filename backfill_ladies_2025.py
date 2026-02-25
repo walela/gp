@@ -30,6 +30,10 @@ def main():
         tournament_id = tournament['id']
         tournament_name = tournament['name']
 
+        if tournament_id.endswith('_ladies'):
+            logger.info(f"Skipping already backfilled ladies tournament {tournament_id}")
+            continue
+
         logger.info(f"Checking {tournament_name} (ID: {tournament_id}) for Ladies section...")
 
         try:
@@ -53,9 +57,11 @@ def main():
 
                 # Scrape the ladies section
                 logger.info(f"  Scraping ladies section...")
+                source_tournament_id = ladies_section.get('tournament_id', tournament_id)
+                section_param = ladies_section.get('url_param', '')
                 name, results, metadata = scraper.get_tournament_data(
-                    tournament_id,
-                    section_param=ladies_section['url_param']
+                    source_tournament_id,
+                    section_param=section_param
                 )
 
                 if results:

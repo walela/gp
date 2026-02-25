@@ -20,7 +20,8 @@ def scrape_tournament_all_sections(tournament_id: str, db: Database, scraper: Ch
 
     for section in sections:
         section_name = section['name']
-        section_param = section['url_param']
+        section_param = section.get('url_param', '')
+        source_tournament_id = section.get('tournament_id', tournament_id)
         is_ladies = section.get('is_ladies', False)
 
         # Determine tournament ID for storage
@@ -32,7 +33,7 @@ def scrape_tournament_all_sections(tournament_id: str, db: Database, scraper: Ch
         logger.info(f"\nScraping {section_name}...")
 
         try:
-            name, results, metadata = scraper.get_tournament_data(tournament_id, section_param=section_param)
+            name, results, metadata = scraper.get_tournament_data(source_tournament_id, section_param=section_param)
 
             if not results:
                 logger.warning(f"  No results found for {section_name}")
