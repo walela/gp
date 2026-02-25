@@ -3,7 +3,7 @@ import { getTournaments } from '@/services/api'
 
 export const dynamic = 'force-dynamic'
 
-const BASE_URL = 'https://1700chess.vercel.app'
+const BASE_URL = 'https://1700chess.sh'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Base routes

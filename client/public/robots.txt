@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://1700chess.vercel.app/sitemap.xml
+Sitemap: https://1700chess.sh/sitemap.xml
 
 # Allow all major search engine bots
 User-agent: Googlebot

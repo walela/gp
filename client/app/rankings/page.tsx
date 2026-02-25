@@ -11,7 +11,7 @@ import {
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
 import { ChevronRight, Crown } from 'lucide-react'
-import { getRankings, getTopPlayers, getSeasons, type PlayerRanking } from '@/services/api'
+import { getRankings, getSeasons, type PlayerRanking } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { SearchForm } from '@/components/rankings/search-form'
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description: 'Official rankings for the Chess Kenya Grand Prix series. View top players, tournament performances and TPR ratings.',
     type: 'website',
     siteName: 'Chess Kenya Grand Prix',
-    url: 'https://1700chess.vercel.app/rankings'
+    url: 'https://1700chess.sh/rankings'
   },
   twitter: {
     card: 'summary',
@@ -136,8 +136,11 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const category = params.category || 'open'
   const gender = category === 'ladies' ? 'f' as const : undefined
 
-  // Pass search query to the backend for filtering
-  const { rankings, total_pages } = await getRankings({
+  const highlightCount = 9
+  const topPlayersFetchCount = highlightCount + 3
+
+  // Main table data request.
+  const rankingsPromise = getRankings({
     sort,
     dir,
     page,
@@ -146,9 +149,25 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
     gender
   })
 
-  const highlightCount = 9
-  // Fetch extra to cover spots freed by Kenya #1 / junior champ being in top 9
-  const { topPlayers } = await getTopPlayers({ count: highlightCount + 3, sortBy: 'best_4', season, gender })
+  // Top-player request used for qualifier highlighting.
+  // Avoid duplicate fetch when the current page already has the required ordering.
+  const canReuseCurrentRankingsForTopPlayers = sort === 'best_4' && dir === 'desc' && page === 1 && !search
+  const topPlayersPromise = canReuseCurrentRankingsForTopPlayers
+    ? null
+    : getRankings({
+        sort: 'best_4',
+        dir: 'desc',
+        page: 1,
+        season,
+        gender
+      })
+
+  const [rankingsData, topPlayersData] = await Promise.all([
+    rankingsPromise,
+    topPlayersPromise
+  ])
+  const { rankings, total_pages } = rankingsData
+  const topPlayers = (topPlayersData?.rankings ?? rankings).slice(0, topPlayersFetchCount)
 
   const kenyaNumber1Name = season === 2025
     ? (category === 'ladies' ? 'ndirangu' : 'mcligeyo')

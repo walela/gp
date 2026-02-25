@@ -86,7 +86,7 @@ export async function generateMetadata({ params }: TournamentPageProps): Promise
       description: `${tournament.total} players competed in the ${shortName} tournament. View complete results, TPR ratings and standings.`,
       type: 'website',
       siteName: 'Chess Kenya Grand Prix',
-      url: `https://1700chess.vercel.app/tournament/${id}`
+      url: `https://1700chess.sh/tournament/${id}`
     },
     twitter: {
       card: 'summary',
@@ -147,7 +147,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
     },
     eventStatus: 'https://schema.org/EventCompleted',
     maximumAttendeeCapacity: tournament.total,
-    url: `https://1700chess.vercel.app/tournament/${id}`,
+    url: `https://1700chess.sh/tournament/${id}`,
     description: `Chess tournament with ${tournament.total} participants, ${resolvedRounds} rounds`
   }
 

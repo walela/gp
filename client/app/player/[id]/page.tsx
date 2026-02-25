@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: PlayerPageProps): Promise<Met
         description: `${ratingText} chess player from ${player.federation}. View tournament results and performance ratings.`,
         type: 'profile',
         siteName: 'Chess Kenya Grand Prix',
-        url: `https://1700chess.vercel.app/player/${id}`
+        url: `https://1700chess.sh/player/${id}`
       },
       twitter: {
         card: 'summary',
@@ -137,7 +137,7 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
       '@type': 'Organization',
       name: 'Chess Kenya'
     },
-    url: `https://1700chess.vercel.app/player/${id}`,
+    url: `https://1700chess.sh/player/${id}`,
     ...(player.current_fide_rating && {
       award: `FIDE Rating: ${player.current_fide_rating}`
     }),

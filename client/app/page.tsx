@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     description: 'Official tournament tracker for Chess Kenya Grand Prix. View results, rankings and upcoming chess tournaments across Kenya.',
     type: 'website',
     siteName: 'Chess Kenya Grand Prix',
-    url: 'https://1700chess.vercel.app'
+    url: 'https://1700chess.sh'
   },
   twitter: {
     card: 'summary_large_image',
