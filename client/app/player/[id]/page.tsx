@@ -7,7 +7,7 @@ export const revalidate = 86400 // cache for 24 hours
 
 interface PlayerPageProps {
   params: { id: string }
-  searchParams: { season?: string }
+  searchParams: { season?: string; gender?: string }
 }
 
 export async function generateMetadata({ params }: PlayerPageProps): Promise<Metadata> {
@@ -65,7 +65,8 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
   let error: Error | null = null
 
   try {
-    player = await getPlayer(id, { season })
+    const gender = resolvedSearchParams.gender
+    player = await getPlayer(id, { season, gender })
     if (!player) {
       // Optionally handle 'player not found' scenario specifically if API returns null/undefined
       throw new Error('Player not found')

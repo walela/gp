@@ -45,6 +45,8 @@ class Database:
                 c.execute('ALTER TABLE tournaments ADD COLUMN rounds INTEGER')
             if 'section' not in existing_columns:
                 c.execute("ALTER TABLE tournaments ADD COLUMN section TEXT DEFAULT 'open'")
+            if 'source_id' not in existing_columns:
+                c.execute('ALTER TABLE tournaments ADD COLUMN source_id TEXT')
             
             # Create players table
             c.execute('''
@@ -153,6 +155,7 @@ class Database:
         location: Optional[str] = None,
         rounds: Optional[int] = None,
         section: str = "open",
+        source_id: Optional[str] = None,
     ):
         """Save tournament data and results."""
         with sqlite3.connect(self.db_file) as conn:
@@ -166,8 +169,8 @@ class Database:
 
             c.execute(
                 '''
-                INSERT INTO tournaments (id, name, start_date, end_date, short_name, location, rounds, section)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO tournaments (id, name, start_date, end_date, short_name, location, rounds, section, source_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(id) DO UPDATE SET
                     name = excluded.name,
                     start_date = COALESCE(excluded.start_date, tournaments.start_date),
@@ -175,7 +178,8 @@ class Database:
                     short_name = COALESCE(excluded.short_name, tournaments.short_name),
                     location = COALESCE(excluded.location, tournaments.location),
                     rounds = COALESCE(excluded.rounds, tournaments.rounds),
-                    section = COALESCE(excluded.section, tournaments.section)
+                    section = COALESCE(excluded.section, tournaments.section),
+                    source_id = COALESCE(excluded.source_id, tournaments.source_id)
                 ''',
                 (
                     tournament_id,
@@ -186,6 +190,7 @@ class Database:
                     inferred_location,
                     inferred_rounds,
                     section,
+                    source_id,
                 ),
             )
 

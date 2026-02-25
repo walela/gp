@@ -85,13 +85,19 @@ class ResultValidator:
         if any('+' in result or '-' in result or 'K' in result for result in game_results):
             return "walkover"
         
+        # Check for forfeit loss in the full table text (catches K in Res column)
+        # '0K' = player lost by forfeit (didn't show up). '1K' = opponent didn't show up (not penalized).
+        # Word boundary \b after K prevents matching '0KEN' (rating 0 + federation KEN).
+        if re.search(r'0K\b', results_text):
+            return "walkover"
+
         # Check for missing games or not paired
         if 'not paired' in results_text:
             return "incomplete"
-            
+
         # Check for withdrawals
         if 'withdrawn' in results_text.lower():
             return "withdrawn"
-            
+
         # If no issues found, result is valid
         return "valid"

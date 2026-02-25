@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { PlayerDetails, PlayerResult, PlayerRanking } from '@/services/api'
-import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, Check } from 'lucide-react'
+import { Trophy, CalendarDays, TrendingUp, Star, ExternalLink, ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, Check, X } from 'lucide-react'
 import { getShortTournamentName } from '@/utils/tournament'
 import {
   CustomTable,
@@ -30,6 +30,7 @@ type SortField = 'tournament' | 'start_rank' | 'rating' | 'points' | 'tpr'
 export default function PlayerClientContent({ player, playerRanking, seasons, currentSeason }: PlayerClientContentProps) {
   const [sortField, setSortField] = useState<SortField>('tpr')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+  const hasLadiesResults = player.results.some(r => r.section === 'ladies')
   // Calculate performance metrics
   const totalTournaments = player.results.length
   const bestTpr = totalTournaments > 0 ? Math.max(...player.results.map(r => r.tpr || 0)) : null
@@ -312,9 +313,11 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                         isInvalid ? 'opacity-70' : ''
                       )}>
                       <CustomTableCell className="px-1 py-3 text-center w-[28px]">
-                        {isCounting && (
+                        {isInvalid ? (
+                          <div className="h-4 w-4 rounded-full bg-red-500 flex items-center justify-center mx-auto"><X className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
+                        ) : isCounting ? (
                           <div className="h-4 w-4 rounded-full bg-emerald-600 flex items-center justify-center mx-auto"><Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
-                        )}
+                        ) : null}
                       </CustomTableCell>
                       <CustomTableCell className="px-2 py-3">
                         <Link
@@ -322,15 +325,13 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 text-sm leading-tight">
                           {getShortTournamentName(result.tournament_name)}
                         </Link>
+                        {hasLadiesResults && result.section === 'open' && (
+                          <span className="block text-xs uppercase tracking-wider text-gray-500 mt-0.5">Open</span>
+                        )}
                       </CustomTableCell>
                       <CustomTableCell className="text-right tabular-nums px-2 py-3">
                         {isInvalid ? (
-                          <div className="flex flex-col items-end space-y-1">
-                            <span className="text-gray-400 line-through text-sm">{result.tpr ?? '-'}</span>
-                            <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded">
-                              Invalid
-                            </span>
-                          </div>
+                          <span className="text-gray-400 line-through text-sm">{result.tpr ?? '-'}</span>
                         ) : (
                           <span className={cn('text-sm font-medium', isCounting ? 'text-blue-700' : '')}>{result.tpr ?? '-'}</span>
                         )}
@@ -441,6 +442,9 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
                           {getShortTournamentName(result.tournament_name)}
                         </Link>
+                        {hasLadiesResults && result.section === 'open' && (
+                          <span className="block text-xs uppercase tracking-wider text-gray-500 mt-0.5">Open</span>
+                        )}
                       </CustomTableCell>
                       <CustomTableCell className="text-right tabular-nums">{result.start_rank ?? '-'}</CustomTableCell>
                       <CustomTableCell className="text-right tabular-nums">{result.rating_in_tournament}</CustomTableCell>

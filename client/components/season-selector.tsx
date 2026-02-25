@@ -26,10 +26,6 @@ export function SeasonSelector({ seasons, currentSeason, className }: SeasonSele
     params.set('season', season.toString())
     // Reset to page 1 when changing season
     params.delete('page')
-    // If switching to a pre-2026 season while on ladies, switch back to open
-    if (season < 2026 && params.get('category') === 'ladies') {
-      params.delete('category')
-    }
     router.push(`${pathname}?${params.toString()}`)
   }
 
