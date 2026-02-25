@@ -25,11 +25,11 @@ interface PlayerClientContentProps {
   currentSeason: number
 }
 
-type SortField = 'tournament' | 'start_rank' | 'rating' | 'points' | 'tpr'
+type SortField = 'date' | 'tournament' | 'start_rank' | 'rating' | 'points' | 'tpr'
 
 export default function PlayerClientContent({ player, playerRanking, seasons, currentSeason }: PlayerClientContentProps) {
-  const [sortField, setSortField] = useState<SortField>('tpr')
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+  const [sortField, setSortField] = useState<SortField>('date')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const hasLadiesResults = player.results.some(r => r.section === 'ladies')
   // Calculate performance metrics
   const totalTournaments = player.results.length
@@ -66,6 +66,10 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
     let aValue: string | number, bValue: string | number
 
     switch (sortField) {
+      case 'date':
+        aValue = a.start_date || ''
+        bValue = b.start_date || ''
+        break
       case 'tournament':
         aValue = getShortTournamentName(a.tournament_name)
         bValue = getShortTournamentName(b.tournament_name)
