@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import url('https://fontsapi.zeoseven.com/442/main/result.css');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -118,14 +119,16 @@
   }
   body {
     @apply bg-background text-foreground text-lg;
-    background: 
-      radial-gradient(circle at 0 0, #b4c4d5 0%, #0000 50%), 
-      radial-gradient(circle at 100% 0, #f3f4f6 0%, #563a3a00 50%), 
-      linear-gradient(253deg, #f8fafc 0%, #f1f5f9 100%);
-    background-attachment: fixed;
     min-height: 100vh;
   }
 
+}
+
+@layer utilities {
+  .font-maple-mono-heading {
+    font-family: "Maple Mono NF CN", "Maple Mono NF", "Maple Mono", var(--font-inter), ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace;
+    letter-spacing: -0.01em;
+  }
 }
 
 /* Chess pattern animation */

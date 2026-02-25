@@ -20,25 +20,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${inter.className}`}>
-        {/* Chess-themed background with subtle checkerboard pattern */}
+        {/* Neobrutalist background - subtle Kenyan palette undertones */}
         <div className="fixed inset-0 -z-10 overflow-hidden">
-          {/* Enhanced gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-100/80 via-white to-slate-300"></div>
-          
-          {/* Subtle vignette effect */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_70%,rgba(241,245,249,0.3)_100%)]"></div>
-          
-          {/* Subtle grid pattern */}
-          <div className="absolute inset-0">
-            {/* Fine grid - very subtle */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#64748b05_1px,transparent_1px),linear-gradient(to_bottom,#64748b05_1px,transparent_1px)] bg-[size:8px_8px]"></div>
-            
-            {/* Medium grid - light */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#64748b08_1px,transparent_1px),linear-gradient(to_bottom,#64748b08_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-            
-            {/* Major grid lines - still subtle */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#64748b10_1px,transparent_1px),linear-gradient(to_bottom,#64748b10_1px,transparent_1px)] bg-[size:160px_160px]"></div>
-          </div>
+          <div className="absolute inset-0 bg-[#f4f2ef]" />
+          {/* Red-to-green diagonal wash */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#f5d5cd] via-[#f4f2ef] to-[#d2e8d8] opacity-60" />
+          {/* Subtle grain */}
+          <div className="absolute inset-0 opacity-[0.10]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`, backgroundSize: '200px 200px' }} />
+          {/* Light grid */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1a1a1a06_1px,transparent_1px),linear-gradient(to_bottom,#1a1a1a06_1px,transparent_1px)] bg-[size:48px_48px]" />
         </div>
         
         <div className="relative flex min-h-screen flex-col">

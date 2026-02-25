@@ -111,7 +111,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
   }
 
   return (
-    <div className="container mx-auto px-4 py-4 space-y-4 max-w-6xl">
+    <div className="w-full max-w-6xl mx-auto py-2 space-y-3">
       {/* Season Selector */}
       <div className="flex justify-end">
         <SeasonSelector seasons={seasons} currentSeason={currentSeason} />
@@ -119,7 +119,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
 
       {/* Player Header */}
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden sm:block hidden">
-        <div className="bg-gray-50 px-4 py-4 border-b border-gray-200">
+        <div className="bg-gray-50 px-3 py-3 sm:px-4 sm:py-4 border-b border-gray-200">
           <div className="flex flex-col space-y-3">
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{player.name}</h1>
 
@@ -139,7 +139,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
         </div>
 
         {/* Stats Section */}
-        <div className="p-4 grid grid-cols-5 gap-4 bg-gray-50">
+        <div className="p-3 sm:p-4 grid grid-cols-5 gap-3 sm:gap-4 bg-gray-50">
           <div className="flex flex-col items-center">
             <Star className="h-4 w-4 text-amber-500 mb-1" />
             <span className="text-xs text-muted-foreground uppercase tracking-wide">Best</span>
@@ -183,7 +183,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
       {/* Mobile Player Header */}
       <div className="sm:hidden">
         <div className="bg-white/95 border border-gray-200/60 rounded-lg shadow-sm overflow-hidden">
-          <div className="bg-gray-50/80 px-4 py-3 border-b border-gray-200/60">
+          <div className="bg-gray-50/80 px-3 py-2.5 border-b border-gray-200/60">
             <div className="flex flex-col space-y-2">
               <h1 className="text-xl font-bold text-gray-900">{player.name}</h1>
 
@@ -203,7 +203,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
           </div>
 
           {/* Simplified Mobile Stats */}
-          <div className="p-3 grid grid-cols-3 gap-3 bg-gray-50/50">
+          <div className="p-2.5 grid grid-cols-3 gap-2.5 bg-gray-50/50">
             <div className="flex flex-col items-center bg-white rounded px-2.5 py-3 border border-gray-100">
               <Star className="h-4 w-4 text-amber-500 mb-1" />
               <span className="text-xs text-gray-500 uppercase tracking-wide">Best</span>

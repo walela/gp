@@ -76,6 +76,11 @@ Create `client/.env.local` so the Next.js app talks to your local Flask instance
 NEXT_PUBLIC_API_URL=http://127.0.0.1:5004/api
 ```
 
+### Font references
+
+- Maple Mono official download: https://font.subf.dev/en/download/
+- Maple Mono GitHub releases: https://github.com/subframe7536/maple-font/releases
+
 ## Project Structure
 
 ```
