@@ -61,6 +61,7 @@ export const upcomingTournaments: Tournament[] = [
     startDate: '2026-04-18',
     endDate: '2026-04-19',
     location: 'TBA',
+    rounds: 6,
     confirmed: true,
     detailsUrl: null
   }

@@ -355,7 +355,9 @@ def player(fide_id):
                     r.tpr,
                     r.rating as rating_in_tournament,
                     r.start_rank,
-                    r.result_status
+                    r.result_status,
+                    t.section,
+                    COALESCE(t.source_id, t.id) as source_id
                 FROM results r
                 JOIN players p ON r.player_id = p.id
                 JOIN tournaments t ON r.tournament_id = t.id
@@ -397,13 +399,19 @@ def player(fide_id):
         results_rows = c.fetchall()
         tournament_results = [dict(row) for row in results_rows]
 
-        # Fetch precomputed ranking data for the player (filtered by season)
+        # Fetch precomputed ranking data for the player (filtered by season and gender)
+        gender = request.args.get("gender")
+        if gender and gender.lower() == 'f':
+            gender_filter = "gender = 'F'"
+        else:
+            gender_filter = "gender IS NULL"
+
         c.execute(
-            """
+            f"""
             SELECT player_id, name, fide_id, rating, tournaments_played,
                    best_1, tournament_1, best_2, best_3, best_4, rank
             FROM player_rankings
-            WHERE fide_id = ? AND season = ? AND gender IS NULL
+            WHERE fide_id = ? AND season = ? AND {gender_filter}
             """,
             (fide_id, season),
         )
@@ -448,8 +456,9 @@ def player(fide_id):
                     "start_rank": result.get("start_rank"),
                     "rounds": result.get("rounds") or infer_rounds(result["tournament_name"]),
                     "result_status": result.get("result_status", "valid"),
-                    "chess_results_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1",
-                    "player_card_url": f"https://chess-results.com/tnr{result['tournament_id']}.aspx?lan=1&art=9&snr={result.get('start_rank', '')}" if result.get("start_rank") else None
+                    "section": result.get("section", "open"),
+                    "chess_results_url": f"https://chess-results.com/tnr{result['source_id']}.aspx?lan=1",
+                    "player_card_url": f"https://chess-results.com/tnr{result['source_id']}.aspx?lan=1&art=9&snr={result.get('start_rank', '')}" if result.get("start_rank") else None
                 }
                 for result in tournament_results
             ],

@@ -9,13 +9,12 @@ interface CategoryToggleProps {
   className?: string
 }
 
-export function CategoryToggle({ currentCategory, currentSeason, className }: CategoryToggleProps) {
+export function CategoryToggle({ currentCategory, className }: CategoryToggleProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // Ladies data only available from 2026 onwards
-  const ladiesDisabled = currentSeason < 2026
+  const ladiesDisabled = false
 
   const handleCategoryChange = (category: 'open' | 'ladies') => {
     if (category === 'ladies' && ladiesDisabled) return

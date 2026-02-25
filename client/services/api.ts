@@ -60,6 +60,7 @@ export interface PlayerResult {
   rounds: number
   location?: string
   result_status?: 'valid' | 'walkover' | 'incomplete' | 'withdrawn' | string
+  section?: 'open' | 'ladies'
 }
 
 export interface PlayerDetails {
@@ -173,9 +174,10 @@ export async function getRankings({
   return data as RankingsResponse
 }
 
-export async function getPlayer(id: string, params: { season?: number } = {}): Promise<PlayerDetails> {
+export async function getPlayer(id: string, params: { season?: number; gender?: string } = {}): Promise<PlayerDetails> {
   const searchParams = new URLSearchParams()
   if (params.season) searchParams.set('season', params.season.toString())
+  if (params.gender) searchParams.set('gender', params.gender)
   const queryString = searchParams.toString()
   const url = queryString ? `${API_BASE}/player/${id}?${queryString}` : `${API_BASE}/player/${id}`
   const res = await fetch(url)

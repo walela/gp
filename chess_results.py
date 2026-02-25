@@ -4,6 +4,7 @@ Scraper for chess-results.com to collect tournament data and TPRs for Kenyan pla
 import re
 import logging
 from datetime import datetime
+from urllib.parse import parse_qsl, urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Optional, Tuple, Dict, Any
@@ -68,16 +69,43 @@ class ChessResultsScraper:
 
         raise requests.RequestException(f"All chess-results mirrors failed for {path}") from last_exc
     
-    def get_available_sections(self, tournament_id: str) -> List[Dict[str, str]]:
+    def get_available_sections(self, tournament_id: str) -> List[Dict[str, Any]]:
         """
         Get available sections for a tournament.
-        Returns list of dicts with 'name', 'tournament_id', and 'is_ladies' keys.
+        Returns list of dicts with:
+        - name: section name
+        - tournament_id: target tournament id for this section
+        - url_param: optional querystring needed for this section (e.g. wi=1)
+        - is_ladies: whether section appears to be ladies/women
 
         Note: On chess-results, different sections are often separate tournaments
         with different IDs, linked via the "Tournament selection" row.
         """
         response = self._request("GET", f"tnr{tournament_id}.aspx", params={"lan": 1, "flag": 30})
         soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Archived tournaments hide cross-links until "Show tournament details" is submitted.
+        if "tournament selection" not in soup.get_text(" ", strip=True).lower():
+            details_submit = soup.find("input", attrs={"name": "cb_alleDetails"})
+            form = details_submit.find_parent("form") if details_submit else None
+            if details_submit and form:
+                # POST back to the same mirror that served the GET
+                action = form.get("action") or f"./tnr{tournament_id}.aspx?lan=1&flag=30"
+                form_url = urljoin(response.url, action)
+
+                payload = {}
+                for input_tag in form.find_all("input"):
+                    name = input_tag.get("name")
+                    if not name:
+                        continue
+                    input_type = (input_tag.get("type") or "").lower()
+                    if input_type in {"hidden", "text"}:
+                        payload[name] = input_tag.get("value", "")
+
+                payload["cb_alleDetails"] = details_submit.get("value", "Show tournament details")
+                details_response = self.session.post(form_url, data=payload, timeout=20)
+                details_response.raise_for_status()
+                soup = BeautifulSoup(details_response.text, "html.parser")
 
         sections = []
 
@@ -97,6 +125,7 @@ class ChessResultsScraper:
                         sections.append({
                             'name': section_name,
                             'tournament_id': tournament_id,
+                            'url_param': '',
                             'is_ladies': 'ladies' in section_name.lower() or 'women' in section_name.lower()
                         })
 
@@ -111,16 +140,25 @@ class ChessResultsScraper:
                         match = re.search(r'tnr(\d+)\.aspx', href)
                         if match:
                             section_tournament_id = match.group(1)
+                            parsed_href = urlparse(href)
+                            # Keep section-specific params; drop generic display params.
+                            filtered_params = [
+                                (k, v)
+                                for k, v in parse_qsl(parsed_href.query, keep_blank_values=True)
+                                if k not in {"lan", "flag", "art", "SNode"}
+                            ]
+                            section_param = "&".join(f"{k}={v}" for k, v in filtered_params)
                             sections.append({
                                 'name': section_name,
                                 'tournament_id': section_tournament_id,
+                                'url_param': section_param,
                                 'is_ladies': 'ladies' in section_name.lower() or 'women' in section_name.lower()
                             })
                     break
 
         # If no sections found, assume it's a single-section tournament (Open)
         if not sections:
-            sections.append({'name': 'Open Section', 'tournament_id': tournament_id, 'is_ladies': False})
+            sections.append({'name': 'Open Section', 'tournament_id': tournament_id, 'url_param': '', 'is_ladies': False})
 
         return sections
 
@@ -229,25 +267,24 @@ class ChessResultsScraper:
 
             if details_button:
                 logger.info("Details button found, simulating POST click...")
-                # Extract form data needed for the POST request
-                form_data = {
-                    '__EVENTTARGET': '',
-                    '__EVENTARGUMENT': '',
-                    'cb_alleDetails': details_button.get('value', 'Show tournament details') # Get button value
-                }
-                # Find hidden fields and add them
-                for hidden_input in initial_soup.find_all('input', {'type': 'hidden'}):
-                    name = hidden_input.get('name')
-                    value = hidden_input.get('value', '')
-                    if name:
-                        form_data[name] = value
-                
-                # Make the POST request to 'click' the button
-                post_response = self._request(
-                    "POST",
-                    details_path,
-                    data=form_data,
-                )
+                form = details_button.find_parent("form")
+                action = (form.get("action") if form else None) or f"./{details_path}?lan=1&flag=30"
+                # POST back to the same mirror that served the GET
+                form_url = urljoin(get_response.url, action)
+
+                form_data = {}
+                for input_tag in initial_soup.find_all('input'):
+                    name = input_tag.get('name')
+                    if not name:
+                        continue
+                    input_type = (input_tag.get('type') or '').lower()
+                    if input_type in {'hidden', 'text'}:
+                        form_data[name] = input_tag.get('value', '')
+
+                form_data['cb_alleDetails'] = details_button.get('value', 'Show tournament details')
+
+                # POST directly to the same mirror (not via _request which cycles mirrors)
+                post_response = self.session.post(form_url, data=form_data, timeout=20)
                 post_response.raise_for_status()
                 details_soup = BeautifulSoup(post_response.text, 'html.parser')
             else:
@@ -278,9 +315,9 @@ class ChessResultsScraper:
                 start_date_iso, end_date_iso = self._extract_dates(details_soup)
                  
         except requests.exceptions.RequestException as e:
-            logger.error(f"HTTP Error accessing details page {details_url}: {e}")
+            logger.error(f"HTTP Error accessing details page for tournament {tournament_id}: {e}")
         except (AttributeError, ValueError, TypeError, IndexError) as e:
-            logger.error(f"Failed to parse round count from details page {details_url}: {e}")
+            logger.error(f"Failed to parse round count from details page for tournament {tournament_id}: {e}")
 
         if round_count is None:
             # Default to 9 rounds if we failed to find/parse it

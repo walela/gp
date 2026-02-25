@@ -147,20 +147,36 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   })
 
   const highlightCount = 9
-  const { topPlayers } = await getTopPlayers({ count: highlightCount + 1, sortBy: 'best_4', season, gender })
+  // Fetch extra to cover spots freed by Kenya #1 / junior champ being in top 9
+  const { topPlayers } = await getTopPlayers({ count: highlightCount + 3, sortBy: 'best_4', season, gender })
 
-  const kenyaNumber1Name = season === currentYear ? 'kaloki' : 'mcligeyo'
-  const kenyaNumber1Player = [...rankings, ...topPlayers].find(player =>
-    player.name.toLowerCase().includes(kenyaNumber1Name)
-  )
-  const kenyaNumber1Id = kenyaNumber1Player?.fide_id || kenyaNumber1Player?.name
+  const kenyaNumber1Name = season === 2025
+    ? (category === 'ladies' ? 'ndirangu' : 'mcligeyo')
+    : null
+  const kenyaNumber1Player = kenyaNumber1Name
+    ? [...rankings, ...topPlayers].find(player =>
+        player.name.toLowerCase().includes(kenyaNumber1Name)
+      )
+    : null
+  const kenyaNumber1Id = kenyaNumber1Player?.fide_id || kenyaNumber1Player?.name || null
+
+  const juniorChampionId = season === 2025
+    ? (category === 'ladies' ? '10822755' : '10831533')
+    : null
+
+  // Count how many "special" qualifiers (Kenya #1, junior champ) fall inside the top 9
+  // Each one frees up a spot for the next player
+  const topPlayerIds = topPlayers.map(p => p.fide_id || p.name)
+  const specialInTop9 = [kenyaNumber1Id, juniorChampionId].filter(id =>
+    id && topPlayerIds.slice(0, highlightCount).includes(id)
+  ).length
+  const effectiveHighlightCount = highlightCount + specialInTop9
 
   const automaticQualifierIds = new Set(
-    topPlayers.slice(0, highlightCount).map(player => player.fide_id || player.name)
+    topPlayers.slice(0, effectiveHighlightCount).map(player => player.fide_id || player.name)
   )
 
   // For past seasons, no provisional - results are final
-  // Kenya #1 takes their own slot, so no one gets bumped up
   const provisionalQualifierId = null
 
   const highlightedQualifierIds = new Set(automaticQualifierIds)
@@ -168,15 +184,13 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
     highlightedQualifierIds.add(provisionalQualifierId)
   }
 
-  const juniorChampionId = '10831533'
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <CategoryToggle currentCategory={category} currentSeason={season} />
           <SeasonSelector
-            seasons={category === 'ladies' ? seasons.filter(s => s >= 2026) : seasons}
+            seasons={seasons}
             currentSeason={season}
           />
         </div>
@@ -262,7 +276,9 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 const isProvisionalQualifier = provisionalQualifierId === playerId
                 const isHighlightedQualifier = highlightedQualifierIds.has(playerId)
                 const isJuniorChampion =
-                  player.fide_id === juniorChampionId || player.name.toLowerCase().includes('kyle kuka')
+                  player.fide_id === juniorChampionId
+                  || (category === 'open' && player.name.toLowerCase().includes('kyle kuka'))
+                  || (category === 'ladies' && player.name.toLowerCase().includes('cassidy'))
                 const tableRank = (page - 1) * 25 + index + 1
 
                 const isDefinitelyQualified = isKenyaNumber1 || isJuniorChampion
@@ -307,14 +323,15 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     className={cn(
                       isKenyaNumber1
                         ? 'bg-amber-50/50 border-l-2 border-l-amber-500 hover:bg-amber-100/50'
-                        : isProvisionalQualifier
-                          ? 'bg-teal-50/80 border-l-2 border-l-teal-600 hover:bg-teal-100'
-                        : isAutomaticQualifier
-                            ? 'bg-blue-50/70 border-l-2 border-l-blue-600 hover:bg-blue-100'
-                            : index % 2 === 0
-                              ? 'bg-gray-50/50 hover:bg-gray-100/50'
-                              : 'bg-white hover:bg-gray-50/50',
-                      isJuniorChampion ? 'ring-1 ring-inset ring-purple-200' : ''
+                        : isJuniorChampion
+                          ? 'bg-purple-50/70 border-l-2 border-l-purple-500 hover:bg-purple-100'
+                          : isProvisionalQualifier
+                            ? 'bg-teal-50/80 border-l-2 border-l-teal-600 hover:bg-teal-100'
+                            : isAutomaticQualifier
+                              ? 'bg-blue-50/70 border-l-2 border-l-blue-600 hover:bg-blue-100'
+                              : index % 2 === 0
+                                ? 'bg-gray-50/50 hover:bg-gray-100/50'
+                                : 'bg-white hover:bg-gray-50/50'
                     )}>
                     <CustomTableCell isHeader className="text-right">
                       {isKenyaNumber1 ? (
@@ -322,12 +339,12 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                           <Crown className="h-3 w-3 text-amber-600" />
                           <span className="font-semibold text-amber-700">{tableRank}</span>
                         </div>
+                      ) : isJuniorChampion ? (
+                        <span className="font-semibold text-purple-700">{tableRank}</span>
                       ) : isProvisionalQualifier ? (
                         <span className="font-semibold text-teal-700">{tableRank}</span>
                       ) : isAutomaticQualifier ? (
                         <span className="font-semibold text-blue-700">{tableRank}</span>
-                      ) : isJuniorChampion ? (
-                        <span className="font-semibold text-purple-700">{tableRank}</span>
                       ) : (
                         tableRank
                       )}
@@ -336,17 +353,17 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       <div className="truncate">
                         {player.fide_id ? (
                           <Link
-                            href={`/player/${player.fide_id}`}
+                            href={`/player/${player.fide_id}${category === 'ladies' ? '?gender=f' : ''}`}
                             className={cn(
                               'font-medium group flex items-center gap-2',
                               isKenyaNumber1
                                 ? 'text-amber-700 hover:text-amber-800'
-                                : isProvisionalQualifier
-                                  ? 'text-teal-700 hover:text-teal-800'
-                                  : isAutomaticQualifier
-                                    ? 'text-blue-700 hover:text-blue-800'
-                                    : isJuniorChampion
-                                      ? 'text-purple-700 hover:text-purple-800'
+                                : isJuniorChampion
+                                  ? 'text-purple-700 hover:text-purple-800'
+                                  : isProvisionalQualifier
+                                    ? 'text-teal-700 hover:text-teal-800'
+                                    : isAutomaticQualifier
+                                      ? 'text-blue-700 hover:text-blue-800'
                                       : 'text-blue-600 hover:text-blue-700'
                             )}
                             title={player.name}>
@@ -364,12 +381,12 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                               'font-medium flex items-center gap-2',
                               isKenyaNumber1
                                 ? 'text-amber-700'
-                                : isProvisionalQualifier
-                                  ? 'text-teal-700'
-                                  : isAutomaticQualifier
-                                    ? 'text-blue-700'
-                                    : isJuniorChampion
-                                      ? 'text-purple-700'
+                                : isJuniorChampion
+                                  ? 'text-purple-700'
+                                  : isProvisionalQualifier
+                                    ? 'text-teal-700'
+                                    : isAutomaticQualifier
+                                      ? 'text-blue-700'
                                       : ''
                             )}
                             title={player.name}>

@@ -6,14 +6,50 @@ For each 2025 tournament:
 1. Check if a Ladies section exists on chess-results
 2. If yes, scrape it and save with section='ladies'
 3. Mark those players as gender='F'
+4. Validate results (walkovers, incomplete, withdrawn)
 """
 
 import logging
+import sqlite3
 from chess_results import ChessResultsScraper
 from db import Database
+from result_validator import ResultValidator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def validate_ladies_results(db: Database, validator: ResultValidator):
+    """Validate results for all ladies tournaments using their source_id."""
+    with sqlite3.connect(db.db_file) as conn:
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT t.id, t.source_id, r.player_id, r.start_rank, p.name
+            FROM results r
+            JOIN tournaments t ON r.tournament_id = t.id
+            JOIN players p ON r.player_id = p.id
+            WHERE t.section = 'ladies' AND t.source_id IS NOT NULL
+        """)
+        rows = c.fetchall()
+
+        logger.info(f"Validating {len(rows)} ladies results...")
+        for row in rows:
+            source_id = row['source_id']
+            start_rank = row['start_rank']
+            if not start_rank:
+                continue
+
+            _, status = validator.get_player_game_results(source_id, start_rank)
+            if status != 'valid':
+                logger.info(f"  {row['name']}: {status} (tournament source_id={source_id})")
+
+            c.execute(
+                "UPDATE results SET result_status = ? WHERE tournament_id = ? AND player_id = ?",
+                (status, row['id'], row['player_id'])
+            )
+        conn.commit()
+    logger.info("Validation complete.")
 
 def main():
     db = Database()
@@ -30,38 +66,41 @@ def main():
         tournament_id = tournament['id']
         tournament_name = tournament['name']
 
+        if tournament_id.endswith('_ladies'):
+            logger.info(f"Skipping already backfilled ladies tournament {tournament_id}")
+            continue
+
         logger.info(f"Checking {tournament_name} (ID: {tournament_id}) for Ladies section...")
 
         try:
             sections = scraper.get_available_sections(tournament_id)
-            logger.info(f"  Found sections: {[s['name'] for s in sections]}")
-
-            # Find ladies section
             ladies_section = next((s for s in sections if s.get('is_ladies')), None)
 
             if ladies_section:
                 ladies_found += 1
                 logger.info(f"  Ladies section found: {ladies_section['name']}")
 
-                # Create a unique ID for the ladies section tournament
                 ladies_tournament_id = f"{tournament_id}_ladies"
 
-                # Check if already scraped
-                if db.does_tournament_exist(ladies_tournament_id):
-                    logger.info(f"  Ladies section already scraped, skipping")
-                    continue
+                # Delete existing to allow re-scrape
+                with sqlite3.connect(db.db_file) as conn:
+                    c = conn.cursor()
+                    c.execute("DELETE FROM results WHERE tournament_id = ?", (ladies_tournament_id,))
+                    c.execute("DELETE FROM tournaments WHERE id = ?", (ladies_tournament_id,))
+                    conn.commit()
 
                 # Scrape the ladies section
                 logger.info(f"  Scraping ladies section...")
+                source_tournament_id = ladies_section.get('tournament_id', tournament_id)
+                section_param = ladies_section.get('url_param', '')
                 name, results, metadata = scraper.get_tournament_data(
-                    tournament_id,
-                    section_param=ladies_section['url_param']
+                    source_tournament_id,
+                    section_param=section_param
                 )
 
                 if results:
                     logger.info(f"  Found {len(results)} results in Ladies section")
 
-                    # Convert results to dict format
                     results_dict = []
                     for result in results:
                         r = {
@@ -78,8 +117,6 @@ def main():
                         }
                         results_dict.append(r)
 
-                    # Save with ladies section indicator
-                    # Use the original tournament dates
                     db.save_tournament(
                         ladies_tournament_id,
                         f"{tournament_name} - Ladies",
@@ -89,6 +126,7 @@ def main():
                         location=tournament.get('location'),
                         rounds=metadata.get('rounds'),
                         section='ladies',
+                        source_id=source_tournament_id,
                     )
 
                     ladies_scraped += 1
@@ -105,6 +143,11 @@ def main():
     logger.info(f"  Tournaments checked: {len(tournaments_2025)}")
     logger.info(f"  Ladies sections found: {ladies_found}")
     logger.info(f"  Ladies sections scraped: {ladies_scraped}")
+
+    # Validate results
+    logger.info("\nValidating ladies results...")
+    validator = ResultValidator(session=scraper.session)
+    validate_ladies_results(db, validator)
 
     # Recalculate rankings for 2025
     logger.info("\nRecalculating 2025 rankings...")
