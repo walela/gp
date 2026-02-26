@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, g
 from flask_compress import Compress
 from flask_cors import CORS
 from chess_results import ChessResultsScraper
@@ -8,6 +8,7 @@ import os
 import logging
 import csv
 import io
+import time
 from flask import Response
 
 from tournament_metadata import infer_location, infer_rounds
@@ -20,9 +21,46 @@ CORS(app)  # Enable CORS for all routes
 db = Database()
 
 PLAYERS_PER_PAGE = 30
+REQUEST_LOGGING_ENABLED = os.environ.get("REQUEST_LOGGING_ENABLED", "true").lower() == "true"
+REQUEST_IP_LOGGING_ENABLED = os.environ.get("REQUEST_IP_LOGGING_ENABLED", "true").lower() == "true"
+SLOW_REQUEST_MS = int(os.environ.get("SLOW_REQUEST_MS", "1000"))
+
+
+def _get_client_ip() -> str:
+    """Resolve best-effort client IP from common proxy headers."""
+    x_forwarded_for = request.headers.get("X-Forwarded-For", "")
+    if x_forwarded_for:
+        return x_forwarded_for.split(",")[0].strip()
+    return request.headers.get("CF-Connecting-IP") or request.remote_addr or "unknown"
+
+
+@app.before_request
+def start_request_timer():
+    g.request_start = time.perf_counter()
 
 @app.after_request
 def add_cache_headers(response):
+    duration_ms = 0.0
+    if hasattr(g, "request_start"):
+        duration_ms = (time.perf_counter() - g.request_start) * 1000
+
+    if REQUEST_LOGGING_ENABLED:
+        size = response.calculate_content_length() or 0
+        log_payload = {
+            "method": request.method,
+            "path": request.path,
+            "status": response.status_code,
+            "duration_ms": round(duration_ms, 2),
+            "size_bytes": size,
+        }
+        if REQUEST_IP_LOGGING_ENABLED:
+            log_payload["client_ip"] = _get_client_ip()
+
+        if duration_ms >= SLOW_REQUEST_MS:
+            logger.warning("slow_request %s", log_payload)
+        else:
+            logger.info("request %s", log_payload)
+
     """Add cache headers to GET requests."""
     if request.method == 'GET' and response.status_code == 200:
         response.headers['Cache-Control'] = 'public, max-age=86400'
