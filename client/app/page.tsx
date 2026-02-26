@@ -88,7 +88,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`px-4 py-2 ${index === upcomingTournaments.length - 1 ? 'pb-4' : ''} ${index % 2 === 0 ? 'bg-gray-200/50' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
+                      className={`px-4 py-2 ${index === upcomingTournaments.length - 1 ? 'pb-4' : ''} ${index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'} hover:bg-gray-200 transition-colors`}>
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0">
                           {detailHref ? (
@@ -179,7 +179,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-200/50' : 'bg-white'} hover:bg-gray-200 transition-colors`}>
+                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'} hover:bg-gray-200 transition-colors`}>
                       <div className="min-w-0">
                         {detailHref ? (
                           <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
