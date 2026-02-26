@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 import { Card } from '@/components/ui/card'
 import {
   CustomTable,
@@ -15,6 +16,7 @@ import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
 import { getShortTournamentName, formatTournamentDate, inferTournamentLocation } from '@/utils/tournament'
 import { ExportButton } from '@/components/ui/export-button'
+import { SectionSelector } from '@/components/tournament/section-selector'
 import { Metadata } from 'next'
 
 export const revalidate = 86400 // cache for 24 hours
@@ -120,6 +122,13 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
 
   // Calculate average TPR of top 10 players using all results
   const averageTopTpr = calculateAverageTopTpr(allResults)
+  const hasSibling = !!tournament.sibling_id
+  const section = tournament.section || 'open'
+  const openId = section === 'open' ? id : tournament.sibling_id!
+  const ladiesId = section === 'ladies' ? id : tournament.sibling_id!
+  const shortName = getShortTournamentName(tournament.name)
+  const year = tournament.start_date ? new Date(tournament.start_date).getFullYear() : null
+  const displayName = year ? `${shortName} ${year}` : shortName
   const resolvedLocation = tournament.location || inferTournamentLocation(tournament.name)
   const locationDisplay = resolvedLocation.includes('Kenya') ? resolvedLocation : `${resolvedLocation}, Kenya`
   const resolvedRounds = tournament.rounds ?? 6
@@ -160,17 +169,27 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
       <div className="space-y-6">
       <div className="flex flex-col gap-4 md:gap-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-4">
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{getShortTournamentName(tournament.name)}</h1>
-          <ExportButton 
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{displayName}</h1>
+          <ExportButton
             url={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/tournament/${id}/export?sort=${sort}&dir=${dir}`}
-            filename={`${getShortTournamentName(tournament.name)}_results.csv`}
+            filename={`${displayName}_results.csv`}
           />
         </div>
       </div>
 
-      {/* Tournament Metadata - Optimized for mobile */}
-      <div className="md:hidden">
-        <Card className="p-4 rounded-lg shadow-elevation-low">
+      {/* Section selector + Metadata */}
+      <div>
+        {hasSibling && (
+          <SectionSelector
+            currentSection={section}
+            openId={openId}
+            ladiesId={ladiesId}
+          />
+        )}
+
+        {/* Tournament Metadata - Mobile */}
+        <div className="md:hidden">
+          <Card className={cn("p-4 shadow-elevation-low", hasSibling ? "rounded-b-lg rounded-t-none" : "rounded-lg")}>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-2">
               <CalendarDays className="h-4 w-4 text-blue-600 flex-shrink-0" />
@@ -224,9 +243,9 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
         </Card>
       </div>
 
-      {/* Tournament Metadata - Desktop version */}
-      <div className="hidden md:block">
-        <Card className="p-4 rounded-lg shadow-elevation-low border-0 bg-white/95 mb-6">
+        {/* Tournament Metadata - Desktop */}
+        <div className="hidden md:block">
+          <Card className={cn("p-4 shadow-elevation-low border-0 bg-white/95", hasSibling ? "rounded-b-lg rounded-t-none" : "rounded-lg")}>
           <div className="grid grid-cols-5 gap-4">
             <div className="flex items-center gap-3">
               <div className="bg-blue-50 p-2 rounded-full flex-shrink-0">
@@ -295,7 +314,8 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               </div>
             </div>
           </div>
-        </Card>
+          </Card>
+        </div>
       </div>
 
       <Card className="rounded-lg border-0 shadow-elevation-low overflow-hidden bg-white/95 backdrop-blur-sm p-0">

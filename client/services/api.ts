@@ -44,6 +44,8 @@ export interface TournamentDetails {
   end_date?: string
   rounds?: number
   location?: string
+  section?: 'open' | 'ladies'
+  sibling_id?: string | null
 }
 
 export interface PlayerResult {

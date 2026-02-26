@@ -839,6 +839,20 @@ class Database:
                 }
             return None
             
+    def find_sibling_tournament(self, tournament_id: str, short_name: str, section: str, season: str) -> Optional[str]:
+        """Find sibling tournament (open <-> ladies) by short_name and season."""
+        sibling_section = 'ladies' if section == 'open' else 'open'
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute(
+                '''SELECT id FROM tournaments
+                   WHERE short_name = ? AND section = ? AND start_date LIKE ? AND id != ?
+                   LIMIT 1''',
+                (short_name, sibling_section, f"{season}%", tournament_id),
+            )
+            row = c.fetchone()
+            return row[0] if row else None
+
     def delete_tournament_data(self, tournament_id: str):
         """Delete tournament and its associated results."""
         with sqlite3.connect(self.db_file) as conn:

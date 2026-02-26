@@ -146,10 +146,25 @@ def tournament(tournament_id):
         start_date = data.get("start_date")
         end_date = data.get("end_date")
         location = data.get("location")
+        section = data.get("section", "open")
         results = data["results"]
 
         rounds = data.get("rounds") or infer_rounds(tournament_name)
         location = location or infer_location(tournament_name)
+
+        # Find sibling section (open <-> ladies)
+        sibling_id = None
+        if tournament_id.endswith("_ladies"):
+            candidate = tournament_id.replace("_ladies", "")
+            if db.get_tournament_info(candidate):
+                sibling_id = candidate
+        else:
+            candidate = f"{tournament_id}_ladies"
+            if db.get_tournament_info(candidate):
+                sibling_id = candidate
+        # Fallback: match by short_name + different section + same season
+        if not sibling_id and short_name and start_date:
+            sibling_id = db.find_sibling_tournament(tournament_id, short_name, section, start_date[:4])
 
         # Sort results
         if sort == "name":
@@ -171,6 +186,8 @@ def tournament(tournament_id):
                     "end_date": end_date,
                     "location": location,
                     "rounds": rounds,
+                    "section": section,
+                    "sibling_id": sibling_id,
                     "results": results,
                     "total": len(results),
                     "page": 1,
@@ -193,6 +210,8 @@ def tournament(tournament_id):
                 "end_date": end_date,
                 "location": location,
                 "rounds": rounds,
+                "section": section,
+                "sibling_id": sibling_id,
                 "results": paginated_results,
                 "total": len(results),
                 "page": page,

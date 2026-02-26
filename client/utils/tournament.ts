@@ -10,24 +10,50 @@
 import dayjs from '@/lib/dayjs'
 
 export const SHORT_NAMES: Record<string, string> = {
-  'Eldoret Open': 'Eldoret Open',
+  // Eldoret
   'Eldoret  Chess Championships Open': 'Eldoret Open',
-  'Kisumu Open': 'Kisumu Open',
+  'Eldoret  Chess Championships Open - Ladies': 'Eldoret Open',
+  '2026 Eldoret Open Chess Championship Grand Prix': 'Eldoret Open',
+  '2026 Eldoret Open Chess Championship Grand Prix - Ladies': 'Eldoret Open',
+  // Kisumu
   'Kisumu Open Chess Tournament': 'Kisumu Open',
-  'Mavens Open': 'Mavens Open',
+  'Kisumu Open Chess Tournament - Ladies': 'Kisumu Open',
+  // Mavens
   'Mavens Open Chess Championship 2025': 'Mavens Open',
+  // Nakuru
   'The East Africa Chess Championship - Nakuru Grand Prix 2025': 'Nakuru Open',
   'The East Africa Chess Championship Nakuru Grand Prix 2025': 'Nakuru Open',
-  'Waridi Chess Festival': 'Waridi Chess Festival',
+  'The East Africa Chess Championship - Nakuru Grand Prix 2025 - Ladies': 'Nakuru Open',
+  'Nakuru Open 2025 (Nov)': 'Nakuru Open (Nov)',
+  'Nakuru Open 2025 (Nov) - Ladies': 'Nakuru Open (Nov)',
+  // Waridi
   'Waridi Chess Festival 2025': 'Waridi Chess Festival',
+  // Kiambu
   'Kiambu Open Grand Prix Chess Championship 2025': 'Kiambu Open',
-  'Kiambu Open': 'Kiambu Open',
+  'Kiambu Open Grand Prix Chess Championship 2025 - Ladies': 'Kiambu Open',
+  // Nairobi County
   'Nairobi County Chess Championship 2025': 'Nairobi County Open',
-  'Nairobi County Open': 'Nairobi County Open',
+  // Quo Vadis
   'QUO VADIS OPEN 2025': 'Quo Vadis Nyeri Open',
+  // Kitale
   'KITALE OPEN CHESS TOURNAMENT OPEN': 'Kitale Open',
-  'Mombasa Open Chess Championship 2025 Open': 'Mombasa Open',
-  'Mombasa International Chess Festival 2025': 'Mombasa Chess Festival'
+  'KITALE OPEN CHESS TOURNAMENT - LADIES': 'Kitale Open',
+  // JYAM
+  'JYAM Open 2025': 'JYAM Open',
+  'JYAM Open 2025 - Ladies': 'JYAM Open',
+  // KCB
+  'KCB Chess Open 2025': 'KCB Chess Open',
+  'KCB Chess Open 2025 - Ladies': 'KCB Chess Open',
+  // Mombasa
+  'Mombasa Open Chess Championship 2025 Open': 'Mombasa Chess Festival',
+  'Mombasa Open Chess Championship 2025 - Ladies': 'Mombasa Chess Festival',
+  'Mombasa International Chess Festival 2025': 'Mombasa Chess Festival',
+  'Mombasa International Chess Festival 2025 - Ladies': 'Mombasa Chess Festival',
+  // Bungoma
+  '2025 Bungoma Open Chess Championship': 'Bungoma Open',
+  '2025 Bungoma Open Chess Championship - Ladies': 'Bungoma Open',
+  // Chess Through Challenges
+  'Chess Through Challenges': 'Chess Through Challenges',
 }
 
 export function getShortTournamentName(name: string): string {
