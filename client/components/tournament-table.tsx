@@ -76,7 +76,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
     }
   })
 
-  const SortIcon = ({ field }: { field: SortField }) => {
+  const getSortIcon = (field: SortField) => {
     if (sortField !== field) {
       return <ArrowUpDownIcon className="h-4 w-4" aria-hidden="true" />
     }
@@ -92,7 +92,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
               <div className="flex items-center gap-1">
                 <span>Tournament</span>
                 <span className="text-muted-foreground">
-                  <SortIcon field="name" />
+                  {getSortIcon("name")}
                 </span>
               </div>
             </CustomTableHead>
@@ -102,7 +102,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
               <div className="flex items-center gap-1">
                 <span>Dates</span>
                 <span className="text-muted-foreground">
-                  <SortIcon field="dates" />
+                  {getSortIcon("dates")}
                 </span>
               </div>
             </CustomTableHead>
@@ -112,7 +112,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
               <div className="flex items-center gap-1">
                 <span>Location</span>
                 <span className="text-muted-foreground">
-                  <SortIcon field="location" />
+                  {getSortIcon("location")}
                 </span>
               </div>
             </CustomTableHead>
@@ -121,7 +121,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
                 <span className="hidden sm:inline">Valid TPRs</span>
                 <span className="sm:hidden">TPRs</span>
                 <span className="text-muted-foreground">
-                  <SortIcon field="players" />
+                  {getSortIcon("players")}
                 </span>
               </div>
             </CustomTableHead>
@@ -131,7 +131,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
               <div className="flex items-center gap-1 justify-end">
                 <span>Rounds</span>
                 <span className="text-muted-foreground">
-                  <SortIcon field="rounds" />
+                  {getSortIcon("rounds")}
                 </span>
               </div>
             </CustomTableHead>
@@ -142,7 +142,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
                 <span className="hidden lg:inline">Avg Top 10 TPR</span>
                 <span className="lg:hidden">Avg TPR</span>
                 <span className="text-muted-foreground">
-                  <SortIcon field="avgTop10TPR" />
+                  {getSortIcon("avgTop10TPR")}
                 </span>
               </div>
             </CustomTableHead>
@@ -152,7 +152,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
               <div className="flex items-center gap-1 justify-end">
                 <span>Avg Top 24 Rating</span>
                 <span className="text-muted-foreground">
-                  <SortIcon field="avgTop24Rating" />
+                  {getSortIcon("avgTop24Rating")}
                 </span>
               </div>
             </CustomTableHead>

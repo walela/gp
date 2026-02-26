@@ -108,7 +108,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
     return new Set(eligible.map(result => result.tournament_id))
   })()
 
-  const SortIcon = ({ field }: { field: SortField }) => {
+  const getSortIcon = (field: SortField) => {
     if (sortField !== field) {
       return <ArrowUpDownIcon className="h-4 w-4" />
     }
@@ -273,7 +273,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                     <div className="flex items-center gap-1">
                       <span>Tournament</span>
                       <span className="text-muted-foreground">
-                        <SortIcon field="tournament" />
+                        {getSortIcon("tournament")}
                       </span>
                     </div>
                   </CustomTableHead>
@@ -283,7 +283,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                     <div className="flex items-center gap-1 justify-end">
                       <span>TPR</span>
                       <span className="text-muted-foreground">
-                        <SortIcon field="tpr" />
+                        {getSortIcon("tpr")}
                       </span>
                     </div>
                   </CustomTableHead>
@@ -293,7 +293,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                     <div className="flex items-center gap-1 justify-end">
                       <span>Points</span>
                       <span className="text-muted-foreground">
-                        <SortIcon field="points" />
+                        {getSortIcon("points")}
                       </span>
                     </div>
                   </CustomTableHead>
@@ -379,7 +379,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                     <div className="flex items-center gap-1">
                       <span>Tournament</span>
                       <span className="text-muted-foreground">
-                        <SortIcon field="tournament" />
+                        {getSortIcon("tournament")}
                       </span>
                     </div>
                   </CustomTableHead>
@@ -387,7 +387,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                     <div className="flex items-center gap-1 justify-end">
                       <span>Starting Rank</span>
                       <span className="text-muted-foreground">
-                        <SortIcon field="start_rank" />
+                        {getSortIcon("start_rank")}
                       </span>
                     </div>
                   </CustomTableHead>
@@ -395,7 +395,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                     <div className="flex items-center gap-1 justify-end">
                       <span>Rating</span>
                       <span className="text-muted-foreground">
-                        <SortIcon field="rating" />
+                        {getSortIcon("rating")}
                       </span>
                     </div>
                   </CustomTableHead>
@@ -403,7 +403,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                     <div className="flex items-center gap-1 justify-end">
                       <span>Points</span>
                       <span className="text-muted-foreground">
-                        <SortIcon field="points" />
+                        {getSortIcon("points")}
                       </span>
                     </div>
                   </CustomTableHead>
@@ -411,7 +411,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                     <div className="flex items-center gap-1 justify-end">
                       <span>TPR</span>
                       <span className="text-muted-foreground">
-                        <SortIcon field="tpr" />
+                        {getSortIcon("tpr")}
                       </span>
                     </div>
                   </CustomTableHead>
