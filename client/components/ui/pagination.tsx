@@ -78,12 +78,12 @@ export function Pagination({
             href={`${basePath}${buildQueryString(currentPage - 1)}`}
             className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
           >
-            <ChevronLeftIcon className="h-4 w-4" />
+            <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Prev</span>
           </Link>
         ) : (
-          <span className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground bg-muted cursor-not-allowed">
-            <ChevronLeftIcon className="h-4 w-4" />
+          <span aria-disabled="true" className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground bg-muted cursor-not-allowed">
+            <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Prev</span>
           </span>
         )}
@@ -144,12 +144,12 @@ export function Pagination({
             className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
           >
             <span className="hidden sm:inline">Next</span>
-            <ChevronRightIcon className="h-4 w-4" />
+            <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
           </Link>
         ) : (
-          <span className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground bg-muted cursor-not-allowed">
+          <span aria-disabled="true" className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground bg-muted cursor-not-allowed">
             <span className="hidden sm:inline">Next</span>
-            <ChevronRightIcon className="h-4 w-4" />
+            <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
           </span>
         )}
       </div>

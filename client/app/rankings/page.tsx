@@ -280,7 +280,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 <CustomTableCell colSpan={9} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                      <Crown className="h-5 w-5" />
+                      <Crown className="h-5 w-5" aria-hidden="true" />
                     </div>
                     <div>
                       <p className="font-medium">No players found</p>
@@ -354,12 +354,12 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                     <CustomTableCell isHeader className="text-right">
                       {isKenyaNumber1 ? (
                         <div className="flex items-center justify-end gap-1">
-                          <Crown className="h-3 w-3 text-amber-600" />
+                          <Crown className="h-3 w-3 text-amber-600" aria-hidden="true" />
                           <span className="font-semibold text-amber-700">{tableRank}</span>
                         </div>
                       ) : isJuniorChampion ? (
                         <div className="flex items-center justify-end gap-1">
-                          <Baby className="h-3.5 w-3.5 text-cyan-600" />
+                          <Baby className="h-3.5 w-3.5 text-cyan-600" aria-hidden="true" />
                           <span className="font-semibold text-cyan-700">{tableRank}</span>
                         </div>
                       ) : isProvisionalQualifier ? (
@@ -390,7 +390,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                             title={player.name}>
                             <span className="sm:hidden flex items-center gap-1">
                               {getDisplayName(player.name)}
-                              <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-blue-500 transition-colors" />
+                              <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-blue-500 transition-colors" aria-hidden="true" />
                             </span>
                             <span className="hidden sm:flex items-center gap-2 group-hover:underline">
                               {getDisplayName(player.name)}
@@ -474,11 +474,11 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           <div className="border-t border-gray-200 bg-gray-50/80">
             <div className="px-3 py-2.5 flex items-center gap-2 text-xs font-medium overflow-x-auto">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-amber-700 whitespace-nowrap">
-                <Crown className="h-3.5 w-3.5 text-amber-600" />
+                <Crown className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
                 FIDE #1
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-cyan-700 whitespace-nowrap">
-                <Baby className="h-3.5 w-3.5 text-cyan-600" />
+                <Baby className="h-3.5 w-3.5 text-cyan-600" aria-hidden="true" />
                 Junior Champ
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-green-700 whitespace-nowrap">
