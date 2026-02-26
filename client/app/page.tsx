@@ -68,7 +68,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <h2 className="text-sm font-bold tracking-tight text-gray-800">UPCOMING</h2>
-                <span className="text-sm text-gray-400">{upcomingTournaments.length} events</span>
+                <span className="text-sm text-gray-400">{upcomingTournaments.length} {upcomingTournaments.length === 1 ? 'event' : 'events'}</span>
               </div>
               <SeasonSelector seasons={seasons} currentSeason={season} />
             </div>
@@ -147,7 +147,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <h2 className="text-sm font-bold tracking-tight text-gray-800">COMPLETED</h2>
-              <span className="text-sm text-gray-400">{tournaments.length} events</span>
+              <span className="text-sm text-gray-400">{tournaments.length} {tournaments.length === 1 ? 'event' : 'events'}</span>
             </div>
             {(upcomingTournaments.length === 0 || season !== currentYear) && (
               <SeasonSelector seasons={seasons} currentSeason={season} />
@@ -161,7 +161,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <section>
             <div className="flex items-center gap-3 mb-4">
               <h2 className="text-sm font-bold tracking-tight text-gray-800">PLANNED</h2>
-              <span className="text-sm text-gray-400">{plannedTournaments.length} events</span>
+              <span className="text-sm text-gray-400">{plannedTournaments.length} {plannedTournaments.length === 1 ? 'event' : 'events'}</span>
             </div>
 
             <div className="bg-white/95 rounded-lg shadow-elevation-low overflow-hidden">
