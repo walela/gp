@@ -1,0 +1,36 @@
+# 1700chess.sh — Chess Kenya Grand Prix Tracker
+
+> Official tournament tracker for the Chess Kenya Grand Prix series. Covers all rated chess tournaments in the Kenyan national Grand Prix circuit.
+
+## What this site provides
+
+- **Tournament results**: Full standings, player rankings, TPR (Tournament Performance Rating) for every Grand Prix event
+- **Player profiles**: Individual performance history, best TPR, tournament-by-tournament breakdown with FIDE ID links
+- **Grand Prix rankings**: Season standings based on best 4 tournament performances (TPR-based)
+- **Upcoming events**: Schedule of upcoming Chess Kenya Grand Prix tournaments with dates, venues, and registration links
+
+## Key concepts
+
+- **TPR (Tournament Performance Rating)**: A performance rating calculated from a player's results in a single tournament, used as the primary metric for Grand Prix standings
+- **Grand Prix ranking**: A player's season ranking based on the average of their best 4 TPR scores across qualifying tournaments
+- **Sections**: Most tournaments have an Open section and a Ladies section, each tracked separately
+
+## Pages
+
+- [Home](https://1700chess.sh/): List of upcoming, completed, and planned tournaments for the current season
+- [Rankings](https://1700chess.sh/rankings): Grand Prix standings — sortable by best TPR, best 4 average, total tournaments played
+- [Tournament results](https://1700chess.sh/tournament/{id}): Individual tournament standings with player names, ratings, points, and TPR
+- [Player profiles](https://1700chess.sh/player/{fide_id}): Per-player tournament history and performance stats
+
+## Coverage
+
+- **Geography**: Kenya — tournaments held in Nairobi, Eldoret, Mombasa, Kisumu, Nakuru, Kitale, Nyeri, and other cities
+- **Organization**: Chess Kenya (national federation) in partnership with local chess clubs
+- **Seasons**: Data available from 2025 onwards
+- **Data source**: Tournament results sourced from chess-results.com
+
+## Technical details
+
+- Built with Next.js, data served via REST API
+- Structured data (JSON-LD) on tournament pages for search engine indexing
+- Sitemap available at /sitemap.xml

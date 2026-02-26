@@ -14,3 +14,5 @@ node_modules/
 .next/
 .vercel/
 .env*.local
+.claude/
+.mcp.json
