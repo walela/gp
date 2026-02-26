@@ -70,198 +70,89 @@ export function Pagination({
   const showMobileEllipsis = totalPages > 3
   
   return (
-    <nav aria-label="Pagination" className={cn("flex justify-center", className)}>
-      {/* Desktop pagination */}
-      <ul className="hidden sm:inline-flex -space-x-px">
-        {/* Previous button */}
-        <li>
-          {currentPage > 1 ? (
-            <Link
-              href={`${basePath}${buildQueryString(currentPage - 1)}`}
-              className="flex items-center justify-center h-9 px-3 ms-0 border border-e-0 border-border rounded-s-md text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-            >
-              <ChevronLeftIcon className="h-4 w-4 mr-1" />
-              <span>Previous</span>
-            </Link>
-          ) : (
-            <span className="flex items-center justify-center h-9 px-3 ms-0 border border-e-0 border-border rounded-s-md text-muted-foreground bg-muted cursor-not-allowed">
-              <ChevronLeftIcon className="h-4 w-4 mr-1" />
-              <span>Previous</span>
-            </span>
-          )}
-        </li>
-        
-        {/* First page if not in range */}
-        {desktopPageRange[0] > 1 && (
-          <>
-            <li>
-              <Link
-                href={`${basePath}${buildQueryString(1)}`}
-                className="flex items-center justify-center h-9 px-3 border border-border text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-              >
-                1
-              </Link>
-            </li>
-            {desktopPageRange[0] > 2 && (
-              <li>
-                <span className="flex items-center justify-center h-9 px-3 border border-border text-muted-foreground bg-background">
-                  ...
-                </span>
-              </li>
-            )}
-          </>
+    <nav aria-label="Pagination" className={cn("flex items-center justify-between px-4", className)}>
+      {/* Previous */}
+      <div className="w-20">
+        {currentPage > 1 ? (
+          <Link
+            href={`${basePath}${buildQueryString(currentPage - 1)}`}
+            className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Prev</span>
+          </Link>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground bg-muted cursor-not-allowed">
+            <ChevronLeftIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Prev</span>
+          </span>
         )}
-        
-        {/* Page numbers */}
-        {desktopPageRange.map(page => (
-          <li key={page}>
-            {page === currentPage ? (
-              <span
-                className="flex items-center justify-center h-9 px-3 border border-border text-primary-foreground bg-primary font-medium"
-                aria-current="page"
-              >
-                {page}
-              </span>
-            ) : (
-              <Link
-                href={`${basePath}${buildQueryString(page)}`}
-                className="flex items-center justify-center h-9 px-3 border border-border text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-              >
-                {page}
-              </Link>
-            )}
-          </li>
-        ))}
-        
-        {/* Last page if not in range */}
-        {desktopPageRange[desktopPageRange.length - 1] < totalPages && (
-          <>
-            {desktopPageRange[desktopPageRange.length - 1] < totalPages - 1 && (
-              <li>
-                <span className="flex items-center justify-center h-9 px-3 border border-border text-muted-foreground bg-background">
-                  ...
-                </span>
-              </li>
-            )}
-            <li>
-              <Link
-                href={`${basePath}${buildQueryString(totalPages)}`}
-                className="flex items-center justify-center h-9 px-3 border border-border text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-              >
-                {totalPages}
-              </Link>
-            </li>
-          </>
-        )}
-        
-        {/* Next button */}
-        <li>
-          {currentPage < totalPages ? (
-            <Link
-              href={`${basePath}${buildQueryString(currentPage + 1)}`}
-              className="flex items-center justify-center h-9 px-3 border border-border rounded-e-md text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-            >
-              <span>Next</span>
-              <ChevronRightIcon className="h-4 w-4 ml-1" />
-            </Link>
-          ) : (
-            <span className="flex items-center justify-center h-9 px-3 border border-border rounded-e-md text-muted-foreground bg-muted cursor-not-allowed">
-              <span>Next</span>
-              <ChevronRightIcon className="h-4 w-4 ml-1" />
-            </span>
-          )}
-        </li>
-      </ul>
+      </div>
 
-      {/* Mobile pagination */}
-      <ul className="sm:hidden inline-flex -space-x-px">
-        {/* Previous button */}
-        <li>
-          {currentPage > 1 ? (
-            <Link
-              href={`${basePath}${buildQueryString(currentPage - 1)}`}
-              className="flex items-center justify-center h-9 px-3 ms-0 border border-e-0 border-border rounded-s-md text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-            >
-              <ChevronLeftIcon className="h-4 w-4 mr-1" />
-              <span className="sr-only">Previous</span>
-            </Link>
-          ) : (
-            <span className="flex items-center justify-center h-9 px-3 ms-0 border border-e-0 border-border rounded-s-md text-muted-foreground bg-muted cursor-not-allowed">
-              <ChevronLeftIcon className="h-4 w-4 mr-1" />
-              <span className="sr-only">Previous</span>
-            </span>
+      {/* Page numbers */}
+      <div className="flex items-center gap-1">
+        {/* Desktop */}
+        <div className="hidden sm:flex items-center gap-1">
+          {desktopPageRange[0] > 1 && (
+            <>
+              <Link href={`${basePath}${buildQueryString(1)}`} className="flex items-center justify-center h-8 w-8 rounded-md text-sm text-foreground/80 hover:bg-accent">1</Link>
+              {desktopPageRange[0] > 2 && <span className="text-sm text-muted-foreground px-1">...</span>}
+            </>
           )}
-        </li>
-        
-        {/* First 3 pages */}
-        {mobilePageRange.map(page => (
-          <li key={page}>
-            {page === currentPage ? (
-              <span
-                className="flex items-center justify-center h-9 w-9 border border-border text-primary-foreground bg-primary font-medium"
-                aria-current="page"
-              >
-                {page}
-              </span>
+          {desktopPageRange.map(page => (
+            page === currentPage ? (
+              <span key={page} className="flex items-center justify-center h-8 w-8 rounded-md text-sm font-medium text-primary-foreground bg-primary" aria-current="page">{page}</span>
             ) : (
-              <Link
-                href={`${basePath}${buildQueryString(page)}`}
-                className="flex items-center justify-center h-9 w-9 border border-border text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-              >
-                {page}
-              </Link>
-            )}
-          </li>
-        ))}
-        
-        {/* Ellipsis and last page */}
-        {showMobileEllipsis && (
-          <>
-            <li>
-              <span className="flex items-center justify-center h-9 w-9 border border-border text-muted-foreground bg-background">
-                ...
-              </span>
-            </li>
-            {totalPages > 3 && (
-              <li>
-                {totalPages === currentPage ? (
-                  <span
-                    className="flex items-center justify-center h-9 w-9 border border-border text-primary-foreground bg-primary font-medium"
-                    aria-current="page"
-                  >
-                    {totalPages}
-                  </span>
-                ) : (
-                  <Link
-                    href={`${basePath}${buildQueryString(totalPages)}`}
-                    className="flex items-center justify-center h-9 w-9 border border-border text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-                  >
-                    {totalPages}
-                  </Link>
-                )}
-              </li>
-            )}
-          </>
-        )}
-        
-        {/* Next button */}
-        <li>
-          {currentPage < totalPages ? (
-            <Link
-              href={`${basePath}${buildQueryString(currentPage + 1)}`}
-              className="flex items-center justify-center h-9 px-3 border border-border rounded-e-md text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
-            >
-              <span className="sr-only">Next</span>
-              <ChevronRightIcon className="h-4 w-4 ml-1" />
-            </Link>
-          ) : (
-            <span className="flex items-center justify-center h-9 px-3 border border-border rounded-e-md text-muted-foreground bg-muted cursor-not-allowed">
-              <span className="sr-only">Next</span>
-              <ChevronRightIcon className="h-4 w-4 ml-1" />
-            </span>
+              <Link key={page} href={`${basePath}${buildQueryString(page)}`} className="flex items-center justify-center h-8 w-8 rounded-md text-sm text-foreground/80 hover:bg-accent">{page}</Link>
+            )
+          ))}
+          {desktopPageRange[desktopPageRange.length - 1] < totalPages && (
+            <>
+              {desktopPageRange[desktopPageRange.length - 1] < totalPages - 1 && <span className="text-sm text-muted-foreground px-1">...</span>}
+              <Link href={`${basePath}${buildQueryString(totalPages)}`} className="flex items-center justify-center h-8 w-8 rounded-md text-sm text-foreground/80 hover:bg-accent">{totalPages}</Link>
+            </>
           )}
-        </li>
-      </ul>
+        </div>
+
+        {/* Mobile */}
+        <div className="flex sm:hidden items-center gap-1">
+          {mobilePageRange.map(page => (
+            page === currentPage ? (
+              <span key={page} className="flex items-center justify-center h-8 w-8 rounded-md text-sm font-medium text-primary-foreground bg-primary" aria-current="page">{page}</span>
+            ) : (
+              <Link key={page} href={`${basePath}${buildQueryString(page)}`} className="flex items-center justify-center h-8 w-8 rounded-md text-sm text-foreground/80 hover:bg-accent">{page}</Link>
+            )
+          ))}
+          {showMobileEllipsis && (
+            <>
+              <span className="text-sm text-muted-foreground px-1">...</span>
+              {totalPages === currentPage ? (
+                <span className="flex items-center justify-center h-8 w-8 rounded-md text-sm font-medium text-primary-foreground bg-primary" aria-current="page">{totalPages}</span>
+              ) : (
+                <Link href={`${basePath}${buildQueryString(totalPages)}`} className="flex items-center justify-center h-8 w-8 rounded-md text-sm text-foreground/80 hover:bg-accent">{totalPages}</Link>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Next */}
+      <div className="w-20 flex justify-end">
+        {currentPage < totalPages ? (
+          <Link
+            href={`${basePath}${buildQueryString(currentPage + 1)}`}
+            className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/80 bg-background hover:bg-accent hover:text-accent-foreground"
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ChevronRightIcon className="h-4 w-4" />
+          </Link>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground bg-muted cursor-not-allowed">
+            <span className="hidden sm:inline">Next</span>
+            <ChevronRightIcon className="h-4 w-4" />
+          </span>
+        )}
+      </div>
     </nav>
   )
 }

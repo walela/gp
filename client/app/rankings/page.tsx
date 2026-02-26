@@ -228,7 +228,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
       <Card
         className={cn(
-          'w-full border-0 shadow-none rounded-none bg-white/95 p-0',
+          'w-full border-0 shadow-none rounded-none bg-white/95 p-0 gap-0',
           'sm:rounded-bl-lg sm:rounded-br-lg sm:rounded-tr-lg sm:shadow-elevation-low'
         )}>
         <CustomTable className="h-full">
@@ -469,48 +469,44 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             )}
           </CustomTableBody>
         </CustomTable>
-      </Card>
 
-      {season !== currentYear && (
-        <div className="border border-gray-200 bg-white/95 shadow-elevation-low">
-          <div className="px-4 py-3 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-700">
-            <span className="inline-flex items-center gap-1.5 text-amber-700">
-              <Crown className="h-3.5 w-3.5 text-amber-600" />
-              Kenya #1
-            </span>
-            <span className="inline-flex items-center gap-1.5 text-cyan-700">
-              <Baby className="h-3.5 w-3.5 text-cyan-600" />
-              National Junior Champion
-            </span>
-            <span className="inline-flex items-center gap-1.5 text-green-700">
-              <span className="inline-flex h-4 items-center justify-center rounded-sm bg-green-100 px-1.5 text-[11px] font-semibold leading-tight text-green-700 sm:hidden">
-                Q
+        {season !== currentYear && (
+          <div className="border-t border-gray-200 bg-gray-50/80">
+            <div className="px-4 py-3 flex flex-wrap items-center gap-2.5 text-xs font-medium">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-amber-700">
+                <Crown className="h-3.5 w-3.5 text-amber-600" />
+                Kenya #1
               </span>
-              <span className="hidden sm:inline-flex h-4 items-center justify-center rounded-full border border-green-600 bg-green-50 px-2 text-[11px] font-semibold leading-tight text-green-700">
-                Q
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-cyan-700">
+                <Baby className="h-3.5 w-3.5 text-cyan-600" />
+                Nat. Junior Champ
               </span>
-              Qualified
-            </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-green-700">
+                <span className="font-semibold">Q</span>
+                Qualified
+              </span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {total_pages > 1 && (
-        <Pagination
-          currentPage={page}
-          totalPages={total_pages}
-          basePath="/rankings"
-          queryParams={{
-            sort,
-            dir,
-            view,
-            season: season.toString(),
-            ...(category !== 'open' ? { category } : {}),
-            ...(search ? { q: search } : {})
-          }}
-          className="mt-4"
-        />
-      )}
+        {total_pages > 1 && (
+          <div className="border-t border-gray-200 py-3">
+            <Pagination
+              currentPage={page}
+              totalPages={total_pages}
+              basePath="/rankings"
+              queryParams={{
+                sort,
+                dir,
+                view,
+                season: season.toString(),
+                ...(category !== 'open' ? { category } : {}),
+                ...(search ? { q: search } : {})
+              }}
+            />
+          </div>
+        )}
+      </Card>
     </div>
   )
 }
