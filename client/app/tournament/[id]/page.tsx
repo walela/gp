@@ -77,7 +77,7 @@ export async function generateMetadata({ params }: TournamentPageProps): Promise
 
   const rawLocation = tournament.location || inferTournamentLocation(tournament.name)
   const locationDisplay = rawLocation.includes('Kenya') ? rawLocation : `${rawLocation}, Kenya`
-  const shortName = getShortTournamentName(tournament.name)
+  const shortName = tournament.short_name || getShortTournamentName(tournament.name)
   const dateStr = formatTournamentDate(tournament.start_date, tournament.end_date)
   
   return {
@@ -126,7 +126,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
   const section = tournament.section || 'open'
   const openId = section === 'open' ? id : tournament.sibling_id!
   const ladiesId = section === 'ladies' ? id : tournament.sibling_id!
-  const shortName = getShortTournamentName(tournament.name)
+  const shortName = tournament.short_name || getShortTournamentName(tournament.name)
   const year = tournament.start_date ? new Date(tournament.start_date).getFullYear() : null
   const displayName = year ? `${shortName} ${year}` : shortName
   const resolvedLocation = tournament.location || inferTournamentLocation(tournament.name)
