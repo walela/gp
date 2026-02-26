@@ -36,7 +36,7 @@ export function SeasonSelector({ seasons, currentSeason, className }: SeasonSele
           'flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
           className
         )}>
-        {currentSeason} Season
+        {currentSeason}
         <ChevronDown className="h-4 w-4 text-gray-500" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-36">
@@ -48,7 +48,7 @@ export function SeasonSelector({ seasons, currentSeason, className }: SeasonSele
               'cursor-pointer',
               season === currentSeason && 'bg-blue-50 text-blue-700 font-medium'
             )}>
-            {season} Season
+            {season}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
