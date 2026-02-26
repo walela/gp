@@ -169,19 +169,21 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const { rankings, total_pages } = rankingsData
   const topPlayers = (topPlayersData?.rankings ?? rankings).slice(0, topPlayersFetchCount)
 
-  const kenyaNumber1Name = season === 2025
-    ? (category === 'ladies' ? 'ndirangu' : 'mcligeyo')
-    : null
-  const kenyaNumber1Player = kenyaNumber1Name
-    ? [...rankings, ...topPlayers].find(player =>
-        player.name.toLowerCase().includes(kenyaNumber1Name)
-      )
-    : null
-  const kenyaNumber1Id = kenyaNumber1Player?.fide_id || kenyaNumber1Player?.name || null
+  // Season-specific qualifier config: Kenya #1 and Junior Champion FIDE IDs
+  const qualifierConfig: Record<number, Record<string, { kenyaNumber1?: string; juniorChampion?: string }>> = {
+    2025: {
+      open: { kenyaNumber1: '10814647', juniorChampion: '10831533' },    // McCligeyo, Kyle Kuka
+      ladies: { kenyaNumber1: '10802886', juniorChampion: '10822755' },  // Ndirangu (Joyce), Cassidy Maina
+    },
+    2026: {
+      open: { kenyaNumber1: '10814582' },   // Kaloki Hawi
+      ladies: { kenyaNumber1: '10814922' },  // Mutisya, Jully
+    }
+  }
 
-  const juniorChampionId = season === 2025
-    ? (category === 'ladies' ? '10822755' : '10831533')
-    : null
+  const seasonConfig = qualifierConfig[season]?.[category]
+  const kenyaNumber1Id = seasonConfig?.kenyaNumber1 ?? null
+  const juniorChampionId = seasonConfig?.juniorChampion ?? null
 
   // Count how many "special" qualifiers (Kenya #1, junior champ) fall inside the top 9
   // Each one frees up a spot for the next player
@@ -294,10 +296,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                 const isAutomaticQualifier = automaticQualifierIds.has(playerId)
                 const isProvisionalQualifier = provisionalQualifierId === playerId
                 const isHighlightedQualifier = highlightedQualifierIds.has(playerId)
-                const isJuniorChampion =
-                  player.fide_id === juniorChampionId
-                  || (category === 'open' && player.name.toLowerCase().includes('kyle kuka'))
-                  || (category === 'ladies' && player.name.toLowerCase().includes('cassidy'))
+                const isJuniorChampion = juniorChampionId !== null && player.fide_id === juniorChampionId
                 const tableRank = (page - 1) * 25 + index + 1
 
                 const isDefinitelyQualified = isKenyaNumber1 || isJuniorChampion
