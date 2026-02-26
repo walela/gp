@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export function middleware(req: NextRequest) {
+export default function proxy(req: NextRequest) {
   const host = req.headers.get('host') ?? ''
 
   if (host === '1700chess.vercel.app') {

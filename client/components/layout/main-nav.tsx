@@ -31,11 +31,11 @@ export function MainNav() {
       <NavigationMenuList className="hidden sm:flex">
         {routes.map(route => (
           <NavigationMenuItem key={route.href}>
-            <Link href={route.href} legacyBehavior passHref>
-              <NavigationMenuLink className={`${navigationMenuTriggerStyle()} text-sm sm:text-[15px]`} active={route.active}>
+            <NavigationMenuLink asChild active={route.active}>
+              <Link href={route.href} className={`${navigationMenuTriggerStyle()} text-sm sm:text-[15px]`}>
                 <span className="relative inline-flex items-center gap-2">{route.label}</span>
-              </NavigationMenuLink>
-            </Link>
+              </Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
         ))}
       </NavigationMenuList>
