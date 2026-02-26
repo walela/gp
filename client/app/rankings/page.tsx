@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
-import { ChevronRight, Crown } from 'lucide-react'
+import { Baby, ChevronRight, Crown } from 'lucide-react'
 import { getRankings, getSeasons, type PlayerRanking } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { ViewSelector } from '@/components/rankings/view-selector'
@@ -71,7 +71,7 @@ function getRankMovement(player: PlayerRanking): {
   if (isNew) {
     return {
       label: 'NEW',
-      className: 'bg-purple-100 text-purple-700',
+      className: 'bg-cyan-100 text-cyan-700',
       ariaLabel: 'New entrant in top rankings'
     }
   }
@@ -342,7 +342,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                       isKenyaNumber1
                         ? 'bg-amber-50/50 border-l-2 border-l-amber-500 hover:bg-amber-100/50'
                         : isJuniorChampion
-                          ? 'bg-purple-50/70 border-l-2 border-l-purple-500 hover:bg-purple-100'
+                          ? 'bg-cyan-50/70 border-l-2 border-l-cyan-500 hover:bg-cyan-100'
                           : isProvisionalQualifier
                             ? 'bg-teal-50/80 border-l-2 border-l-teal-600 hover:bg-teal-100'
                             : isAutomaticQualifier
@@ -358,7 +358,10 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                           <span className="font-semibold text-amber-700">{tableRank}</span>
                         </div>
                       ) : isJuniorChampion ? (
-                        <span className="font-semibold text-purple-700">{tableRank}</span>
+                        <div className="flex items-center justify-end gap-1">
+                          <Baby className="h-3.5 w-3.5 text-cyan-600" />
+                          <span className="font-semibold text-cyan-700">{tableRank}</span>
+                        </div>
                       ) : isProvisionalQualifier ? (
                         <span className="font-semibold text-teal-700">{tableRank}</span>
                       ) : isAutomaticQualifier ? (
@@ -377,7 +380,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                               isKenyaNumber1
                                 ? 'text-amber-700 hover:text-amber-800'
                                 : isJuniorChampion
-                                  ? 'text-purple-700 hover:text-purple-800'
+                                  ? 'text-cyan-700 hover:text-cyan-800'
                                   : isProvisionalQualifier
                                     ? 'text-teal-700 hover:text-teal-800'
                                     : isAutomaticQualifier
@@ -400,7 +403,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                               isKenyaNumber1
                                 ? 'text-amber-700'
                                 : isJuniorChampion
-                                  ? 'text-purple-700'
+                                  ? 'text-cyan-700'
                                   : isProvisionalQualifier
                                     ? 'text-teal-700'
                                     : isAutomaticQualifier
@@ -475,8 +478,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <Crown className="h-3.5 w-3.5 text-amber-600" />
               Kenya #1
             </span>
-            <span className="inline-flex items-center gap-1.5 text-purple-700">
-              <span className="h-2.5 w-2.5 rounded-full border-[1.5px] border-purple-500 bg-purple-50" />
+            <span className="inline-flex items-center gap-1.5 text-cyan-700">
+              <Baby className="h-3.5 w-3.5 text-cyan-600" />
               National Junior Champion
             </span>
             <span className="inline-flex items-center gap-1.5 text-green-700">
@@ -486,7 +489,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
               <span className="hidden sm:inline-flex h-4 items-center justify-center rounded-full border border-green-600 bg-green-50 px-2 text-[11px] font-semibold leading-tight text-green-700">
                 Q
               </span>
-              Qualifier
+              Qualified
             </span>
           </div>
         </div>
