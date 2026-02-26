@@ -472,14 +472,14 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
         {season !== currentYear && (
           <div className="border-t border-gray-200 bg-gray-50/80">
-            <div className="px-4 py-3 flex flex-wrap items-center gap-2.5 text-xs font-medium">
+            <div className="px-3 py-2.5 flex items-center gap-2 text-xs font-medium">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-amber-700">
                 <Crown className="h-3.5 w-3.5 text-amber-600" />
-                Kenya #1
+                FIDE #1
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-cyan-700">
                 <Baby className="h-3.5 w-3.5 text-cyan-600" />
-                Nat. Junior Champ
+                Junior Champion
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-green-700">
                 <span className="font-semibold">Q</span>

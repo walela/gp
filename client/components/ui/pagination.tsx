@@ -70,9 +70,9 @@ export function Pagination({
   const showMobileEllipsis = totalPages > 3
   
   return (
-    <nav aria-label="Pagination" className={cn("flex items-center justify-between px-4", className)}>
+    <nav aria-label="Pagination" className={cn("flex items-center justify-between px-3", className)}>
       {/* Previous */}
-      <div className="w-20">
+      <div className="shrink-0">
         {currentPage > 1 ? (
           <Link
             href={`${basePath}${buildQueryString(currentPage - 1)}`}
@@ -137,7 +137,7 @@ export function Pagination({
       </div>
 
       {/* Next */}
-      <div className="w-20 flex justify-end">
+      <div className="shrink-0 flex justify-end">
         {currentPage < totalPages ? (
           <Link
             href={`${basePath}${buildQueryString(currentPage + 1)}`}
