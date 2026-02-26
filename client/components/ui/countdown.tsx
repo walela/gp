@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useSyncExternalStore, useCallback } from 'react'
 
 interface CountdownProps {
   targetDate: string
@@ -15,63 +15,46 @@ interface TimeLeft {
   seconds: number
 }
 
-export function Countdown({ targetDate }: CountdownProps) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null)
-  const [isClient, setIsClient] = useState(false)
-  const [isExpired, setIsExpired] = useState(false)
+function calculateTimeLeft(targetDate: string): TimeLeft | null {
+  const now = new Date().getTime()
+  // Assume 9am start time
+  const target = new Date(targetDate + ' 09:00:00').getTime()
+  const difference = target - now
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  if (difference <= 0) return null
 
-  useEffect(() => {
-    if (!isClient) return
-
-    const calculateTimeLeft = (): TimeLeft | null => {
-      const now = new Date().getTime()
-      // Assume 9am start time
-      const target = new Date(targetDate + ' 09:00:00').getTime()
-      const difference = target - now
-
-      if (difference <= 0) {
-        setIsExpired(true)
-        return null
-      }
-
-      return {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((difference % (1000 * 60)) / 1000)
-      }
-    }
-
-    // Initial calculation
-    const initialTimeLeft = calculateTimeLeft()
-    setTimeLeft(initialTimeLeft)
-
-    // Set up interval
-    const timer = setInterval(() => {
-      const newTimeLeft = calculateTimeLeft()
-      setTimeLeft(newTimeLeft)
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [targetDate, isClient])
-
-  if (!isClient) {
-    return <span className="text-sm text-gray-500">Loading...</span>
+  return {
+    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+    minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+    seconds: Math.floor((difference % (1000 * 60)) / 1000)
   }
+}
 
-  if (isExpired) {
-    return <span className="text-sm text-green-600 font-medium">Tournament Started!</span>
+function subscribe(callback: () => void) {
+  const id = setInterval(callback, 1000)
+  return () => clearInterval(id)
+}
+
+export function Countdown({ targetDate }: CountdownProps) {
+  const getSnapshot = useCallback(() => {
+    const tl = calculateTimeLeft(targetDate)
+    return tl ? JSON.stringify(tl) : null
+  }, [targetDate])
+
+  const getServerSnapshot = useCallback(() => null, [])
+
+  const raw = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const timeLeft: TimeLeft | null = raw ? JSON.parse(raw) : null
+
+  if (raw === null && typeof window === 'undefined') {
+    return <span className="text-sm text-gray-500">Loading...</span>
   }
 
   if (!timeLeft) {
-    return <span className="text-sm text-gray-500">Loading...</span>
+    return <span className="text-sm text-green-600 font-medium">Tournament Started!</span>
   }
 
-  // Format time - always include seconds
   const formatTime = () => {
     if (timeLeft.days > 0) {
       return `${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`
@@ -83,4 +66,4 @@ export function Countdown({ targetDate }: CountdownProps) {
   }
 
   return <span className="font-mono text-sm">{formatTime()}</span>
-} 
+}

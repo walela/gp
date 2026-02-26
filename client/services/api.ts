@@ -1,5 +1,7 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'
 
+const CACHE_24H = { next: { revalidate: 86400 } } as RequestInit
+
 export interface Tournament {
   id: string
   name: string
@@ -113,7 +115,7 @@ export async function getTournaments(
   if (params.page) searchParams.set('page', params.page.toString())
   if (params.season) searchParams.set('season', params.season.toString())
 
-  const response = await fetch(`${API_BASE}/tournaments?${searchParams}`)
+  const response = await fetch(`${API_BASE}/tournaments?${searchParams}`, CACHE_24H)
   if (!response.ok) throw new Error('Failed to fetch tournaments')
   return response.json()
 }
@@ -123,7 +125,7 @@ export interface SeasonsResponse {
 }
 
 export async function getSeasons(): Promise<SeasonsResponse> {
-  const response = await fetch(`${API_BASE}/seasons`)
+  const response = await fetch(`${API_BASE}/seasons`, CACHE_24H)
   if (!response.ok) throw new Error('Failed to fetch seasons')
   return response.json()
 }
@@ -141,7 +143,7 @@ export async function getTournamentDetails(
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
 
-  const response = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`)
+  const response = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`, CACHE_24H)
   if (!response.ok) throw new Error('Failed to fetch tournament details')
   return response.json()
 }
@@ -171,7 +173,7 @@ export async function getRankings({
   if (gender) {
     url += `&gender=${gender}`
   }
-  const res = await fetch(url)
+  const res = await fetch(url, CACHE_24H)
   const data = await res.json()
   return data as RankingsResponse
 }
@@ -182,7 +184,7 @@ export async function getPlayer(id: string, params: { season?: number; gender?: 
   if (params.gender) searchParams.set('gender', params.gender)
   const queryString = searchParams.toString()
   const url = queryString ? `${API_BASE}/player/${id}?${queryString}` : `${API_BASE}/player/${id}`
-  const res = await fetch(url)
+  const res = await fetch(url, CACHE_24H)
   const data = await res.json()
   return data as PlayerDetails
 }
@@ -200,13 +202,13 @@ export async function getTournament(
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
 
-  const res = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`)
+  const res = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`, CACHE_24H)
   const data = await res.json()
   return data as TournamentDetails
 }
 
 export async function refreshTournament(id: string): Promise<{ status: string }> {
-  const response = await fetch(`${API_BASE}/refresh/${id}`)
+  const response = await fetch(`${API_BASE}/refresh/${id}`, { cache: 'no-store' })
   if (!response.ok) throw new Error('Failed to refresh tournament')
   return response.json()
 }
@@ -230,7 +232,6 @@ export async function getTopPlayers({
   season?: number
   gender?: 'f' | 'm'
 } = {}): Promise<TopPlayersResponse> {
-  // Get first page with all top players
   const data = await getRankings({ sort: sortBy, dir, page: 1, q, season, gender })
 
   return {
@@ -239,8 +240,7 @@ export async function getTopPlayers({
 }
 
 export async function getTournamentAllResults(id: string): Promise<TournamentResult[]> {
-  // Fetch all results without pagination
-  const res = await fetch(`${API_BASE}/tournament/${id}?all_results=true`)
+  const res = await fetch(`${API_BASE}/tournament/${id}?all_results=true`, CACHE_24H)
   const data = await res.json()
   return data.results as TournamentResult[]
 }
