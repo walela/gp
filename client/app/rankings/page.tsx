@@ -472,16 +472,16 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
         {season !== currentYear && (
           <div className="border-t border-gray-200 bg-gray-50/80">
-            <div className="px-3 py-2.5 flex items-center gap-2 text-xs font-medium">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-amber-700">
+            <div className="px-3 py-2.5 flex items-center gap-2 text-xs font-medium overflow-x-auto">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-amber-700 whitespace-nowrap">
                 <Crown className="h-3.5 w-3.5 text-amber-600" />
                 FIDE #1
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-cyan-700">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-cyan-700 whitespace-nowrap">
                 <Baby className="h-3.5 w-3.5 text-cyan-600" />
-                Junior Champion
+                Junior Champ
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-green-700">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-green-700 whitespace-nowrap">
                 <span className="font-semibold">Q</span>
                 Qualified
               </span>
