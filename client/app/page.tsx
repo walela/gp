@@ -102,18 +102,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           )}
                           <div className="mt-1.5 flex items-center gap-x-3 text-xs text-gray-500">
                             <span className="inline-flex items-center gap-1">
-                              <CalendarDays className="h-3 w-3" />
+                              <CalendarDays className="h-3 w-3" aria-hidden="true" />
                               {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
                             </span>
                             <span className="inline-flex items-center gap-1 min-w-0">
-                              <MapPin className="h-3 w-3 shrink-0" />
+                              <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
                               <span className="truncate">{tournament.location}</span>
                             </span>
                           </div>
                           {tournament.rounds && (
                             <div className="mt-1.5 text-xs text-gray-500">
                               <span className="inline-flex items-center gap-1">
-                                <RotateCw className="h-3 w-3" />
+                                <RotateCw className="h-3 w-3" aria-hidden="true" />
                                 {tournament.rounds} rounds
                               </span>
                             </div>
@@ -130,7 +130,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition-colors">
                               Register
-                              <ArrowRight className="h-3 w-3" />
+                              <ArrowRight className="h-3 w-3" aria-hidden="true" />
                             </a>
                           )}
                         </div>

@@ -20,13 +20,15 @@ export function SectionSelector({ currentSection, openId, ladiesId }: SectionSel
   }
 
   return (
-    <div className="inline-flex divide-x divide-gray-200 rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-sm">
+    <div role="tablist" className="inline-flex divide-x divide-gray-200 rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-sm">
       {sectionOptions.map(option => {
         const isActive = currentSection === option.value
         return (
           <Link
             key={option.value}
             href={getHref(option.value)}
+            role="tab"
+            aria-selected={isActive}
             className={cn(
               'inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-all',
               isActive

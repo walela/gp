@@ -78,9 +78,9 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
-      return <ArrowUpDownIcon className="h-4 w-4" />
+      return <ArrowUpDownIcon className="h-4 w-4" aria-hidden="true" />
     }
-    return sortDirection === 'asc' ? <ArrowUpIcon className="h-4 w-4" /> : <ArrowDownIcon className="h-4 w-4" />
+    return sortDirection === 'asc' ? <ArrowUpIcon className="h-4 w-4" aria-hidden="true" /> : <ArrowDownIcon className="h-4 w-4" aria-hidden="true" />
   }
 
   return (
@@ -88,7 +88,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
       <CustomTable className="h-full">
         <CustomTableHeader>
           <CustomTableRow>
-            <CustomTableHead className="cursor-pointer select-none min-w-[200px]" onClick={() => handleSort('name')}>
+            <CustomTableHead className="cursor-pointer select-none min-w-[200px]" onClick={() => handleSort('name')} onKeyDown={e => e.key === 'Enter' && handleSort('name')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1">
                 <span>Tournament</span>
                 <span className="text-muted-foreground">
@@ -98,7 +98,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
             </CustomTableHead>
             <CustomTableHead
               className="cursor-pointer select-none min-w-[140px] hidden sm:table-cell"
-              onClick={() => handleSort('dates')}>
+              onClick={() => handleSort('dates')} onKeyDown={e => e.key === 'Enter' && handleSort('dates')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1">
                 <span>Dates</span>
                 <span className="text-muted-foreground">
@@ -108,7 +108,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
             </CustomTableHead>
             <CustomTableHead
               className="cursor-pointer select-none hidden md:table-cell"
-              onClick={() => handleSort('location')}>
+              onClick={() => handleSort('location')} onKeyDown={e => e.key === 'Enter' && handleSort('location')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1">
                 <span>Location</span>
                 <span className="text-muted-foreground">
@@ -116,7 +116,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
                 </span>
               </div>
             </CustomTableHead>
-            <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('players')}>
+            <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('players')} onKeyDown={e => e.key === 'Enter' && handleSort('players')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1 justify-end">
                 <span className="hidden sm:inline">Valid TPRs</span>
                 <span className="sm:hidden">TPRs</span>
@@ -127,7 +127,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
             </CustomTableHead>
             <CustomTableHead
               className="cursor-pointer select-none text-right hidden lg:table-cell"
-              onClick={() => handleSort('rounds')}>
+              onClick={() => handleSort('rounds')} onKeyDown={e => e.key === 'Enter' && handleSort('rounds')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1 justify-end">
                 <span>Rounds</span>
                 <span className="text-muted-foreground">
@@ -137,7 +137,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
             </CustomTableHead>
             <CustomTableHead
               className="cursor-pointer select-none text-right hidden sm:table-cell"
-              onClick={() => handleSort('avgTop10TPR')}>
+              onClick={() => handleSort('avgTop10TPR')} onKeyDown={e => e.key === 'Enter' && handleSort('avgTop10TPR')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1 justify-end">
                 <span className="hidden lg:inline">Avg Top 10 TPR</span>
                 <span className="lg:hidden">Avg TPR</span>
@@ -148,7 +148,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
             </CustomTableHead>
             <CustomTableHead
               className="cursor-pointer select-none text-right hidden xl:table-cell"
-              onClick={() => handleSort('avgTop24Rating')}>
+              onClick={() => handleSort('avgTop24Rating')} onKeyDown={e => e.key === 'Enter' && handleSort('avgTop24Rating')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1 justify-end">
                 <span>Avg Top 24 Rating</span>
                 <span className="text-muted-foreground">
