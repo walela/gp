@@ -15,6 +15,7 @@ export interface Tournament {
   registrationDeadline?: string
   registrationUrl?: string
   detailsUrl?: string | null
+  locationUrl?: string
 }
 
 // Tournaments happening within roughly the next two months
@@ -26,6 +27,7 @@ export const upcomingTournaments: Tournament[] = [
     startDate: '2026-03-07',
     endDate: '2026-03-08',
     location: 'Kisumu Social Hall',
+    locationUrl: 'https://maps.google.com/?q=Kisumu+Social+Hall,+Kisumu,+Kenya',
     rounds: 6,
     confirmed: true,
     registrationUrl: 'https://forms.gle/gqHvBQ1ohFJ5jnEM7',
@@ -38,6 +40,7 @@ export const upcomingTournaments: Tournament[] = [
     startDate: '2026-03-19',
     endDate: '2026-03-22',
     location: 'ALX The Piano, Westlands',
+    locationUrl: 'https://maps.google.com/?q=ALX+The+Piano,+Westlands,+Nairobi,+Kenya',
     rounds: 8,
     confirmed: true,
     registrationUrl: 'https://mavens.co.ke/event/register/16',
@@ -96,6 +99,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-05-09',
     endDate: '2026-05-10',
     location: 'Rainbow Ruiru Resort',
+    locationUrl: 'https://maps.google.com/?q=Rainbow+Ruiru+Resort,+Ruiru,+Kenya',
     confirmed: true,
     detailsUrl: null
   },
@@ -136,6 +140,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-06-05',
     endDate: '2026-06-07',
     location: 'Quo Vadis Hub, Nyeri',
+    locationUrl: 'https://maps.google.com/?q=Quo+Vadis+Hub,+Nyeri,+Kenya',
     confirmed: true,
     detailsUrl: null
   },
@@ -146,6 +151,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-06-25',
     endDate: '2026-06-27',
     location: 'Pride Hotel, Bondo',
+    locationUrl: 'https://maps.google.com/?q=Pride+Hotel,+Bondo,+Kenya',
     confirmed: true,
     detailsUrl: null
   },
@@ -166,6 +172,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-07-19',
     endDate: '2026-07-19',
     location: 'City Mall, Mombasa',
+    locationUrl: 'https://maps.google.com/?q=City+Mall,+Mombasa,+Kenya',
     confirmed: true,
     detailsUrl: null
   },
@@ -186,6 +193,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-08-29',
     endDate: '2026-08-30',
     location: 'KICC, Nairobi',
+    locationUrl: 'https://maps.google.com/?q=KICC,+Nairobi,+Kenya',
     confirmed: true,
     detailsUrl: null
   },
@@ -206,6 +214,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-10-09',
     endDate: '2026-10-11',
     location: 'Light Academy, Mombasa',
+    locationUrl: 'https://maps.google.com/?q=Light+Academy,+Mombasa,+Kenya',
     confirmed: true,
     detailsUrl: null
   },

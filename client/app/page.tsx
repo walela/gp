@@ -107,7 +107,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                             </span>
                             <span className="inline-flex items-center gap-1 min-w-0">
                               <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
-                              <span className="truncate">{tournament.location}</span>
+                              {tournament.locationUrl ? (
+                                <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">{tournament.location}</a>
+                              ) : (
+                                <span className="truncate">{tournament.location}</span>
+                              )}
                             </span>
                           </div>
                           {tournament.rounds && (
@@ -195,7 +199,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                             ? `${dayjs(tournament.startDate!).format('MMM Do')}-${dayjs(tournament.endDate!).format('Do')}`
                             : tournament.month ?? 'TBA'}
                           <span className="mx-1.5">•</span>
-                          {tournament.location}
+                          {tournament.locationUrl ? (
+                            <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{tournament.location}</a>
+                          ) : (
+                            tournament.location
+                          )}
                         </p>
                       </div>
                       <div className="flex-shrink-0 ml-4 text-xs text-gray-400">
