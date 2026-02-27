@@ -175,7 +175,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
                       className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
                       {tournament.short_name || tournament.name}
                     </Link>
-                    <div className="text-sm text-gray-600 sm:hidden space-x-2">
+                    <div className="text-xs text-gray-500 sm:hidden space-x-2">
                       <span>{dates}</span>
                       <span className="lg:hidden">•</span>
                       <span className="lg:hidden">{rounds} rounds</span>
