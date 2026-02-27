@@ -35,7 +35,7 @@ export const upcomingTournaments: Tournament[] = [
     id: 'mavens-2026',
     name: 'Mavens International Open 2026 - Grand Prix',
     short_name: 'Mavens Open',
-    startDate: '2026-03-20',
+    startDate: '2026-03-19',
     endDate: '2026-03-22',
     location: 'ALX The Piano, Westlands',
     rounds: 8,
