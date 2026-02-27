@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 """
 Scrape 2026 tournaments including both Open and Ladies sections.
 """
@@ -30,7 +33,8 @@ def scrape_tournament_all_sections(tournament_id: str, db: Database, scraper: Ch
         else:
             storage_id = tournament_id
 
-        logger.info(f"\nScraping {section_name}...")
+        logger.info(f"
+Scraping {section_name}...")
 
         try:
             name, results, metadata = scraper.get_tournament_data(source_tournament_id, section_param=section_param)
@@ -87,13 +91,15 @@ def main():
     ]
 
     for tournament_id in tournaments_2026:
-        logger.info(f"\n{'='*60}")
+        logger.info(f"
+{'='*60}")
         logger.info(f"Processing tournament {tournament_id}")
         logger.info(f"{'='*60}")
         scrape_tournament_all_sections(tournament_id, db, scraper)
 
     # Recalculate rankings for 2026
-    logger.info("\nRecalculating 2026 rankings...")
+    logger.info("
+Recalculating 2026 rankings...")
     db.recalculate_rankings(season=2026)
     logger.info("Done!")
 

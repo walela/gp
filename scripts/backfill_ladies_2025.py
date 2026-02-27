@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 """
 Backfill script to scrape Ladies sections from 2025 tournaments.
 
@@ -139,18 +142,21 @@ def main():
         except Exception as e:
             logger.error(f"  Error processing tournament {tournament_id}: {e}")
 
-    logger.info(f"\nSummary:")
+    logger.info(f"
+Summary:")
     logger.info(f"  Tournaments checked: {len(tournaments_2025)}")
     logger.info(f"  Ladies sections found: {ladies_found}")
     logger.info(f"  Ladies sections scraped: {ladies_scraped}")
 
     # Validate results
-    logger.info("\nValidating ladies results...")
+    logger.info("
+Validating ladies results...")
     validator = ResultValidator(session=scraper.session)
     validate_ladies_results(db, validator)
 
     # Recalculate rankings for 2025
-    logger.info("\nRecalculating 2025 rankings...")
+    logger.info("
+Recalculating 2025 rankings...")
     db.recalculate_rankings(season=2025)
     logger.info("Done!")
 

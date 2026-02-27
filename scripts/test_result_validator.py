@@ -1,3 +1,6 @@
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 """
 Tests for ResultValidator using real chess-results.com HTML fixtures.
 
@@ -522,7 +525,7 @@ class TestResultValidator:
         """
         status = self.validator._determine_result_status(
             ["23", "10", "5"],
-            "Rd. Bo. SNo Name Ayuma, Samara\t0\tKEN\tMavens Chess Club"
+            "Rd. Bo. SNo Name Ayuma, Samara	0	KEN	Mavens Chess Club"
         )
         assert status == "valid"
 
