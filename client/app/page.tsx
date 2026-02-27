@@ -100,7 +100,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           <div className="mt-1.5 flex items-center gap-x-3 text-xs text-gray-500">
                             <span className="inline-flex items-center gap-1">
                               <span className="w-4 text-center" aria-hidden="true">📅</span>
-                              {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
+                              {dayjs(tournament.startDate).format('MMM Do')}–{dayjs(tournament.endDate).format('Do')}
                             </span>
                             {tournament.rounds && (
                               <span className="inline-flex items-center gap-1">
@@ -187,7 +187,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                         )}
                         <p className="text-xs text-gray-500 mt-1">
                           {hasDates
-                            ? `${dayjs(tournament.startDate!).format('MMM Do')}-${dayjs(tournament.endDate!).format('Do')}`
+                            ? `${dayjs(tournament.startDate!).format('MMM Do')}–${dayjs(tournament.endDate!).format('Do')}`
                             : tournament.month ?? 'TBA'}
                           <span className="mx-1.5">•</span>
                           {tournament.locationUrl ? (

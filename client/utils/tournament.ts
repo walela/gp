@@ -144,8 +144,8 @@ export function formatTournamentDateWithOrdinals(startDate?: string, endDate?: s
   }
 
   if (start.isSame(end, 'month')) {
-    return `${start.format('MMM Do')}-${end.format('Do')}`
+    return `${start.format('MMM Do')}–${end.format('Do')}`
   }
 
-  return `${start.format('MMM Do')} - ${end!.format('MMM Do')}`
+  return `${start.format('MMM Do')} – ${end!.format('MMM Do')}`
 }
