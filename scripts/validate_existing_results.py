@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 """
 Script to validate existing tournament results and update their status.
 """

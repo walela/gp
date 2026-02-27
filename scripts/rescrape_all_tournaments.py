@@ -1,3 +1,6 @@
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 """
 Script to rescrape all tournaments with improved result status detection.
 """
@@ -208,7 +211,8 @@ if __name__ == "__main__":
             logger.error(f"Failed to process tournament {tournament_name}: {e}")
     
     # Print summary
-    logger.info("\n--- SCRAPING SUMMARY ---")
+    logger.info("
+--- SCRAPING SUMMARY ---")
     for tournament_id, result in tournament_results.items():
         logger.info(f"{result['name']}: {result['results_count']} results, Dates: {result['dates']}")
     logger.info("--- END OF SUMMARY ---")

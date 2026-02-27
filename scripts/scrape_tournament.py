@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 """
 Generic script to scrape and save any tournament data.
 Usage: python scrape_tournament.py <tournament_id> "<tournament_name>"
@@ -56,7 +59,8 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
         )
         
         # Process and validate each player's result
-        logger.info("\n=== Validating player results ===")
+        logger.info("
+=== Validating player results ===")
         processed_results = []
         
         for i, result in enumerate(results):
@@ -92,13 +96,15 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
         valid_kenyan = [r for r in kenyan_results if r["result_status"] == "valid"]
         invalid_kenyan = [r for r in kenyan_results if r["result_status"] != "valid"]
         
-        logger.info("\n=== Validation Summary ===")
+        logger.info("
+=== Validation Summary ===")
         logger.info(f"Total Kenyan players: {len(kenyan_results)}")
         logger.info(f"Valid results: {len(valid_kenyan)}")
         logger.info(f"Invalid results: {len(invalid_kenyan)}")
         
         if invalid_kenyan:
-            logger.info("\nInvalid results breakdown:")
+            logger.info("
+Invalid results breakdown:")
             status_counts = {}
             for r in invalid_kenyan:
                 status = r["result_status"]
@@ -107,7 +113,8 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
                 logger.info(f"  - {status}: {count}")
         
         # Save to database with validation statuses
-        logger.info("\nSaving to database...")
+        logger.info("
+Saving to database...")
         save_tournament_with_validation(
             db,
             tournament_id,
@@ -116,7 +123,8 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
             metadata=metadata,
         )
         
-        logger.info(f"\n✅ Successfully saved tournament: {tournament_name}")
+        logger.info(f"
+✅ Successfully saved tournament: {tournament_name}")
         
         # Return some stats
         return {
@@ -172,13 +180,15 @@ def main():
     
     result = scrape_and_save_tournament(tournament_id, tournament_name)
     if result:
-        print("\n✅ Scraping complete!")
+        print("
+✅ Scraping complete!")
         print(f"Tournament: {result['name']}")
         print(f"Total players: {result['results_count']}")
         print(f"Kenyan players: {result['kenyan_players']}")
         print(f"  - Valid results: {result['valid_kenyan']}")
         print(f"  - Invalid results: {result['invalid_kenyan']}")
-        print("\nDon't forget to add this tournament to TOURNAMENT_NAMES in app.py:")
+        print("
+Don't forget to add this tournament to TOURNAMENT_NAMES in app.py:")
         print(f'    "{tournament_id}": "{result["name"]}",')
 
 if __name__ == "__main__":
