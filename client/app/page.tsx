@@ -6,7 +6,7 @@ import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
-import { CalendarDays, MapPin, ArrowRight, RotateCw } from 'lucide-react'
+import { CalendarDays, ArrowRight, RotateCw } from 'lucide-react'
 
 export const revalidate = 86400 // cache for 24 hours
 
@@ -105,23 +105,21 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                               <CalendarDays className="h-3 w-3" aria-hidden="true" />
                               {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
                             </span>
-                            <span className="inline-flex items-center gap-1 min-w-0">
-                              <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
-                              {tournament.locationUrl ? (
-                                <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">{tournament.location}</a>
-                              ) : (
-                                <span className="truncate">{tournament.location}</span>
-                              )}
-                            </span>
-                          </div>
-                          {tournament.rounds && (
-                            <div className="mt-1.5 text-xs text-gray-500">
+                            {tournament.rounds && (
                               <span className="inline-flex items-center gap-1">
                                 <RotateCw className="h-3 w-3" aria-hidden="true" />
                                 {tournament.rounds} rounds
                               </span>
-                            </div>
-                          )}
+                            )}
+                          </div>
+                          <div className="mt-1.5 flex items-center gap-1 text-xs text-gray-500 min-w-0">
+                            <span aria-hidden="true">📍</span>
+                            {tournament.locationUrl ? (
+                              <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">{tournament.location}</a>
+                            ) : (
+                              <span className="truncate">{tournament.location}</span>
+                            )}
+                          </div>
                         </div>
                         <div className="flex items-center justify-between sm:justify-end gap-3">
                           <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">
