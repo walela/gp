@@ -66,10 +66,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         {upcomingTournaments.length > 0 && season === currentYear && (
           <section>
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <h2 className="text-sm font-bold tracking-tight text-gray-800">UPCOMING</h2>
-                <span className="text-sm text-gray-400">{upcomingTournaments.length} {upcomingTournaments.length === 1 ? 'event' : 'events'}</span>
-              </div>
+              <h2 className="text-sm font-bold tracking-tight text-gray-800">UPCOMING ({upcomingTournaments.length})</h2>
               <SeasonSelector seasons={seasons} currentSeason={season} />
             </div>
 
@@ -102,18 +99,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           )}
                           <div className="mt-1.5 flex items-center gap-x-3 text-xs text-gray-500">
                             <span className="inline-flex items-center gap-1">
-                              <span aria-hidden="true">📅</span>
+                              <span className="w-4 text-center" aria-hidden="true">📅</span>
                               {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
                             </span>
                             {tournament.rounds && (
                               <span className="inline-flex items-center gap-1">
-                                <span aria-hidden="true">⚔️</span>
+                                <span className="w-4 text-center" aria-hidden="true">⚔️</span>
                                 {tournament.rounds} rounds
                               </span>
                             )}
                           </div>
                           <div className="mt-1.5 flex items-center gap-1 text-xs text-gray-500 min-w-0">
-                            <span aria-hidden="true">📍</span>
+                            <span className="w-4 text-center shrink-0" aria-hidden="true">📍</span>
                             {tournament.locationUrl ? (
                               <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">{tournament.location}</a>
                             ) : (
@@ -121,11 +118,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                             )}
                           </div>
                         </div>
-                        <div className="flex items-center justify-between sm:justify-end gap-3">
+                        <div className="flex items-center justify-between sm:justify-end gap-3 sm:min-w-[180px]">
                           <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">
                             {formatTimeAway(tournament.startDate)}
                           </span>
-                          {tournament.registrationUrl && (
+                          {tournament.registrationUrl ? (
                             <a
                               href={tournament.registrationUrl}
                               target="_blank"
@@ -134,6 +131,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                               Register
                               <ArrowRight className="h-3 w-3" aria-hidden="true" />
                             </a>
+                          ) : (
+                            <span className="w-[76px]" />
                           )}
                         </div>
                       </div>
@@ -147,10 +146,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         <section>
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <h2 className="text-sm font-bold tracking-tight text-gray-800">COMPLETED</h2>
-              <span className="text-sm text-gray-400">{tournaments.length} {tournaments.length === 1 ? 'event' : 'events'}</span>
-            </div>
+            <h2 className="text-sm font-bold tracking-tight text-gray-800">COMPLETED ({tournaments.length})</h2>
             {(upcomingTournaments.length === 0 || season !== currentYear) && (
               <SeasonSelector seasons={seasons} currentSeason={season} />
             )}
@@ -161,10 +157,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         {plannedTournaments.length > 0 && season === currentYear && (
           <section>
-            <div className="flex items-center gap-3 mb-4">
-              <h2 className="text-sm font-bold tracking-tight text-gray-800">PLANNED</h2>
-              <span className="text-sm text-gray-400">{plannedTournaments.length} {plannedTournaments.length === 1 ? 'event' : 'events'}</span>
-            </div>
+            <h2 className="text-sm font-bold tracking-tight text-gray-800 mb-4">PLANNED ({plannedTournaments.length})</h2>
 
             <div className="bg-white/95 rounded-lg shadow-elevation-low overflow-hidden">
               <div className="divide-y divide-gray-100">
