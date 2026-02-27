@@ -100,7 +100,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                               {tournament.short_name || tournament.name}
                             </span>
                           )}
-                          <div className="mt-1.5 flex items-center gap-x-3 text-sm text-gray-500">
+                          <div className="mt-1.5 flex items-center gap-x-3 text-xs text-gray-500">
                             <span className="inline-flex items-center gap-1">
                               <span aria-hidden="true">📅</span>
                               {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
@@ -112,7 +112,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                               </span>
                             )}
                           </div>
-                          <div className="mt-1.5 flex items-center gap-1 text-sm text-gray-500 min-w-0">
+                          <div className="mt-1.5 flex items-center gap-1 text-xs text-gray-500 min-w-0">
                             <span aria-hidden="true">📍</span>
                             {tournament.locationUrl ? (
                               <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">{tournament.location}</a>
