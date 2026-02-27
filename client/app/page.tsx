@@ -6,7 +6,7 @@ import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
-import { CalendarDays, ArrowRight, RotateCw } from 'lucide-react'
+import { ArrowRight, RotateCw } from 'lucide-react'
 
 export const revalidate = 86400 // cache for 24 hours
 
@@ -102,7 +102,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           )}
                           <div className="mt-1.5 flex items-center gap-x-3 text-xs text-gray-500">
                             <span className="inline-flex items-center gap-1">
-                              <CalendarDays className="h-3 w-3" aria-hidden="true" />
+                              <span aria-hidden="true">📅</span>
                               {dayjs(tournament.startDate).format('MMM Do')}-{dayjs(tournament.endDate).format('Do')}
                             </span>
                             {tournament.rounds && (
