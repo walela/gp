@@ -9,7 +9,7 @@ export function CustomTable({ className, containerClassName, ...props }: CustomT
     <div className={`w-full h-full overflow-hidden shadow-none rounded-none sm:shadow-elevation-mid sm:rounded-lg ${containerClassName || ''}`}>
       <div className="w-full h-full overflow-x-auto">
         <table
-          className={`w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse ${className || ''}`}
+          className={`w-full text-sm text-left rtl:text-right text-gray-600 dark:text-gray-400 border-collapse ${className || ''}`}
           {...props}
         />
       </div>

@@ -34,23 +34,22 @@ export function SearchForm({ defaultValue = '' }: SearchFormProps) {
   return (
     <div className="relative w-full sm:w-[350px]">
       <form onSubmit={handleSubmit} className="relative group">
-        <Input 
-          type="search" 
-          name="q" 
-          placeholder="Search player list..." 
+        <Input
+          type="search"
+          name="q"
+          placeholder="Search player list..."
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          className="pr-16 pl-4 h-11 bg-white/80 backdrop-blur-sm border-gray-200 transition-shadow duration-200 shadow-elevation-low hover:shadow-elevation-mid group-focus-within:shadow-elevation-mid rounded-l-[0.625rem]" 
+          className="h-11 rounded-md border-gray-200 bg-white/90 pr-12 shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0 focus-visible:border-blue-500"
         />
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={isPending}
-          className="absolute right-0 top-0 h-full px-4 bg-gray-200 hover:bg-blue-100 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-none rounded-r-[0.625rem] transition-all duration-200 border border-l-0 border-gray-200"
-        >
+          className="absolute right-1 top-1 bottom-1 inline-flex w-9 items-center justify-center rounded-md bg-slate-100 text-slate-600 transition-colors hover:bg-blue-100 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
           {isPending ? (
-            <Loader2 className="h-4 w-4 text-gray-600 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <SearchIcon className="h-4 w-4 text-gray-600" />
+            <SearchIcon className="h-4 w-4" />
           )}
         </button>
       </form>
