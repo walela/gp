@@ -29,8 +29,8 @@ export const metadata: Metadata = {
 }
 
 function formatTimeAway(startDateIso: string) {
-  const startDate = dayjs(startDateIso)
-  const now = dayjs()
+  const startDate = dayjs(startDateIso).startOf('day')
+  const now = dayjs().startOf('day')
   const daysAway = startDate.diff(now, 'day')
   const weeksAway = Math.floor(daysAway / 7)
   const remainingDays = daysAway % 7
