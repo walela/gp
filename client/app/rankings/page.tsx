@@ -210,6 +210,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <CategoryToggle currentCategory={category} currentSeason={season} />
+          <div className="flex-1" />
           <SeasonSelector
             seasons={seasons}
             currentSeason={season}

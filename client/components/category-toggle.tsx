@@ -53,7 +53,15 @@ export function CategoryToggle({ currentCategory, className }: CategoryTogglePro
               ? 'text-gray-400 cursor-not-allowed'
               : 'text-gray-600 hover:text-gray-900'
         )}>
-        Ladies
+        <span className="relative">
+          Ladies
+          {currentCategory !== 'ladies' && (
+            <span className="absolute -top-0.5 -right-1.5 flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-300 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-400" />
+            </span>
+          )}
+        </span>
       </button>
     </div>
   )

@@ -33,11 +33,12 @@ export function SeasonSelector({ seasons, currentSeason, className }: SeasonSele
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          'flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+          'flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm transition-colors hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
           className
         )}>
+        <span className="text-gray-500 font-normal">Season</span>
         {currentSeason}
-        <ChevronDown className="h-4 w-4 text-gray-500" />
+        <ChevronDown className="h-4 w-4 text-gray-500 transition-transform [[data-state=open]>&]:rotate-180" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-36">
         {seasons.map(season => (
