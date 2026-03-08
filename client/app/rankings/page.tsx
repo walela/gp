@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   }
 }
 
-export const revalidate = 86400 // cache for 24 hours
+export const revalidate = 120
 
 // Smart name abbreviation function for very long names
 function getDisplayName(fullName: string): string {

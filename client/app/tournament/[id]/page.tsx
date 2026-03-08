@@ -19,7 +19,7 @@ import { ExportButton } from '@/components/ui/export-button'
 import { SectionSelector } from '@/components/tournament/section-selector'
 import { Metadata } from 'next'
 
-export const revalidate = 86400 // cache for 24 hours
+export const revalidate = 120
 
 interface TournamentPageProps {
   params: {

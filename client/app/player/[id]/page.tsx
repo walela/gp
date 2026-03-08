@@ -3,7 +3,7 @@ import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 import { Metadata } from 'next'
 
-export const revalidate = 86400 // cache for 24 hours
+export const revalidate = 120
 
 interface PlayerPageProps {
   params: { id: string }

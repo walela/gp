@@ -8,7 +8,7 @@ import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
 import { ArrowRight } from 'lucide-react'
 
-export const revalidate = 86400 // cache for 24 hours
+export const revalidate = 120
 
 export const metadata: Metadata = {
   title: 'Chess Kenya Grand Prix - Official Tournament Tracker',
