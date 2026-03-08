@@ -3,7 +3,7 @@ import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 import { Metadata } from 'next'
 
-export const revalidate = 120
+export const dynamic = 'force-dynamic'
 
 interface PlayerPageProps {
   params: { id: string }

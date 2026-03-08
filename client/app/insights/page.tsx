@@ -6,7 +6,7 @@ import {
   Trophy, Dumbbell, Scale, Clock, AlertTriangle, Activity, Crosshair
 } from 'lucide-react'
 
-export const revalidate = 120
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Season Insights - Chess Kenya Grand Prix',

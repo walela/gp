@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   }
 }
 
-export const revalidate = 120
+export const dynamic = 'force-dynamic'
 
 // Smart name abbreviation function for very long names
 function getDisplayName(fullName: string): string {
