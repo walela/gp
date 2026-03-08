@@ -130,6 +130,8 @@ class ChessResultsScraper:
                         })
 
                     # Get links to other sections (different tournament IDs)
+                    # Only include links that point to a DIFFERENT tournament ID
+                    # (nav links like "Statistics", "Alphabetical list" point to the same ID)
                     links = second_cell.find_all('a')
                     for link in links:
                         section_name = link.get_text(strip=True)
@@ -140,6 +142,9 @@ class ChessResultsScraper:
                         match = re.search(r'tnr(\d+)\.aspx', href)
                         if match:
                             section_tournament_id = match.group(1)
+                            # Skip links that point to the same tournament (nav links, not sections)
+                            if section_tournament_id == tournament_id:
+                                continue
                             parsed_href = urlparse(href)
                             # Keep section-specific params; drop generic display params.
                             filtered_params = [
@@ -162,10 +167,11 @@ class ChessResultsScraper:
 
         return sections
 
-    def get_tournament_data(self, tournament_id: str, section_param: str = '') -> Tuple[str, List[TournamentResult], Dict[str, Optional[Any]]]:
+    def get_tournament_data(self, tournament_id: str, section_param: str = '', round_number: int = None) -> Tuple[str, List[TournamentResult], Dict[str, Optional[Any]]]:
         """
         Get tournament data for a given tournament ID and optional section.
         section_param: URL parameter for specific section (e.g., 'wi=1' for ladies)
+        round_number: specific round to fetch standings for (None = latest/final)
         """
         # Build params
         params = {"lan": 1}
@@ -207,8 +213,11 @@ class ChessResultsScraper:
         if tournament_id == "1126042":
             round_count = 8
 
-        # Fetch the final ranking page for the determined round count with complete list
-        ranking_params = {"lan": 1, "art": 1, "rd": round_count, "zeilen": 99999}
+        # Use specified round or default to total round count
+        fetch_round = round_number if round_number else round_count
+
+        # Fetch the ranking page for the specified round with complete list
+        ranking_params = {"lan": 1, "art": 1, "rd": fetch_round, "zeilen": 99999}
         # Add section params
         if section_param:
             for param in section_param.split('&'):
@@ -224,10 +233,11 @@ class ChessResultsScraper:
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Parse standings table
-        results = self._parse_standings(soup, round_count, tournament_id)
+        results = self._parse_standings(soup, fetch_round, tournament_id)
 
         metadata = {
             "rounds": round_count,
+            "round_fetched": fetch_round,
             "location": infer_location(tournament_name),
             "start_date": start_date,
             "end_date": end_date,
@@ -390,7 +400,7 @@ class ChessResultsScraper:
             # Calculate TPR - handle different column names
             tpr = 0
             # Some events tuck performance under alternative tie-break columns (e.g., tb5)
-            tpr_columns = ['rp', 'tb6', 'tb5', 'tpr', 'perf']
+            tpr_columns = ['rp', 'tb6', 'tb5', 'tb4', 'tpr', 'perf']
             for col in tpr_columns:
                 if col in headers:
                     tpr_cell = cells[headers.index(col)]

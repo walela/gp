@@ -125,8 +125,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const currentYear = new Date().getFullYear()
   const season = params.season ? Number(params.season) : (seasons[0] || currentYear)
 
-  // Default to best_1 (Best TPR) for current year (few tournaments), best_4 for past seasons
-  const defaultSort = season === currentYear ? 'best_1' : 'best_4'
+  // Default to best_2 for current year, best_4 for past seasons
+  const defaultSort = season === currentYear ? 'best_2' : 'best_4'
 
   const sort = params.sort || defaultSort
   const dir = params.dir || 'desc'
@@ -151,11 +151,11 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
 
   // Top-player request used for qualifier highlighting.
   // Avoid duplicate fetch when the current page already has the required ordering.
-  const canReuseCurrentRankingsForTopPlayers = sort === 'best_4' && dir === 'desc' && page === 1 && !search
+  const canReuseCurrentRankingsForTopPlayers = sort === defaultSort && dir === 'desc' && page === 1 && !search
   const topPlayersPromise = canReuseCurrentRankingsForTopPlayers
     ? null
     : getRankings({
-        sort: 'best_4',
+        sort: defaultSort,
         dir: 'desc',
         page: 1,
         season,

@@ -239,6 +239,26 @@ export async function getTopPlayers({
   }
 }
 
+export interface Insight {
+  category: string
+  title: string
+  detail: string
+  data: unknown
+}
+
+export interface InsightsResponse {
+  season: number
+  total_players: number
+  total_tournaments: number
+  insights: Insight[]
+}
+
+export async function getInsights(season: number): Promise<InsightsResponse> {
+  const res = await fetch(`${API_BASE}/${season}/insights`, CACHE_24H)
+  if (!res.ok) throw new Error('Failed to fetch insights')
+  return res.json()
+}
+
 export async function getTournamentAllResults(id: string): Promise<TournamentResult[]> {
   const res = await fetch(`${API_BASE}/tournament/${id}?all_results=true`, CACHE_24H)
   const data = await res.json()

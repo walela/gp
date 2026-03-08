@@ -21,19 +21,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: 'kisumu-open-2026',
-    name: '2nd Edition Kisumu Open Chess Championship - Grand Prix',
-    short_name: 'Kisumu Open',
-    startDate: '2026-03-07',
-    endDate: '2026-03-08',
-    location: 'Jalaram Academy, Milimani, Kisumu',
-    locationUrl: 'https://maps.google.com/?q=Jalaram+Academy+Milimani+Kisumu+Kenya',
-    rounds: 6,
-    confirmed: true,
-    registrationUrl: 'https://forms.gle/gqHvBQ1ohFJ5jnEM7',
-    detailsUrl: null
-  },
-  {
     id: 'mavens-2026',
     name: 'Mavens International Open 2026 - Grand Prix',
     short_name: 'Mavens Open',

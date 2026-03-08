@@ -1034,3 +1034,47 @@ class Database:
             ''', (start_date, end_date, tournament_id))
             conn.commit()
             return c.rowcount
+
+    def update_tournament_metadata(self, tournament_id: str, **kwargs):
+        """Update tournament metadata fields."""
+        allowed = {'name', 'short_name', 'start_date', 'end_date', 'location', 'rounds', 'section', 'source_id'}
+        updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
+        if not updates:
+            return 0
+        set_clause = ', '.join(f'{k} = ?' for k in updates)
+        values = list(updates.values()) + [tournament_id]
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute(f'UPDATE tournaments SET {set_clause} WHERE id = ?', values)
+            conn.commit()
+            return c.rowcount
+
+    def update_result(self, tournament_id: str, fide_id: str, **kwargs):
+        """Update a result row identified by tournament_id and player fide_id."""
+        allowed = {'rating', 'points', 'tpr', 'has_walkover', 'result_status'}
+        updates = {k: v for k, v in kwargs.items() if k in allowed}
+        if not updates:
+            return 0
+        set_clause = ', '.join(f'{k} = ?' for k in updates)
+        values = list(updates.values()) + [tournament_id, fide_id]
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute(
+                f'''UPDATE results SET {set_clause}
+                    WHERE tournament_id = ? AND player_id = (SELECT id FROM players WHERE fide_id = ?)''',
+                values,
+            )
+            conn.commit()
+            return c.rowcount
+
+    def delete_result(self, tournament_id: str, fide_id: str):
+        """Delete a result row identified by tournament_id and player fide_id."""
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute(
+                '''DELETE FROM results
+                   WHERE tournament_id = ? AND player_id = (SELECT id FROM players WHERE fide_id = ?)''',
+                (tournament_id, fide_id),
+            )
+            conn.commit()
+            return c.rowcount

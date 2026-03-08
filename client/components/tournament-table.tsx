@@ -116,10 +116,9 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
                 </span>
               </div>
             </CustomTableHead>
-            <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('players')} onKeyDown={e => e.key === 'Enter' && handleSort('players')} role="button" tabIndex={0}>
+            <CustomTableHead className="cursor-pointer select-none text-right hidden sm:table-cell" onClick={() => handleSort('players')} onKeyDown={e => e.key === 'Enter' && handleSort('players')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1 justify-end">
-                <span className="hidden sm:inline">Valid TPRs</span>
-                <span className="sm:hidden">TPRs</span>
+                <span>Valid TPRs</span>
                 <span className="text-muted-foreground">
                   {getSortIcon("players")}
                 </span>
@@ -184,7 +183,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
                 </CustomTableCell>
                 <CustomTableCell className="whitespace-nowrap hidden sm:table-cell">{dates}</CustomTableCell>
                 <CustomTableCell className="hidden md:table-cell">{location}</CustomTableCell>
-                <CustomTableCell className="text-right tabular-nums">{tournament.results}</CustomTableCell>
+                <CustomTableCell className="text-right tabular-nums hidden sm:table-cell">{tournament.results}</CustomTableCell>
                 <CustomTableCell className="text-right tabular-nums hidden lg:table-cell">{rounds}</CustomTableCell>
                 <CustomTableCell className="text-right tabular-nums hidden sm:table-cell">
                   {tournament.avgTop10TPR || '-'}
