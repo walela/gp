@@ -71,6 +71,7 @@ export interface PlayerDetails {
   name: string
   fide_id: string
   federation: string
+  gender: string | null
   current_fide_rating: number | null
   latest_tournament_rating: number | null
   ranking: (PlayerRanking & { current_rank?: number }) | null

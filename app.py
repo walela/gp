@@ -390,7 +390,7 @@ def player(fide_id):
 
         # 1. Fetch player details
         c.execute(
-            "SELECT name, fide_id, federation FROM players WHERE fide_id = ?",
+            "SELECT name, fide_id, federation, gender FROM players WHERE fide_id = ?",
             (fide_id,),
         )
         player_row = c.fetchone()
@@ -503,6 +503,7 @@ def player(fide_id):
             "name": player_details["name"],
             "fide_id": player_details["fide_id"],
             "federation": player_details["federation"],
+            "gender": player_details.get("gender"),
             "current_fide_rating": player_ranking.get("rating") if player_ranking else None,
             "latest_tournament_rating": latest_tournament_rating,
             "ranking": player_ranking,

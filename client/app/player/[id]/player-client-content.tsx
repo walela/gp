@@ -30,7 +30,7 @@ type SortField = 'date' | 'tournament' | 'start_rank' | 'rating' | 'points' | 't
 export default function PlayerClientContent({ player, playerRanking, seasons, currentSeason }: PlayerClientContentProps) {
   const [sortField, setSortField] = useState<SortField>('date')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
-  const hasLadiesResults = player.results.some(r => r.section === 'ladies')
+  const isFemale = player.gender === 'F'
   // Calculate performance metrics
   const totalTournaments = player.results.length
   const bestTpr = totalTournaments > 0 ? Math.max(...player.results.map(r => r.tpr || 0)) : null
@@ -329,7 +329,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 text-sm leading-tight">
                           {getShortTournamentName(result.tournament_name)}
                         </Link>
-                        {hasLadiesResults && result.section === 'open' && (
+                        {isFemale && result.section === 'open' && (
                           <span className="block text-xs uppercase tracking-wider text-gray-500 mt-0.5">Open</span>
                         )}
                       </CustomTableCell>
@@ -446,7 +446,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
                           {getShortTournamentName(result.tournament_name)}
                         </Link>
-                        {hasLadiesResults && result.section === 'open' && (
+                        {isFemale && result.section === 'open' && (
                           <span className="block text-xs uppercase tracking-wider text-gray-500 mt-0.5">Open</span>
                         )}
                       </CustomTableCell>
