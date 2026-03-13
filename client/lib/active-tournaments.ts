@@ -34,17 +34,6 @@ export const upcomingTournaments: Tournament[] = [
     detailsUrl: null
   },
   {
-    id: 'kenya-open-2026',
-    name: 'Kenya Open International - Grand Prix',
-    short_name: 'Kenya Open',
-    startDate: '2026-04-03',
-    endDate: '2026-04-06',
-    location: 'TBA',
-    rounds: 8,
-    confirmed: true,
-    detailsUrl: null
-  },
-  {
     id: 'sataranji-2026',
     name: 'Sataranji Africa Chess Festival - Grand Prix',
     short_name: 'Sataranji Africa Chess Festival',
@@ -241,6 +230,16 @@ export const plannedTournaments: Tournament[] = [
     month: 'TBA',
     location: 'TBA',
     confirmed: false,
+    detailsUrl: null
+  },
+  {
+    id: 'kenya-open-2026',
+    name: 'Kenya Open International - Grand Prix',
+    short_name: 'Kenya Open',
+    month: 'TBA',
+    location: 'TBA',
+    confirmed: false,
+    status: 'postponed',
     detailsUrl: null
   }
 ]
