@@ -21,19 +21,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: 'mavens-2026',
-    name: 'Mavens International Open 2026 - Grand Prix',
-    short_name: 'Mavens Open',
-    startDate: '2026-03-19',
-    endDate: '2026-03-22',
-    location: 'Delegates Lounge, KICC',
-    locationUrl: 'https://maps.google.com/?q=KICC,+Nairobi,+Kenya',
-    rounds: 8,
-    confirmed: true,
-    registrationUrl: 'https://mavens.co.ke/event/register/16',
-    detailsUrl: null
-  },
-  {
     id: 'sataranji-2026',
     name: 'Sataranji Africa Chess Festival - Grand Prix',
     short_name: 'Sataranji Africa Chess Festival',
