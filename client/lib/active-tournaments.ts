@@ -42,7 +42,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-05-01',
     endDate: '2026-05-03',
     location: 'Kericho',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -52,7 +52,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-05-01',
     endDate: '2026-05-03',
     location: 'Nakuru',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -73,7 +73,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-05-09',
     endDate: '2026-05-10',
     location: 'Kakamega',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -83,17 +83,17 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-05-30',
     endDate: '2026-05-31',
     location: 'Nakuru',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
     id: 'nairobi-open-2026',
-    name: 'Nairobi Open - Grand Prix',
-    short_name: 'Nairobi Open',
+    name: 'Nairobi County Chess Championship - Grand Prix',
+    short_name: 'Nairobi County Open',
     startDate: '2026-05-30',
     endDate: '2026-06-01',
     location: 'Nairobi',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -104,7 +104,7 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-06-07',
     location: 'Quo Vadis Hub, Nyeri',
     locationUrl: 'https://maps.google.com/?q=Quo+Vadis+Hub,+Nyeri,+Kenya',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -115,16 +115,17 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-06-27',
     location: 'Pride Hotel, Bondo',
     locationUrl: 'https://maps.google.com/?q=Pride+Hotel,+Bondo,+Kenya',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
-    id: 'lighthouse-open-2026',
-    name: 'Lighthouse Open - Grand Prix',
-    short_name: 'Lighthouse Open',
+    id: 'coast-open-2026',
+    name: 'Coast Open - Grand Prix',
+    short_name: 'Coast Open',
     startDate: '2026-07-03',
     endDate: '2026-07-05',
     location: 'Mombasa',
+    rounds: 6,
     confirmed: true,
     detailsUrl: null
   },
@@ -136,7 +137,7 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-07-19',
     location: 'City Mall, Mombasa',
     locationUrl: 'https://maps.google.com/?q=City+Mall,+Mombasa,+Kenya',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -146,7 +147,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-07-24',
     endDate: '2026-07-25',
     location: 'Kitale',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -157,7 +158,7 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-08-30',
     location: 'KICC, Nairobi',
     locationUrl: 'https://maps.google.com/?q=KICC,+Nairobi,+Kenya',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -167,7 +168,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-09-19',
     endDate: '2026-09-20',
     location: 'TBA',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -178,7 +179,7 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-10-11',
     location: 'Light Academy, Mombasa',
     locationUrl: 'https://maps.google.com/?q=Light+Academy,+Mombasa,+Kenya',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -188,7 +189,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-10-24',
     endDate: '2026-10-25',
     location: 'Kajiado',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -198,7 +199,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-11-21',
     endDate: '2026-11-22',
     location: 'Nairobi',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -207,15 +208,6 @@ export const plannedTournaments: Tournament[] = [
     short_name: 'Grandmasters Open',
     month: 'October 2026',
     location: 'Kakamega',
-    confirmed: false,
-    detailsUrl: null
-  },
-  {
-    id: 'coast-open-2026',
-    name: 'Coast Open 2026 - Grand Prix',
-    short_name: 'Coast Open',
-    month: 'TBA',
-    location: 'TBA',
     confirmed: false,
     detailsUrl: null
   },

@@ -202,8 +202,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
                             Postponed
                           </span>
+                        ) : tournament.confirmed ? (
+                          <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                            Confirmed
+                          </span>
                         ) : (
-                          'TBC'
+                          <span className="text-xs font-medium text-gray-400">
+                            TBC
+                          </span>
                         )}
                       </div>
                     </div>
