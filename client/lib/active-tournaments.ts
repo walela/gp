@@ -26,9 +26,11 @@ export const upcomingTournaments: Tournament[] = [
     short_name: 'Sataranji Africa Chess Festival',
     startDate: '2026-04-18',
     endDate: '2026-04-19',
-    location: 'TBA',
+    location: 'USIU Africa, USIU Road',
+    locationUrl: 'https://maps.google.com/?q=USIU+Africa,+USIU+Road,+Nairobi,+Kenya',
     rounds: 6,
     confirmed: true,
+    registrationUrl: 'https://www.sataranjiafrica.com/2026-grand-prix-open-ladies',
     detailsUrl: null
   }
 ]
@@ -137,7 +139,7 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-07-19',
     location: 'City Mall, Mombasa',
     locationUrl: 'https://maps.google.com/?q=City+Mall,+Mombasa,+Kenya',
-    confirmed: false,
+    confirmed: true,
     detailsUrl: null
   },
   {
