@@ -110,6 +110,7 @@ def get_tournament_data(tournament_id: str):
         location=metadata.get("location"),
         rounds=metadata.get("rounds"),
         section=metadata.get("section", "open"),
+        source_id=tournament_id,
     )
     
     # Recalculate rankings after new data is saved
@@ -1265,6 +1266,8 @@ def admin_scrape_commit():
     metadata = body.get("metadata", {})
     if not tournament_id or not name:
         return jsonify({"error": "tournament_id and name required"}), 400
+    if not tournament_id.isdigit():
+        return jsonify({"error": "tournament_id must be a numeric chess-results ID"}), 400
     try:
         section = metadata.get("section", "open")
         # Determine DB tournament ID
