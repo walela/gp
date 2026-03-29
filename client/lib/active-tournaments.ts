@@ -127,7 +127,8 @@ export const plannedTournaments: Tournament[] = [
     short_name: 'Coast Open',
     startDate: '2026-07-03',
     endDate: '2026-07-05',
-    location: 'Mombasa',
+    location: 'City Mall, Mombasa',
+    locationUrl: 'https://maps.google.com/?q=City+Mall,+Mombasa,+Kenya',
     rounds: 6,
     confirmed: true,
     detailsUrl: null
@@ -137,7 +138,7 @@ export const plannedTournaments: Tournament[] = [
     name: 'Mombasa International Chess Festival - Grand Prix',
     short_name: 'Mombasa Chess Festival',
     startDate: '2026-07-19',
-    endDate: '2026-07-19',
+    endDate: '2026-07-21',
     location: 'City Mall, Mombasa',
     locationUrl: 'https://maps.google.com/?q=City+Mall,+Mombasa,+Kenya',
     confirmed: true,
