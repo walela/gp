@@ -72,10 +72,11 @@ export const plannedTournaments: Tournament[] = [
     id: 'kakamega-open-2026',
     name: 'Kakamega Open - Grand Prix',
     short_name: 'Kakamega Open',
-    startDate: '2026-05-09',
-    endDate: '2026-05-10',
+    startDate: '2026-05-30',
+    endDate: '2026-05-31',
     location: 'Kakamega',
-    confirmed: false,
+    rounds: 6,
+    confirmed: true,
     detailsUrl: null
   },
   {
