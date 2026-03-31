@@ -176,8 +176,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       ladies: { kenyaNumber1: '10802886', juniorChampion: '10822755' },  // Ndirangu (Joyce), Cassidy Maina
     },
     2026: {
-      open: { kenyaNumber1: '10814582' },   // Kaloki Hawi
-      ladies: { kenyaNumber1: '10814922' },  // Mutisya, Jully
+      open: { kenyaNumber1: '10824014' },   // Simiyu, Jadon
+      ladies: { kenyaNumber1: '10822755' },  // Elizabeth Cassidy Maina
     }
   }
 
