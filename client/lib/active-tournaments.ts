@@ -32,6 +32,28 @@ export const upcomingTournaments: Tournament[] = [
     confirmed: true,
     registrationUrl: 'https://www.sataranjiafrica.com/2026-grand-prix-open-ladies',
     detailsUrl: null
+  },
+  {
+    id: 'kiambu-open-2026',
+    name: 'Kiambu Open - Grand Prix',
+    short_name: 'Kiambu Open',
+    startDate: '2026-05-09',
+    endDate: '2026-05-10',
+    location: 'Rainbow Ruiru Resort',
+    locationUrl: 'https://maps.google.com/?q=Rainbow+Ruiru+Resort,+Ruiru,+Kenya',
+    confirmed: true,
+    detailsUrl: null
+  },
+  {
+    id: 'kakamega-open-2026',
+    name: 'Kakamega Open - Grand Prix',
+    short_name: 'Kakamega Open',
+    startDate: '2026-05-30',
+    endDate: '2026-05-31',
+    location: 'Kakamega',
+    rounds: 6,
+    confirmed: true,
+    detailsUrl: null
   }
 ]
 
@@ -55,28 +77,6 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-05-03',
     location: 'Nakuru',
     confirmed: false,
-    detailsUrl: null
-  },
-  {
-    id: 'kiambu-open-2026',
-    name: 'Kiambu Open - Grand Prix',
-    short_name: 'Kiambu Open',
-    startDate: '2026-05-09',
-    endDate: '2026-05-10',
-    location: 'Rainbow Ruiru Resort',
-    locationUrl: 'https://maps.google.com/?q=Rainbow+Ruiru+Resort,+Ruiru,+Kenya',
-    confirmed: true,
-    detailsUrl: null
-  },
-  {
-    id: 'kakamega-open-2026',
-    name: 'Kakamega Open - Grand Prix',
-    short_name: 'Kakamega Open',
-    startDate: '2026-05-30',
-    endDate: '2026-05-31',
-    location: 'Kakamega',
-    rounds: 6,
-    confirmed: true,
     detailsUrl: null
   },
   {
