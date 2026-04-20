@@ -21,19 +21,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: 'sataranji-2026',
-    name: 'Sataranji Africa Chess Festival - Grand Prix',
-    short_name: 'Sataranji Africa Chess Festival',
-    startDate: '2026-04-18',
-    endDate: '2026-04-19',
-    location: 'USIU Africa, USIU Road',
-    locationUrl: 'https://maps.google.com/?q=USIU+Africa,+USIU+Road,+Nairobi,+Kenya',
-    rounds: 6,
-    confirmed: true,
-    registrationUrl: 'https://www.sataranjiafrica.com/2026-grand-prix-open-ladies',
-    detailsUrl: null
-  },
-  {
     id: 'kiambu-open-2026',
     name: 'Kiambu Open - Grand Prix',
     short_name: 'Kiambu Open',
@@ -127,8 +114,8 @@ export const plannedTournaments: Tournament[] = [
     short_name: 'Coast Open',
     startDate: '2026-07-03',
     endDate: '2026-07-05',
-    location: 'City Mall, Mombasa',
-    locationUrl: 'https://maps.google.com/?q=City+Mall,+Mombasa,+Kenya',
+    location: 'Bliss Resort, Nyali',
+    locationUrl: 'https://maps.google.com/?q=Bliss+Resort,+Nyali,+Mombasa,+Kenya',
     rounds: 6,
     confirmed: true,
     detailsUrl: null
