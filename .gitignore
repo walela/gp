@@ -13,6 +13,7 @@ ENV/
 node_modules/
 .next/
 .vercel/
+.logs/
 .env*.local
 .claude/
 .mcp.json
