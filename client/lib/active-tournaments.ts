@@ -26,8 +26,8 @@ export const upcomingTournaments: Tournament[] = [
     short_name: 'Kiambu Open',
     startDate: '2026-05-09',
     endDate: '2026-05-10',
-    location: 'Rainbow Ruiru Resort',
-    locationUrl: 'https://maps.google.com/?q=Rainbow+Ruiru+Resort,+Ruiru,+Kenya',
+    location: "Zetech University Technology Park - Mang'u Campus",
+    locationUrl: "https://maps.google.com/?q=Zetech+University+Technology+Park+Mang'u+Campus,+Kenya",
     confirmed: true,
     detailsUrl: null
   },
@@ -41,31 +41,35 @@ export const upcomingTournaments: Tournament[] = [
     rounds: 6,
     confirmed: true,
     detailsUrl: null
+  },
+  {
+    id: 'ncc-gp-1-2026',
+    name: '1st NCC Grand Prix',
+    short_name: '1st NCC GP',
+    startDate: '2026-06-26',
+    endDate: '2026-06-28',
+    location: 'Goan Gymkhana Club, Nairobi',
+    locationUrl: 'https://maps.google.com/?q=Goan+Gymkhana+Club,+Nairobi,+Kenya',
+    rounds: 6,
+    confirmed: true,
+    detailsUrl: null
+  },
+  {
+    id: 'coast-open-2026',
+    name: 'Coast Open - Grand Prix',
+    short_name: 'Coast Open',
+    startDate: '2026-07-03',
+    endDate: '2026-07-05',
+    location: 'Bliss Resort, Nyali',
+    locationUrl: 'https://maps.google.com/?q=Bliss+Resort,+Nyali,+Mombasa,+Kenya',
+    rounds: 6,
+    confirmed: true,
+    detailsUrl: null
   }
 ]
 
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
-  {
-    id: 'kericho-open-2026',
-    name: 'Kericho Open International Chess Championship - Grand Prix',
-    short_name: 'Kericho Open',
-    startDate: '2026-05-01',
-    endDate: '2026-05-03',
-    location: 'Kericho',
-    confirmed: false,
-    detailsUrl: null
-  },
-  {
-    id: 'east-africa-open-2026',
-    name: 'East Africa Open 2nd Edition - Grand Prix',
-    short_name: 'East Africa Open',
-    startDate: '2026-05-01',
-    endDate: '2026-05-03',
-    location: 'Nakuru',
-    confirmed: false,
-    detailsUrl: null
-  },
   {
     id: 'nakuru-open-2026',
     name: 'Nakuru Open - Grand Prix',
@@ -106,18 +110,6 @@ export const plannedTournaments: Tournament[] = [
     location: 'Pride Hotel, Bondo',
     locationUrl: 'https://maps.google.com/?q=Pride+Hotel,+Bondo,+Kenya',
     confirmed: false,
-    detailsUrl: null
-  },
-  {
-    id: 'coast-open-2026',
-    name: 'Coast Open - Grand Prix',
-    short_name: 'Coast Open',
-    startDate: '2026-07-03',
-    endDate: '2026-07-05',
-    location: 'Bliss Resort, Nyali',
-    locationUrl: 'https://maps.google.com/?q=Bliss+Resort,+Nyali,+Mombasa,+Kenya',
-    rounds: 6,
-    confirmed: true,
     detailsUrl: null
   },
   {
