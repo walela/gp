@@ -1,5 +1,9 @@
 # Agent Notes
 
+## Git
+
+- Do not add "Co-Authored-By" lines or any self-attribution in commit messages.
+
 ## Tournament Update Workflow
 
 When a Grand Prix event is finished, update it in this order:
@@ -55,7 +59,6 @@ As of April 20, 2026:
   - `scripts/scrape_2026_tournaments.py`
   - `scripts/backfill_ladies_2025.py`
 - The admin scrape path in `app.py` is the more reliable source of truth for the current workflow.
-- `chess.db` may appear as an untracked local file; do not delete or modify unrelated user files unless explicitly asked.
 
 ## Quick Checks
 

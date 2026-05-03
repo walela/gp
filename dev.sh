@@ -25,16 +25,24 @@ if [[ ! -d ".venv" ]]; then
   uv venv
 fi
 
-echo "Syncing Python dependencies..."
-uv pip install -r requirements.txt >/dev/null
+REQ_STAMP="${ROOT_DIR}/.venv/.req-stamp"
+if [[ ! -f "${REQ_STAMP}" || "${ROOT_DIR}/requirements.txt" -nt "${REQ_STAMP}" ]]; then
+  echo "Syncing Python dependencies..."
+  uv pip install -r requirements.txt >/dev/null
+  touch "${REQ_STAMP}"
+fi
 
 PYTHON_BIN="${ROOT_DIR}/.venv/bin/python"
 if [[ "${OS:-}" == "Windows_NT" && -f "${ROOT_DIR}/.venv/Scripts/python.exe" ]]; then
   PYTHON_BIN="${ROOT_DIR}/.venv/Scripts/python.exe"
 fi
 
-echo "Installing frontend dependencies..."
-(cd "${ROOT_DIR}/client" && npm install >/dev/null)
+NPM_STAMP="${ROOT_DIR}/client/node_modules/.install-stamp"
+if [[ ! -f "${NPM_STAMP}" || "${ROOT_DIR}/client/package-lock.json" -nt "${NPM_STAMP}" ]]; then
+  echo "Installing frontend dependencies..."
+  (cd "${ROOT_DIR}/client" && npm install >/dev/null)
+  touch "${NPM_STAMP}"
+fi
 
 echo "Starting Flask API (logs -> ${BACKEND_LOG})..."
 cd "${ROOT_DIR}"
