@@ -59,8 +59,7 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
         )
         
         # Process and validate each player's result
-        logger.info("
-=== Validating player results ===")
+        logger.info("=== Validating player results ===")
         processed_results = []
         
         for i, result in enumerate(results):
@@ -96,15 +95,13 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
         valid_kenyan = [r for r in kenyan_results if r["result_status"] == "valid"]
         invalid_kenyan = [r for r in kenyan_results if r["result_status"] != "valid"]
         
-        logger.info("
-=== Validation Summary ===")
+        logger.info("=== Validation Summary ===")
         logger.info(f"Total Kenyan players: {len(kenyan_results)}")
         logger.info(f"Valid results: {len(valid_kenyan)}")
         logger.info(f"Invalid results: {len(invalid_kenyan)}")
         
         if invalid_kenyan:
-            logger.info("
-Invalid results breakdown:")
+            logger.info("Invalid results breakdown:")
             status_counts = {}
             for r in invalid_kenyan:
                 status = r["result_status"]
@@ -113,8 +110,7 @@ Invalid results breakdown:")
                 logger.info(f"  - {status}: {count}")
         
         # Save to database with validation statuses
-        logger.info("
-Saving to database...")
+        logger.info("Saving to database...")
         save_tournament_with_validation(
             db,
             tournament_id,
@@ -123,8 +119,7 @@ Saving to database...")
             metadata=metadata,
         )
         
-        logger.info(f"
-✅ Successfully saved tournament: {tournament_name}")
+        logger.info(f"✅ Successfully saved tournament: {tournament_name}")
         
         # Return some stats
         return {
@@ -180,15 +175,13 @@ def main():
     
     result = scrape_and_save_tournament(tournament_id, tournament_name)
     if result:
-        print("
-✅ Scraping complete!")
+        print("✅ Scraping complete!")
         print(f"Tournament: {result['name']}")
         print(f"Total players: {result['results_count']}")
         print(f"Kenyan players: {result['kenyan_players']}")
         print(f"  - Valid results: {result['valid_kenyan']}")
         print(f"  - Invalid results: {result['invalid_kenyan']}")
-        print("
-Don't forget to add this tournament to TOURNAMENT_NAMES in app.py:")
+        print("Don't forget to add this tournament to TOURNAMENT_NAMES in app.py:")
         print(f'    "{tournament_id}": "{result["name"]}",')
 
 if __name__ == "__main__":

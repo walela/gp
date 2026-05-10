@@ -21,17 +21,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: 'kiambu-open-2026',
-    name: 'Kiambu Open - Grand Prix',
-    short_name: 'Kiambu Open',
-    startDate: '2026-05-09',
-    endDate: '2026-05-10',
-    location: "Zetech University Technology Park - Mang'u Campus",
-    locationUrl: "https://maps.google.com/?q=Zetech+University+Technology+Park+Mang'u+Campus,+Kenya",
-    confirmed: true,
-    detailsUrl: null
-  },
-  {
     id: 'kakamega-open-2026',
     name: 'Kakamega Open - Grand Prix',
     short_name: 'Kakamega Open',

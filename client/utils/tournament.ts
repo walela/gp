@@ -31,6 +31,8 @@ export const SHORT_NAMES: Record<string, string> = {
   // Kiambu
   'Kiambu Open Grand Prix Chess Championship 2025': 'Kiambu Open',
   'Kiambu Open Grand Prix Chess Championship 2025 - Ladies': 'Kiambu Open',
+  '2026 Kiambu Open Chess Tournament: Grand Prix OPEN': 'Kiambu Open',
+  '2026 Kiambu Open Chess Tournament: Grand Prix LADIES': 'Kiambu Open',
   // Nairobi County
   'Nairobi County Chess Championship 2025': 'Nairobi County Open',
   // Quo Vadis
