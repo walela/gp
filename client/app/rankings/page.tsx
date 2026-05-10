@@ -125,8 +125,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const currentYear = new Date().getFullYear()
   const season = params.season ? Number(params.season) : (seasons[0] || currentYear)
 
-  // Default to best_2 for current year, best_4 for past seasons
-  const defaultSort = season === currentYear ? 'best_2' : 'best_4'
+  // Default to best_3 for current year, best_4 for past seasons
+  const defaultSort = season === currentYear ? 'best_3' : 'best_4'
 
   const sort = params.sort || defaultSort
   const dir = params.dir || 'desc'
