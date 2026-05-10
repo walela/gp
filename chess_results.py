@@ -196,16 +196,18 @@ class ChessResultsScraper:
             # Fallback if title format is unexpected
             tournament_name = title_parts[-1].strip()
             
-        # Remove common redundant suffixes
-        is_ladies_section = False
+        # Detect ladies/women anywhere in the title (case-insensitive whole-word match).
+        # Detection is decoupled from name-cleaning so we don't accidentally rename
+        # existing tournaments whose stored names include a bare "Ladies"/"Open" suffix.
+        is_ladies_section = bool(re.search(r'\b(ladies|women)\b', tournament_name, re.IGNORECASE))
+
+        # Strip only the explicit "{X} Section" suffixes for cleaner names.
         for suffix in ["Open Section", "Ladies Section", "Women Section"]:
             if tournament_name.lower().endswith(suffix.lower()):
-                if 'ladies' in suffix.lower() or 'women' in suffix.lower():
-                    is_ladies_section = True
                 tournament_name = tournament_name[:-len(suffix)].strip()
                 break
 
-        # Also check section_param for ladies indicator
+        # Section param (e.g. wi=1) is an unambiguous ladies signal
         if 'wi=' in section_param:
             is_ladies_section = True
 
@@ -330,38 +332,72 @@ class ChessResultsScraper:
             logger.error(f"Failed to parse round count from details page for tournament {tournament_id}: {e}")
 
         if round_count is None:
-            # Default to 9 rounds if we failed to find/parse it
-            logger.warning(f"Could not find round count for {tournament_id}, defaulting to 9")
+            logger.error(
+                "⚠️  Round count missing for tournament %s — defaulting to 9. "
+                "Verify and override before trusting standings.",
+                tournament_id,
+            )
             round_count = 9
             
         return round_count, start_date_iso, end_date_iso
 
     def _extract_dates(self, details_soup: BeautifulSoup) -> Tuple[Optional[str], Optional[str]]:
-        """Extract start and end dates from the details soup."""
-        date_pattern = re.compile(r'\b(\d{2})\.(\d{2})\.(\d{4})\b')
-        text_content = details_soup.get_text(" ", strip=True)
-        matches = date_pattern.findall(text_content)
+        """Extract start and end dates from the details soup.
 
-        unique_matches = []
-        for match in matches:
-            date_str = ".".join(match)
-            if date_str not in unique_matches:
-                unique_matches.append(date_str)
+        Anchors on the row whose label cell is 'Date' (or 'Datum'). The value cell
+        contains formats like '2026/05/09 to 2026/05/10' or '09.05.2026 - 10.05.2026'.
+        Falls back to greedy page-wide regex if the labelled row isn't found.
+        """
+        value_text: Optional[str] = None
+        for row in details_soup.find_all('tr'):
+            cells = row.find_all('td')
+            if len(cells) < 2:
+                continue
+            label = cells[0].get_text(strip=True).rstrip(':').lower()
+            if label in {'date', 'datum'}:
+                value_text = cells[1].get_text(' ', strip=True)
+                break
 
-        if not unique_matches:
-            return None, None
+        if value_text:
+            dates = self._parse_date_pair(value_text)
+            if dates[0]:
+                return dates
 
-        start_iso = self._to_iso(unique_matches[0])
-        end_iso = self._to_iso(unique_matches[1]) if len(unique_matches) > 1 else start_iso
-        return start_iso, end_iso
+        # Fallback: greedy scan of the whole page (legacy behaviour).
+        logger.warning("Date row not found on details page; falling back to page-wide regex.")
+        return self._parse_date_pair(details_soup.get_text(' ', strip=True))
 
     @staticmethod
-    def _to_iso(raw_date: str) -> Optional[str]:
-        """Convert dd.mm.yyyy to ISO date."""
-        try:
-            return datetime.strptime(raw_date, "%d.%m.%Y").date().isoformat()
-        except ValueError:
-            return None
+    def _parse_date_pair(text: str) -> Tuple[Optional[str], Optional[str]]:
+        """Find up to two dates in `text`. Supports yyyy/mm/dd, yyyy-mm-dd, dd.mm.yyyy.
+
+        Returns (start, end) as ISO strings, swapping if start > end.
+        """
+        patterns = [
+            (re.compile(r'\b(\d{4})[/-](\d{1,2})[/-](\d{1,2})\b'), '%Y-%m-%d'),
+            (re.compile(r'\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b'),     '%d.%m.%Y'),
+        ]
+        found: List[str] = []
+        for regex, fmt in patterns:
+            for match in regex.findall(text):
+                raw = '-'.join(match) if fmt == '%Y-%m-%d' else '.'.join(match)
+                try:
+                    iso = datetime.strptime(raw, fmt).date().isoformat()
+                except ValueError:
+                    continue
+                if iso not in found:
+                    found.append(iso)
+            if found:
+                break  # prefer first format that matched
+
+        if not found:
+            return None, None
+        if len(found) == 1:
+            return found[0], found[0]
+        start, end = found[0], found[1]
+        if start > end:
+            start, end = end, start
+        return start, end
     
     def _parse_standings(self, soup: BeautifulSoup, total_rounds: int, tournament_id: str = None) -> List[TournamentResult]:
         """Parse the standings table and return list of tournament results."""
