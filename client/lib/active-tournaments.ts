@@ -26,9 +26,12 @@ export const upcomingTournaments: Tournament[] = [
     short_name: 'Kakamega Open',
     startDate: '2026-05-30',
     endDate: '2026-05-31',
-    location: 'Kakamega',
+    location: 'Baaz Hotel, Maraba, Kakamega',
+    locationUrl: 'https://maps.google.com/?q=Baaz+Hotel,+Maraba,+Kakamega,+Kenya',
     rounds: 6,
     confirmed: true,
+    registrationDeadline: '2026-05-27',
+    registrationUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScblakv41xrTqBzju_mi5U4ZESWplrHFUnqm-SJCYHd4EU6Xg/viewform',
     detailsUrl: null
   },
   {
