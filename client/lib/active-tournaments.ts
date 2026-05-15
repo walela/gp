@@ -58,6 +58,7 @@ export const upcomingTournaments: Tournament[] = [
     locationUrl: 'https://maps.google.com/?q=Goan+Gymkhana+Club,+Nairobi,+Kenya',
     rounds: 6,
     confirmed: true,
+    registrationUrl: 'https://kenyachessmasala.com/1st-nairobi-chess-club-grand-prix-event',
     detailsUrl: null
   },
   {
