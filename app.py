@@ -463,8 +463,12 @@ def player(fide_id):
         results_rows = c.fetchall()
         tournament_results = [dict(row) for row in results_rows]
 
-        # Fetch precomputed ranking data for the player (filtered by season and gender)
+        # Fetch precomputed ranking data for the player (filtered by season and gender).
+        # Female players default to the Ladies ranking — that's their primary standing
+        # even when they also qualify for Open. Pass ?gender=open to view the Open row.
         gender = request.args.get("gender")
+        if not gender and player_details.get("gender") == 'F':
+            gender = 'f'
         if gender and gender.lower() == 'f':
             gender_filter = "gender = 'F'"
         else:
