@@ -67,8 +67,8 @@ export const upcomingTournaments: Tournament[] = [
     short_name: 'Coast Open',
     startDate: '2026-07-03',
     endDate: '2026-07-05',
-    location: 'Bliss Resort, Nyali',
-    locationUrl: 'https://maps.google.com/?q=Bliss+Resort,+Nyali,+Mombasa,+Kenya',
+    location: 'Sai Rock Hotel & Spa, Mombasa',
+    locationUrl: 'https://maps.google.com/?q=Sai+Rock+Hotel+%26+Spa,+Mombasa,+Kenya',
     rounds: 6,
     confirmed: true,
     detailsUrl: null
@@ -77,26 +77,6 @@ export const upcomingTournaments: Tournament[] = [
 
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
-  {
-    id: 'nakuru-open-2026',
-    name: 'Nakuru Open - Grand Prix',
-    short_name: 'Nakuru Open',
-    startDate: '2026-05-30',
-    endDate: '2026-05-31',
-    location: 'Nakuru',
-    confirmed: false,
-    detailsUrl: null
-  },
-  {
-    id: 'nairobi-open-2026',
-    name: 'Nairobi County Chess Championship - Grand Prix',
-    short_name: 'Nairobi County Open',
-    startDate: '2026-05-30',
-    endDate: '2026-06-01',
-    location: 'Nairobi',
-    confirmed: false,
-    detailsUrl: null
-  },
   {
     id: 'siaya-open-2026',
     name: 'Siaya Open - Grand Prix',
