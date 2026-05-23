@@ -71,6 +71,7 @@ export const upcomingTournaments: Tournament[] = [
     locationUrl: 'https://maps.google.com/?q=Sai+Rock+Hotel+%26+Spa,+Mombasa,+Kenya',
     rounds: 6,
     confirmed: true,
+    registrationUrl: 'https://www.lighthousechessclub.com/tournaments/7/register',
     detailsUrl: null
   }
 ]
