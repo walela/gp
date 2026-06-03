@@ -172,8 +172,8 @@ export const plannedTournaments: Tournament[] = [
     id: 'kenya-open-2026',
     name: 'KCB Kenya Open - Grand Prix',
     short_name: 'KCB Kenya Open',
-    startDate: '2026-12-17',
-    endDate: '2026-12-20',
+    startDate: '2026-10-17',
+    endDate: '2026-10-20',
     location: 'TBA',
     confirmed: true,
     detailsUrl: null
