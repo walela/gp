@@ -149,6 +149,17 @@ export const plannedTournaments: Tournament[] = [
     detailsUrl: null
   },
   {
+    id: 'nairobi-county-open-2026',
+    name: 'Nairobi County Open - Grand Prix',
+    short_name: 'Nairobi County Open',
+    startDate: '2026-12-12',
+    endDate: '2026-12-14',
+    location: 'Nairobi',
+    locationUrl: 'https://maps.google.com/?q=Nairobi,+Kenya',
+    confirmed: true,
+    detailsUrl: null
+  },
+  {
     id: 'grandmasters-open-2026',
     name: 'Grandmasters Open - Grand Prix',
     short_name: 'Grandmasters Open',
@@ -159,12 +170,12 @@ export const plannedTournaments: Tournament[] = [
   },
   {
     id: 'kenya-open-2026',
-    name: 'Kenya Open International - Grand Prix',
-    short_name: 'Kenya Open',
-    month: 'TBA',
+    name: 'KCB Kenya Open - Grand Prix',
+    short_name: 'KCB Kenya Open',
+    startDate: '2026-12-17',
+    endDate: '2026-12-20',
     location: 'TBA',
-    confirmed: false,
-    status: 'postponed',
+    confirmed: true,
     detailsUrl: null
   }
 ]
