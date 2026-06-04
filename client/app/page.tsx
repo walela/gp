@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getTournamentData } from '@/lib/tournament-data'
 import { TournamentTable } from '@/components/tournament-table'
-import { upcomingTournaments, plannedTournaments } from '@/lib/active-tournaments'
+import { upcomingTournaments, plannedTournaments, type Tournament } from '@/lib/active-tournaments'
 import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 import { SeasonSelector } from '@/components/season-selector'
@@ -44,6 +44,40 @@ function formatTimeAway(startDateIso: string) {
   return `${weeksAway} weeks ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
 }
 
+function getTournamentSortValue(tournament: Tournament) {
+  if (tournament.startDate) return dayjs(tournament.startDate).valueOf()
+
+  const monthMatch = tournament.month?.match(/^([A-Za-z]+)\s+(\d{4})$/)
+  if (!monthMatch) return Number.MAX_SAFE_INTEGER
+
+  const monthIndex = [
+    'january',
+    'february',
+    'march',
+    'april',
+    'may',
+    'june',
+    'july',
+    'august',
+    'september',
+    'october',
+    'november',
+    'december'
+  ].indexOf(monthMatch[1].toLowerCase())
+
+  if (monthIndex === -1) return Number.MAX_SAFE_INTEGER
+
+  return new Date(Number(monthMatch[2]), monthIndex, 1).getTime()
+}
+
+function sortTournamentsBySchedule(tournaments: Tournament[]) {
+  return [...tournaments].sort((a, b) => {
+    const dateSort = getTournamentSortValue(a) - getTournamentSortValue(b)
+    if (dateSort !== 0) return dateSort
+    return a.name.localeCompare(b.name)
+  })
+}
+
 interface HomePageProps {
   searchParams: {
     season?: string
@@ -59,20 +93,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const season = params.season ? Number(params.season) : (seasons[0] || currentYear)
 
   const tournaments = await getTournamentData(season)
+  const sortedUpcomingTournaments = sortTournamentsBySchedule(upcomingTournaments)
+  const sortedPlannedTournaments = sortTournamentsBySchedule(plannedTournaments)
 
   return (
     <div className="min-h-screen">
       <div className="container mx-auto sm:px-4 py-4 space-y-8 max-w-11xl">
-        {upcomingTournaments.length > 0 && season === currentYear && (
+        {sortedUpcomingTournaments.length > 0 && season === currentYear && (
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold tracking-tight text-gray-800">UPCOMING ({upcomingTournaments.length})</h2>
+              <h2 className="text-sm font-bold tracking-tight text-gray-800">UPCOMING ({sortedUpcomingTournaments.length})</h2>
               <SeasonSelector seasons={seasons} currentSeason={season} />
             </div>
 
             <div className="bg-white/95 rounded-lg shadow-elevation-low overflow-hidden">
               <div className="divide-y divide-gray-100">
-                {upcomingTournaments.map((tournament, index) => {
+                {sortedUpcomingTournaments.map((tournament, index) => {
                   if (!tournament.startDate || !tournament.endDate) return null
 
                   const detailHref =
@@ -85,7 +121,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   return (
                     <div
                       key={tournament.id}
-                      className={`px-4 py-2 ${index === upcomingTournaments.length - 1 ? 'pb-4' : ''} ${index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'} hover:bg-gray-200 transition-colors`}>
+                      className={`px-4 py-2 ${index === sortedUpcomingTournaments.length - 1 ? 'pb-4' : ''} ${index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'} hover:bg-gray-200 transition-colors`}>
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0">
                           {detailHref ? (
@@ -147,7 +183,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold tracking-tight text-gray-800">COMPLETED ({tournaments.length})</h2>
-            {(upcomingTournaments.length === 0 || season !== currentYear) && (
+            {(sortedUpcomingTournaments.length === 0 || season !== currentYear) && (
               <SeasonSelector seasons={seasons} currentSeason={season} />
             )}
           </div>
@@ -155,13 +191,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <TournamentTable tournaments={tournaments} />
         </section>
 
-        {plannedTournaments.length > 0 && season === currentYear && (
+        {sortedPlannedTournaments.length > 0 && season === currentYear && (
           <section>
-            <h2 className="text-sm font-bold tracking-tight text-gray-800 mb-4">PLANNED ({plannedTournaments.length})</h2>
+            <h2 className="text-sm font-bold tracking-tight text-gray-800 mb-4">PLANNED ({sortedPlannedTournaments.length})</h2>
 
             <div className="bg-white/95 rounded-lg shadow-elevation-low overflow-hidden">
               <div className="divide-y divide-gray-100">
-                {plannedTournaments.map((tournament, index) => {
+                {sortedPlannedTournaments.map((tournament, index) => {
                   const hasDates = Boolean(tournament.startDate && tournament.endDate)
 
                   const detailHref =
