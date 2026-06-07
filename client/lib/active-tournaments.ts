@@ -21,20 +21,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: 'quo-vadis-2026',
-    name: 'Quo Vadis Nyeri Chess Open - Grand Prix',
-    short_name: 'Quo Vadis Nyeri Open',
-    startDate: '2026-06-05',
-    endDate: '2026-06-07',
-    location: 'Quo Vadis Youth Hub, Nyeri',
-    locationUrl: 'https://maps.google.com/?q=Quo+Vadis+Youth+Hub,+Nyeri,+Kenya',
-    rounds: 8,
-    confirmed: true,
-    registrationDeadline: '2026-06-04',
-    registrationUrl: 'https://chesskenya.co.ke/Events/register/41',
-    detailsUrl: null
-  },
-  {
     id: 'ncc-gp-1-2026',
     name: '1st NCC Grand Prix',
     short_name: '1st NCC GP',
