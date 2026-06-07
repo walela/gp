@@ -69,6 +69,7 @@ export const upcomingTournaments: Tournament[] = [
     location: 'West Side Hotel, Kitale',
     locationUrl: 'https://maps.google.com/?q=West+Side+Hotel,+Kitale,+Kenya',
     confirmed: true,
+    registrationUrl: 'https://forms.gle/ehuyRunnJfN6iN6f9',
     detailsUrl: null
   }
 ]
