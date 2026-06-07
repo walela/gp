@@ -10,6 +10,8 @@ BACKEND_PORT="${BACKEND_PORT:-5004}"
 FRONTEND_HOST="${FRONTEND_HOST:-localhost}"
 FRONTEND_PORT="${FRONTEND_PORT:-3000}"
 NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL:-http://${BACKEND_HOST}:${BACKEND_PORT}/api}"
+OPEN_BROWSER="${OPEN_BROWSER:-1}"
+FRONTEND_URL="http://${FRONTEND_HOST}:${FRONTEND_PORT}"
 
 if ! command -v uv >/dev/null 2>&1; then
   echo "Error: uv is required. Install it from https://github.com/astral-sh/uv" >&2
@@ -67,6 +69,48 @@ PY
 check_port "${BACKEND_HOST}" "${BACKEND_PORT}" "Backend"
 check_port "127.0.0.1" "${FRONTEND_PORT}" "Frontend"
 
+open_url() {
+  local url="$1"
+
+  if [[ "${OS:-}" == "Windows_NT" ]]; then
+    cmd.exe /c start "" "${url}" >/dev/null 2>&1 || true
+  elif command -v open >/dev/null 2>&1; then
+    open "${url}" >/dev/null 2>&1 || true
+  elif command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "${url}" >/dev/null 2>&1 || true
+  fi
+}
+
+open_frontend_when_ready() {
+  local url="$1"
+
+  case "${OPEN_BROWSER}" in
+    0|false|FALSE|False|no|NO|No) return ;;
+  esac
+
+  (
+    if "${PYTHON_BIN}" - "${url}" <<'PY'
+import sys
+import time
+import urllib.request
+
+url = sys.argv[1]
+
+for _ in range(60):
+    try:
+        with urllib.request.urlopen(url, timeout=0.5):
+            sys.exit(0)
+    except Exception:
+        time.sleep(0.5)
+
+sys.exit(1)
+PY
+    then
+      open_url "${url}"
+    fi
+  ) &
+}
+
 NPM_STAMP="${ROOT_DIR}/client/node_modules/.install-stamp"
 if [[ ! -f "${NPM_STAMP}" || "${ROOT_DIR}/client/package-lock.json" -nt "${NPM_STAMP}" ]]; then
   echo "Installing frontend dependencies..."
@@ -97,7 +141,8 @@ fi
 
 echo "Starting Next.js dev server..."
 echo "Backend: http://${BACKEND_HOST}:${BACKEND_PORT} (tail -f ${BACKEND_LOG})"
-echo "Frontend: http://${FRONTEND_HOST}:${FRONTEND_PORT}"
+echo "Frontend: ${FRONTEND_URL}"
 echo "API env: NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}"
 cd "${ROOT_DIR}/client"
+open_frontend_when_ready "${FRONTEND_URL}"
 NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL}" npm run dev -- -H "${FRONTEND_HOST}" -p "${FRONTEND_PORT}"

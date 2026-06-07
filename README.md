@@ -48,11 +48,18 @@ A web application to track chess Grand Prix tournaments in Kenya, view player pe
    - start the Flask API on http://127.0.0.1:5004 (logs in `.logs/backend.log`)
    - start the Next.js dev server on http://localhost:3000
    - point the frontend at the local API automatically
+   - open the frontend in your browser when it is ready
 
 You can override the default ports when needed:
 
 ```bash
 BACKEND_PORT=5014 FRONTEND_PORT=3014 ./dev.sh
+```
+
+Disable browser opening when needed:
+
+```bash
+OPEN_BROWSER=0 ./dev.sh
 ```
 
 ### Manual setup (optional)
