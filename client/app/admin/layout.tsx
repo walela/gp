@@ -34,8 +34,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       await adminLogin(password)
       setAdminToken(password)
       setToken(password)
-    } catch {
-      setError('Invalid password')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Invalid password')
     } finally {
       setLoggingIn(false)
     }

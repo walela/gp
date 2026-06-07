@@ -11,10 +11,14 @@ import csv
 import io
 import time
 import hmac
+import hashlib
 from functools import wraps
 from flask import Response
+from dotenv import load_dotenv
 
 from tournament_metadata import infer_location, infer_rounds
+
+load_dotenv(os.path.join(os.path.dirname(__file__), "backend", ".env"))
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +31,7 @@ PLAYERS_PER_PAGE = 30
 REQUEST_LOGGING_ENABLED = os.environ.get("REQUEST_LOGGING_ENABLED", "true").lower() == "true"
 REQUEST_IP_LOGGING_ENABLED = os.environ.get("REQUEST_IP_LOGGING_ENABLED", "true").lower() == "true"
 SLOW_REQUEST_MS = int(os.environ.get("SLOW_REQUEST_MS", "1000"))
+ADMIN_DEBUG_LOGIN = os.environ.get("ADMIN_DEBUG_LOGIN", "false").lower() == "true"
 
 
 def _get_client_ip() -> str:
@@ -1173,6 +1178,18 @@ def admin_login():
         return jsonify({"error": "Admin not configured"}), 503
     if hmac.compare_digest(password, ADMIN_PASSWORD):
         return jsonify({"ok": True})
+    if ADMIN_DEBUG_LOGIN:
+        debug_payload = {
+            "received_len": len(password),
+            "expected_len": len(ADMIN_PASSWORD),
+            "received_hash": hashlib.sha256(password.encode("utf-8")).hexdigest()[:12],
+            "expected_hash": hashlib.sha256(ADMIN_PASSWORD.encode("utf-8")).hexdigest()[:12],
+        }
+        logger.warning(
+            "admin_login_failed_debug %s",
+            debug_payload,
+        )
+        return jsonify({"error": "Invalid password", "debug": debug_payload}), 401
     return jsonify({"error": "Invalid password"}), 401
 
 

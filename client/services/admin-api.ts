@@ -18,7 +18,11 @@ async function adminFetch(path: string, init?: RequestInit) {
   })
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
-    throw new Error(body.error || `Request failed: ${res.status}`)
+    let message = body.error || `Request failed: ${res.status}`
+    if (body.debug) {
+      message += ` (received ${body.debug.received_len}/${body.debug.received_hash}, expected ${body.debug.expected_len}/${body.debug.expected_hash})`
+    }
+    throw new Error(message)
   }
   return res.json()
 }

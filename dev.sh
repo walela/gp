@@ -11,6 +11,7 @@ FRONTEND_HOST="${FRONTEND_HOST:-localhost}"
 FRONTEND_PORT="${FRONTEND_PORT:-3000}"
 NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL:-http://${BACKEND_HOST}:${BACKEND_PORT}/api}"
 OPEN_BROWSER="${OPEN_BROWSER:-1}"
+ADMIN_DEBUG_LOGIN="${ADMIN_DEBUG_LOGIN:-true}"
 FRONTEND_URL="http://${FRONTEND_HOST}:${FRONTEND_PORT}"
 
 if ! command -v uv >/dev/null 2>&1; then
@@ -56,9 +57,13 @@ import sys
 host = sys.argv[1]
 port = int(sys.argv[2])
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-    sock.settimeout(0.25)
-    sys.exit(0 if sock.connect_ex((host, port)) == 0 else 1)
+for family, socktype, proto, _, addr in socket.getaddrinfo(host, port, type=socket.SOCK_STREAM):
+    with socket.socket(family, socktype, proto) as sock:
+        sock.settimeout(0.25)
+        if sock.connect_ex(addr) == 0:
+            sys.exit(0)
+
+sys.exit(1)
 PY
   then
     echo "Error: ${label} port ${port} is already in use on ${host}." >&2
@@ -67,7 +72,7 @@ PY
 }
 
 check_port "${BACKEND_HOST}" "${BACKEND_PORT}" "Backend"
-check_port "127.0.0.1" "${FRONTEND_PORT}" "Frontend"
+check_port "${FRONTEND_HOST}" "${FRONTEND_PORT}" "Frontend"
 
 open_url() {
   local url="$1"
@@ -120,7 +125,7 @@ fi
 
 echo "Starting Flask API (logs -> ${BACKEND_LOG})..."
 cd "${ROOT_DIR}"
-PORT="${BACKEND_PORT}" "${PYTHON_BIN}" "${ROOT_DIR}/app.py" >"${BACKEND_LOG}" 2>&1 &
+ADMIN_DEBUG_LOGIN="${ADMIN_DEBUG_LOGIN}" PORT="${BACKEND_PORT}" "${PYTHON_BIN}" "${ROOT_DIR}/app.py" >"${BACKEND_LOG}" 2>&1 &
 BACKEND_PID=$!
 
 cleanup() {
