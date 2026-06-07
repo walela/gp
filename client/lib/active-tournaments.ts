@@ -59,6 +59,17 @@ export const upcomingTournaments: Tournament[] = [
     confirmed: true,
     registrationUrl: 'https://www.lighthousechessclub.com/tournaments/7/register',
     detailsUrl: null
+  },
+  {
+    id: 'kitale-open-2026',
+    name: 'Kitale Open - Grand Prix',
+    short_name: 'Kitale Open',
+    startDate: '2026-07-18',
+    endDate: '2026-07-19',
+    location: 'West Side Hotel, Kitale',
+    locationUrl: 'https://maps.google.com/?q=West+Side+Hotel,+Kitale,+Kenya',
+    confirmed: true,
+    detailsUrl: null
   }
 ]
 
@@ -84,16 +95,6 @@ export const plannedTournaments: Tournament[] = [
     location: 'City Mall, Mombasa',
     locationUrl: 'https://maps.google.com/?q=City+Mall,+Mombasa,+Kenya',
     confirmed: true,
-    detailsUrl: null
-  },
-  {
-    id: 'kitale-open-2026',
-    name: 'Kitale Open - Grand Prix',
-    short_name: 'Kitale Open',
-    startDate: '2026-07-24',
-    endDate: '2026-07-25',
-    location: 'Kitale',
-    confirmed: false,
     detailsUrl: null
   },
   {

@@ -47,6 +47,13 @@ A web application to track chess Grand Prix tournaments in Kenya, view player pe
    - install frontend dependencies (`client/node_modules`)
    - start the Flask API on http://127.0.0.1:5004 (logs in `.logs/backend.log`)
    - start the Next.js dev server on http://localhost:3000
+   - point the frontend at the local API automatically
+
+You can override the default ports when needed:
+
+```bash
+BACKEND_PORT=5014 FRONTEND_PORT=3014 ./dev.sh
+```
 
 ### Manual setup (optional)
 
@@ -70,7 +77,7 @@ npm run dev  # serves on http://localhost:3000
 
 ### Frontend environment configuration
 
-Create `client/.env.local` so the Next.js app talks to your local Flask instance:
+`./dev.sh` sets this automatically. If you run the frontend manually, create `client/.env.local` so the Next.js app talks to your local Flask instance:
 
 ```
 NEXT_PUBLIC_API_URL=http://127.0.0.1:5004/api
