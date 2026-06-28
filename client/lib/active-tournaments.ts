@@ -21,19 +21,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: 'ncc-gp-1-2026',
-    name: '1st NCC Grand Prix',
-    short_name: '1st NCC GP',
-    startDate: '2026-06-26',
-    endDate: '2026-06-28',
-    location: 'Goan Gymkhana Club, Nairobi',
-    locationUrl: 'https://maps.google.com/?q=Goan+Gymkhana+Club,+Nairobi,+Kenya',
-    rounds: 6,
-    confirmed: true,
-    registrationUrl: 'https://kenyachessmasala.com/1st-nairobi-chess-club-grand-prix-event',
-    detailsUrl: null
-  },
-  {
     id: 'coast-open-2026',
     name: 'Coast Open - Grand Prix',
     short_name: 'Coast Open',
@@ -62,17 +49,6 @@ export const upcomingTournaments: Tournament[] = [
 
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
-  {
-    id: 'siaya-open-2026',
-    name: 'Siaya Open - Grand Prix',
-    short_name: 'Siaya Open',
-    startDate: '2026-06-25',
-    endDate: '2026-06-27',
-    location: 'Pride Hotel, Bondo',
-    locationUrl: 'https://maps.google.com/?q=Pride+Hotel,+Bondo,+Kenya',
-    confirmed: false,
-    detailsUrl: null
-  },
   {
     id: 'mombasa-festival-2026',
     name: 'Mombasa International Chess Festival - Grand Prix',

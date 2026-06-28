@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from typing import List, Optional, Tuple, Dict, Any
 from dataclasses import dataclass
 from db import Database
+from player_eligibility import is_gp_eligible_player
 from tournament_metadata import infer_location
 
 # Set up logging
@@ -568,6 +569,7 @@ class ChessResultsScraper:
             result.games_played == result.total_rounds
             and not result.has_walkover
             and result.player.federation == "KEN"
+            and is_gp_eligible_player(result.player.fide_id, result.player.name)
         )
 
 

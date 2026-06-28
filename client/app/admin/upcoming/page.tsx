@@ -1,21 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { upcomingTournaments, plannedTournaments, type Tournament } from '@/lib/active-tournaments'
 
 export default function UpcomingPage() {
-  const [upcoming, setUpcoming] = useState<Tournament[]>([])
-  const [planned, setPlanned] = useState<Tournament[]>([])
+  const [upcoming, setUpcoming] = useState<Tournament[]>(() => [...upcomingTournaments])
+  const [planned, setPlanned] = useState<Tournament[]>(() => [...plannedTournaments])
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<Tournament>>({})
   const [showJson, setShowJson] = useState(false)
-
-  useEffect(() => {
-    setUpcoming([...upcomingTournaments])
-    setPlanned([...plannedTournaments])
-  }, [])
-
-  const allTournaments = [...upcoming, ...planned]
 
   const startEdit = (t: Tournament) => {
     setEditingId(t.id)

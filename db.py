@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
 
+from player_eligibility import is_gp_eligible_player
 from tournament_metadata import infer_location, infer_rounds, infer_short_name
 
 logger = logging.getLogger(__name__)
@@ -318,7 +319,7 @@ class Database:
             c.execute(query, params)
             return [dict(row) for row in c.fetchall()]
     
-    def get_tournament(self, tournament_id: str) -> Optional[Dict]:
+    def get_tournament(self, tournament_id: str, include_ineligible: bool = False) -> Optional[Dict]:
         """Get tournament details and results."""
         with sqlite3.connect(self.db_file) as conn:
             conn.row_factory = sqlite3.Row
@@ -373,6 +374,9 @@ class Database:
             
             results = []
             for row in c.fetchall():
+                if not include_ineligible and not is_gp_eligible_player(row[1], row[0]):
+                    continue
+
                 # Check row structure based on length
                 has_start_rank = len(row) > 8  # With result_status, we have at least 9 columns
                 has_result_status = len(row) > 7  # Either 8 (without start_rank) or 9 columns
@@ -760,8 +764,13 @@ class Database:
 
         for player_id, results in all_results.items():
             # Filter for KEN federation and valid results
-            valid_results = [r for r in results if r["player"]["federation"] == "KEN" and
-                             (r.get("result_status", "valid") == "valid" or r.get("result_status") is None)]
+            valid_results = [
+                r
+                for r in results
+                if r["player"]["federation"] == "KEN"
+                and (r.get("result_status", "valid") == "valid" or r.get("result_status") is None)
+                and is_gp_eligible_player(r["player"].get("fide_id"), r["player"].get("name"))
+            ]
 
             if not valid_results:
                 continue
@@ -878,9 +887,17 @@ class Database:
             # Ensure the results table exists, handle potential error if it doesn't
             # (Though usually it should exist if tournaments do)
             try:
-                c.execute("SELECT COUNT(*) as count FROM results WHERE tournament_id = ?", (tournament_id,))
-                row = c.fetchone()
-                return row['count'] if row else 0
+                c.execute(
+                    """
+                    SELECT p.fide_id, p.name
+                    FROM results r
+                    JOIN players p ON r.player_id = p.id
+                    WHERE r.tournament_id = ?
+                    AND (r.result_status IS NULL OR r.result_status = 'valid')
+                    """,
+                    (tournament_id,),
+                )
+                return sum(1 for row in c.fetchall() if is_gp_eligible_player(row["fide_id"], row["name"]))
             except sqlite3.OperationalError as e:
                 logger.error(f"Error counting results for tournament {tournament_id}: {e}")
                 return 0 # Return 0 if table/column missing or other SQL error
@@ -891,44 +908,61 @@ class Database:
             c = conn.cursor()
             if season:
                 c.execute('''
-                    SELECT r.tournament_id, COUNT(*) as count
+                    SELECT r.tournament_id, p.fide_id, p.name
                     FROM results r
                     JOIN tournaments t ON r.tournament_id = t.id
+                    JOIN players p ON r.player_id = p.id
                     WHERE t.start_date LIKE ?
                     AND (r.result_status IS NULL OR r.result_status = 'valid')
-                    GROUP BY r.tournament_id
                 ''', (f'{season}%',))
             else:
                 c.execute('''
-                    SELECT tournament_id, COUNT(*) as count
-                    FROM results
-                    WHERE result_status IS NULL OR result_status = 'valid'
-                    GROUP BY tournament_id
+                    SELECT r.tournament_id, p.fide_id, p.name
+                    FROM results r
+                    JOIN players p ON r.player_id = p.id
+                    WHERE r.result_status IS NULL OR r.result_status = 'valid'
                 ''')
-            return {row[0]: row[1] for row in c.fetchall()}
+            counts: Dict[str, int] = {}
+            for tournament_id, fide_id, name in c.fetchall():
+                if is_gp_eligible_player(fide_id, name):
+                    counts[tournament_id] = counts.get(tournament_id, 0) + 1
+            return counts
 
     def get_tournament_stats(self, tournament_id: str) -> Dict:
         """Get tournament stats: avgTop10TPR and avgTop24Rating."""
         with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
             c = conn.cursor()
 
             # Get top 10 TPRs (excluding invalid results)
             c.execute('''
-                SELECT tpr FROM results
-                WHERE tournament_id = ? AND tpr IS NOT NULL
-                AND (result_status IS NULL OR result_status = 'valid')
-                ORDER BY tpr DESC LIMIT 10
+                SELECT r.tpr, p.fide_id, p.name
+                FROM results r
+                JOIN players p ON r.player_id = p.id
+                WHERE r.tournament_id = ? AND r.tpr IS NOT NULL
+                AND (r.result_status IS NULL OR r.result_status = 'valid')
+                ORDER BY r.tpr DESC
             ''', (tournament_id,))
-            top10_tprs = [row[0] for row in c.fetchall()]
+            top10_tprs = [
+                row["tpr"]
+                for row in c.fetchall()
+                if is_gp_eligible_player(row["fide_id"], row["name"])
+            ][:10]
             avg_top10_tpr = round(sum(top10_tprs) / len(top10_tprs)) if top10_tprs else 0
 
             # Get top 24 ratings
             c.execute('''
-                SELECT rating FROM results
-                WHERE tournament_id = ? AND rating IS NOT NULL
-                ORDER BY rating DESC LIMIT 24
+                SELECT r.rating, p.fide_id, p.name
+                FROM results r
+                JOIN players p ON r.player_id = p.id
+                WHERE r.tournament_id = ? AND r.rating IS NOT NULL
+                ORDER BY r.rating DESC
             ''', (tournament_id,))
-            top24_ratings = [row[0] for row in c.fetchall()]
+            top24_ratings = [
+                row["rating"]
+                for row in c.fetchall()
+                if is_gp_eligible_player(row["fide_id"], row["name"])
+            ][:24]
             avg_top24_rating = round(sum(top24_ratings) / len(top24_ratings)) if top24_ratings else 0
 
             return {
@@ -937,88 +971,54 @@ class Database:
             }
 
     def get_all_tournament_stats(self, season: int = None) -> Dict[str, Dict]:
-        """Get stats for all tournaments using window functions (single query)."""
+        """Get tournament stats, excluding players who are not GP-eligible."""
         with sqlite3.connect(self.db_file) as conn:
+            conn.row_factory = sqlite3.Row
             c = conn.cursor()
-
-            # Get avg top 10 TPR per tournament
-            if season:
-                c.execute('''
-                    WITH ranked_tpr AS (
-                        SELECT r.tournament_id, r.tpr,
-                            ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.tpr DESC) as rn
-                        FROM results r
-                        JOIN tournaments t ON r.tournament_id = t.id
-                        WHERE r.tpr IS NOT NULL
-                        AND (r.result_status IS NULL OR r.result_status = 'valid')
-                        AND t.start_date LIKE ?
-                    )
-                    SELECT tournament_id, ROUND(AVG(tpr)) as avg_top10_tpr
-                    FROM ranked_tpr
-                    WHERE rn <= 10
-                    GROUP BY tournament_id
-                ''', (f'{season}%',))
-            else:
-                c.execute('''
-                    WITH ranked_tpr AS (
-                        SELECT r.tournament_id, r.tpr,
-                            ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.tpr DESC) as rn
-                        FROM results r
-                        JOIN tournaments t ON r.tournament_id = t.id
-                        WHERE r.tpr IS NOT NULL
-                        AND (r.result_status IS NULL OR r.result_status = 'valid')
-                    )
-                    SELECT tournament_id, ROUND(AVG(tpr)) as avg_top10_tpr
-                    FROM ranked_tpr
-                    WHERE rn <= 10
-                    GROUP BY tournament_id
-                ''')
-            tpr_stats = {row[0]: row[1] for row in c.fetchall()}
-
-            # Get avg top 24 rating per tournament
-            if season:
-                c.execute('''
-                    WITH ranked_rating AS (
-                        SELECT r.tournament_id, r.rating,
-                            ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.rating DESC) as rn
-                        FROM results r
-                        JOIN tournaments t ON r.tournament_id = t.id
-                        WHERE r.rating IS NOT NULL
-                        AND t.start_date LIKE ?
-                    )
-                    SELECT tournament_id, ROUND(AVG(rating)) as avg_top24_rating
-                    FROM ranked_rating
-                    WHERE rn <= 24
-                    GROUP BY tournament_id
-                ''', (f'{season}%',))
-            else:
-                c.execute('''
-                    WITH ranked_rating AS (
-                        SELECT r.tournament_id, r.rating,
-                            ROW_NUMBER() OVER (PARTITION BY r.tournament_id ORDER BY r.rating DESC) as rn
-                        FROM results r
-                        JOIN tournaments t ON r.tournament_id = t.id
-                        WHERE r.rating IS NOT NULL
-                    )
-                    SELECT tournament_id, ROUND(AVG(rating)) as avg_top24_rating
-                    FROM ranked_rating
-                    WHERE rn <= 24
-                    GROUP BY tournament_id
-                ''')
-            rating_stats = {row[0]: row[1] for row in c.fetchall()}
 
             # Get all tournament IDs
             if season:
                 c.execute('SELECT id FROM tournaments WHERE start_date LIKE ?', (f'{season}%',))
             else:
                 c.execute('SELECT id FROM tournaments')
+            stats = {
+                row["id"]: {
+                    'avg_top10_tpr': 0,
+                    'avg_top24_rating': 0,
+                }
+                for row in c.fetchall()
+            }
 
-            stats = {}
+            result_query = '''
+                SELECT r.tournament_id, r.tpr, r.rating, r.result_status, p.fide_id, p.name
+                FROM results r
+                JOIN tournaments t ON r.tournament_id = t.id
+                JOIN players p ON r.player_id = p.id
+            '''
+            params = []
+            if season:
+                result_query += ' WHERE t.start_date LIKE ?'
+                params.append(f'{season}%')
+            c.execute(result_query, params)
+
+            tprs_by_tournament: Dict[str, List[int]] = {}
+            ratings_by_tournament: Dict[str, List[int]] = {}
             for row in c.fetchall():
-                t_id = row[0]
-                stats[t_id] = {
-                    'avg_top10_tpr': tpr_stats.get(t_id, 0) or 0,
-                    'avg_top24_rating': rating_stats.get(t_id, 0) or 0
+                if not is_gp_eligible_player(row["fide_id"], row["name"]):
+                    continue
+
+                tournament_id = row["tournament_id"]
+                if row["tpr"] is not None and (row["result_status"] is None or row["result_status"] == "valid"):
+                    tprs_by_tournament.setdefault(tournament_id, []).append(row["tpr"])
+                if row["rating"] is not None:
+                    ratings_by_tournament.setdefault(tournament_id, []).append(row["rating"])
+
+            for tournament_id in stats:
+                top10_tprs = sorted(tprs_by_tournament.get(tournament_id, []), reverse=True)[:10]
+                top24_ratings = sorted(ratings_by_tournament.get(tournament_id, []), reverse=True)[:24]
+                stats[tournament_id] = {
+                    'avg_top10_tpr': round(sum(top10_tprs) / len(top10_tprs)) if top10_tprs else 0,
+                    'avg_top24_rating': round(sum(top24_ratings) / len(top24_ratings)) if top24_ratings else 0,
                 }
 
             return stats
