@@ -1,8 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
-import { ChevronLeft, ChevronRight, ExternalLink, RefreshCw, Search, X } from 'lucide-react'
+import { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import { ChevronLeft, ChevronRight, ExternalLink, Info, RefreshCw, Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {
   getChessKenyaOpen2026Audit,
   type ChessKenyaAuditResponse,
@@ -118,11 +119,63 @@ function issueClass(kind: string) {
   }
 }
 
-function rankClass(row: ChessKenyaAuditRow) {
-  if (row.severity === 'top_10') return 'text-red-700'
-  if (row.severity === 'top_30') return 'text-amber-700'
-  if (row.severity === 'top_75') return 'text-blue-700'
-  return 'text-gray-600'
+const SUMMARY_SHORT: Record<string, string> = {
+  'Best TPR': 'Best',
+  '2nd Best TPR': '2nd',
+  '3rd Best TPR': '3rd',
+  '4th Best TPR': '4th',
+  'Number of Events': 'Events',
+  'Ranking score': 'Score',
+  'Average of Events Played': 'Avg'
+}
+
+function shortField(field: string) {
+  return SUMMARY_SHORT[field] ?? field
+}
+
+const KIND_SHORT: Record<string, string> = {
+  chess_kenya_includes_invalid_result: 'Invalid result',
+  event_tpr_mismatch: 'TPR mismatch',
+  identity_issue: 'Identity',
+  missing_in_chess_kenya: 'Missing in CK',
+  missing_in_tracker: 'Missing in tracker',
+  summary_mismatch: 'Standings'
+}
+
+function shortKind(row: ChessKenyaAuditRow) {
+  return KIND_SHORT[row.kind] ?? row.kind_label
+}
+
+const KIND_DESCRIPTION: Record<string, string> = {
+  chess_kenya_includes_invalid_result:
+    'Chess Kenya counts a TPR that the tracker excludes from rankings (walkover, incomplete, or withdrawn result).',
+  event_tpr_mismatch: 'The TPR for this event differs between the Chess Kenya CSV and the tracker.',
+  identity_issue: "The player's FIDE ID or name does not line up cleanly between Chess Kenya and the tracker.",
+  missing_in_chess_kenya:
+    'The tracker has eligible valid result(s) for this player, but they are absent from the Chess Kenya CSV.',
+  missing_in_tracker: 'Chess Kenya lists a TPR for this player, but the tracker has no eligible valid result.',
+  summary_mismatch:
+    'The aggregate standings totals (best TPRs, event count, ranking score, average) differ between Chess Kenya and the tracker.'
+}
+
+function rankChip(row: ChessKenyaAuditRow) {
+  switch (row.severity) {
+    case 'top_10':
+      return 'bg-red-100 text-red-800'
+    case 'top_30':
+      return 'bg-amber-100 text-amber-800'
+    case 'top_75':
+      return 'bg-blue-100 text-blue-800'
+    default:
+      return 'bg-gray-100 text-gray-600'
+  }
+}
+
+function deltaTint(delta: number | null | undefined) {
+  if (delta === null || delta === undefined) return 'text-gray-400'
+  if (delta > 0) return 'bg-green-50 text-green-700'
+  if (delta < 0) return 'bg-red-50 text-red-700'
+  return 'text-gray-400'
 }
 
 function rowSearchText(row: ChessKenyaAuditRow) {
@@ -156,14 +209,6 @@ function compareRows(a: ChessKenyaAuditRow, b: ChessKenyaAuditRow) {
   return a.player_name.localeCompare(b.player_name)
 }
 
-function sourceLabel(row: ChessKenyaAuditRow) {
-  const bits = []
-  if (row.tracker_rank) bits.push(`Tracker #${row.tracker_rank}`)
-  if (row.chess_kenya_rank) bits.push(`CK #${row.chess_kenya_rank}`)
-  if (row.chess_kenya_row) bits.push(`row ${row.chess_kenya_row}`)
-  return bits.join(' / ')
-}
-
 function hasActiveFilters(state: FilterState) {
   return Boolean(state.query.trim()) || state.kind !== 'all' || state.eventId !== 'all'
 }
@@ -174,11 +219,35 @@ function pageRange(currentPage: number, totalPages: number) {
   return Array.from({ length: end - start + 1 }, (_, index) => start + index)
 }
 
+// A player's summary impacts are the same on every event row, so only render
+// them once per player (on the first row visible on this page).
+function firstImpactRowIds(rows: ChessKenyaAuditRow[]) {
+  const seen = new Set<string>()
+  const ids = new Set<string>()
+  for (const row of rows) {
+    if (!(row.impacts ?? []).length) continue
+    const key = row.fide_id || row.player_name
+    if (seen.has(key)) continue
+    seen.add(key)
+    ids.add(row.id)
+  }
+  return ids
+}
+
 export function ChessKenyaAuditClient() {
   const [audit, setAudit] = useState<ChessKenyaAuditResponse | null>(null)
   const [view, dispatchView] = useReducer(viewReducer, initialViewState)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
+
+  const toggleImpacts = (id: string) =>
+    setExpanded(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -224,6 +293,7 @@ export function ChessKenyaAuditClient() {
   const firstVisibleRow = filteredRows.length === 0 ? 0 : startRow + 1
   const lastVisibleRow = startRow + visibleRows.length
   const filtersActive = hasActiveFilters(filters)
+  const impactRowIds = firstImpactRowIds(visibleRows)
 
   const dispatchFilter = (action: FilterAction) => {
     dispatchView({ type: 'filter', section: activeSectionId, action })
@@ -419,110 +489,164 @@ export function ChessKenyaAuditClient() {
       <div className="border-2 border-black bg-white overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b-2 border-black bg-gray-50 text-left">
-              <th className="w-[92px] px-3 py-2 font-medium">Impact</th>
-              <th className="min-w-[220px] px-3 py-2 font-medium">Player</th>
-              <th className="min-w-[180px] px-3 py-2 font-medium">Issue</th>
-              <th className="min-w-[160px] px-3 py-2 font-medium">Field</th>
-              <th className="px-3 py-2 text-right font-medium">Chess Kenya</th>
-              <th className="px-3 py-2 text-right font-medium">Tracker</th>
-              <th className="px-3 py-2 text-right font-medium">Delta</th>
-              <th className="min-w-[180px] px-3 py-2 text-right font-medium">Sources</th>
+            <tr className="border-b-2 border-black bg-gray-50 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+              <th className="w-[56px] px-2 py-2.5">Rank</th>
+              <th className="min-w-[150px] px-2 py-2.5">Player</th>
+              <th className="px-2 py-2.5">FIDE ID</th>
+              <th className="min-w-[130px] px-2 py-2.5">Issue</th>
+              <th className="px-2 py-2.5">Field</th>
+              <th className="px-2 py-2.5 text-right whitespace-nowrap">Chess Kenya</th>
+              <th className="px-2 py-2.5 text-right">Tracker</th>
+              <th className="px-2 py-2.5 text-right">Delta</th>
+              <th className="min-w-[110px] px-2 py-2.5 text-right">Sources</th>
             </tr>
           </thead>
           <tbody>
             {visibleRows.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-10 text-center text-sm text-gray-500">
+                <td colSpan={9} className="py-10 text-center text-sm text-gray-500">
                   No discrepancies match the current filters.
                 </td>
               </tr>
             ) : (
-              visibleRows.map(row => (
-                <tr key={row.id} className="border-b border-gray-200 align-top last:border-b-0 hover:bg-gray-50">
-                  <td className="px-3 py-2 whitespace-normal">
-                    <div className={cn('font-bold tabular-nums', rankClass(row))}>
-                      {row.priority_rank ? `#${row.priority_rank}` : '-'}
-                    </div>
-                    <div className="mt-1 text-[11px] leading-4 text-gray-500">
-                      {sourceLabel(row)}
-                    </div>
+              visibleRows.map(row => {
+                const showImpacts = impactRowIds.has(row.id)
+                const isExpanded = showImpacts && expanded.has(row.id)
+                return (
+                <Fragment key={row.id}>
+                <tr className="align-top border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
+                  <td className="px-2 py-2.5 whitespace-nowrap">
+                    <span className={cn('inline-flex min-w-[2.25rem] justify-center px-1 py-0.5 text-sm font-bold tabular-nums', rankChip(row))}>
+                      {row.priority_rank ? `#${row.priority_rank}` : '—'}
+                    </span>
                   </td>
-                  <td className="px-3 py-2 whitespace-normal">
-                    <div className="font-medium text-gray-950">{row.player_name || '-'}</div>
-                    <div className="mt-1 text-xs text-gray-500">
-                      {row.fide_id || row.tracker_fide_id || row.chess_kenya_fide_id || 'No FIDE ID'}
-                    </div>
-                    {row.chess_kenya_fide_id && row.tracker_fide_id && row.chess_kenya_fide_id !== row.tracker_fide_id && (
-                      <div className="mt-1 text-[11px] leading-4 text-gray-500">
-                        CK FIDE: {row.chess_kenya_fide_id}
-                        <br />
-                        Tracker FIDE: {row.tracker_fide_id}
-                      </div>
-                    )}
+                  <td className="px-2 py-2.5 whitespace-normal">
+                    <div className="font-semibold text-gray-950">{row.player_name || '—'}</div>
                     {row.chess_kenya_name && row.tracker_name && row.chess_kenya_name !== row.tracker_name && (
-                      <div className="mt-1 text-[11px] text-gray-500">
+                      <div className="mt-0.5 text-[11px] text-gray-500">
                         CK: {row.chess_kenya_name}
                       </div>
                     )}
                   </td>
-                  <td className="px-3 py-2 whitespace-normal">
-                    <span className={cn('inline-flex border px-2 py-1 text-xs font-medium', issueClass(row.kind))}>
-                      {row.kind_label}
-                    </span>
-                    {row.detail && (
-                      <div className="mt-2 max-w-[260px] text-xs leading-5 text-gray-500">
-                        {row.detail}
-                      </div>
-                    )}
-                    {(row.impacts ?? []).length > 0 && (
-                      <div className="mt-2 max-w-[320px]">
-                        <div className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-                          Affects
-                        </div>
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          {(row.impacts ?? []).map(impact => (
-                            <span
-                              key={`${row.id}:${impact.field}`}
-                              className="border border-gray-300 bg-gray-50 px-1.5 py-0.5 text-[11px] text-gray-700">
-                              {impact.field}: {formatValue(impact.chess_kenya)} -&gt; {formatValue(impact.tracker)}
-                            </span>
-                          ))}
-                        </div>
+                  <td className="px-2 py-2.5 whitespace-nowrap tabular-nums text-gray-700">
+                    {row.fide_id || row.tracker_fide_id || row.chess_kenya_fide_id || <span className="text-gray-300">—</span>}
+                    {row.chess_kenya_fide_id && row.tracker_fide_id && row.chess_kenya_fide_id !== row.tracker_fide_id && (
+                      <div className="mt-1 text-[11px] leading-4 text-gray-500">
+                        CK: {row.chess_kenya_fide_id}
+                        <br />
+                        Trk: {row.tracker_fide_id}
                       </div>
                     )}
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="px-2 py-2.5 whitespace-normal">
+                    <div className="flex items-start gap-1.5">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span
+                            tabIndex={0}
+                            className={cn('inline-flex cursor-help border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap', issueClass(row.kind))}>
+                            {shortKind(row)}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-xs text-xs leading-5">
+                          {KIND_DESCRIPTION[row.kind] ?? row.kind_label}
+                        </TooltipContent>
+                      </Tooltip>
+                      {row.detail && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              aria-label="Why this is flagged"
+                              className="mt-0.5 shrink-0 text-gray-400 transition-colors hover:text-gray-700">
+                              <Info className="size-3.5" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="right" className="max-w-xs text-xs leading-5">
+                            {row.detail}
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
+                    {showImpacts && (
+                      <button
+                        type="button"
+                        onClick={() => toggleImpacts(row.id)}
+                        aria-expanded={isExpanded}
+                        aria-controls={`impacts-${row.id}`}
+                        className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500 transition-colors hover:text-gray-900">
+                        <ChevronRight className={cn('size-3 transition-transform duration-200', isExpanded && 'rotate-90')} />
+                        Affects ({(row.impacts ?? []).length})
+                      </button>
+                    )}
+                  </td>
+                  <td className="px-2 py-2.5">
                     <div className="font-medium text-gray-800">{row.event_name || row.field}</div>
                     {row.event_name && row.field !== row.event_name && (
-                      <div className="mt-1 text-xs text-gray-500">{row.field}</div>
+                      <div className="mt-0.5 text-xs text-gray-500">{row.field}</div>
                     )}
                   </td>
-                  <td className="px-3 py-2 text-right tabular-nums">{formatValue(row.chess_kenya)}</td>
-                  <td className="px-3 py-2 text-right tabular-nums">{formatValue(row.tracker)}</td>
-                  <td className={cn(
-                    'px-3 py-2 text-right font-medium tabular-nums',
-                    row.delta && row.delta > 0 ? 'text-green-700' : row.delta && row.delta < 0 ? 'text-red-700' : 'text-gray-500'
-                  )}>
-                    {formatDelta(row.delta)}
+                  <td className="px-2 py-2.5 text-right font-medium tabular-nums text-gray-900">{formatValue(row.chess_kenya)}</td>
+                  <td className="px-2 py-2.5 text-right font-medium tabular-nums text-gray-900">{formatValue(row.tracker)}</td>
+                  <td className="px-2 py-2.5 text-right">
+                    {row.delta === null || row.delta === undefined ? (
+                      <span className="text-gray-300">—</span>
+                    ) : (
+                      <span className={cn('inline-block px-1.5 py-0.5 text-xs font-semibold tabular-nums', deltaTint(row.delta))}>
+                        {formatDelta(row.delta)}
+                      </span>
+                    )}
                   </td>
-                  <td className="px-3 py-2">
-                    <div className="flex flex-wrap justify-end gap-1.5">
+                  <td className="px-2 py-2.5">
+                    <div className="flex flex-wrap justify-end gap-1">
                       {row.links.map(link => (
                         <a
                           key={`${row.id}:${link.label}`}
                           href={link.href}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 border border-black px-2 py-1 text-xs font-medium text-gray-900 hover:bg-black hover:text-white">
+                          className="inline-flex items-center gap-1 border border-black px-1.5 py-0.5 text-[11px] font-medium text-gray-900 hover:bg-black hover:text-white">
                           {link.label}
-                          <ExternalLink className="size-3" />
+                          <ExternalLink className="size-3 shrink-0" />
                         </a>
                       ))}
                     </div>
                   </td>
                 </tr>
-              ))
+                {showImpacts && (
+                  <tr className="border-b border-gray-200 last:border-b-0">
+                    <td colSpan={3} aria-hidden />
+                    <td colSpan={5} className="p-0">
+                      <div
+                        id={`impacts-${row.id}`}
+                        className={cn(
+                          'grid transition-all duration-200 ease-out motion-reduce:transition-none',
+                          isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                        )}>
+                        <div className="overflow-hidden">
+                          <div className="px-3 pb-3">
+                            <div className="border-l-2 border-gray-300 bg-gray-50 px-3 py-2">
+                              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px]">
+                                {(row.impacts ?? []).map(impact => (
+                                  <span key={`${row.id}:${impact.field}`} className="whitespace-nowrap">
+                                    <span className="text-gray-500">{shortField(impact.field)}</span>{' '}
+                                    <span className="font-medium tabular-nums text-gray-800">
+                                      {formatValue(impact.chess_kenya)} &rarr; {formatValue(impact.tracker)}
+                                    </span>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td aria-hidden />
+                  </tr>
+                )}
+                </Fragment>
+                )
+              })
             )}
           </tbody>
         </table>

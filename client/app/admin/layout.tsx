@@ -90,7 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <button onClick={logout} className="text-xs text-gray-400 hover:underline">Logout</button>
           </div>
         </nav>
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="max-w-[1920px] mx-auto px-4 py-6">
           {children}
         </div>
       </div>

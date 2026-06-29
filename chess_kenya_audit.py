@@ -580,6 +580,7 @@ def _links(
     event: Optional[dict[str, Any]] = None,
 ) -> list[dict[str, str]]:
     fide_id = (tracker_player or ck_player or {}).get("fide_id")
+    player_url = site_player_url(fide_id, section_id)
     links: list[dict[str, str]] = []
     if event:
         event_id = event["id"]
@@ -588,14 +589,16 @@ def _links(
         start_rank = (event_detail or excluded_detail or {}).get("start_rank")
         links.append(
             {
-                "label": "Chess-Results player" if start_rank else "Chess-Results event",
+                "label": "Chess-Results",
                 "href": chess_results_url(event["chess_results_id"], start_rank),
             }
         )
-        tracker_event_url = site_tournament_url(event["tracker_url_id"])
-        if tracker_event_url:
-            links.append({"label": "1700 event", "href": tracker_event_url})
-    player_url = site_player_url(fide_id, section_id)
+        # The 1700 event page is redundant when we can already deep-link to the
+        # player on 1700chess; only include it when there is no player link.
+        if not player_url:
+            tracker_event_url = site_tournament_url(event["tracker_url_id"])
+            if tracker_event_url:
+                links.append({"label": "1700 event", "href": tracker_event_url})
     if player_url:
         links.append({"label": "1700 player", "href": player_url})
     return links
