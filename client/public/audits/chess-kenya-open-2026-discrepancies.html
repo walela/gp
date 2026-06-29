@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chess Kenya 2026 Open CSV Audit</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin: 0; background: #f6f7f9; color: #111827; }
+    main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 48px; }
+    h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: 0; }
+    p { color: #4b5563; line-height: 1.55; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+    .pill { background: white; border: 1px solid #d1d5db; border-radius: 999px; padding: 6px 10px; font-size: 13px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 22px 0; }
+    .card { background: white; border: 1px solid #d1d5db; border-radius: 8px; padding: 14px 16px; }
+    .card span { display: block; color: #6b7280; font-size: 13px; }
+    .card strong { display: block; margin-top: 6px; font-size: 26px; }
+    .notes { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px; }
+    table { width: 100%; border-collapse: collapse; background: white; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; font-size: 13px; }
+    th { background: #111827; color: white; position: sticky; top: 0; z-index: 1; }
+    tbody tr:nth-child(even) { background: #f9fafb; }
+    .table-wrap { overflow-x: auto; border-radius: 8px; margin-top: 20px; }
+    .num { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Chess Kenya 2026 Open CSV Audit</h1>
+  <p>Comparison between the Chess Kenya CSV and the 1700 Chess tracker database for the 2026 Open Grand Prix standings. The tracker side uses eligible, valid Open-section results only.</p>
+  <div class="meta">
+    <span class="pill">Generated: 2026-06-29 09:19 </span>
+    <span class="pill">Source CSV: Grand Prix Standings 2026 - Open Section.csv</span>
+    <span class="pill">Discrepancy rows: 388</span>
+  </div>
+  <div class="cards"><div class="card"><span>Event TPR mismatch</span><strong>17</strong></div>
+<div class="card"><span>Missing in Chess Kenya CSV</span><strong>266</strong></div>
+<div class="card"><span>Missing in tracker</span><strong>13</strong></div>
+<div class="card"><span>Summary mismatch</span><strong>92</strong></div></div>
+  <div class="notes">
+    <strong>Notes</strong>
+    <ul><li>The CSV labels 1st Nairobi Chess Club Grand Prix - Open in column 10, but the populated NCC TPR values are in column 9. This audit maps column 9 to NCC.</li></ul>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Player</th>
+          <th>FIDE ID</th>
+          <th>Field</th>
+          <th>Chess Kenya CSV</th>
+          <th>Tracker</th>
+          <th>Detail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Event TPR mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>Kiambu Open</td><td>1652</td><td>1364</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>Mavens Open</td><td>1364</td><td></td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>Quo Vadis Nyeri Open</td><td>1589</td><td></td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Jesse Jayden</td><td>10857630</td><td>Sataranji Open</td><td></td><td>1547</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Langat, Silvanus</td><td>10841741</td><td>Kakamega Open</td><td></td><td>1893</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Langat, Silvanus</td><td>10845038</td><td>Kiambu Open</td><td></td><td>1661</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Magor, Marcarius Onyango</td><td>10838899</td><td>Kakamega Open</td><td></td><td>1696</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Mbaabu Cyprian</td><td>10818251</td><td>1st NCC GP</td><td>1629</td><td>1649</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Miheso, Clement Chomu</td><td>10800026</td><td>Kakamega Open</td><td></td><td>1565</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Misiko, Peter Wangila</td><td>10841113</td><td>Kakamega Open</td><td></td><td>1548</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Ngonga, Paul Oketch</td><td>10802797</td><td>Sataranji Open</td><td></td><td>1663</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Nyaruaba, Raphael</td><td>554016827</td><td>Mavens Open</td><td></td><td>1632</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Odongo Bill Clinton</td><td>10839968</td><td>Kakamega Open</td><td></td><td>1498</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Omondi Suleiman</td><td>10841741</td><td>Kakamega Open</td><td>1839</td><td>1893</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Silim, Hussein</td><td>10838422</td><td>Kakamega Open</td><td></td><td>1639</td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Singe, Philip Mbawala</td><td>10800360</td><td>Kiambu Open</td><td>1675</td><td></td><td></td></tr>
+<tr><td>Event TPR mismatch</td><td>Waweru Trevor Kipngetich</td><td>10842870</td><td>Kiambu Open</td><td></td><td>1509</td><td></td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Abraham Otieno,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Achol, Agot Achol</td><td>554009073</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Adrian, Kiprotich</td><td>554004446</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Adrian, Muge</td><td>554015111</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Agape, Cherutich Chumba</td><td>554001358</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Alex Juma</td><td>10895388</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Alex, Mbugua</td><td>554017556</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Alex, Mwangi</td><td>554016819</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Alex, Waweru</td><td>554002370</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Alfred, Muchiri Wanjohi</td><td>10808434</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Allan Maina,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Allan, Kiptoo</td><td>10885765</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Andanje, Lawrence</td><td>10811427</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Asaph, Ndungu</td><td>554018374</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Asiago, Tiffan Nyambati</td><td>10881972</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Austin Kibe</td><td>554006309</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Aymaan Bholim</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ben, Mwangi Kamau</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ben, Otieno Omondi</td><td>10805850</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Biwott, Kevin</td><td>554015120</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Bodalikar, Shivishwar</td><td>10844813</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Bonface mutethia</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Brian Kipkoech,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Brian, Njagi</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Carson Mwenda,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Chege Ian Magu</td><td>10852190</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Christopher, Hawi Joseph Odhiambo</td><td>554002443</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Chumo, Aurelia Jemutai</td><td>10809457</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Clinton, Muriithi Munene</td><td>10897810</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Cynthia, Jepkemoi Kiplagat</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Dan Vincent Onyango,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Dancun  Silali</td><td>554010594</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Danson, Macharia Ndung&#x27;u</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>David Shammah</td><td>10835059</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>David, Ndirangu</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>David, Simiyu Newton</td><td>554017920</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Deng, Achol Deng</td><td>554009286</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Dennis mulama,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Dennis, Kariuki Maina</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Diana, Makomi</td><td>10882278</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Eliakim, Kibet</td><td>554014999</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Elvira, Patience</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Emmanuel Wanjala</td><td>554009090</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Emmanuel, Nyongesa</td><td>554015596</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Erick Joel khamadi,</td><td>10826661</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Erick, Nyabota</td><td>10821074</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ethan, Muchoki Cherere</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ethan, Ojowi</td><td>10859217</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Fantalis, Lucy Nduta</td><td>10820914</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Farnsworth, Temba</td><td>10887156</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Felix Oloo,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Finey, Ahona</td><td>554017190</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gachanja, Ian</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gacheru, Francis Nderitu</td><td>10837639</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gavin, Ngure Kiarie</td><td>554010535</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gavril, Jamar</td><td>10849912</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gianni, Tuli</td><td>10850210</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gicheha, Kennedy</td><td>10846271</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gicheru, Kennedy Muthoni</td><td>10808523</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gikandi Bernice Wambui</td><td>10825606</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gilana, Angel Muthoni</td><td>10835610</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gisore, Daniel</td><td>10811176</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gitonga Murang&#x27;a,</td><td>10899294</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Given, Adriel Walunywa</td><td>554013356</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Godfrey, Motanya Junior</td><td>554024226</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Gracylyne, Hungi</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Griffins Tonny,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Habiba, Ibrahim Bunge</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Hamisi, Benford Nyandoro</td><td>10837515</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Harry, Favour Lumati</td><td>554010764</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Henry Njite,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ian Kosgei,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Inde, Joy</td><td>10844970</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Inocent, Jabez</td><td>554014808</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Irene, Gichuki</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Isaac, Baraka</td><td>10896945</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Isaac, Kimamo</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Jabu Kariuki Gachwe</td><td>10854070</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Jairus Omondi,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>James Gitonga</td><td>554006007</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>James Mungai,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>James, Mwangi Kimuri</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Jayden, Mwebi</td><td>10856218</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Jaylah, Wambui Njoroge</td><td>554001080</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Jeremy, Muthomi</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Jermaine Mutai,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>John Okello Oluoch</td><td>554007771</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>John, Batista</td><td>10858113</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>John, Njuguna</td><td>554000084</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Joseph Kimani</td><td>554009103</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Joseph Ndung&#x27;u</td><td>554008379</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Joseph, Muuo</td><td>554009456</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Julius Maraga,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Jumba Gloria</td><td>10800794</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Justa Mukiri,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Justin Kariuki</td><td>554006015</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kabugo Njugi</td><td>10839119</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kahungu, Jackson</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kaloki, Zuri</td><td>10814507</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kamau, Elijah</td><td>10846506</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kamoni Elvin</td><td>10824545</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kamoni Elvis Githae</td><td>10831525</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Karel, Sanders</td><td>10845267</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kariuki, Ian</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Karuru, Tlevis</td><td>10843442</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kayden Sankau Oloitiptip</td><td>10865497</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kennedy, Omokol</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kevin, Kamau Mburu</td><td>554015421</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Khalid Rapando,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kiai, Jayden</td><td>10843841</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kibiwott, Andrew</td><td>554009561</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kibos, Dave Cheburet</td><td>10858989</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kibui, Jackson Githinji</td><td>554000092</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kiereini, Samuel</td><td>10811850</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kim Vivica</td><td>10839194</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kimani, Wanjiru</td><td>10816810</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kipkemoi, Ryan</td><td>554015081</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kipkoech, Brian</td><td>554015260</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kipkosgei, Japheth</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kiplangat, Meshack</td><td>10897054</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kipleting, Obed</td><td>554015278</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kiprop Owen</td><td>10835334</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kiprop, Louis</td><td>10867678</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kisindai, Paul Wangwe</td><td>10811060</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kosgei, Ian</td><td>554015170</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kosgey, David Kimtai</td><td>554014956</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kuria, David</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Kyalo Peter</td><td>10834060</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Lagat, Wirix Kipruto</td><td>554000688</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Lawrence Olum</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Lawrence, Kemboi</td><td>554017033</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Lenny, Karweru Mwaniki</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Leone, David</td><td>10897690</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Likhaya, Nelson</td><td>10832700</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Lincoln, Mweru</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Macharia, Gilbert Mwangi</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Maguor, Deng Gheit Longar</td><td>10882502</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Maina, Ochieng</td><td>554015065</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Maiyani Oloitiptip Trevor</td><td>10896015</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Makanga, Annabel</td><td>10834850</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mandela, Jacob</td><td>10854185</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Manuel Mwine Bujara</td><td>554003474</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Maraga, Julius</td><td>554015138</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mark, Nyakwara Juma</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mary, Gathoni Gichuki</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mary, Mbaka</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Matthias, Kariuki Cherere</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Maurice Omondi Aduda</td><td>554009081</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mbugua, Pete Jasiri</td><td>10893636</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mercelino, Thuku</td><td>554009596</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Michael Kuria,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mogambi, Ian</td><td>10897119</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mongeli, Sasha</td><td>10809090</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Morris Mureithi,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mubi Hillary</td><td>10835555</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Muchira Erick,</td><td>554025680</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Muganzi, Delmas Gwademba</td><td>10839704</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mugor, Clifford</td><td>554015286</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mugweru, Collins</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Muhambe, Terrence Shisundi</td><td>10843612</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Muli, Baraka Kimama</td><td>10842748</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Muna, Robert</td><td>10845143</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Murigi, Solomon</td><td>554017050</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Musa, Raila</td><td>10895817</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Musali, Bravine Wanganga</td><td>554017068</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Museveni, Benard Chacha</td><td>10824197</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Muthumbi, Richard</td><td>10838457</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mutisya, Jully</td><td>10814922</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Muturi, Brandon Mureithi</td><td>10830863</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mwalugha Oliver</td><td>10840222</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mwangi, Brian Kabiru</td><td>554015413</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mwangi, Dennis</td><td>554014891</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mwashe, Philip</td><td>10811257</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mwashe, Yvonne Adego</td><td>10812679</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Mwembi, Emmanuel</td><td>554014727</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Nashipae, Bella</td><td>10843981</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Nathan Mutai,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Nathaniel, Waithaka</td><td>10872370</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ndegwa, Irwin Ndege</td><td>10843990</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ndirangu, Christopher</td><td>10823646</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ndirangu, Joyce Nyaruai</td><td>10802886</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Nehemiah Obat,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Nelvin Mundia</td><td>10897828</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ngaruiya, Aiden Wanaina</td><td>10843159</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ngesa Francis</td><td>10819444</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Nic-Ayden, Motyo</td><td>554001749</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Njagi, Princewill Mutugi</td><td>10897860</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Noah Travis Opondo</td><td>10873538</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Nyaga, David</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Nyasaka, Agnes Obonyo</td><td>10890858</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ochieng, Victor</td><td>554004527</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Odhiambo Fredrick Goroba</td><td>10893962</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Odiembo, Esley</td><td>10841075</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Oduol, James</td><td>10835954</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ojunge, Edwin Ojowi</td><td>10827935</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Okello Jimmy,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Okwiri, Dhillo Emmanuel</td><td>554009570</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Oluchiri, Jeshurun Inyangala</td><td>10836586</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Omondi Wesley,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Omondi, Jairus</td><td>554015154</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Omondi, Kyle Aswa</td><td>10838147</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Omondi, Robert</td><td>554015146</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Omondi, Stanley</td><td>10823425</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ongeri, Moses Obure</td><td>10894314</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Onkeo Ryan</td><td>10831320</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Onyango Paul Ochieng</td><td>10846450</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Oredo, Brian Otieno</td><td>10843728</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Otanga, James Nyareru</td><td>10896600</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Otieno Ronny</td><td>10829180</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Oyamo, Martin</td><td>10802851</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Oywa Titus Ochieng</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Pamela, Makena</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Peris, Wanjiru Waithira</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Polycarp Ndung&#x27;o Moraga</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Prince, Kiarie Mutitu</td><td>10899162</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Priscillah, Wahito</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ralph, Royford Muthomi</td><td>554010420</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Raymaekers, Max Kiprop</td><td>554014948</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Rishit, Ravat</td><td>10817328</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Robert Omondi,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ronald Kipng&#x27;eno,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Roy, Kosgey</td><td>554015073</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Royford, Muthomi</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ryan, Muhoro</td><td>10877355</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Ryan, Mutinda</td><td>10899936</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Samson, Mogaka Gitamo</td><td>10896457</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Samuel Kariuki,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Sandra Onyango,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Sardana Aseem</td><td>10836721</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Sean, Ringera</td><td>10878831</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Serede Elvis Mugilwa Jnr</td><td>10836152</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Shah Hitansh Jeegar</td><td>10839100</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Shalom, Wanyoike</td><td>554003180</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Shawn, Myles Mucheru</td><td>10879676</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Sheikh, Mukhtar Nur</td><td>10805826</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Sheilrayn Samson,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Shelmith, Kamau</td><td>10879870</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Shem, Ngugi</td><td>10879897</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Shihugwa Mark Robert,</td><td>554025672</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Shiroko, Excellent</td><td>10888446</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Shukri Shakirah</td><td>10833307</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Simiyu, David Newton</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Simiyu, Kibwana</td><td>10890688</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Stephen, Richard</td><td>10845283</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Teresiah, Deborah Muleli</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Tindi, Victor</td><td>10839259</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Triumph, Emmanuel</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Victor Amdany,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Victor Otieno</td><td>554008271</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Victor, Kiprono Ruto</td><td>10882537</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Victor, Otieno</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Victoria, Akali</td><td>554017289</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Vincent, Achilles</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Vivian Simiyu,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Waichinga Dennis</td><td>10835539</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Wambalo, Wong</td><td>10826556</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Wamwenje, Ethan</td><td>10844198</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Waswa Abigael</td><td>10831150</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Waweru, Patricia Wairimu</td><td>10842861</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Wekesa, Ignatious</td><td>554004810</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Wesonga,, Zulfikaar</td><td>554015308</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>William Mungai,</td><td></td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>William, Gachari</td><td>10895779</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Winston, Makanga</td><td>10891773</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Wisley Oriki</td><td>10892699</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in Chess Kenya CSV</td><td>Witness, Omoyo</td><td>10884823</td><td>Player</td><td>missing</td><td>present</td><td>Tracker has eligible valid Open result(s).</td></tr>
+<tr><td>Missing in tracker</td><td>Abiola James</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Daniel Gisore</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Gicheru, John Wagema</td><td>10815503</td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>HItash Shar Jeegar</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Jesse, Fabian</td><td>10834656</td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>John Okello</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Joseph, Ndungu</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Kahara Ethan Kariuki</td><td>10841466</td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Kiprono, Victor</td><td>10897062</td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Philip Mwashe</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Shar Danish Jeegar</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Titus Ochieng</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Missing in tracker</td><td>Victor Ochieng</td><td></td><td>Player</td><td>present</td><td>missing</td><td>Chess Kenya has at least one TPR, but the tracker has no eligible valid Open result for this player.</td></tr>
+<tr><td>Summary mismatch</td><td>Alex Kipkoech</td><td>10847790</td><td>Average of Events Played</td><td>1689</td><td>1688</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Alex Kipkoech</td><td>10847790</td><td>Ranking score</td><td>1689</td><td>1688</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Amos Wayne</td><td>10895000</td><td>Average of Events Played</td><td>1987</td><td>1986</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Amos Wayne</td><td>10895000</td><td>Ranking score</td><td>1987</td><td>1986</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Chumba, Allan</td><td>10823875</td><td>Ranking score</td><td>1897</td><td>1896</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Daniel, Misiko</td><td>10896376</td><td>Average of Events Played</td><td>1625</td><td>1624</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Daniel, Misiko</td><td>10896376</td><td>Ranking score</td><td>1625</td><td>1624</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Edwin Owen</td><td>10897844</td><td>Average of Events Played</td><td>1885</td><td>1884</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Edwin Owen</td><td>10897844</td><td>Ranking score</td><td>1885</td><td>1884</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jaeger, Nyamongo Omari</td><td>554000017</td><td>Average of Events Played</td><td>1433</td><td>1432</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jaeger, Nyamongo Omari</td><td>554000017</td><td>Ranking score</td><td>1433</td><td>1432</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>2nd Best TPR</td><td>1589</td><td></td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>3rd Best TPR</td><td>1364</td><td></td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>Average of Events Played</td><td>1535</td><td>1364</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>Best TPR</td><td>1652</td><td>1364</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>Number of Events</td><td>3</td><td>1</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jayden Kiai</td><td>10856145</td><td>Ranking score</td><td>1535</td><td>1364</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jesse Jayden</td><td>10857630</td><td>2nd Best TPR</td><td></td><td>1547</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jesse Jayden</td><td>10857630</td><td>Average of Events Played</td><td>1558</td><td>1552</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jesse Jayden</td><td>10857630</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jesse Jayden</td><td>10857630</td><td>Ranking score</td><td>1558</td><td>1552</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jethwa, Shiv</td><td>10844716</td><td>Average of Events Played</td><td>1935</td><td>1934</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Jethwa, Shiv</td><td>10844716</td><td>Ranking score</td><td>1935</td><td>1934</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Kagambi Lawrence</td><td>10800190</td><td>Average of Events Played</td><td>1697</td><td>1696</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Kagambi Lawrence</td><td>10800190</td><td>Ranking score</td><td>1697</td><td>1696</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10841741</td><td>2nd Best TPR</td><td>1817</td><td>1844</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10845038</td><td>2nd Best TPR</td><td></td><td>1661</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10841741</td><td>3rd Best TPR</td><td></td><td>1817</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10841741</td><td>Average of Events Played</td><td>1831</td><td>1851</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10845038</td><td>Average of Events Played</td><td>1859</td><td>1760</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10841741</td><td>Best TPR</td><td>1844</td><td>1893</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10841741</td><td>Number of Events</td><td>2</td><td>3</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10845038</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10841741</td><td>Ranking score</td><td>1831</td><td>1851</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Langat, Silvanus</td><td>10845038</td><td>Ranking score</td><td>1859</td><td>1760</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Magor, Marcarius Onyango</td><td>10838899</td><td>2nd Best TPR</td><td></td><td>1523</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Magor, Marcarius Onyango</td><td>10838899</td><td>Average of Events Played</td><td>1523</td><td>1610</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Magor, Marcarius Onyango</td><td>10838899</td><td>Best TPR</td><td>1523</td><td>1696</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Magor, Marcarius Onyango</td><td>10838899</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Magor, Marcarius Onyango</td><td>10838899</td><td>Ranking score</td><td>1523</td><td>1610</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Mbaabu Cyprian</td><td>10818251</td><td>Average of Events Played</td><td>1629</td><td>1649</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Mbaabu Cyprian</td><td>10818251</td><td>Best TPR</td><td>1629</td><td>1649</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Mbaabu Cyprian</td><td>10818251</td><td>Ranking score</td><td>1629</td><td>1649</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Miheso, Clement Chomu</td><td>10800026</td><td>2nd Best TPR</td><td>1525</td><td>1565</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Miheso, Clement Chomu</td><td>10800026</td><td>3rd Best TPR</td><td></td><td>1525</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Miheso, Clement Chomu</td><td>10800026</td><td>Average of Events Played</td><td>1682</td><td>1643</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Miheso, Clement Chomu</td><td>10800026</td><td>Number of Events</td><td>2</td><td>3</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Miheso, Clement Chomu</td><td>10800026</td><td>Ranking score</td><td>1682</td><td>1643</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Misiko, Peter Wangila</td><td>10841113</td><td>2nd Best TPR</td><td></td><td>1525</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Misiko, Peter Wangila</td><td>10841113</td><td>Average of Events Played</td><td>1525</td><td>1536</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Misiko, Peter Wangila</td><td>10841113</td><td>Best TPR</td><td>1525</td><td>1548</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Misiko, Peter Wangila</td><td>10841113</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Misiko, Peter Wangila</td><td>10841113</td><td>Ranking score</td><td>1525</td><td>1536</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Muhambe, Terrence Shisundi</td><td>10843612</td><td>Average of Events Played</td><td>1843</td><td>1842</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Muhambe, Terrence Shisundi</td><td>10843612</td><td>Ranking score</td><td>1843</td><td>1842</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Ngonga, Paul Oketch</td><td>10802797</td><td>2nd Best TPR</td><td></td><td>1633</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Ngonga, Paul Oketch</td><td>10802797</td><td>Average of Events Played</td><td>1633</td><td>1648</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Ngonga, Paul Oketch</td><td>10802797</td><td>Best TPR</td><td>1633</td><td>1663</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Ngonga, Paul Oketch</td><td>10802797</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Ngonga, Paul Oketch</td><td>10802797</td><td>Ranking score</td><td>1633</td><td>1648</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Njuki, Gabriel</td><td>10816127</td><td>Ranking score</td><td>2075</td><td>2074</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Nyamiaka, Haden</td><td>10832343</td><td>Average of Events Played</td><td>1839</td><td>1838</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Nyamiaka, Haden</td><td>10832343</td><td>Ranking score</td><td>1839</td><td>1838</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Nyaruaba, Raphael</td><td>554016827</td><td>2nd Best TPR</td><td></td><td>1632</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Nyaruaba, Raphael</td><td>554016827</td><td>Average of Events Played</td><td>1726</td><td>1679</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Nyaruaba, Raphael</td><td>554016827</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Nyaruaba, Raphael</td><td>554016827</td><td>Ranking score</td><td>1726</td><td>1679</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Odongo Bill Clinton</td><td>10839968</td><td>2nd Best TPR</td><td></td><td>1498</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Odongo Bill Clinton</td><td>10839968</td><td>Average of Events Played</td><td>1619</td><td>1558</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Odongo Bill Clinton</td><td>10839968</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Odongo Bill Clinton</td><td>10839968</td><td>Ranking score</td><td>1619</td><td>1558</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Okonga, Hugh Misiko</td><td>10813420</td><td>Average of Events Played</td><td>1897</td><td>1896</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Okonga, Hugh Misiko</td><td>10813420</td><td>Ranking score</td><td>1897</td><td>1896</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Omondi Suleiman</td><td>10841741</td><td>2nd Best TPR</td><td>1839</td><td>1844</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Omondi Suleiman</td><td>10841741</td><td>Average of Events Played</td><td>1833</td><td>1851</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Omondi Suleiman</td><td>10841741</td><td>Best TPR</td><td>1844</td><td>1893</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Omondi Suleiman</td><td>10841741</td><td>Ranking score</td><td>1833</td><td>1851</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Silim, Hussein</td><td>10838422</td><td>2nd Best TPR</td><td></td><td>1394</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Silim, Hussein</td><td>10838422</td><td>Average of Events Played</td><td>1394</td><td>1516</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Silim, Hussein</td><td>10838422</td><td>Best TPR</td><td>1394</td><td>1639</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Silim, Hussein</td><td>10838422</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Silim, Hussein</td><td>10838422</td><td>Ranking score</td><td>1394</td><td>1516</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Simiyu Baraka Daniel</td><td>10842810</td><td>Average of Events Played</td><td>1717</td><td>1716</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Simiyu Baraka Daniel</td><td>10842810</td><td>Ranking score</td><td>1717</td><td>1716</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Singe, Philip Mbawala</td><td>10800360</td><td>4th Best TPR</td><td>1675</td><td></td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Singe, Philip Mbawala</td><td>10800360</td><td>Average of Events Played</td><td>1740</td><td>1761</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Singe, Philip Mbawala</td><td>10800360</td><td>Number of Events</td><td>4</td><td>3</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Singe, Philip Mbawala</td><td>10800360</td><td>Ranking score</td><td>1740</td><td>1761</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Waweru Trevor Kipngetich</td><td>10842870</td><td>2nd Best TPR</td><td></td><td>1509</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Waweru Trevor Kipngetich</td><td>10842870</td><td>Average of Events Played</td><td>1642</td><td>1576</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Waweru Trevor Kipngetich</td><td>10842870</td><td>Number of Events</td><td>1</td><td>2</td><td></td></tr>
+<tr><td>Summary mismatch</td><td>Waweru Trevor Kipngetich</td><td>10842870</td><td>Ranking score</td><td>1642</td><td>1576</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
