@@ -58,6 +58,13 @@ export interface AuditLink {
   href: string
 }
 
+export interface AuditImpact {
+  field: string
+  chess_kenya: number | string | null
+  tracker: number | string | null
+  delta: number | null
+}
+
 export interface ChessKenyaAuditRow {
   id: string
   section: 'open' | 'ladies'
@@ -83,6 +90,7 @@ export interface ChessKenyaAuditRow {
   chess_kenya_rank: number | null
   tracker_rank: number | null
   links: AuditLink[]
+  impacts: AuditImpact[]
 }
 
 export interface ChessKenyaAuditSection {

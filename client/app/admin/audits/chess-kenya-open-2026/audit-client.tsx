@@ -135,7 +135,8 @@ function rowSearchText(row: ChessKenyaAuditRow) {
     row.tracker_fide_id,
     row.field,
     row.event_name,
-    row.kind_label
+    row.kind_label,
+    ...(row.impacts ?? []).map(impact => impact.field)
   ].filter(Boolean).join(' ').toLowerCase()
 }
 
@@ -472,6 +473,22 @@ export function ChessKenyaAuditClient() {
                     {row.detail && (
                       <div className="mt-2 max-w-[260px] text-xs leading-5 text-gray-500">
                         {row.detail}
+                      </div>
+                    )}
+                    {(row.impacts ?? []).length > 0 && (
+                      <div className="mt-2 max-w-[320px]">
+                        <div className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          Affects
+                        </div>
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {(row.impacts ?? []).map(impact => (
+                            <span
+                              key={`${row.id}:${impact.field}`}
+                              className="border border-gray-300 bg-gray-50 px-1.5 py-0.5 text-[11px] text-gray-700">
+                              {impact.field}: {formatValue(impact.chess_kenya)} -&gt; {formatValue(impact.tracker)}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </td>

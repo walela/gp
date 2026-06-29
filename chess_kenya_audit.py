@@ -654,6 +654,16 @@ def _row(
         "chess_kenya_rank": ck_player.get("source_rank") if ck_player else None,
         "tracker_rank": tracker_player.get("contender_rank") if tracker_player else None,
         "links": _links(ck_player, tracker_player, section_id, event),
+        "impacts": [],
+    }
+
+
+def _summary_impact(summary_row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "field": summary_row["field"],
+        "chess_kenya": summary_row["chess_kenya"],
+        "tracker": summary_row["tracker"],
+        "delta": summary_row["delta"],
     }
 
 
@@ -953,6 +963,9 @@ def discrepancy_rows(
         if not ck_player or not tracker_player:
             continue
 
+        event_issue_rows: list[dict[str, Any]] = []
+        summary_rows: list[dict[str, Any]] = []
+
         for event in events:
             event_id = event["id"]
             ck_value = ck_player["events"].get(event_id)
@@ -964,7 +977,7 @@ def discrepancy_rows(
                 continue
             if ck_value is not None and tracker_value is None and excluded_detail:
                 status = excluded_detail.get("result_status") or "invalid"
-                rows.append(
+                event_issue_rows.append(
                     _row(
                         "chess_kenya_includes_invalid_result",
                         ck_player,
@@ -981,7 +994,7 @@ def discrepancy_rows(
                     )
                 )
                 continue
-            rows.append(
+            event_issue_rows.append(
                 _row(
                     "event_tpr_mismatch",
                     ck_player,
@@ -1002,7 +1015,7 @@ def discrepancy_rows(
                 continue
             if ck_value is None and tracker_value is None:
                 continue
-            rows.append(
+            summary_rows.append(
                 _row(
                     "summary_mismatch",
                     ck_player,
@@ -1018,6 +1031,15 @@ def discrepancy_rows(
                     ),
                 )
             )
+
+        if event_issue_rows and summary_rows:
+            impacts = [_summary_impact(row) for row in summary_rows]
+            for row in event_issue_rows:
+                row["impacts"] = impacts
+            rows.extend(event_issue_rows)
+        else:
+            rows.extend(event_issue_rows)
+            rows.extend(summary_rows)
 
     def sort_key(row: dict[str, Any]) -> tuple[int, int, bool, int, str]:
         rank = row["priority_rank"] if row["priority_rank"] is not None else 999999
