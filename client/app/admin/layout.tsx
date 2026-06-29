@@ -77,12 +77,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <AuthContext value={{ token, logout }}>
       <div className="min-h-screen bg-[#f4f2ef]">
-        <nav className="bg-black text-white px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-6">
+        <nav className="bg-black text-white px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2">
             <span className="font-bold text-sm">GP Admin</span>
             <Link href="/admin" className="text-sm hover:underline">Dashboard</Link>
             <Link href="/admin/scrape" className="text-sm hover:underline">Scrape</Link>
             <Link href="/admin/upcoming" className="text-sm hover:underline">Upcoming</Link>
+            <Link href="/admin/audits" className="text-sm hover:underline">Audits</Link>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/" className="text-xs text-gray-400 hover:underline">View Site</Link>

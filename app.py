@@ -13,6 +13,7 @@ import time
 import hmac
 import hashlib
 from functools import wraps
+from pathlib import Path
 from flask import Response
 from dotenv import load_dotenv
 
@@ -1191,6 +1192,30 @@ def admin_login():
         )
         return jsonify({"error": "Invalid password", "debug": debug_payload}), 401
     return jsonify({"error": "Invalid password"}), 401
+
+
+@app.route("/api/admin/audits/chess-kenya-open-2026")
+@require_admin
+def admin_chess_kenya_open_2026_audit():
+    """Compare Chess Kenya Open and Ladies CSVs against the local tracker."""
+    from chess_kenya_audit import (
+        DEFAULT_CHESS_KENYA_LADIES_2026_CSV,
+        DEFAULT_CHESS_KENYA_OPEN_2026_CSV,
+        build_chess_kenya_open_2026_audit,
+    )
+
+    csv_path = Path(os.environ.get("CHESS_KENYA_OPEN_2026_CSV", DEFAULT_CHESS_KENYA_OPEN_2026_CSV))
+    ladies_csv_path = Path(os.environ.get("CHESS_KENYA_LADIES_2026_CSV", DEFAULT_CHESS_KENYA_LADIES_2026_CSV))
+    if not csv_path.exists():
+        return jsonify({
+            "error": f"Chess Kenya Open CSV not found at {csv_path}. Set CHESS_KENYA_OPEN_2026_CSV to override."
+        }), 404
+
+    try:
+        return jsonify(build_chess_kenya_open_2026_audit(Path(db.db_file), csv_path, ladies_csv_path))
+    except Exception as e:
+        logger.exception("chess_kenya_open_2026_audit_failed")
+        return jsonify({"error": f"Audit failed: {str(e)}"}), 500
 
 
 @app.route("/api/admin/scrape/sections", methods=["POST"])

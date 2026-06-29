@@ -35,6 +35,86 @@ export async function adminLogin(password: string): Promise<{ ok: boolean }> {
   })
 }
 
+// Audits
+export interface AuditEvent {
+  id: string
+  name: string
+  csv_column: number
+  tracker_ids: string[]
+  tracker_url_id: string
+  chess_results_id: string
+  chess_results_url: string
+  tracker_url: string
+}
+
+export interface AuditKind {
+  id: string
+  label: string
+  count: number
+}
+
+export interface AuditLink {
+  label: string
+  href: string
+}
+
+export interface ChessKenyaAuditRow {
+  id: string
+  section: 'open' | 'ladies'
+  kind: string
+  kind_label: string
+  player_name: string
+  chess_kenya_name: string | null
+  tracker_name: string | null
+  fide_id: string
+  chess_kenya_fide_id: string | null
+  tracker_fide_id: string | null
+  field: string
+  event_id: string | null
+  event_name: string | null
+  chess_kenya: number | string | null
+  tracker: number | string | null
+  delta: number | null
+  detail: string
+  priority_rank: number | null
+  severity: 'top_10' | 'top_30' | 'top_75' | 'long_tail' | 'unranked'
+  chess_kenya_section: 'open' | 'ladies' | null
+  chess_kenya_row: number | null
+  chess_kenya_rank: number | null
+  tracker_rank: number | null
+  links: AuditLink[]
+}
+
+export interface ChessKenyaAuditSection {
+  id: 'open' | 'ladies'
+  label: string
+  category: 'open' | 'ladies'
+  source: {
+    label: string
+    path: string
+    loaded: boolean
+  }
+  events: AuditEvent[]
+  kinds: AuditKind[]
+  notes: string[]
+  summary: {
+    chess_kenya_players: number
+    tracker_players: number
+    discrepancy_rows: number
+  }
+  rows: ChessKenyaAuditRow[]
+}
+
+export interface ChessKenyaAuditResponse {
+  generated_at: string
+  season: number
+  sections: ChessKenyaAuditSection[]
+}
+
+export async function getChessKenyaOpen2026Audit(): Promise<ChessKenyaAuditResponse> {
+  return adminFetch('/admin/audits/chess-kenya-open-2026')
+}
+
 // Scrape workflow
 export interface ScrapedResult {
   player: {

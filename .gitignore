@@ -16,4 +16,5 @@ node_modules/
 .logs/
 .env*.local
 .claude/
+.private/
 .mcp.json

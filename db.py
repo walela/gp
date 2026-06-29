@@ -1,5 +1,6 @@
 import sqlite3
 import logging
+import math
 import os
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
@@ -8,6 +9,12 @@ from player_eligibility import is_gp_eligible_player
 from tournament_metadata import infer_location, infer_rounds, infer_short_name
 
 logger = logging.getLogger(__name__)
+
+
+def round_half_up(value: float) -> int:
+    """Round positive ranking averages the same way spreadsheets do."""
+    return math.floor(value + 0.5)
+
 
 class Database:
     def __init__(self, db_file: str = None):
@@ -804,11 +811,11 @@ class Database:
                     player_info["fide_id"],
                     player_info["rating"],
                     len(valid_results),
-                    round(best_1),
+                    round_half_up(best_1),
                     tournament_1,
-                    round(best_2),
-                    round(best_3),
-                    round(best_4),
+                    round_half_up(best_2),
+                    round_half_up(best_3),
+                    round_half_up(best_4),
                     season,
                     stored_gender,
                 )

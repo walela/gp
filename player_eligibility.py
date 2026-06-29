@@ -11,6 +11,7 @@ INELIGIBLE_GP_PLAYER_FIDE_IDS = {
     "10891420",  # Atem Gak, Ngong
     "2004348",   # Gilruth Peter
     "10830987",  # Chvoro Viacheslav
+    "10848525",  # Bhavsar Nisha Nileshbhai
 }
 
 INELIGIBLE_GP_PLAYER_NAMES = {
@@ -20,6 +21,9 @@ INELIGIBLE_GP_PLAYER_NAMES = {
     "peter gilruth",
     "chvoro viacheslav",
     "viacheslav chvoro",
+    "bhavsar nisha nileshbhai",
+    "nisha nileshbhai bhavsar",
+    "nisha bhavsar",
 }
 
 
