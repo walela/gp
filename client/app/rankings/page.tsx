@@ -224,16 +224,6 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/rankings/export?sort=${sort}&dir=${dir}&season=${season}${gender ? `&gender=${gender}` : ''}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
           exportFilename={`GP_${category}_rankings_${season}${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
         />
-        {season === 2026 && category === 'open' && (
-          <div className="mt-2 flex justify-end">
-            <Link
-              href="/audits/chess-kenya-open-2026-discrepancies.html"
-              className="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4"
-            >
-              Chess Kenya CSV audit
-            </Link>
-          </div>
-        )}
       </div>
 
       <Card
