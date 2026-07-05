@@ -31,11 +31,7 @@ export const upcomingTournaments: Tournament[] = [
     confirmed: true,
     registrationUrl: 'https://forms.gle/ehuyRunnJfN6iN6f9',
     detailsUrl: null
-  }
-]
-
-// Grand Prix tournaments beyond the 60-day window
-export const plannedTournaments: Tournament[] = [
+  },
   {
     id: 'mombasa-festival-2026',
     name: 'Mombasa International Chess Festival - Grand Prix',
@@ -57,7 +53,11 @@ export const plannedTournaments: Tournament[] = [
     locationUrl: 'https://maps.google.com/?q=KICC,+Nairobi,+Kenya',
     confirmed: false,
     detailsUrl: null
-  },
+  }
+]
+
+// Grand Prix tournaments beyond the 60-day window
+export const plannedTournaments: Tournament[] = [
   {
     id: 'jumuiya-2026',
     name: 'Jumuiya Ya Afrika Mashariki Open - Grand Prix',
