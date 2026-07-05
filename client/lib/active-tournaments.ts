@@ -21,19 +21,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: 'coast-open-2026',
-    name: 'Coast Open - Grand Prix',
-    short_name: 'Coast Open',
-    startDate: '2026-07-03',
-    endDate: '2026-07-05',
-    location: 'Sai Rock Hotel & Spa, Mombasa',
-    locationUrl: 'https://maps.google.com/?q=Sai+Rock+Hotel+%26+Spa,+Mombasa,+Kenya',
-    rounds: 6,
-    confirmed: true,
-    registrationUrl: 'https://www.lighthousechessclub.com/tournaments/7/register',
-    detailsUrl: null
-  },
-  {
     id: 'kitale-open-2026',
     name: 'Kitale Open - Grand Prix',
     short_name: 'Kitale Open',
