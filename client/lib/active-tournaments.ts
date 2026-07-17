@@ -33,17 +33,6 @@ export const upcomingTournaments: Tournament[] = [
     detailsUrl: null
   },
   {
-    id: 'mombasa-festival-2026',
-    name: 'Mombasa International Chess Festival - Grand Prix',
-    short_name: 'Mombasa Chess Festival',
-    startDate: '2026-07-19',
-    endDate: '2026-07-21',
-    location: 'City Mall, Mombasa',
-    locationUrl: 'https://maps.google.com/?q=City+Mall,+Mombasa,+Kenya',
-    confirmed: true,
-    detailsUrl: null
-  },
-  {
     id: 'minichess-gp-2026',
     name: 'Minichess Kenya Grand Prix',
     short_name: 'Minichess GP',
