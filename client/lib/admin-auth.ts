@@ -15,6 +15,9 @@ export function getAdminToken(): string | null {
 export function setAdminToken(token: string) {
   localStorage.setItem(TOKEN_KEY, token)
   localStorage.setItem(EXPIRY_KEY, String(Date.now() + TTL_MS))
+  // This device belongs to the site owner — stop counting its visits in
+  // Plausible so admin/testing traffic doesn't pollute real analytics.
+  localStorage.setItem('plausible_ignore', 'true')
 }
 
 export function clearAdminToken() {

@@ -88,6 +88,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </DesignThemeProvider>
         <SpeedInsights />
+        {/* Analytics opt-out: visiting any page with ?plausible_ignore=true sets
+            the flag Plausible checks (and ?plausible_ignore=false clears it), so
+            the owner can exclude a device (e.g. phone) without dev tools. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=new URLSearchParams(location.search).get('plausible_ignore');if(p==='true')localStorage.setItem('plausible_ignore','true');else if(p==='false')localStorage.removeItem('plausible_ignore');}catch(e){}})();`,
+          }}
+        />
         {/* Queue custom events fired before the deferred Plausible script loads. */}
         <script
           dangerouslySetInnerHTML={{
