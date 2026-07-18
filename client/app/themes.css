@@ -274,7 +274,8 @@ html[data-theme='neo-brutalist'] {
   --t-accent: #2e5bff;
   --t-accent-ink: #ffffff;
   --t-line: #000000;
-  --t-chip: #ffe500;
+  --t-chip: #9ef0c1;
+  --t-chip-ink: #050505;
   --t-radius: 0px;
   --t-radius-pill: 0px;
   --t-border-w: 3px;
