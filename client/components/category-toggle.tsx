@@ -31,9 +31,12 @@ export function CategoryToggle({ currentCategory, className }: CategoryTogglePro
   }
 
   return (
-    <div className={cn('inline-flex rounded-lg border border-gray-200 bg-gray-100 p-0.5', className)}>
+    <div
+      data-slot="segmented-control"
+      className={cn('inline-flex rounded-lg border border-gray-200 bg-gray-100 p-0.5', className)}>
       <button
         onClick={() => handleCategoryChange('open')}
+        aria-pressed={currentCategory === 'open'}
         className={cn(
           'rounded-md px-4 py-1.5 text-sm font-medium transition-colors',
           currentCategory === 'open'
@@ -45,6 +48,7 @@ export function CategoryToggle({ currentCategory, className }: CategoryTogglePro
       <button
         onClick={() => handleCategoryChange('ladies')}
         disabled={ladiesDisabled}
+        aria-pressed={currentCategory === 'ladies'}
         className={cn(
           'rounded-md px-4 py-1.5 text-sm font-medium transition-colors',
           currentCategory === 'ladies'

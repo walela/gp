@@ -124,10 +124,6 @@
 }
 
 @layer utilities {
-  .font-maple-mono-heading {
-    font-family: "Maple Mono NF CN", "Maple Mono NF", "Maple Mono", var(--font-inter), ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace;
-    letter-spacing: -0.01em;
-  }
   .shadow-elevation-low {
     box-shadow:
       0.5px 1px 1px hsl(30deg 20% 50% / 0.7);

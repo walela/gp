@@ -1,0 +1,588 @@
+/* ============================================================
+   Design theme system
+   Active only when <html data-theme="..."> is set (see
+   design-theme-context.tsx). "default" removes the attribute and
+   leaves the original look untouched.
+
+   Each theme defines a set of semantic --t-* variables; a shared
+   block below maps those onto both the shadcn design tokens and the
+   hard-coded Tailwind utilities used on the tournaments/rankings
+   pages, so we can re-skin without rewriting every component.
+   ============================================================ */
+
+html[data-theme] {
+  /* sensible fallbacks; individual themes override */
+  --t-radius: 0.5rem;
+  --t-radius-pill: 9999px;
+  --t-border-w: 1px;
+  --t-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --t-shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.1);
+  /* readable text colour for status/neutral pills; themes override as needed */
+  --t-chip-ink: var(--t-ink);
+  --t-font: var(--font-inter), Inter, system-ui, sans-serif;
+  --t-font-head: var(--t-font);
+
+  /* map semantic vars onto shadcn tokens (covers Card, popovers,
+     muted text, primary buttons, borders, radius, etc.) */
+  --background: var(--t-bg);
+  --foreground: var(--t-ink);
+  --card: var(--t-surface);
+  --card-foreground: var(--t-ink);
+  --popover: var(--t-surface);
+  --popover-foreground: var(--t-ink);
+  --primary: var(--t-accent);
+  --primary-foreground: var(--t-accent-ink);
+  --secondary: var(--t-surface-3);
+  --secondary-foreground: var(--t-ink);
+  --muted: var(--t-surface-2);
+  --muted-foreground: var(--t-ink-2);
+  --accent: var(--t-surface-3);
+  --accent-foreground: var(--t-ink);
+  --border: var(--t-line);
+  --input: var(--t-line);
+  --ring: var(--t-accent);
+  --radius: var(--t-radius);
+}
+
+/* ---------- Page canvas & base typography ---------- */
+html[data-theme],
+html[data-theme] body {
+  background-color: var(--t-bg);
+  color: var(--t-ink);
+  font-family: var(--t-font) !important;
+}
+
+/* Replace the layered decorative background with a flat/theme canvas */
+html[data-theme] [data-app-bg] {
+  background: var(--t-canvas, var(--t-bg)) !important;
+}
+html[data-theme] [data-app-bg] > * {
+  display: none !important;
+}
+
+html[data-theme] h1,
+html[data-theme] h2,
+html[data-theme] h3 {
+  font-family: var(--t-font-head) !important;
+}
+
+/* ---------- Surfaces ---------- */
+html[data-theme] :is(.bg-white, .bg-white\/90, .bg-white\/95, [data-slot='card']) {
+  background-color: var(--t-surface) !important;
+  backdrop-filter: none !important;
+}
+html[data-theme] :is(.bg-gray-50, .bg-gray-50\/50, .bg-gray-50\/80, .bg-gray-100):not(thead) {
+  background-color: var(--t-surface-2) !important;
+}
+html[data-theme] :is(.bg-gray-200, .bg-gray-200\/50) {
+  background-color: var(--t-surface-3) !important;
+}
+
+/* Table zebra striping (CustomTableRow uses odd/even utilities) */
+html[data-theme] tbody tr:nth-child(odd) {
+  background-color: var(--t-surface) !important;
+}
+html[data-theme] tbody tr:nth-child(even) {
+  background-color: var(--t-surface-2) !important;
+}
+html[data-theme] tbody tr:hover {
+  background-color: var(--t-surface-3) !important;
+}
+
+/* Table header row (the <tr> carries odd:bg-white, so theme it too) */
+html[data-theme] thead,
+html[data-theme] thead tr {
+  background-color: var(--t-thead-bg) !important;
+}
+html[data-theme] thead :is(th, tr, span, div) {
+  color: var(--t-thead-ink) !important;
+}
+html[data-theme] table {
+  color: var(--t-ink) !important;
+}
+
+/* ---------- Text ---------- */
+html[data-theme] :is(.text-gray-900, .text-gray-800, .text-foreground) {
+  color: var(--t-ink) !important;
+}
+html[data-theme] :is(.text-gray-600, .text-gray-500, .text-gray-400, .text-muted-foreground) {
+  color: var(--t-ink-2) !important;
+}
+
+/* ---------- Links / accent text ---------- */
+html[data-theme] :is(.text-blue-600) {
+  color: var(--t-link) !important;
+}
+html[data-theme] :is(.text-blue-700, .hover\:text-blue-700:hover) {
+  color: var(--t-link-2) !important;
+}
+
+/* ---------- Borders / dividers ---------- */
+html[data-theme] :is(.border, .border-b, .border-t, .border-b-0, [data-slot='card']),
+html[data-theme] :is(thead, tbody tr, th, td),
+html[data-theme] :is(.divide-gray-100, .divide-gray-200) > * {
+  border-color: var(--t-line) !important;
+}
+
+/* ---------- Radius ---------- */
+html[data-theme]
+  :is(.rounded, .rounded-sm, .rounded-md, .rounded-lg, .rounded-xl,
+      .rounded-t-lg, .rounded-b-lg, .rounded-tr-lg, .sm\:rounded-lg, .sm\:rounded-tr-lg) {
+  border-radius: var(--t-radius) !important;
+}
+html[data-theme] .rounded-full {
+  border-radius: var(--t-radius-pill) !important;
+}
+
+/* ---------- Shadows ---------- */
+html[data-theme] :is(.shadow-sm, .shadow-elevation-low) {
+  box-shadow: var(--t-shadow) !important;
+}
+html[data-theme] :is(.shadow-elevation-mid, .sm\:shadow-elevation-mid) {
+  box-shadow: var(--t-shadow-lg) !important;
+}
+
+/* ---------- Primary / active (view selector tab, mobile nav) ---------- */
+html[data-theme] .bg-primary {
+  background-color: var(--t-accent) !important;
+}
+html[data-theme] .text-primary-foreground {
+  color: var(--t-accent-ink) !important;
+}
+html[data-theme] .text-primary {
+  color: var(--t-accent) !important;
+}
+
+/* ---------- Segmented control (Open/Ladies toggle) ----------
+   The default relies on a white segment + shadow over a grey track, which
+   vanishes in flat/borderless themes. Give the selected segment an inverted,
+   theme-agnostic fill so it always reads as active. */
+html[data-theme] [data-slot='segmented-control'] {
+  background-color: var(--t-surface-2) !important;
+  border-color: var(--t-line) !important;
+}
+html[data-theme] [data-slot='segmented-control'] button[aria-pressed='true'] {
+  background-color: var(--t-ink) !important;
+  color: var(--t-bg) !important;
+  box-shadow: none !important;
+}
+html[data-theme] [data-slot='segmented-control'] button[aria-pressed='false'] {
+  background-color: transparent !important;
+  color: var(--t-ink-2) !important;
+}
+
+/* ---------- Header ---------- */
+html[data-theme] header {
+  background-color: var(--t-surface) !important;
+  border-color: var(--t-line) !important;
+  backdrop-filter: none !important;
+}
+
+/* ---------- Neutralise pastel chips so they fit each theme ----------
+   Keep the *text* colour (it still signals status/qualification) but
+   drop the light backgrounds onto a themed chip surface. */
+html[data-theme]
+  :is(.bg-blue-50, .bg-blue-50\/70, .bg-green-50, .bg-green-100, .bg-amber-100,
+      .bg-cyan-50, .bg-cyan-100, .bg-teal-50, .bg-teal-100, .bg-red-100,
+      .bg-amber-50\/50, .bg-cyan-50\/70, .bg-teal-50\/80, .bg-blue-50\/70) {
+  background-color: var(--t-chip) !important;
+}
+html[data-theme] :is(.border-blue-200, .border-amber-200, .border-green-200, .border-cyan-200, .border-teal-600, .border-green-600) {
+  border-color: var(--t-line) !important;
+}
+/* Neutral status pill (e.g. "In progress" / time-away): give it an opaque
+   chip surface and a guaranteed-contrast ink instead of muted grey-on-grey. */
+html[data-theme] .rounded-full:is(.bg-gray-200, .bg-gray-100) {
+  background-color: var(--t-chip) !important;
+  color: var(--t-chip-ink) !important;
+}
+html[data-theme] .rounded-full:is(.bg-gray-200, .bg-gray-100) :is(span, a) {
+  color: var(--t-chip-ink) !important;
+}
+
+/* ============================================================
+   THEME: Brutalist (raw web brutalism)
+   Stark industrial grotesque (Space Grotesk), browser-blue
+   underlined links, hard 2px black grid, zero shadow, zero radius.
+   ============================================================ */
+html[data-theme='brutalist'] {
+  --t-bg: #ffffff;
+  --t-canvas: #ffffff;
+  --t-surface: #ffffff;
+  --t-surface-2: #ffffff;
+  --t-surface-3: #d9d9d9;
+  --t-thead-bg: #ffffff;
+  --t-thead-ink: #000000;
+  --t-ink: #000000;
+  --t-ink-2: #000000;
+  --t-link: #0000ee;
+  --t-link-2: #551a8b;
+  --t-accent: #0000ee;
+  --t-accent-ink: #ffffff;
+  --t-line: #000000;
+  --t-chip: #d9d9d9;
+  --t-radius: 0px;
+  --t-radius-pill: 0px;
+  --t-border-w: 2px;
+  --t-shadow: none;
+  --t-shadow-lg: none;
+  --t-font: var(--font-space-grotesk), 'Arial Narrow', Arial, sans-serif;
+  --t-font-head: var(--font-space-grotesk), 'Arial Narrow', Arial, sans-serif;
+}
+/* hard 2px black borders, no shadows anywhere */
+html[data-theme='brutalist']
+  :is([data-slot='card'], header, input, button, [data-slot='dropdown-menu-trigger'],
+      .shadow-elevation-low, .shadow-sm, .border, thead, .inline-flex.divide-x) {
+  border: 2px solid #000 !important;
+  box-shadow: none !important;
+}
+/* full cell grid */
+html[data-theme='brutalist'] :is(td, th) {
+  border: 1px solid #000 !important;
+}
+html[data-theme='brutalist'] thead {
+  border-bottom: 2px solid #000 !important;
+}
+html[data-theme='brutalist'] thead :is(th, tr, span, div) {
+  color: #000 !important;
+  text-transform: uppercase;
+}
+/* raw, always-underlined links + underlined headings */
+html[data-theme='brutalist'] a {
+  text-decoration: underline !important;
+}
+html[data-theme='brutalist'] :is(h1, h2, h3) {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* ============================================================
+   THEME: Neo-Brutalist (polished, chunky)
+   ============================================================ */
+html[data-theme='neo-brutalist'] {
+  --t-bg: #f4f1e9;
+  --t-canvas: #f4f1e9;
+  --t-surface: #ffffff;
+  --t-surface-2: #ececec;
+  --t-surface-3: #e2e2e2;
+  --t-thead-bg: #000000;
+  --t-thead-ink: #ffffff;
+  --t-ink: #050505;
+  --t-ink-2: #4a4a4a;
+  --t-link: #2e5bff;
+  --t-link-2: #1b3fcc;
+  --t-accent: #2e5bff;
+  --t-accent-ink: #ffffff;
+  --t-line: #000000;
+  --t-chip: #ffe500;
+  --t-radius: 0px;
+  --t-radius-pill: 0px;
+  --t-border-w: 3px;
+  --t-shadow: 4px 4px 0 0 #000000;
+  --t-shadow-lg: 6px 6px 0 0 #000000;
+  --t-font: var(--font-bricolage), 'Archivo Black', system-ui, sans-serif;
+  --t-font-head: var(--t-font);
+}
+/* Thick hard borders on the chunky elements */
+html[data-theme='neo-brutalist']
+  :is([data-slot='card'], header, input, button, [data-slot='dropdown-menu-trigger'],
+      .shadow-elevation-low, .shadow-sm, .border, thead, .inline-flex.divide-x) {
+  border-width: 3px !important;
+  border-style: solid !important;
+  border-color: #000 !important;
+}
+html[data-theme='neo-brutalist'] h1,
+html[data-theme='neo-brutalist'] h2,
+html[data-theme='neo-brutalist'] h3 {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 800;
+}
+html[data-theme='neo-brutalist'] thead :is(th, span, div) {
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   THEME: Swiss / International
+   ============================================================ */
+html[data-theme='swiss'] {
+  --t-bg: #ffffff;
+  --t-canvas: #ffffff;
+  --t-surface: #ffffff;
+  /* no grey fills — structure comes from rules, not tints */
+  --t-surface-2: #ffffff;
+  --t-surface-3: #f4f4f4;
+  /* white header band; hierarchy from the rule system, not a black bar */
+  --t-thead-bg: #ffffff;
+  --t-thead-ink: #111111;
+  --t-ink: #111111;
+  --t-ink-2: #565656;
+  --t-link: #e2001a;
+  --t-link-2: #b00015;
+  --t-accent: #e2001a;
+  --t-accent-ink: #ffffff;
+  --t-line: #111111;
+  --t-chip: #f2f2f2;
+  --t-chip-ink: #111111;
+  --t-radius: 0px;
+  --t-radius-pill: 0px;
+  --t-shadow: none;
+  --t-shadow-lg: none;
+  --t-font: var(--font-archivo), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --t-font-head: var(--font-archivo), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+/* Headlines: large, heavy, tightly tracked, flush left, tight leading */
+html[data-theme='swiss'] :is(h1, h2, h3) {
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.03;
+}
+html[data-theme='swiss'] h1 {
+  letter-spacing: -0.035em;
+}
+/* Section headings act as Swiss dividers: heavy black rule above the label */
+html[data-theme='swiss'] h2 {
+  border-top: 4px solid #111 !important;
+  border-bottom: 0 !important;
+  padding-top: 8px !important;
+  padding-bottom: 0 !important;
+}
+/* Cards are plain ruled boxes — no fill, no shadow */
+html[data-theme='swiss'] [data-slot='card'] {
+  border: 1px solid #111 !important;
+}
+/* Data table = classic Swiss double-rule system on white:
+   thick rule above the heads, thin rule below, uppercase tracked labels */
+html[data-theme='swiss'] thead,
+html[data-theme='swiss'] thead tr {
+  background-color: #ffffff !important;
+  border-top: 3px solid #111 !important;
+  border-bottom: 1.5px solid #111 !important;
+}
+html[data-theme='swiss'] thead :is(th, tr, span, div) {
+  color: #111 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  font-size: 11px;
+}
+/* Hairline rows, no zebra fills */
+html[data-theme='swiss'] tbody tr:nth-child(even),
+html[data-theme='swiss'] tbody tr:nth-child(odd) {
+  background-color: #ffffff !important;
+}
+html[data-theme='swiss'] tbody tr {
+  border-bottom: 1px solid #d9d9d9 !important;
+}
+html[data-theme='swiss'] tbody tr:hover {
+  background-color: #f4f4f4 !important;
+}
+/* Aligned figures throughout the data grid */
+html[data-theme='swiss'] :is(thead, tbody) :is(td, th),
+html[data-theme='swiss'] .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+/* Red index numbers — the one accent, used with restraint */
+html[data-theme='swiss'] tbody th[scope='row'] {
+  color: var(--t-accent) !important;
+  font-weight: 800;
+}
+/* Links: clean red, underline only on hover */
+html[data-theme='swiss'] a {
+  text-decoration: none;
+}
+html[data-theme='swiss'] a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+/* ============================================================
+   THEME: Editorial (magazine)
+   Serif, warm paper, hairline rows, oldstyle numerals.
+   ============================================================ */
+html[data-theme='editorial'] {
+  --t-bg: #f9f6ef;
+  --t-canvas: #f9f6ef;
+  --t-surface: #ffffff;
+  --t-surface-2: #f3ecdd;
+  --t-surface-3: #e9e0cf;
+  --t-thead-bg: #26201b;
+  --t-thead-ink: #f4efe4;
+  --t-ink: #201a15;
+  --t-ink-2: #736556;
+  --t-link: #8a2f22;
+  --t-link-2: #5f1e14;
+  --t-accent: #8a2f22;
+  --t-accent-ink: #fffdf7;
+  --t-line: #d3c6b0;
+  --t-chip: #ece2cf;
+  --t-radius: 2px;
+  --t-radius-pill: 9999px;
+  --t-shadow: 0 1px 2px rgba(60, 40, 20, 0.06);
+  --t-shadow-lg: 0 10px 30px rgba(60, 40, 20, 0.1);
+  --t-font: var(--font-source-serif), 'Iowan Old Style', Palatino, Georgia, 'Times New Roman', serif;
+  --t-font-head: var(--font-source-serif), 'Iowan Old Style', Palatino, Georgia, serif;
+}
+html[data-theme='editorial'] :is(h1, h2, h3) {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+/* section headings behave like magazine kickers */
+html[data-theme='editorial'] h2 {
+  border-bottom: 2px solid var(--t-ink) !important;
+  padding-bottom: 6px;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+/* clean hairline rows instead of zebra */
+html[data-theme='editorial'] tbody tr:nth-child(even),
+html[data-theme='editorial'] tbody tr:nth-child(odd) {
+  background-color: var(--t-surface) !important;
+}
+html[data-theme='editorial'] tbody tr {
+  border-bottom: 1px solid var(--t-line) !important;
+}
+html[data-theme='editorial'] tbody tr:hover {
+  background-color: var(--t-surface-2) !important;
+}
+/* oldstyle, proportional-feeling figures */
+html[data-theme='editorial'] :is(td, th, .tabular-nums) {
+  font-variant-numeric: oldstyle-nums tabular-nums;
+}
+html[data-theme='editorial'] a {
+  text-underline-offset: 3px;
+}
+/* lift white "sheets" off the paper canvas */
+html[data-theme='editorial'] [data-slot='card'] {
+  border: 1px solid var(--t-line) !important;
+  box-shadow: var(--t-shadow-lg) !important;
+}
+
+/* ============================================================
+   THEME: Liquid Glass (glass for the chrome, clarity for content)
+   Frosted translucent CHROME (header, filters, tabs, popovers)
+   floats over a soft color-wash gradient with lit edges; the dense
+   data table stays largely opaque for comfortable sustained reading.
+   Radius tiers: pills for filters/chips, a soft 12px for cards.
+   ============================================================ */
+html[data-theme='glass'] {
+  --t-bg: #dbe4ff;
+  --t-canvas:
+    radial-gradient(1200px 600px at 8% -5%, rgba(255, 175, 236, 0.75), transparent 60%),
+    radial-gradient(1000px 700px at 100% 0%, rgba(140, 200, 255, 0.8), transparent 55%),
+    radial-gradient(900px 700px at 50% 110%, rgba(180, 160, 255, 0.8), transparent 55%),
+    linear-gradient(135deg, #a7c6ff 0%, #c3b6ff 50%, #ffc6ef 100%);
+  --t-surface: rgba(255, 255, 255, 0.55);
+  --t-surface-2: rgba(255, 255, 255, 0.4);
+  --t-surface-3: rgba(255, 255, 255, 0.7);
+  --t-thead-bg: rgba(255, 255, 255, 0.32);
+  --t-thead-ink: #2a2550;
+  --t-ink: #1e1b3a;
+  --t-ink-2: #4c4770;
+  --t-link: #4f46e5;
+  --t-link-2: #3730a3;
+  --t-accent: #6366f1;
+  --t-accent-ink: #ffffff;
+  --t-line: rgba(120, 110, 190, 0.22);
+  --t-chip: rgba(255, 255, 255, 0.9);
+  --t-chip-ink: #241f4d;
+  --t-radius: 12px;
+  --t-radius-pill: 9999px;
+  --t-shadow: 0 4px 16px rgba(70, 60, 150, 0.14);
+  --t-shadow-lg: 0 14px 44px rgba(70, 60, 150, 0.22);
+  --t-font: var(--font-inter), Inter, system-ui, sans-serif;
+  --t-font-head: var(--font-inter), Inter, system-ui, sans-serif;
+}
+/* frosted chrome — cards, floating controls keep the glass, with a lit
+   top edge (inset highlight) for a touch of dimensional refraction */
+html[data-theme='glass']
+  :is([data-slot='card'], .bg-white, .bg-white\/90, .bg-white\/95, .shadow-elevation-low) {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(18px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: var(--t-shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+}
+/* frosted sticky header */
+html[data-theme='glass'] header {
+  background-color: rgba(255, 255, 255, 0.42) !important;
+  backdrop-filter: blur(16px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(170%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+/* keep popovers / dropdowns (theme picker, season) readable + frosted */
+html[data-theme='glass']
+  :is([data-slot='dropdown-menu-content'], [data-slot='popover-content'], [data-slot='select-content']) {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+}
+
+/* CONTENT CLARITY — the dense rankings table drops most of its translucency
+   so the glass elsewhere reads as intentional. (:has scopes this to the data
+   card, leaving the floating control/filter cards fully glassy.) */
+html[data-theme='glass'] [data-slot='card']:has(table) {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(6px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(6px) saturate(115%) !important;
+  border: 1px solid rgba(120, 110, 190, 0.2) !important;
+  box-shadow: var(--t-shadow-lg) !important;
+}
+/* opaque, even zebra — removes the translucent banding around ranks 10–12 */
+html[data-theme='glass'] tbody tr:nth-child(odd) {
+  background-color: #ffffff !important;
+}
+html[data-theme='glass'] tbody tr:nth-child(even) {
+  background-color: #f4f4fc !important;
+}
+html[data-theme='glass'] tbody tr:hover {
+  background-color: #eceafb !important;
+}
+/* opaque header band + readable hairline rules on the light table */
+html[data-theme='glass'] thead,
+html[data-theme='glass'] thead tr {
+  background-color: rgba(243, 242, 252, 0.97) !important;
+}
+html[data-theme='glass'] :is(tbody tr, thead, th, td) {
+  border-color: rgba(60, 50, 120, 0.1) !important;
+}
+
+html[data-theme='glass'] :is(h1, h2, h3) {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+/* glossy accent tab with a static specular highlight (light catching glass) */
+html[data-theme='glass'] .bg-primary {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 45%),
+    linear-gradient(180deg, #7c7cf5 0%, #5b52e6 100%) !important;
+  box-shadow: 0 6px 18px rgba(90, 70, 230, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Accessibility fallbacks -------------------------------------------------- */
+/* Prefer solid surfaces when the user asks for reduced transparency. */
+@media (prefers-reduced-transparency: reduce) {
+  html[data-theme='glass']
+    :is([data-slot='card'], .bg-white, .bg-white\/90, .bg-white\/95, header,
+        [data-slot='dropdown-menu-content'], [data-slot='popover-content'],
+        [data-slot='select-content']) {
+    background-color: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-color: rgba(120, 110, 190, 0.3) !important;
+  }
+  html[data-theme='glass'] [data-app-bg] {
+    background: #e9ecfb !important;
+  }
+}
+/* Respect reduced motion for any glass transitions/animations. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme='glass'] * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

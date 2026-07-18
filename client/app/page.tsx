@@ -98,7 +98,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto sm:px-4 py-4 space-y-8 max-w-11xl">
+      <div className="py-4 space-y-8">
         {sortedUpcomingTournaments.length > 0 && season === currentYear && (
           <section>
             <div className="flex items-center justify-between mb-4">

@@ -1,15 +1,52 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import {
+  Inter,
+  Bricolage_Grotesque,
+  Space_Grotesk,
+  Archivo,
+  Source_Serif_4,
+} from 'next/font/google'
 import './globals.css'
+import './themes.css'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
+import { DesignThemeProvider } from '@/lib/design-theme-context'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Script from 'next/script'
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-inter'
+  variable: '--font-inter',
 })
+
+// Theme fonts, self-hosted via next/font so each design looks the same on every
+// OS instead of falling back to whatever the visitor happens to have installed.
+const bricolage = Bricolage_Grotesque({
+  subsets: ['latin'],
+  variable: '--font-bricolage',
+})
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
+})
+const archivo = Archivo({
+  subsets: ['latin'],
+  variable: '--font-archivo',
+})
+const sourceSerif = Source_Serif_4({
+  subsets: ['latin'],
+  variable: '--font-source-serif',
+})
+
+const fontVariables = [
+  inter,
+  bricolage,
+  spaceGrotesk,
+  archivo,
+  sourceSerif,
+]
+  .map(f => f.variable)
+  .join(' ')
 
 export const metadata: Metadata = {
   title: 'Chess Kenya Grand Prix',
@@ -18,10 +55,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${inter.className}`}>
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
+      <body className={`${fontVariables} ${inter.className}`}>
+        {/* Apply the saved design theme before paint to avoid a default-theme
+            flash. Mirrors THEME_STORAGE_KEY + isThemedPath() in design-themes.ts. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('gp-design-theme');if(!t||t==='default')return;var p=location.pathname;var themed=p==='/'||['/rankings','/ladies','/insights','/tournament','/player'].some(function(x){return p===x||p.indexOf(x+'/')===0;});if(themed)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+          }}
+        />
         {/* Neobrutalist background - subtle Kenyan palette undertones */}
-        <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div data-app-bg className="fixed inset-0 -z-10 overflow-hidden">
           <div className="absolute inset-0 bg-[#f4f2ef]" />
           {/* Red-to-green diagonal wash */}
           <div className="absolute inset-0 bg-gradient-to-br from-[#f5d5cd] via-[#f4f2ef] to-[#d2e8d8] opacity-60" />
@@ -31,14 +75,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#1a1a1a06_1px,transparent_1px),linear-gradient(to_bottom,#1a1a1a06_1px,transparent_1px)] bg-[size:48px_48px]" />
         </div>
         
-        <div className="relative flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">
-            <div className="container mx-auto max-w-7xl px-3 py-4">{children}</div>
-          </main>
-          <Footer />
-        </div>
+        <DesignThemeProvider>
+          <div className="relative flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">
+              <div className="container mx-auto max-w-7xl px-3 py-4">{children}</div>
+            </main>
+            <Footer />
+          </div>
+        </DesignThemeProvider>
         <SpeedInsights />
+        {/* Queue custom events fired before the deferred Plausible script loads. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}`,
+          }}
+        />
         <Script
           defer
           data-domain="1700chess.sh"
