@@ -436,9 +436,11 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                         isInvalid ? 'opacity-70' : ''
                       )}>
                       <CustomTableCell className="text-center w-[40px]">
-                        {isCounting && (
+                        {isInvalid ? (
+                          <div className="h-4 w-4 rounded-full bg-red-500 flex items-center justify-center mx-auto"><X className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
+                        ) : isCounting ? (
                           <div className="h-4 w-4 rounded-full bg-emerald-600 flex items-center justify-center mx-auto"><Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
-                        )}
+                        ) : null}
                       </CustomTableCell>
                       <CustomTableCell className="whitespace-nowrap">
                         <Link
