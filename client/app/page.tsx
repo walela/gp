@@ -165,7 +165,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           </div>
                         </div>
                         <div className="flex items-center justify-between sm:justify-end gap-3 sm:min-w-[180px]">
-                          <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">
+                          <span className="inline-flex items-center rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                             {formatTimeAway(tournament.startDate)}
                           </span>
                           {tournament.registrationUrl && !isTournamentInProgress(tournament) ? (

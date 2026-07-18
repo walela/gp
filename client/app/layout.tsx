@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import {
   Inter,
   Bricolage_Grotesque,
-  Space_Grotesk,
   Archivo,
   Source_Serif_4,
 } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import './themes.css'
 import { Header } from '@/components/layout/header'
@@ -25,9 +25,12 @@ const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
 })
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
+// Clash Grotesk (Indian Type Foundry) is self-hosted from its Fontshare
+// release — it isn't on Google Fonts. Variable file covers weights 200–700.
+const clashGrotesk = localFont({
+  src: './fonts/ClashGrotesk-Variable.woff2',
+  weight: '200 700',
+  variable: '--font-clash',
 })
 const archivo = Archivo({
   subsets: ['latin'],
@@ -41,7 +44,7 @@ const sourceSerif = Source_Serif_4({
 const fontVariables = [
   inter,
   bricolage,
-  spaceGrotesk,
+  clashGrotesk,
   archivo,
   sourceSerif,
 ]

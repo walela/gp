@@ -191,10 +191,12 @@ html[data-theme] :is(.border-blue-200, .border-amber-200, .border-green-200, .bo
   border-color: var(--t-line) !important;
 }
 /* Neutral status pill (e.g. "In progress" / time-away): give it an opaque
-   chip surface and a guaranteed-contrast ink instead of muted grey-on-grey. */
+   chip surface, a guaranteed-contrast ink, and a themed outline so it never
+   dissolves into a same-coloured (e.g. grey zebra) row background. */
 html[data-theme] .rounded-full:is(.bg-gray-200, .bg-gray-100) {
   background-color: var(--t-chip) !important;
   color: var(--t-chip-ink) !important;
+  border-color: var(--t-line) !important;
 }
 html[data-theme] .rounded-full:is(.bg-gray-200, .bg-gray-100) :is(span, a) {
   color: var(--t-chip-ink) !important;
@@ -202,7 +204,7 @@ html[data-theme] .rounded-full:is(.bg-gray-200, .bg-gray-100) :is(span, a) {
 
 /* ============================================================
    THEME: Brutalist (raw web brutalism)
-   Stark industrial grotesque (Space Grotesk), browser-blue
+   Contemporary display grotesque (Clash Grotesk), browser-blue
    underlined links, hard 2px black grid, zero shadow, zero radius.
    ============================================================ */
 html[data-theme='brutalist'] {
@@ -226,8 +228,8 @@ html[data-theme='brutalist'] {
   --t-border-w: 2px;
   --t-shadow: none;
   --t-shadow-lg: none;
-  --t-font: var(--font-space-grotesk), 'Arial Narrow', Arial, sans-serif;
-  --t-font-head: var(--font-space-grotesk), 'Arial Narrow', Arial, sans-serif;
+  --t-font: var(--font-clash), 'Helvetica Neue', Arial, sans-serif;
+  --t-font-head: var(--font-clash), 'Helvetica Neue', Arial, sans-serif;
 }
 /* hard 2px black borders, no shadows anywhere */
 html[data-theme='brutalist']
@@ -274,7 +276,7 @@ html[data-theme='neo-brutalist'] {
   --t-accent: #2e5bff;
   --t-accent-ink: #ffffff;
   --t-line: #000000;
-  --t-chip: #9ef0c1;
+  --t-chip: #ffe500;
   --t-chip-ink: #050505;
   --t-radius: 0px;
   --t-radius-pill: 0px;
