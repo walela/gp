@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { SearchIcon, Loader2 } from 'lucide-react'
+import { trackEvent } from '@/lib/analytics'
 
 interface SearchFormProps {
   defaultValue?: string
@@ -22,6 +23,7 @@ export function SearchForm({ defaultValue = '' }: SearchFormProps) {
       const params = new URLSearchParams(searchParams)
       if (searchValue.trim()) {
         params.set('q', searchValue.trim())
+        trackEvent('Rankings search')
       } else {
         params.delete('q')
       }

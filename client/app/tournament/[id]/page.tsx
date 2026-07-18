@@ -16,6 +16,7 @@ import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
 import { getShortTournamentName, formatTournamentDate, inferTournamentLocation } from '@/utils/tournament'
 import { ExportButton } from '@/components/ui/export-button'
+import { TrackedLink } from '@/components/tracked-link'
 import { SectionSelector } from '@/components/tournament/section-selector'
 import { Metadata } from 'next'
 
@@ -230,13 +231,14 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               <ExternalLink className="h-4 w-4 text-blue-600 flex-shrink-0" />
               <div>
                 <p className="text-xs text-muted-foreground">External</p>
-                <a
+                <TrackedLink
+                  event="Outbound: chess-results"
                   href={`https://chess-results.com/tnr${tournament.id}.aspx?lan=1`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm font-medium text-blue-600 hover:underline">
                   chess-results.com
-                </a>
+                </TrackedLink>
               </div>
             </div>
           </div>
@@ -303,13 +305,14 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                   <ExternalLink className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <a
+                  <TrackedLink
+                    event="Outbound: chess-results"
                     href={`https://chess-results.com/tnr${tournament.id}.aspx?lan=1`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline text-sm">
                     View tournament on chess-results.com
-                  </a>
+                  </TrackedLink>
                 </div>
               </div>
             </div>

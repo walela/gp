@@ -1,13 +1,14 @@
 import React from 'react'
-import Link from 'next/link'
 import { ExternalLink } from 'lucide-react'
+import { TrackedLink } from '@/components/tracked-link'
 
 export function Footer() {
   return (
     <footer className="w-full border-t bg-background py-4">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-center items-center">
         <div className="flex flex-wrap items-center justify-center gap-8">
-          <Link
+          <TrackedLink
+            event="Outbound: GitHub"
             href="https://github.com/walela/gp"
             target="_blank"
             rel="noopener noreferrer"
@@ -23,7 +24,7 @@ export function Footer() {
             </svg>
             <span>GitHub</span>
             <ExternalLink size={10} className="opacity-70" />
-          </Link>
+          </TrackedLink>
         </div>
       </div>
     </footer>

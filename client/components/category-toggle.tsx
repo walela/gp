@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { trackEvent } from '@/lib/analytics'
 
 interface CategoryToggleProps {
   currentCategory: 'open' | 'ladies'
@@ -18,12 +19,14 @@ export function CategoryToggle({ currentCategory, className }: CategoryTogglePro
 
   const handleCategoryChange = (category: 'open' | 'ladies') => {
     if (category === 'ladies' && ladiesDisabled) return
+    if (category === currentCategory) return
 
     const params = new URLSearchParams(searchParams.toString())
     if (category === 'open') {
       params.delete('category')
     } else {
       params.set('category', category)
+      trackEvent('Category: Ladies')
     }
     // Reset to page 1 when changing category
     params.delete('page')

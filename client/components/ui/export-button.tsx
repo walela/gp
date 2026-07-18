@@ -3,6 +3,7 @@
 import { Download } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { trackEvent } from '@/lib/analytics'
 
 interface ExportButtonProps {
   url: string
@@ -16,6 +17,7 @@ export function ExportButton({ url, filename, className, children }: ExportButto
 
   const handleExport = async () => {
     setLoading(true)
+    trackEvent('Export CSV')
     try {
       const response = await fetch(url)
       if (!response.ok) throw new Error('Export failed')

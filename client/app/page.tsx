@@ -6,6 +6,7 @@ import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
+import { TrackedLink } from '@/components/tracked-link'
 import { ArrowRight } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -169,14 +170,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                             {formatTimeAway(tournament.startDate)}
                           </span>
                           {tournament.registrationUrl && !isTournamentInProgress(tournament) ? (
-                            <a
+                            <TrackedLink
+                              event="Register click"
                               href={tournament.registrationUrl}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition-colors">
                               Register
                               <ArrowRight className="h-3 w-3" aria-hidden="true" />
-                            </a>
+                            </TrackedLink>
                           ) : null}
                         </div>
                       </div>

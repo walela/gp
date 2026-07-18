@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/custom-table'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { trackEvent } from '@/lib/analytics'
 import { SeasonSelector } from '@/components/season-selector'
 
 interface PlayerClientContentProps {
@@ -351,6 +352,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                             href={result.player_card_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => trackEvent('Player card click')}
                             className="text-blue-600 hover:text-blue-800 transition-colors"
                             aria-label="View on chess-results.com"
                             title="View on chess-results.com">
@@ -477,6 +479,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                             href={result.player_card_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => trackEvent('Player card click')}
                             className="text-blue-600 hover:text-blue-800 inline-flex justify-center"
                             title="View player card on chess-results.com">
                             <ExternalLink className="h-4 w-4" />

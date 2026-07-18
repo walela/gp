@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+import { trackEvent } from '@/lib/analytics'
 
 interface SeasonSelectorProps {
   seasons: number[]
@@ -22,6 +23,8 @@ export function SeasonSelector({ seasons, currentSeason, className }: SeasonSele
   const searchParams = useSearchParams()
 
   const handleSeasonChange = (season: number) => {
+    if (season === currentSeason) return
+    trackEvent('Season changed')
     const params = new URLSearchParams(searchParams.toString())
     params.set('season', season.toString())
     // Reset to page 1 when changing season
