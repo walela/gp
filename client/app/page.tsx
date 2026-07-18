@@ -78,6 +78,16 @@ function sortTournamentsBySchedule(tournaments: Tournament[]) {
   })
 }
 
+// A tournament is "in progress" once its start day has arrived and its end day
+// has not yet passed. Registration is closed at that point, so the button hides.
+function isTournamentInProgress(tournament: Tournament) {
+  if (!tournament.startDate || !tournament.endDate) return false
+  const today = dayjs().startOf('day')
+  const started = today.diff(dayjs(tournament.startDate).startOf('day'), 'day') >= 0
+  const notEnded = dayjs(tournament.endDate).startOf('day').diff(today, 'day') >= 0
+  return started && notEnded
+}
+
 interface HomePageProps {
   searchParams: {
     season?: string
@@ -158,7 +168,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">
                             {formatTimeAway(tournament.startDate)}
                           </span>
-                          {tournament.registrationUrl ? (
+                          {tournament.registrationUrl && !isTournamentInProgress(tournament) ? (
                             <a
                               href={tournament.registrationUrl}
                               target="_blank"

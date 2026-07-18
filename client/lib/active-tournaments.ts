@@ -63,9 +63,8 @@ export const plannedTournaments: Tournament[] = [
     short_name: 'Mombasa Open',
     startDate: '2026-10-09',
     endDate: '2026-10-11',
-    location: 'Light Academy, Mombasa',
-    locationUrl: 'https://maps.google.com/?q=Light+Academy,+Mombasa,+Kenya',
-    confirmed: false,
+    location: 'TBA',
+    confirmed: true,
     detailsUrl: null
   },
   {
