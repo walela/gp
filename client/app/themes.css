@@ -89,12 +89,23 @@ html[data-theme] tbody tr:hover {
   background-color: var(--t-surface-3) !important;
 }
 
-/* Table header row (the <tr> carries odd:bg-white, so theme it too) */
+/* Table header row: the header <tr> carries utility bg classes (odd:bg-white,
+   and in some tables an explicit bg-gray-50) that otherwise win the cascade and
+   paint a light surface over the dark thead. The tr[class] selector bumps
+   specificity above the generic .bg-gray-*→surface rule so the header band
+   always uses the theme's header colour. */
 html[data-theme] thead,
-html[data-theme] thead tr {
+html[data-theme] thead tr,
+html[data-theme] thead tr[class] {
   background-color: var(--t-thead-bg) !important;
 }
-html[data-theme] thead :is(th, tr, span, div) {
+/* Header labels: the second selector re-states the muted text classes scoped
+   to thead so it out-specifies the global .text-gray-* → --t-ink-2 rule below,
+   which would otherwise paint header links dark-on-dark (illegible). */
+html[data-theme] thead :is(th, tr, td, span, div, a, button, p, svg),
+html[data-theme]
+  thead :is(.text-gray-900, .text-gray-800, .text-gray-600, .text-gray-500,
+    .text-gray-400, .text-muted-foreground, .text-blue-600, .text-blue-700) {
   color: var(--t-thead-ink) !important;
 }
 html[data-theme] table {
@@ -180,10 +191,13 @@ html[data-theme] header {
 
 /* ---------- Neutralise pastel chips so they fit each theme ----------
    Keep the *text* colour (it still signals status/qualification) but
-   drop the light backgrounds onto a themed chip surface. */
+   drop the light backgrounds onto a themed chip surface.
+   NOTE: semantic success (green) and danger (red) backgrounds are
+   deliberately excluded so a "valid" tick stays green and an invalid
+   one stays red, instead of collapsing into the theme's accent chip. */
 html[data-theme]
-  :is(.bg-blue-50, .bg-blue-50\/70, .bg-green-50, .bg-green-100, .bg-amber-100,
-      .bg-cyan-50, .bg-cyan-100, .bg-teal-50, .bg-teal-100, .bg-red-100,
+  :is(.bg-blue-50, .bg-blue-50\/70, .bg-amber-100,
+      .bg-cyan-50, .bg-cyan-100, .bg-teal-50, .bg-teal-100,
       .bg-amber-50\/50, .bg-cyan-50\/70, .bg-teal-50\/80, .bg-blue-50\/70) {
   background-color: var(--t-chip) !important;
 }

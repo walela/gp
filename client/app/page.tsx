@@ -177,9 +177,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                               Register
                               <ArrowRight className="h-3 w-3" aria-hidden="true" />
                             </a>
-                          ) : (
-                            <span className="w-[76px]" />
-                          )}
+                          ) : null}
                         </div>
                       </div>
                     </div>
