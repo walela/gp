@@ -21,18 +21,6 @@ export interface Tournament {
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
   {
-    id: 'kitale-open-2026',
-    name: 'Kitale Open - Grand Prix',
-    short_name: 'Kitale Open',
-    startDate: '2026-07-18',
-    endDate: '2026-07-19',
-    location: 'West Side Hotel, Kitale',
-    locationUrl: 'https://maps.google.com/?q=West+Side+Hotel,+Kitale,+Kenya',
-    confirmed: true,
-    registrationUrl: 'https://forms.gle/ehuyRunnJfN6iN6f9',
-    detailsUrl: null
-  },
-  {
     id: 'minichess-gp-2026',
     name: 'Minichess Kenya Grand Prix',
     short_name: 'Minichess GP',

@@ -1260,6 +1260,7 @@ def admin_scrape_preview():
                     "fide_id": r.player.fide_id,
                     "federation": r.player.federation,
                     "rating": r.player.rating,
+                    "gender": r.player.gender,
                 },
                 "points": r.points,
                 "tpr": r.tpr,

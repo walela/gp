@@ -76,6 +76,7 @@ def scrape_and_save_tournament(tournament_id: str, tournament_name: str):
                     "fide_id": result.player.fide_id,
                     "rating": result.player.rating,
                     "federation": result.player.federation,
+                    "gender": result.player.gender,
                 },
                 "points": result.points,
                 "tpr": result.tpr,
