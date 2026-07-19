@@ -99,8 +99,11 @@ site-code deployments are not held behind the data cache.
 Set the same strong `REVALIDATE_SECRET` value in:
 
 - Vercel, for the protected `/api/revalidate` route.
-- GitHub Actions, so a successful Fly deployment invalidates cached results.
-- Fly, so production admin edits can invalidate cached results immediately.
+- GitHub Actions, so deployments invalidate cached results. The workflow also
+  synchronizes this value to Fly so production admin edits invalidate the cache.
+
+The Fly deployment workflow fails before deploying when its GitHub Actions
+secret is missing, rather than publishing new data with a stale frontend cache.
 
 Fly can optionally set `FRONTEND_REVALIDATE_URL` when the frontend revalidation
 endpoint is not `https://www.1700chess.sh/api/revalidate`. If a webhook is missed,
