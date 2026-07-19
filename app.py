@@ -12,6 +12,7 @@ import io
 import time
 import hmac
 import hashlib
+import requests as http_requests
 from functools import wraps
 from pathlib import Path
 from flask import Response
@@ -33,6 +34,11 @@ REQUEST_LOGGING_ENABLED = os.environ.get("REQUEST_LOGGING_ENABLED", "true").lowe
 REQUEST_IP_LOGGING_ENABLED = os.environ.get("REQUEST_IP_LOGGING_ENABLED", "true").lower() == "true"
 SLOW_REQUEST_MS = int(os.environ.get("SLOW_REQUEST_MS", "1000"))
 ADMIN_DEBUG_LOGIN = os.environ.get("ADMIN_DEBUG_LOGIN", "false").lower() == "true"
+FRONTEND_REVALIDATE_URL = os.environ.get(
+    "FRONTEND_REVALIDATE_URL",
+    "https://1700chess.sh/api/revalidate",
+)
+REVALIDATE_SECRET = os.environ.get("REVALIDATE_SECRET", "")
 
 
 def _get_client_ip() -> str:
@@ -41,6 +47,29 @@ def _get_client_ip() -> str:
     if x_forwarded_for:
         return x_forwarded_for.split(",")[0].strip()
     return request.headers.get("CF-Connecting-IP") or request.remote_addr or "unknown"
+
+
+def _revalidate_frontend_data() -> bool:
+    """Best-effort invalidation of the frontend's cached public API data."""
+    if not REVALIDATE_SECRET:
+        logger.info("frontend_revalidation_skipped secret_not_configured")
+        return False
+
+    try:
+        response = http_requests.post(
+            FRONTEND_REVALIDATE_URL,
+            headers={"Authorization": f"Bearer {REVALIDATE_SECRET}"},
+            timeout=5,
+        )
+        response.raise_for_status()
+        logger.info("frontend_revalidation_succeeded")
+        return True
+    except http_requests.RequestException:
+        # Database writes have already succeeded. Do not turn a temporary
+        # frontend/network problem into a failed admin mutation response; the
+        # one-day Next cache TTL remains the fallback.
+        logger.exception("frontend_revalidation_failed")
+        return False
 
 
 @app.before_request
@@ -70,12 +99,15 @@ def add_cache_headers(response):
         else:
             logger.info("request %s", log_payload)
 
-    """Add cache headers to GET requests (skip admin routes)."""
+    """Require HTTP clients to revalidate public API responses before reuse."""
     if request.method == 'GET' and response.status_code == 200 and not request.path.startswith('/api/admin'):
         if app.debug:
             response.headers['Cache-Control'] = 'no-store'
         else:
-            response.headers['Cache-Control'] = 'public, max-age=86400'
+            # Next's tagged Data Cache is the single cache owner. Keeping the
+            # origin revalidatable prevents an intermediary from returning old
+            # results after Next has invalidated its own cache.
+            response.headers['Cache-Control'] = 'no-cache, must-revalidate'
     return response
 
 
@@ -1333,6 +1365,7 @@ def admin_scrape_commit():
             source_id=tournament_id,
         )
         db.recalculate_rankings()
+        _revalidate_frontend_data()
         return jsonify({"ok": True, "tournament_id": db_tournament_id})
     except Exception as e:
         logger.error(f"Error committing scrape for {tournament_id}: {e}")
@@ -1360,6 +1393,7 @@ def admin_update_tournament(tournament_id):
     body = request.get_json(silent=True) or {}
     updated = db.update_tournament_metadata(tournament_id, **body)
     if updated:
+        _revalidate_frontend_data()
         return jsonify({"ok": True})
     return jsonify({"error": "Tournament not found or no changes"}), 404
 
@@ -1369,6 +1403,7 @@ def admin_update_tournament(tournament_id):
 def admin_delete_tournament(tournament_id):
     db.delete_tournament_data(tournament_id)
     db.recalculate_rankings()
+    _revalidate_frontend_data()
     return jsonify({"ok": True})
 
 
@@ -1379,6 +1414,7 @@ def admin_update_result(tournament_id, fide_id):
     updated = db.update_result(tournament_id, fide_id, **body)
     if updated:
         db.recalculate_rankings()
+        _revalidate_frontend_data()
         return jsonify({"ok": True})
     return jsonify({"error": "Result not found"}), 404
 
@@ -1389,6 +1425,7 @@ def admin_delete_result(tournament_id, fide_id):
     deleted = db.delete_result(tournament_id, fide_id)
     if deleted:
         db.recalculate_rankings()
+        _revalidate_frontend_data()
         return jsonify({"ok": True})
     return jsonify({"error": "Result not found"}), 404
 

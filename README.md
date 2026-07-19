@@ -90,6 +90,22 @@ npm run dev  # serves on http://localhost:3000
 NEXT_PUBLIC_API_URL=http://127.0.0.1:5004/api
 ```
 
+### Results cache revalidation
+
+Public API fetches are cached in the Next.js Data Cache for up to one day and
+share the `gp-data` cache tag. The frontend remains dynamically rendered, so
+site-code deployments are not held behind the data cache.
+
+Set the same strong `REVALIDATE_SECRET` value in:
+
+- Vercel, for the protected `/api/revalidate` route.
+- GitHub Actions, so a successful Fly deployment invalidates cached results.
+- Fly, so production admin edits can invalidate cached results immediately.
+
+Fly can optionally set `FRONTEND_REVALIDATE_URL` when the frontend revalidation
+endpoint is not `https://1700chess.sh/api/revalidate`. If a webhook is missed,
+the one-day cache lifetime provides automatic recovery.
+
 ### Font references
 
 - Maple Mono official download: https://font.subf.dev/en/download/

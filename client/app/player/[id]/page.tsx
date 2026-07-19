@@ -3,7 +3,8 @@ import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 import { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
+// Render HTML per request while allowing explicitly cached data fetches.
+export const revalidate = 0
 
 interface PlayerPageProps {
   params: { id: string }

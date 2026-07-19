@@ -6,7 +6,8 @@ import {
   Trophy, Dumbbell, Scale, Clock, AlertTriangle, Activity, Crosshair
 } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+// Render HTML per request while allowing explicitly cached data fetches.
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Season Insights - Chess Kenya Grand Prix',

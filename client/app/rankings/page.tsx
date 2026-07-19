@@ -37,7 +37,8 @@ export const metadata: Metadata = {
   }
 }
 
-export const dynamic = 'force-dynamic'
+// Render HTML per request while allowing explicitly cached data fetches.
+export const revalidate = 0
 
 // Smart name abbreviation function for very long names
 function getDisplayName(fullName: string): string {
