@@ -40,6 +40,24 @@ When a Grand Prix event is finished, update it in this order:
    - Once an event is scraped and saved as completed, remove it from `upcomingTournaments`.
    - If an event is postponed or not completed, update/move its static record instead of removing it.
 
+6. Deploy and verify cache revalidation.
+   - A successful Fly deployment does not by itself refresh the frontend. Public API fetches use the Next.js Data Cache with the `gp-data` tag.
+   - The Fly workflow must successfully call `https://www.1700chess.sh/api/revalidate` after deploying data.
+   - Verify the public site, tournament detail, Open rankings, and Ladies rankings after deployment. Do not treat a correct Fly API response as sufficient proof that the frontend is fresh.
+
+## Production Cache Revalidation
+
+- `REVALIDATE_SECRET` must use the same strong value in GitHub Actions and the production Vercel project. The deployment workflow synchronizes that value to Fly for admin-triggered invalidation.
+- Never print, log, commit, or expose the secret while testing. Load it from the relevant secret store or a protected temporary file and remove temporary files afterward.
+- The canonical endpoint is `https://www.1700chess.sh/api/revalidate`. Do not use a host that redirects to `www`: HTTP clients may drop the `Authorization` header across a host redirect, and a redirect can otherwise look like a successful invalidation.
+- Missing revalidation configuration is a deployment failure. Never silently skip invalidation and report success.
+- Expected endpoint behavior:
+  - An unauthenticated `POST` returns `401`. A `503` means Vercel does not have `REVALIDATE_SECRET` in that deployment.
+  - An authenticated `POST` returns JSON containing `{"revalidated":true,"tag":"gp-data"}`.
+- After revalidation, use a cache-busting query string when checking rendered production pages. Confirm that the new tournament appears, completed/upcoming counts are correct, and both ranking categories include the expected players.
+- If the Fly API has new data but rendered pages do not, suspect the Next.js tagged Data Cache first. If static upcoming data changed but completed results did not, that is especially strong evidence that the frontend build deployed while the data cache remained stale.
+- When adding or rotating this secret, redeploy Vercel so the route receives the new environment value. Also update GitHub Actions; the next Fly deployment will stage the same value on Fly.
+
 ## Sataranji Context
 
 As of April 20, 2026:
@@ -59,6 +77,7 @@ As of April 20, 2026:
   - `scripts/scrape_2026_tournaments.py`
   - `scripts/backfill_ladies_2025.py`
 - The admin scrape path in `app.py` is the more reliable source of truth for the current workflow.
+- A production database update can be correct while the public site remains stale. Compare the direct Fly API with cache-busted rendered pages and confirm that the revalidation workflow did not skip or redirect.
 
 ## Quick Checks
 
