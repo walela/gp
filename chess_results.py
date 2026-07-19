@@ -26,6 +26,7 @@ class Player:
     fide_id: Optional[str]
     federation: str
     rating: Optional[int]
+    gender: Optional[str] = None
     title: Optional[str] = None
     club: Optional[str] = None
 
@@ -434,10 +435,12 @@ class ChessResultsScraper:
             rank = int(cells[headers.index('rk.')].text)
             start_rank = int(cells[headers.index('sno')].text)
             
-            # Calculate TPR - handle different column names
+            # Calculate TPR from an explicitly labelled standings column when
+            # available. Event-specific TB columns are not safe fallbacks: their
+            # meaning is configured by the organiser and may be Buchholz, wins,
+            # rating K-factor, etc.
             tpr = 0
-            # Some events tuck performance under alternative tie-break columns (e.g., tb5)
-            tpr_columns = ['rp', 'tb6', 'tb5', 'tb4', 'tpr', 'perf']
+            tpr_columns = ['rp', 'tpr', 'perf']
             for col in tpr_columns:
                 if col in headers:
                     tpr_cell = cells[headers.index(col)]
@@ -447,26 +450,36 @@ class ChessResultsScraper:
                         except ValueError:
                             tpr = 0
                     break
-            
-            # Get FIDE ID if available
-            fide_id = self._extract_fide_id(cells[headers.index('name')], tournament_id, start_rank)
+
+            player_details = self._get_player_details(tournament_id, start_rank)
+            fide_id = player_details["fide_id"]
+            if player_details["tpr"] is not None:
+                tpr = player_details["tpr"]
+
+            gender = None
+            if 'sex' in headers:
+                sex = cells[headers.index('sex')].get_text(strip=True).lower()
+                if sex in {'f', 'w'}:
+                    gender = 'F'
         
             # Create player and result objects
-            player = Player(name=name, fide_id=fide_id, federation="KEN", rating=rating)
+            player = Player(
+                name=name,
+                fide_id=fide_id,
+                federation="KEN",
+                rating=rating,
+                gender=gender,
+            )
             result = TournamentResult(
                 player=player,
                 games_played=total_rounds,
                 total_rounds=total_rounds,
                 points=points,
                 tpr=tpr,
-                has_walkover=False,  # Will be updated later
+                has_walkover=player_details["has_walkover"],
                 rank=rank,
                 start_rank=start_rank
             )
-            
-            # Check for walkovers
-            if tournament_id:
-                result.has_walkover = self._check_for_walkover(tournament_id, start_rank, name)
             
             results.append(result)
             
@@ -480,9 +493,9 @@ class ChessResultsScraper:
             headers.append(header)
         return headers
     
-    def _extract_fide_id(self, cell, tournament_id: str, start_rank: int) -> Optional[str]:
-        """Extract FIDE ID from player cell."""
-        # Construct player details URL using starting rank
+    def _get_player_details(self, tournament_id: str, start_rank: int) -> Dict[str, Any]:
+        """Return FIDE ID, performance rating, and walkover state from player details."""
+        details = {"fide_id": None, "tpr": None, "has_walkover": False}
         try:
             response = self._request(
                 "GET",
@@ -497,17 +510,35 @@ class ChessResultsScraper:
                 },
             )
             player_soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Look for FIDE ID in player details
+
             fide_row = player_soup.find('td', string=re.compile(r'Fide-ID'))
             if fide_row and fide_row.find_next_sibling('td'):
                 fide_id = fide_row.find_next_sibling('td').text.strip()
                 if fide_id and fide_id.isdigit():
-                    return fide_id
-            return None
+                    details["fide_id"] = fide_id
+
+            performance_row = player_soup.find(
+                'td', string=re.compile(r'^\s*Performance rating\s*$', re.IGNORECASE)
+            )
+            if performance_row and performance_row.find_next_sibling('td'):
+                performance_text = performance_row.find_next_sibling('td').get_text(strip=True)
+                match = re.search(r'-?\d+', performance_text)
+                if match:
+                    details["tpr"] = int(match.group())
+
+            for table in player_soup.find_all('table', {'class': 'CRs1'}):
+                if "Rd." in table.text:
+                    results_text = table.get_text(" ", strip=True)
+                    details["has_walkover"] = 'K' in results_text or 'not paired' in results_text
+                    break
         except Exception as e:
-            logger.error(f"Error extracting FIDE ID: {str(e)}")
-            return None
+            logger.error(f"Error extracting player details: {str(e)}")
+
+        return details
+
+    def _extract_fide_id(self, cell, tournament_id: str, start_rank: int) -> Optional[str]:
+        """Extract FIDE ID from the player's details page."""
+        return self._get_player_details(tournament_id, start_rank)["fide_id"]
     
     def _extract_rating(self, rating_text: str) -> Optional[int]:
         """Extract numerical rating from text."""
@@ -523,37 +554,7 @@ class ChessResultsScraper:
         Check if a player likely had a walkover based on their points.
         This is a simplified check - ideally we'd look at individual games.
         """
-        # If points are not a multiple of 0.5, there might have been a walkover/forfeit
-        try:
-            response = self._request(
-                "GET",
-                f"tnr{tournament_id}.aspx",
-                params={
-                    "lan": 1,
-                    "art": 9,
-                    "fed": "KEN",
-                    "turdet": "YES",
-                    "flag": 30,
-                    "snr": start_rank,
-                },
-            )
-            player_soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Find all tables with class CRs1
-            results_tables = player_soup.find_all('table', {'class': 'CRs1'})
-            
-            # Look for the results table (it has "Rd." in its header)
-            results_text = ""
-            for table in results_tables:
-                if "Rd." in table.text:
-                    results_text = table.text.strip()
-                    break
-            
-            # Check for walkovers or missing rounds
-            return 'K' in results_text or 'not paired' in results_text
-        except Exception as e:
-            logger.error(f"Error fetching player game results: {str(e)}")
-            return False
+        return self._get_player_details(tournament_id, start_rank)["has_walkover"]
     
     def is_eligible_result(self, result: TournamentResult) -> bool:
         """

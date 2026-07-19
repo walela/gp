@@ -214,6 +214,7 @@ class Database:
                             "fide_id": getattr(player_obj, "fide_id", None),
                             "federation": getattr(player_obj, "federation", None),
                             "rating": getattr(player_obj, "rating", None),
+                            "gender": getattr(player_obj, "gender", None),
                         },
                         "points": getattr(result, "points", None),
                         "tpr": getattr(result, "tpr", None),
@@ -229,6 +230,7 @@ class Database:
                 player_fide_id = player_data.get("fide_id")
                 player_name = player_data.get("name")
                 player_federation = player_data.get("federation")
+                player_gender = 'F' if is_ladies_section else player_data.get("gender")
                 player_rating = result_dict.get("rating") or player_data.get("rating")
                 points = result_dict.get("points")
                 tpr = result_dict.get("tpr")
@@ -265,11 +267,13 @@ class Database:
                         INSERT INTO players (fide_id, name, federation, gender)
                         VALUES (?, ?, ?, ?)
                         ''',
-                        (player_fide_id, player_name, player_federation, 'F' if is_ladies_section else None),
+                        (player_fide_id, player_name, player_federation, player_gender),
                     )
                     player_db_id = c.lastrowid
-                elif is_ladies_section:
-                    # Mark existing player as female if in ladies section
+                elif player_gender == 'F':
+                    # Ladies-section membership or a source sex marker establishes
+                    # eligibility for the Ladies rankings without removing the
+                    # player's Open ranking eligibility.
                     c.execute('UPDATE players SET gender = ? WHERE id = ?', ('F', player_db_id))
 
                 c.execute(
