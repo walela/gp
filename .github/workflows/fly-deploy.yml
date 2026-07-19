@@ -12,7 +12,21 @@ jobs:
     concurrency: deploy-group    # optional: ensure only one action runs at a time
     steps:
       - uses: actions/checkout@v4
+      - name: Verify cache revalidation is configured
+        env:
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+        run: |
+          if [ -z "${REVALIDATE_SECRET}" ]; then
+            echo "::error::REVALIDATE_SECRET is not configured. Refusing to deploy data that the frontend cannot revalidate."
+            exit 1
+          fi
+
       - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Sync cache revalidation secret to Fly
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+        run: flyctl secrets set --stage REVALIDATE_SECRET="${REVALIDATE_SECRET}"
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
@@ -20,11 +34,6 @@ jobs:
         env:
           REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
         run: |
-          if [ -z "${REVALIDATE_SECRET}" ]; then
-            echo "REVALIDATE_SECRET is not configured; skipping frontend revalidation."
-            exit 0
-          fi
-
           curl --silent --show-error --fail-with-body \
             --location \
             --max-redirs 0 \
