@@ -1,7 +1,11 @@
+import { GP_DATA_CACHE } from '@/lib/data-cache'
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'
 
-const NO_CACHE = { cache: 'no-store' } as RequestInit
-
+// Public GP data changes only when tournament results or metadata are updated.
+// Cache each API URL in Next's Data Cache, then invalidate the shared tag after
+// a results deployment or admin edit. The one-day TTL is a safety net in case
+// an invalidation webhook is ever missed.
 export interface Tournament {
   id: string
   name: string
@@ -116,7 +120,7 @@ export async function getTournaments(
   if (params.page) searchParams.set('page', params.page.toString())
   if (params.season) searchParams.set('season', params.season.toString())
 
-  const response = await fetch(`${API_BASE}/tournaments?${searchParams}`, NO_CACHE)
+  const response = await fetch(`${API_BASE}/tournaments?${searchParams}`, GP_DATA_CACHE)
   if (!response.ok) throw new Error('Failed to fetch tournaments')
   return response.json()
 }
@@ -126,7 +130,7 @@ export interface SeasonsResponse {
 }
 
 export async function getSeasons(): Promise<SeasonsResponse> {
-  const response = await fetch(`${API_BASE}/seasons`, NO_CACHE)
+  const response = await fetch(`${API_BASE}/seasons`, GP_DATA_CACHE)
   if (!response.ok) throw new Error('Failed to fetch seasons')
   return response.json()
 }
@@ -144,7 +148,7 @@ export async function getTournamentDetails(
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
 
-  const response = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`, NO_CACHE)
+  const response = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`, GP_DATA_CACHE)
   if (!response.ok) throw new Error('Failed to fetch tournament details')
   return response.json()
 }
@@ -174,7 +178,7 @@ export async function getRankings({
   if (gender) {
     url += `&gender=${gender}`
   }
-  const res = await fetch(url, NO_CACHE)
+  const res = await fetch(url, GP_DATA_CACHE)
   const data = await res.json()
   return data as RankingsResponse
 }
@@ -185,7 +189,7 @@ export async function getPlayer(id: string, params: { season?: number; gender?: 
   if (params.gender) searchParams.set('gender', params.gender)
   const queryString = searchParams.toString()
   const url = queryString ? `${API_BASE}/player/${id}?${queryString}` : `${API_BASE}/player/${id}`
-  const res = await fetch(url, NO_CACHE)
+  const res = await fetch(url, GP_DATA_CACHE)
   const data = await res.json()
   return data as PlayerDetails
 }
@@ -203,7 +207,7 @@ export async function getTournament(
   if (params.dir) searchParams.set('dir', params.dir)
   if (params.page) searchParams.set('page', params.page.toString())
 
-  const res = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`, NO_CACHE)
+  const res = await fetch(`${API_BASE}/tournament/${id}?${searchParams}`, GP_DATA_CACHE)
   const data = await res.json()
   return data as TournamentDetails
 }
@@ -255,13 +259,13 @@ export interface InsightsResponse {
 }
 
 export async function getInsights(season: number): Promise<InsightsResponse> {
-  const res = await fetch(`${API_BASE}/${season}/insights`, NO_CACHE)
+  const res = await fetch(`${API_BASE}/${season}/insights`, GP_DATA_CACHE)
   if (!res.ok) throw new Error('Failed to fetch insights')
   return res.json()
 }
 
 export async function getTournamentAllResults(id: string): Promise<TournamentResult[]> {
-  const res = await fetch(`${API_BASE}/tournament/${id}?all_results=true`, NO_CACHE)
+  const res = await fetch(`${API_BASE}/tournament/${id}?all_results=true`, GP_DATA_CACHE)
   const data = await res.json()
   return data.results as TournamentResult[]
 }

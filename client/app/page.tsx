@@ -9,7 +9,8 @@ import { getSeasons } from '@/services/api'
 import { TrackedLink } from '@/components/tracked-link'
 import { ArrowRight } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+// Render HTML per request while allowing explicitly cached data fetches.
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Chess Kenya Grand Prix - Official Tournament Tracker',

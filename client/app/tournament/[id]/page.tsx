@@ -20,7 +20,8 @@ import { TrackedLink } from '@/components/tracked-link'
 import { SectionSelector } from '@/components/tournament/section-selector'
 import { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
+// Render HTML per request while allowing explicitly cached data fetches.
+export const revalidate = 0
 
 interface TournamentPageProps {
   params: {

@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getTournaments } from '@/services/api'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 86400
 
 const BASE_URL = 'https://1700chess.sh'
 

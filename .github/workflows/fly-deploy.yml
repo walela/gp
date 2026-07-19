@@ -16,3 +16,21 @@ jobs:
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Revalidate frontend data cache
+        env:
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+        run: |
+          if [ -z "${REVALIDATE_SECRET}" ]; then
+            echo "REVALIDATE_SECRET is not configured; skipping frontend revalidation."
+            exit 0
+          fi
+
+          curl --silent --show-error --fail-with-body \
+            --location \
+            --max-redirs 0 \
+            --retry 12 \
+            --retry-delay 10 \
+            --retry-all-errors \
+            --request POST \
+            --header "Authorization: Bearer ${REVALIDATE_SECRET}" \
+            https://www.1700chess.sh/api/revalidate
