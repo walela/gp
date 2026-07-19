@@ -103,7 +103,7 @@ Set the same strong `REVALIDATE_SECRET` value in:
 - Fly, so production admin edits can invalidate cached results immediately.
 
 Fly can optionally set `FRONTEND_REVALIDATE_URL` when the frontend revalidation
-endpoint is not `https://1700chess.sh/api/revalidate`. If a webhook is missed,
+endpoint is not `https://www.1700chess.sh/api/revalidate`. If a webhook is missed,
 the one-day cache lifetime provides automatic recovery.
 
 ### Font references

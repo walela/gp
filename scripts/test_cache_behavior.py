@@ -14,12 +14,19 @@ def test_frontend_revalidation_uses_bearer_secret(monkeypatch):
     captured = {}
 
     class SuccessfulResponse:
+        is_redirect = False
+
         @staticmethod
         def raise_for_status():
             return None
 
-    def fake_post(url, *, headers, timeout):
-        captured.update(url=url, headers=headers, timeout=timeout)
+    def fake_post(url, *, headers, timeout, allow_redirects):
+        captured.update(
+            url=url,
+            headers=headers,
+            timeout=timeout,
+            allow_redirects=allow_redirects,
+        )
         return SuccessfulResponse()
 
     monkeypatch.setattr(app_module, "REVALIDATE_SECRET", "test-secret")
@@ -35,7 +42,26 @@ def test_frontend_revalidation_uses_bearer_secret(monkeypatch):
         "url": "https://example.test/api/revalidate",
         "headers": {"Authorization": "Bearer test-secret"},
         "timeout": 5,
+        "allow_redirects": False,
     }
+
+
+def test_frontend_revalidation_uses_canonical_default():
+    assert app_module.FRONTEND_REVALIDATE_URL == "https://www.1700chess.sh/api/revalidate"
+
+
+def test_frontend_revalidation_rejects_redirects(monkeypatch):
+    class RedirectResponse:
+        is_redirect = True
+        headers = {"Location": "https://unexpected.example/api/revalidate"}
+
+    def fake_post(*args, **kwargs):
+        return RedirectResponse()
+
+    monkeypatch.setattr(app_module, "REVALIDATE_SECRET", "test-secret")
+    monkeypatch.setattr(app_module.http_requests, "post", fake_post)
+
+    assert app_module._revalidate_frontend_data() is False
 
 
 def test_frontend_revalidation_is_disabled_without_secret(monkeypatch):

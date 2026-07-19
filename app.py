@@ -36,7 +36,7 @@ SLOW_REQUEST_MS = int(os.environ.get("SLOW_REQUEST_MS", "1000"))
 ADMIN_DEBUG_LOGIN = os.environ.get("ADMIN_DEBUG_LOGIN", "false").lower() == "true"
 FRONTEND_REVALIDATE_URL = os.environ.get(
     "FRONTEND_REVALIDATE_URL",
-    "https://1700chess.sh/api/revalidate",
+    "https://www.1700chess.sh/api/revalidate",
 )
 REVALIDATE_SECRET = os.environ.get("REVALIDATE_SECRET", "")
 
@@ -60,7 +60,13 @@ def _revalidate_frontend_data() -> bool:
             FRONTEND_REVALIDATE_URL,
             headers={"Authorization": f"Bearer {REVALIDATE_SECRET}"},
             timeout=5,
+            allow_redirects=False,
         )
+        if response.is_redirect:
+            raise http_requests.TooManyRedirects(
+                f"Frontend revalidation unexpectedly redirected to {response.headers.get('Location', 'unknown')}",
+                response=response,
+            )
         response.raise_for_status()
         logger.info("frontend_revalidation_succeeded")
         return True
