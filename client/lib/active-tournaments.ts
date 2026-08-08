@@ -43,7 +43,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-09-05',
     endDate: '2026-09-06',
     location: 'TBA',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -74,7 +74,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-10-24',
     endDate: '2026-10-25',
     location: 'Kajiado',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {
@@ -106,7 +106,7 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-09-11',
     endDate: '2026-09-13',
     location: 'Kisii',
-    confirmed: true,
+    confirmed: false,
     detailsUrl: null
   },
   {

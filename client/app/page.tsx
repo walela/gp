@@ -155,26 +155,27 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 return (
                   <div
                     key={tournament.id}
-                    className="grid grid-cols-[2.75rem_minmax(0,1fr)] sm:grid-cols-[4.5rem_minmax(0,1fr)]">
-                    <div className="relative flex justify-center pt-4">
+                    className="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-1 sm:grid-cols-[4.5rem_minmax(0,1fr)]">
+                    <div className="relative flex items-center justify-center">
                       {index === 0 && (
-                        <Diamond className="absolute left-1/2 top-0 z-10 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 fill-emerald-600 text-emerald-600 drop-shadow-sm" aria-hidden="true" />
+                        <Diamond className="absolute left-1/2 top-0 z-10 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 fill-blue-600 text-blue-600 drop-shadow-sm" aria-hidden="true" />
                       )}
-                      <span className="absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 bg-gray-300" aria-hidden="true" />
-                      <span className="absolute bottom-0 left-1/2 top-16 w-px -translate-x-1/2 bg-gray-300" aria-hidden="true" />
+                      <span className="absolute bottom-[calc(50%+1.375rem)] left-1/2 top-0 w-px -translate-x-1/2 bg-gray-400" aria-hidden="true" />
+                      <span className="absolute bottom-0 left-1/2 top-[calc(50%+1.375rem)] w-px -translate-x-1/2 bg-gray-400" aria-hidden="true" />
                       {index === sortedActiveTournaments.length - 1 && (
-                        <Diamond className="absolute bottom-0 left-1/2 z-10 h-2.5 w-2.5 -translate-x-1/2 translate-y-1/2 fill-emerald-600 text-emerald-600 drop-shadow-sm" aria-hidden="true" />
+                        <Diamond className="absolute bottom-0 left-1/2 z-10 h-2.5 w-2.5 -translate-x-1/2 translate-y-1/2 fill-blue-600 text-blue-600 drop-shadow-sm" aria-hidden="true" />
                       )}
                       <time
                         dateTime={tournament.startDate}
-                        className="relative z-10 flex h-fit min-w-11 flex-col items-center text-xs font-medium leading-none tracking-wide text-gray-600">
-                        <span>{monthLabel}</span>
-                        <span className="mt-1 text-base">{dayLabel}</span>
-                        <Diamond className="mt-1 h-2 w-2 fill-blue-600 text-blue-600" aria-hidden="true" />
+                        className="relative z-10 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-400 bg-transparent text-gray-600">
+                        <span className="flex max-w-full flex-col items-center text-[9px] font-medium leading-none">
+                          <span>{monthLabel}</span>
+                          <span className="mt-1 text-sm tabular-nums">{dayLabel}</span>
+                        </span>
                       </time>
                     </div>
 
-                    <div className={`min-w-0 rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low ${index < sortedActiveTournaments.length - 1 ? 'mb-3' : ''}`}>
+                    <div className="my-1.5 min-w-0 rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low">
                       <div className="flex min-w-0 items-start justify-between gap-3">
                         <div className="min-w-0">
                           {detailHref ? (
