@@ -19,6 +19,7 @@ import { Pagination } from '@/components/ui/pagination'
 import { SeasonSelector } from '@/components/season-selector'
 import { CategoryToggle } from '@/components/category-toggle'
 import { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Player Rankings - Chess Kenya Grand Prix',
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     description: 'Official rankings for the Chess Kenya Grand Prix series. View top players, tournament performances and TPR ratings.',
     type: 'website',
     siteName: 'Chess Kenya Grand Prix',
-    url: 'https://1700chess.sh/rankings'
+    url: 'https://1700chess.sh'
   },
   twitter: {
     card: 'summary',
@@ -105,7 +106,7 @@ function getRankMovement(player: PlayerRanking): {
   }
 }
 
-interface RankingsPageProps {
+export interface RankingsPageProps {
   searchParams: {
     sort?: string
     dir?: 'asc' | 'desc'
@@ -117,7 +118,7 @@ interface RankingsPageProps {
   }
 }
 
-export default async function RankingsPage({ searchParams }: RankingsPageProps) {
+export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   // Properly await the searchParams object
   const params = await searchParams
 
@@ -135,6 +136,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
   const search = params.q || ''
   const category = params.category || 'open'
   const gender = category === 'ladies' ? 'f' as const : undefined
+  const rankingsBasePath = '/'
 
   const highlightCount = 9
   const topPlayersFetchCount = highlightCount + 3
@@ -236,11 +238,11 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
           <CustomTableHeader>
             <CustomTableRow>
               <CustomTableHead className="w-[36px] text-right">
-                <SortableHeader column="rank" label="Rank" basePath="/rankings" className="w-full hidden sm:block" />
-                <SortableHeader column="rank" label="#" basePath="/rankings" className="w-full sm:hidden" />
+                <SortableHeader column="rank" label="Rank" basePath={rankingsBasePath} className="w-full hidden sm:block" />
+                <SortableHeader column="rank" label="#" basePath={rankingsBasePath} className="w-full sm:hidden" />
               </CustomTableHead>
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">
-                <SortableHeader column="name" label="Name" basePath="/rankings" className="w-full" />
+                <SortableHeader column="name" label="Name" basePath={rankingsBasePath} className="w-full" />
               </CustomTableHead>
               {season !== currentYear && (
                 <>
@@ -257,21 +259,21 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                   column="tournaments_played"
                   label="Tournaments"
                   align="right"
-                  basePath="/rankings"
+                  basePath={rankingsBasePath}
                   className="w-full"
                 />
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_1' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader column="best_1" label="Best TPR" align="right" basePath="/rankings" className="w-full" />
+                <SortableHeader column="best_1" label="Best TPR" align="right" basePath={rankingsBasePath} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_2' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader column="best_2" label="Best 2" align="right" basePath="/rankings" className="w-full" />
+                <SortableHeader column="best_2" label="Best 2" align="right" basePath={rankingsBasePath} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_3' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader column="best_3" label="Best 3" align="right" basePath="/rankings" className="w-full" />
+                <SortableHeader column="best_3" label="Best 3" align="right" basePath={rankingsBasePath} className="w-full" />
               </CustomTableHead>
               <CustomTableHead className={cn('text-right', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
-                <SortableHeader column="best_4" label="Best 4" align="right" basePath="/rankings" className="w-full" />
+                <SortableHeader column="best_4" label="Best 4" align="right" basePath={rankingsBasePath} className="w-full" />
               </CustomTableHead>
             </CustomTableRow>
           </CustomTableHeader>
@@ -495,7 +497,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
             <Pagination
               currentPage={page}
               totalPages={total_pages}
-              basePath="/rankings"
+              basePath={rankingsBasePath}
               queryParams={{
                 sort,
                 dir,
@@ -510,4 +512,15 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
       </Card>
     </div>
   )
+}
+
+export default async function LegacyRankingsPage({ searchParams }: RankingsPageProps) {
+  const params = await searchParams
+  const query = new URLSearchParams()
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) query.set(key, value)
+  })
+
+  redirect(query.size > 0 ? `/?${query.toString()}` : '/')
 }

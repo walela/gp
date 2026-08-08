@@ -108,7 +108,7 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
       <div className="container mx-auto px-4 py-6 text-center">
         <h2 className="text-xl font-bold mb-2">Error Loading Player</h2>
         <p className="text-muted-foreground mb-4">{error.message || 'An unknown error occurred'}</p>
-        <Link href="/rankings" className="text-blue-600 hover:underline">
+        <Link href="/" className="text-blue-600 hover:underline">
           Return to Rankings
         </Link>
       </div>
@@ -121,7 +121,7 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
       <div className="container mx-auto px-4 py-6 text-center">
         <h2 className="text-xl font-bold mb-2">Player Not Found</h2>
         <p className="text-muted-foreground mb-4">The player with ID {id} could not be found.</p>
-        <Link href="/rankings" className="text-blue-600 hover:underline">
+        <Link href="/" className="text-blue-600 hover:underline">
           Return to Rankings
         </Link>
       </div>

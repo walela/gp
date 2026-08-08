@@ -17,13 +17,13 @@ export function MainNav() {
   const routes = [
     {
       href: '/',
-      label: 'Tournaments',
-      active: pathname === '/'
+      label: 'Rankings',
+      active: pathname === '/' || pathname === '/rankings'
     },
     {
-      href: '/rankings',
-      label: 'Rankings',
-      active: pathname === '/rankings'
+      href: '/tournaments',
+      label: 'Tournaments',
+      active: pathname === '/tournaments'
     },
     ...(isDev ? [{
       href: '/admin',
