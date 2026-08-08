@@ -54,6 +54,7 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-09-20',
     location: 'SABIS International School, Runda',
     confirmed: true,
+    registrationUrl: 'https://forms.gle/pTNQTupnMBVUSENH7-',
     detailsUrl: null
   },
   {
