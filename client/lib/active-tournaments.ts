@@ -22,13 +22,14 @@ export interface Tournament {
 export const upcomingTournaments: Tournament[] = [
   {
     id: 'minichess-gp-2026',
-    name: 'Minichess Kenya Grand Prix',
+    name: 'Minichess Open Chess Championship - Grand Prix Circuit',
     short_name: 'Minichess GP',
     startDate: '2026-08-29',
     endDate: '2026-08-30',
     location: 'KICC, Nairobi',
     locationUrl: 'https://maps.google.com/?q=KICC,+Nairobi,+Kenya',
-    confirmed: false,
+    confirmed: true,
+    registrationUrl: 'https://forms.gle/8Kd598aSVEnKQE1b9',
     detailsUrl: null
   }
 ]
@@ -36,13 +37,23 @@ export const upcomingTournaments: Tournament[] = [
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
   {
+    id: 'mao-open-2026',
+    name: 'The MAO Open - Grand Prix Circuit',
+    short_name: 'MAO Open',
+    startDate: '2026-09-05',
+    endDate: '2026-09-06',
+    location: 'TBA',
+    confirmed: true,
+    detailsUrl: null
+  },
+  {
     id: 'jumuiya-2026',
     name: 'Jumuiya Ya Afrika Mashariki Open - Grand Prix',
     short_name: 'Jumuiya Open',
     startDate: '2026-09-19',
     endDate: '2026-09-20',
-    location: 'TBA',
-    confirmed: false,
+    location: 'SABIS International School, Runda',
+    confirmed: true,
     detailsUrl: null
   },
   {
@@ -62,37 +73,39 @@ export const plannedTournaments: Tournament[] = [
     startDate: '2026-10-24',
     endDate: '2026-10-25',
     location: 'Kajiado',
-    confirmed: false,
+    confirmed: true,
     detailsUrl: null
   },
   {
     id: 'ctc-classical-2026',
-    name: 'CTC Classical - Grand Prix',
-    short_name: 'CTC Classical',
+    name: 'CTC Open - Grand Prix',
+    short_name: 'CTC Open',
     startDate: '2026-11-21',
     endDate: '2026-11-22',
     location: 'Nairobi',
-    confirmed: false,
+    confirmed: true,
     detailsUrl: null
   },
   {
     id: 'nairobi-county-open-2026',
     name: 'Nairobi County Open - Grand Prix',
     short_name: 'Nairobi County Open',
-    startDate: '2026-12-12',
-    endDate: '2026-12-14',
+    startDate: '2026-09-26',
+    endDate: '2026-09-27',
     location: 'Nairobi',
     locationUrl: 'https://maps.google.com/?q=Nairobi,+Kenya',
     confirmed: true,
+    registrationUrl: 'https://ncca.or.ke/Events/register/13',
     detailsUrl: null
   },
   {
-    id: 'grandmasters-open-2026',
-    name: 'Grandmasters Open - Grand Prix',
-    short_name: 'Grandmasters Open',
-    month: 'October 2026',
-    location: 'Kakamega',
-    confirmed: false,
+    id: 'kisii-open-2026',
+    name: 'Kisii Open - Grand Prix',
+    short_name: 'Kisii Open',
+    startDate: '2026-09-11',
+    endDate: '2026-09-13',
+    location: 'Kisii',
+    confirmed: true,
     detailsUrl: null
   },
   {

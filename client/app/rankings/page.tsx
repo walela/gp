@@ -389,12 +389,12 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps) 
                                       : 'text-blue-600 hover:text-blue-700'
                             )}
                             title={player.name}>
-                            <span className="sm:hidden flex items-center gap-1">
+                            <span className="flex items-center gap-1 sm:gap-2 sm:group-hover:underline">
                               {getDisplayName(player.name)}
-                              <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-blue-500 transition-colors" aria-hidden="true" />
-                            </span>
-                            <span className="hidden sm:flex items-center gap-2 group-hover:underline">
-                              {getDisplayName(player.name)}
+                              <ChevronRight
+                                className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-blue-500 sm:hidden"
+                                aria-hidden="true"
+                              />
                             </span>
                           </Link>
                         ) : (

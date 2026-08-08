@@ -124,114 +124,61 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
       </div>
 
       {/* Player Header */}
-      <div className="bg-white border border-gray-200 rounded-lg shadow-elevation-low overflow-hidden sm:block hidden">
-        <div className="bg-gray-50 px-3 py-3 sm:px-4 sm:py-4 border-b border-gray-200">
-          <div className="flex flex-col space-y-3">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{player.name}</h1>
+      <div className="overflow-hidden rounded-lg border border-gray-200/60 bg-white/95 shadow-elevation-low sm:border-gray-200 sm:bg-white">
+        <div className="border-b border-gray-200/60 bg-gray-50/80 px-3 py-2.5 sm:border-gray-200 sm:bg-gray-50 sm:px-4 sm:py-4">
+          <div className="flex flex-col space-y-2 sm:space-y-3">
+            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">{player.name}</h1>
 
             {player.fide_id && (
-              <div className="flex items-center gap-2">
-                <a
-                  href={`https://ratings.fide.com/profile/${player.fide_id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline text-sm flex items-center gap-1.5 font-medium">
-                  FIDE ID: {player.fide_id}
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              </div>
+              <a
+                href={`https://ratings.fide.com/profile/${player.fide_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:underline">
+                FIDE ID: {player.fide_id}
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>
             )}
           </div>
         </div>
 
-        {/* Stats Section */}
-        <div className="p-3 sm:p-4 grid grid-cols-5 gap-3 sm:gap-4 bg-gray-50">
-          <div className="flex flex-col items-center">
-            <Star className="h-4 w-4 text-amber-500 mb-1" />
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">Best</span>
-            <p className="font-semibold text-lg flex items-center gap-1">
+        <div className="grid grid-cols-3 gap-2.5 bg-gray-50/50 p-2.5 sm:grid-cols-5 sm:gap-4 sm:bg-gray-50 sm:p-4">
+          <div className="flex flex-col items-center rounded border border-gray-100 bg-white px-2.5 py-3 sm:border-0 sm:bg-transparent sm:p-0">
+            <Star className="mb-1 h-4 w-4 text-amber-500" />
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">Best</span>
+            <p className="flex items-center gap-1 text-lg font-semibold">
               {bestTpr ?? '-'}
-              {bestTpr && bestTpr >= 2000 && <Trophy className="h-3 w-3 text-amber-500" />}
+              {bestTpr && bestTpr >= 2000 && <Trophy className="hidden h-3 w-3 text-amber-500 sm:block" />}
             </p>
           </div>
 
-          <div className="flex flex-col items-center">
-            <Star className="h-4 w-4 text-blue-500 mb-1" />
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">Best 4</span>
-            <p className="font-semibold text-lg">{best4Average ?? '-'}</p>
+          <div className="flex flex-col items-center rounded border border-gray-100 bg-white px-2.5 py-3 sm:border-0 sm:bg-transparent sm:p-0">
+            <Star className="mb-1 h-4 w-4 text-blue-500" />
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">Best 4</span>
+            <p className="text-lg font-semibold">{best4Average ?? '-'}</p>
             {bestAverageInfo && bestAverageInfo.label !== 'Best 4' && bestAverageValue !== null && (
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-[10px] text-muted-foreground sm:text-[11px]">
                 ({bestAverageInfo.label}: {bestAverageValue})
               </span>
             )}
           </div>
 
-          <div className="flex flex-col items-center">
-            <TrendingUp className="h-4 w-4 text-gray-500 mb-1" />
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">Avg</span>
-            <p className="font-semibold text-lg">{averageTpr || '-'}</p>
+          <div className="hidden flex-col items-center sm:flex">
+            <TrendingUp className="mb-1 h-4 w-4 text-gray-500" />
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">Avg</span>
+            <p className="text-lg font-semibold">{averageTpr || '-'}</p>
           </div>
 
-          <div className="flex flex-col items-center">
-            <CalendarDays className="h-4 w-4 text-gray-500 mb-1" />
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">Tournaments</span>
-            <p className="font-semibold text-lg">{totalTournaments}</p>
+          <div className="hidden flex-col items-center sm:flex">
+            <CalendarDays className="mb-1 h-4 w-4 text-gray-500" />
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">Tournaments</span>
+            <p className="text-lg font-semibold">{totalTournaments}</p>
           </div>
 
-          <div className="flex flex-col items-center">
-            <Trophy className="h-4 w-4 text-green-500 mb-1" />
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">GP Ranking</span>
-            <p className="font-semibold text-lg">#{currentRank || '-'}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Player Header */}
-      <div className="sm:hidden">
-        <div className="bg-white/95 border border-gray-200/60 rounded-lg shadow-elevation-low overflow-hidden">
-          <div className="bg-gray-50/80 px-3 py-2.5 border-b border-gray-200/60">
-            <div className="flex flex-col space-y-2">
-              <h1 className="text-xl font-bold text-gray-900">{player.name}</h1>
-
-              {player.fide_id && (
-                <div className="flex items-center gap-2">
-                  <a
-                    href={`https://ratings.fide.com/profile/${player.fide_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm flex items-center gap-1.5 font-medium drop-shadow-sm">
-                    FIDE ID: {player.fide_id}
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Simplified Mobile Stats */}
-          <div className="p-2.5 grid grid-cols-3 gap-2.5 bg-gray-50/50">
-            <div className="flex flex-col items-center bg-white rounded px-2.5 py-3 border border-gray-100">
-              <Star className="h-4 w-4 text-amber-500 mb-1" />
-              <span className="text-xs text-gray-500 uppercase tracking-wide">Best</span>
-              <p className="font-bold text-lg text-gray-900">{bestTpr ?? '-'}</p>
-            </div>
-
-            <div className="flex flex-col items-center bg-white rounded px-2.5 py-3 border border-gray-100">
-              <Star className="h-4 w-4 text-blue-500 mb-1" />
-              <span className="text-xs text-gray-500 uppercase tracking-wide">Best 4</span>
-              <p className="font-bold text-lg text-gray-900">{best4Average ?? '-'}</p>
-              {bestAverageInfo && bestAverageInfo.label !== 'Best 4' && bestAverageValue !== null && (
-                <span className="text-[10px] text-gray-500">
-                  ({bestAverageInfo.label}: {bestAverageValue})
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col items-center bg-white rounded px-2.5 py-3 border border-gray-100">
-              <Trophy className="h-4 w-4 text-green-500 mb-1" />
-              <span className="text-xs text-gray-500 uppercase tracking-wide">Ranking</span>
-              <p className="font-bold text-lg text-gray-900">#{currentRank || '-'}</p>
-            </div>
+          <div className="flex flex-col items-center rounded border border-gray-100 bg-white px-2.5 py-3 sm:border-0 sm:bg-transparent sm:p-0">
+            <Trophy className="mb-1 h-4 w-4 text-green-500" />
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">GP Ranking</span>
+            <p className="text-lg font-semibold">#{currentRank || '-'}</p>
           </div>
         </div>
       </div>
@@ -260,17 +207,15 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
             </CustomTable>
           </Card>
         ) : (
-        <>
-        {/* Mobile View */}
-        <div className="block sm:hidden">
+        <div>
           <Card className="rounded-lg border border-gray-200/60 shadow-elevation-low overflow-hidden bg-white/95 p-0">
             <CustomTable className="h-full">
               <CustomTableHeader>
                 <CustomTableRow>
-                  <CustomTableHead className="w-[28px] px-1 text-center text-xs">
+                  <CustomTableHead className="w-[28px] px-1 text-center text-xs sm:w-[40px] sm:px-4">
                     <span className="sr-only">Counted</span>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-xs px-2" onClick={() => handleSort('tournament')}>
+                  <CustomTableHead className="min-w-[120px] cursor-pointer select-none px-2 text-xs sm:min-w-[200px] sm:px-4 sm:text-sm" onClick={() => handleSort('tournament')}>
                     <div className="flex items-center gap-1">
                       <span>Tournament</span>
                       <span className="text-muted-foreground">
@@ -278,114 +223,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead
-                    className="cursor-pointer select-none text-right text-xs px-2"
-                    onClick={() => handleSort('tpr')}>
-                    <div className="flex items-center gap-1 justify-end">
-                      <span>TPR</span>
-                      <span className="text-muted-foreground">
-                        {getSortIcon("tpr")}
-                      </span>
-                    </div>
-                  </CustomTableHead>
-                  <CustomTableHead
-                    className="cursor-pointer select-none text-right text-xs px-2"
-                    onClick={() => handleSort('points')}>
-                    <div className="flex items-center gap-1 justify-end">
-                      <span>Points</span>
-                      <span className="text-muted-foreground">
-                        {getSortIcon("points")}
-                      </span>
-                    </div>
-                  </CustomTableHead>
-                  <CustomTableHead className="w-[28px] px-1 text-center text-xs">
-                    <span className="sr-only">Link</span>
-                  </CustomTableHead>
-                </CustomTableRow>
-              </CustomTableHeader>
-              <CustomTableBody>
-                {sortedResults.map((result: PlayerResult, index) => {
-                  const isCounting = countingTournamentIds.has(result.tournament_id)
-                  const isInvalid = result.result_status && result.result_status !== 'valid'
-                  return (
-                    <CustomTableRow
-                      key={`${result.tournament_id}-${index}`}
-                      className={cn(
-                        'transition-colors',
-                        index % 2 === 0
-                          ? 'bg-gray-50/50 hover:bg-gray-100/50'
-                          : 'bg-white hover:bg-gray-50/50',
-                        isInvalid ? 'opacity-70' : ''
-                      )}>
-                      <CustomTableCell className="px-1 py-3 text-center w-[28px]">
-                        {isInvalid ? (
-                          <div className="h-4 w-4 rounded-full bg-red-500 flex items-center justify-center mx-auto"><X className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
-                        ) : isCounting ? (
-                          <div className="h-4 w-4 rounded-full bg-emerald-600 flex items-center justify-center mx-auto"><Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
-                        ) : null}
-                      </CustomTableCell>
-                      <CustomTableCell className="px-2 py-3">
-                        <Link
-                          href={`/tournament/${result.tournament_id}`}
-                          className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 text-sm leading-tight">
-                          {getShortTournamentName(result.tournament_name)}
-                        </Link>
-                        {isFemale && result.section === 'open' && (
-                          <span className="block text-xs uppercase tracking-wider text-gray-500 mt-0.5">Open</span>
-                        )}
-                      </CustomTableCell>
-                      <CustomTableCell className="text-right tabular-nums px-2 py-3">
-                        {isInvalid ? (
-                          <span className="text-gray-400 line-through text-sm">{result.tpr ?? '-'}</span>
-                        ) : (
-                          <span className={cn('text-sm font-medium', isCounting ? 'text-blue-700' : '')}>{result.tpr ?? '-'}</span>
-                        )}
-                      </CustomTableCell>
-                      <CustomTableCell className="text-right tabular-nums px-2 py-3">
-                        <span className={cn('text-sm font-medium', isCounting ? 'text-blue-700' : '')}>
-                          {result.points.toFixed(1)}/{result.rounds}
-                        </span>
-                      </CustomTableCell>
-                      <CustomTableCell className="px-1 py-3 text-center w-[28px]">
-                        {result.player_card_url && (
-                          <a
-                            href={result.player_card_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => trackEvent('Player card click')}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
-                            aria-label="View on chess-results.com"
-                            title="View on chess-results.com">
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </a>
-                        )}
-                      </CustomTableCell>
-                    </CustomTableRow>
-                  )
-                })}
-              </CustomTableBody>
-            </CustomTable>
-          </Card>
-        </div>
-
-        {/* Desktop View */}
-        <div className="hidden sm:block">
-          <Card className="rounded-lg border border-gray-200/60 shadow-elevation-low overflow-hidden bg-white/95 p-0">
-            <CustomTable className="h-full">
-              <CustomTableHeader>
-                <CustomTableRow>
-                  <CustomTableHead className="w-[40px] text-center">
-                    <span className="sr-only">Counted</span>
-                  </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none min-w-[200px]" onClick={() => handleSort('tournament')}>
-                    <div className="flex items-center gap-1">
-                      <span>Tournament</span>
-                      <span className="text-muted-foreground">
-                        {getSortIcon("tournament")}
-                      </span>
-                    </div>
-                  </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('start_rank')}>
+                  <CustomTableHead className="hidden cursor-pointer select-none text-right sm:table-cell" onClick={() => handleSort('start_rank')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>Starting Rank</span>
                       <span className="text-muted-foreground">
@@ -393,7 +231,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('rating')}>
+                  <CustomTableHead className="hidden cursor-pointer select-none text-right sm:table-cell" onClick={() => handleSort('rating')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>Rating</span>
                       <span className="text-muted-foreground">
@@ -401,7 +239,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('points')}>
+                  <CustomTableHead className="cursor-pointer select-none px-2 text-right text-xs sm:px-4 sm:text-sm" onClick={() => handleSort('points')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>Points</span>
                       <span className="text-muted-foreground">
@@ -409,7 +247,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="cursor-pointer select-none text-right" onClick={() => handleSort('tpr')}>
+                  <CustomTableHead className="cursor-pointer select-none px-2 text-right text-xs sm:px-4 sm:text-sm" onClick={() => handleSort('tpr')}>
                     <div className="flex items-center gap-1 justify-end">
                       <span>TPR</span>
                       <span className="text-muted-foreground">
@@ -417,8 +255,8 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                       </span>
                     </div>
                   </CustomTableHead>
-                  <CustomTableHead className="text-center">
-                    <span>Link</span>
+                  <CustomTableHead className="w-[28px] px-1 text-center text-xs sm:w-auto sm:px-4 sm:text-sm">
+                    <span className="sr-only sm:not-sr-only">Link</span>
                   </CustomTableHead>
                 </CustomTableRow>
               </CustomTableHeader>
@@ -437,14 +275,14 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           : 'bg-white hover:bg-gray-50/50',
                         isInvalid ? 'opacity-70' : ''
                       )}>
-                      <CustomTableCell className="text-center w-[40px]">
+                      <CustomTableCell className="w-[28px] px-1 text-center sm:w-[40px] sm:px-4">
                         {isInvalid ? (
                           <div className="h-4 w-4 rounded-full bg-red-500 flex items-center justify-center mx-auto"><X className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
                         ) : isCounting ? (
                           <div className="h-4 w-4 rounded-full bg-emerald-600 flex items-center justify-center mx-auto"><Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /></div>
                         ) : null}
                       </CustomTableCell>
-                      <CustomTableCell className="whitespace-nowrap">
+                      <CustomTableCell className="px-2 text-sm sm:px-4 sm:text-base">
                         <Link
                           href={`/tournament/${result.tournament_id}`}
                           className="font-medium text-blue-600 hover:text-blue-700 hover:underline underline-offset-4">
@@ -454,18 +292,18 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           <span className="block text-xs uppercase tracking-wider text-gray-500 mt-0.5">Open</span>
                         )}
                       </CustomTableCell>
-                      <CustomTableCell className="text-right tabular-nums">{result.start_rank ?? '-'}</CustomTableCell>
-                      <CustomTableCell className="text-right tabular-nums">{result.rating_in_tournament}</CustomTableCell>
-                      <CustomTableCell className="text-right tabular-nums">
+                      <CustomTableCell className="hidden text-right tabular-nums sm:table-cell">{result.start_rank ?? '-'}</CustomTableCell>
+                      <CustomTableCell className="hidden text-right tabular-nums sm:table-cell">{result.rating_in_tournament}</CustomTableCell>
+                      <CustomTableCell className="px-2 text-right text-sm tabular-nums sm:px-4 sm:text-base">
                         <span className={cn('font-medium', isCounting ? 'text-blue-700' : '')}>
                           {result.points.toFixed(1)}/{result.rounds}
                         </span>
                       </CustomTableCell>
-                      <CustomTableCell className="text-right tabular-nums">
+                      <CustomTableCell className="px-2 text-right text-sm tabular-nums sm:px-4 sm:text-base">
                         {isInvalid ? (
                           <div className="flex items-center justify-end space-x-2">
                             <span className="text-gray-400 line-through">{result.tpr ?? '-'}</span>
-                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md border border-red-200">
+                            <span className="hidden items-center rounded-md border border-red-200 bg-red-100 px-2 py-1 text-xs font-medium text-red-800 sm:inline-flex">
                               Invalid
                             </span>
                           </div>
@@ -473,14 +311,15 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                           <span className={cn('font-medium', isCounting ? 'text-blue-700' : '')}>{result.tpr ?? '-'}</span>
                         )}
                       </CustomTableCell>
-                      <CustomTableCell className="text-center">
-                        {result.start_rank && result.player_card_url ? (
+                      <CustomTableCell className="w-[28px] px-1 text-center sm:w-auto sm:px-4">
+                        {result.player_card_url ? (
                           <a
                             href={result.player_card_url}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => trackEvent('Player card click')}
-                            className="text-blue-600 hover:text-blue-800 inline-flex justify-center"
+                            className="inline-flex justify-center text-blue-600 hover:text-blue-800"
+                            aria-label="View player card on chess-results.com"
                             title="View player card on chess-results.com">
                             <ExternalLink className="h-4 w-4" />
                           </a>
@@ -495,7 +334,6 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
             </CustomTable>
           </Card>
         </div>
-        </>
         )}
       </div>
     </div>

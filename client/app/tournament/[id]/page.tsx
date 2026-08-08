@@ -189,137 +189,73 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
           />
         )}
 
-        {/* Tournament Metadata - Mobile */}
-        <div className="md:hidden">
-          <Card className={cn("p-4 shadow-elevation-low", hasSibling ? "rounded-b-lg rounded-t-none" : "rounded-lg")}>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4 text-blue-600 flex-shrink-0" />
+        <Card className={cn("border-0 bg-white/95 p-4 shadow-elevation-low", hasSibling ? "rounded-b-lg rounded-t-none" : "rounded-lg")}>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-4">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex-shrink-0 md:rounded-full md:bg-blue-50 md:p-2">
+                <CalendarDays className="h-4 w-4 text-blue-600 md:h-5 md:w-5" />
+              </div>
               <div>
                 <p className="text-xs text-muted-foreground">Date</p>
                 <p className="text-sm font-medium">{formatTournamentDate(tournament.start_date, tournament.end_date)}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-red-600 flex-shrink-0" />
+
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex-shrink-0 md:rounded-full md:bg-red-50 md:p-2">
+                <MapPin className="h-4 w-4 text-red-600 md:h-5 md:w-5" />
+              </div>
               <div>
                 <p className="text-xs text-muted-foreground">Location</p>
                 <p className="text-sm font-medium">{locationDisplay}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-purple-600 flex-shrink-0" />
+
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex-shrink-0 md:rounded-full md:bg-purple-50 md:p-2">
+                <Users className="h-4 w-4 text-purple-600 md:h-5 md:w-5" />
+              </div>
               <div>
                 <p className="text-xs text-muted-foreground">Participants</p>
                 <p className="text-sm font-medium">{tournament.total} players</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-amber-600 flex-shrink-0" />
+
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex-shrink-0 md:rounded-full md:bg-amber-50 md:p-2">
+                <Trophy className="h-4 w-4 text-amber-600 md:h-5 md:w-5" />
+              </div>
               <div>
                 <p className="text-xs text-muted-foreground">Format</p>
                 <p className="text-sm font-medium">{resolvedRounds} rounds</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex-shrink-0 md:rounded-full md:bg-yellow-50 md:p-2">
+                <Star className="h-4 w-4 text-yellow-600 md:h-5 md:w-5" />
+              </div>
               <div>
                 <p className="text-xs text-muted-foreground">Avg Top 10 TPR</p>
                 <p className="text-sm font-medium">{averageTopTpr}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <ExternalLink className="h-4 w-4 text-blue-600 flex-shrink-0" />
-              <div>
-                <p className="text-xs text-muted-foreground">External</p>
-                <TrackedLink
-                  event="Outbound: chess-results"
-                  href={`https://chess-results.com/tnr${tournament.id}.aspx?lan=1`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium text-blue-600 hover:underline">
-                  chess-results.com
-                </TrackedLink>
+
+            <div className="col-span-2 flex items-center gap-2 md:col-span-5 md:mt-1 md:gap-3">
+              <div className="flex-shrink-0 md:rounded-full md:bg-blue-50 md:p-2">
+                <ExternalLink className="h-4 w-4 text-blue-600 md:h-5 md:w-5" />
               </div>
+              <TrackedLink
+                event="Outbound: chess-results"
+                href={`https://chess-results.com/tnr${tournament.id}.aspx?lan=1`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium text-blue-600 hover:underline">
+                View tournament on chess-results.com
+              </TrackedLink>
             </div>
           </div>
         </Card>
-      </div>
-
-        {/* Tournament Metadata - Desktop */}
-        <div className="hidden md:block">
-          <Card className={cn("p-4 shadow-elevation-low border-0 bg-white/95", hasSibling ? "rounded-b-lg rounded-t-none" : "rounded-lg")}>
-          <div className="grid grid-cols-5 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-blue-50 p-2 rounded-full flex-shrink-0">
-                <CalendarDays className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Date</p>
-                <p className="font-medium text-sm">{formatTournamentDate(tournament.start_date, tournament.end_date)}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="bg-red-50 p-2 rounded-full flex-shrink-0">
-                <MapPin className="h-5 w-5 text-red-600" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Location</p>
-                <p className="font-medium text-sm">{locationDisplay}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="bg-purple-50 p-2 rounded-full flex-shrink-0">
-                <Users className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Participants</p>
-                <p className="font-medium text-sm">{tournament.total} players</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="bg-amber-50 p-2 rounded-full flex-shrink-0">
-                <Trophy className="h-5 w-5 text-amber-600" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Format</p>
-                <p className="font-medium text-sm">{resolvedRounds} rounds</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="bg-yellow-50 p-2 rounded-full flex-shrink-0">
-                <Star className="h-5 w-5 text-yellow-600" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Avg TPR (Top 10)</p>
-                <p className="font-medium text-sm">{averageTopTpr}</p>
-              </div>
-            </div>
-
-            <div className="col-span-5 mt-1">
-              <div className="flex items-center gap-3">
-                <div className="bg-blue-50 p-2 rounded-full flex-shrink-0">
-                  <ExternalLink className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <TrackedLink
-                    event="Outbound: chess-results"
-                    href={`https://chess-results.com/tnr${tournament.id}.aspx?lan=1`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm">
-                    View tournament on chess-results.com
-                  </TrackedLink>
-                </div>
-              </div>
-            </div>
-          </div>
-          </Card>
-        </div>
       </div>
 
       <Card className="rounded-lg border-0 shadow-elevation-low overflow-hidden bg-white/95 backdrop-blur-sm p-0">
@@ -381,12 +317,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
                         href={`/player/${result.player.fide_id}`}
                         className="font-medium text-blue-600 hover:underline"
                         title={result.player.name}>
-                        <span className="sm:hidden">
-                          {result.player.name.length > 15
-                            ? result.player.name.split(' ').slice(0, 2).join(' ') + '...'
-                            : result.player.name}
-                        </span>
-                        <span className="hidden sm:inline">{result.player.name}</span>
+                        <span className="block max-w-[12rem] truncate sm:max-w-none">{result.player.name}</span>
                       </Link>
                     ) : (
                       <span className="font-medium" title={result.player.name}>

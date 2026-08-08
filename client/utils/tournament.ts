@@ -129,6 +129,24 @@ export function formatTournamentDate(startDate?: string, endDate?: string): stri
   return `${start.format('MMMM D, YYYY')} - ${end!.format('MMMM D, YYYY')}`
 }
 
+/** Format a compact tournament date without ordinal suffixes. */
+export function formatTournamentDateCompact(startDate?: string, endDate?: string): string {
+  if (!startDate) return 'TBD'
+
+  const start = dayjs(startDate)
+  const end = endDate ? dayjs(endDate) : null
+
+  if (!end || start.isSame(end, 'day')) {
+    return start.format('MMM D')
+  }
+
+  if (start.isSame(end, 'month')) {
+    return `${start.format('MMM D')}–${end.format('D')}`
+  }
+
+  return `${start.format('MMM D')}–${end.format('MMM D')}`
+}
+
 /**
  * Format a tournament date range with ordinal suffixes (1st, 2nd, etc.)
  * @param startDate Start date string in ISO format (YYYY-MM-DD)

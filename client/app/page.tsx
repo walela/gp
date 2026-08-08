@@ -7,7 +7,9 @@ import { Metadata } from 'next'
 import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
 import { TrackedLink } from '@/components/tracked-link'
-import { ArrowRight } from 'lucide-react'
+import { formatTournamentDateCompact } from '@/utils/tournament'
+import { ArrowRight, Diamond } from 'lucide-react'
+import { CollapsibleSection } from '@/components/collapsible-section'
 
 // Render HTML per request while allowing explicitly cached data fetches.
 export const revalidate = 0
@@ -105,167 +107,150 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const season = params.season ? Number(params.season) : (seasons[0] || currentYear)
 
   const tournaments = await getTournamentData(season)
-  const sortedUpcomingTournaments = sortTournamentsBySchedule(upcomingTournaments)
-  const sortedPlannedTournaments = sortTournamentsBySchedule(plannedTournaments)
+  const nearTermTournamentIds = new Set(upcomingTournaments.map(tournament => tournament.id))
+  const activeTournamentsByDate = sortTournamentsBySchedule([...upcomingTournaments, ...plannedTournaments])
+  const sortedActiveTournaments = [
+    ...activeTournamentsByDate.filter(tournament => nearTermTournamentIds.has(tournament.id) || tournament.confirmed),
+    ...activeTournamentsByDate.filter(tournament => !nearTermTournamentIds.has(tournament.id) && !tournament.confirmed)
+  ]
+  const sectionHeaderClassName =
+    '-mx-3 mb-4 flex items-center justify-between border-y border-gray-200/80 bg-white/70 px-5 py-4 sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0'
+  const sectionTitleClassName =
+    'text-sm font-bold tracking-tight text-gray-800'
 
   return (
     <div className="min-h-screen">
-      <div className="py-4 space-y-8">
-        {sortedUpcomingTournaments.length > 0 && season === currentYear && (
-          <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold tracking-tight text-gray-800">UPCOMING ({sortedUpcomingTournaments.length})</h2>
-              <SeasonSelector seasons={seasons} currentSeason={season} />
-            </div>
+      <div className="space-y-3 py-2 sm:space-y-8 sm:py-4">
+        <div className="flex justify-end sm:hidden">
+          <SeasonSelector seasons={seasons} currentSeason={season} />
+        </div>
 
-            <div className="bg-white/95 rounded-lg shadow-elevation-low overflow-hidden">
-              <div className="divide-y divide-gray-100">
-                {sortedUpcomingTournaments.map((tournament, index) => {
-                  if (!tournament.startDate || !tournament.endDate) return null
+        {sortedActiveTournaments.length > 0 && season === currentYear && (
+          <CollapsibleSection
+            title={`UPCOMING (${sortedActiveTournaments.length})`}
+            headerClassName={`${sectionHeaderClassName} !mb-0 gap-3`}
+            titleClassName={sectionTitleClassName}
+            trailing={
+              <div className="hidden shrink-0 sm:block">
+                <SeasonSelector seasons={seasons} currentSeason={season} />
+              </div>
+            }>
+            <div className="pb-2 pt-3 sm:py-3">
+              {sortedActiveTournaments.map((tournament, index) => {
+                const hasDates = Boolean(tournament.startDate && tournament.endDate)
+                const isNearTerm = nearTermTournamentIds.has(tournament.id)
+                const monthLabel = tournament.startDate
+                  ? dayjs(tournament.startDate).format('MMM').toUpperCase()
+                  : tournament.month?.split(/\s+/)[0].slice(0, 3).toUpperCase() ?? 'TBA'
+                const dayLabel = tournament.startDate ? dayjs(tournament.startDate).format('DD') : '—'
+                const locationLabel = tournament.location === 'TBA' ? 'Venue TBA' : tournament.location
 
-                  const detailHref =
-                    typeof tournament.detailsUrl === 'string'
-                      ? tournament.detailsUrl
-                      : tournament.detailsUrl === undefined && /^\d+$/.test(tournament.id)
-                        ? `/tournament/${tournament.id}`
-                        : null
+                const detailHref =
+                  typeof tournament.detailsUrl === 'string'
+                    ? tournament.detailsUrl
+                    : tournament.detailsUrl === undefined && hasDates && /^\d+$/.test(tournament.id)
+                      ? `/tournament/${tournament.id}`
+                      : null
 
-                  return (
-                    <div
-                      key={tournament.id}
-                      className={`px-4 py-2 ${index === sortedUpcomingTournaments.length - 1 ? 'pb-4' : ''} ${index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'} hover:bg-gray-200 transition-colors`}>
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                return (
+                  <div
+                    key={tournament.id}
+                    className="grid grid-cols-[2.75rem_minmax(0,1fr)] sm:grid-cols-[4.5rem_minmax(0,1fr)]">
+                    <div className="relative flex justify-center pt-4">
+                      {index === 0 && (
+                        <Diamond className="absolute left-1/2 top-0 z-10 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 fill-emerald-600 text-emerald-600 drop-shadow-sm" aria-hidden="true" />
+                      )}
+                      <span className="absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 bg-gray-300" aria-hidden="true" />
+                      <span className="absolute bottom-0 left-1/2 top-16 w-px -translate-x-1/2 bg-gray-300" aria-hidden="true" />
+                      {index === sortedActiveTournaments.length - 1 && (
+                        <Diamond className="absolute bottom-0 left-1/2 z-10 h-2.5 w-2.5 -translate-x-1/2 translate-y-1/2 fill-emerald-600 text-emerald-600 drop-shadow-sm" aria-hidden="true" />
+                      )}
+                      <time
+                        dateTime={tournament.startDate}
+                        className="relative z-10 flex h-fit min-w-11 flex-col items-center text-xs font-medium leading-none tracking-wide text-gray-600">
+                        <span>{monthLabel}</span>
+                        <span className="mt-1 text-base">{dayLabel}</span>
+                        <Diamond className="mt-1 h-2 w-2 fill-blue-600 text-blue-600" aria-hidden="true" />
+                      </time>
+                    </div>
+
+                    <div className={`min-w-0 rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low ${index < sortedActiveTournaments.length - 1 ? 'mb-3' : ''}`}>
+                      <div className="flex min-w-0 items-start justify-between gap-3">
                         <div className="min-w-0">
                           {detailHref ? (
-                            <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
+                            <Link href={detailHref} className="text-sm font-medium text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline sm:text-base">
                               {tournament.short_name || tournament.name}
                             </Link>
                           ) : (
-                            <span className="text-sm text-blue-600 font-medium">
+                            <span className="text-sm font-medium text-blue-600 sm:text-base">
                               {tournament.short_name || tournament.name}
                             </span>
                           )}
-                          <div className="mt-1.5 flex items-center gap-x-3 text-xs text-gray-500">
-                            <span className="inline-flex items-center gap-1">
-                              <span className="w-4 text-center" aria-hidden="true">📅</span>
-                              {dayjs(tournament.startDate).format('MMM Do')}–{dayjs(tournament.endDate).format('Do')}
-                            </span>
-                            {tournament.rounds && (
-                              <span className="inline-flex items-center gap-1">
-                                <span className="w-4 text-center" aria-hidden="true">⚔️</span>
-                                {tournament.rounds} rounds
-                              </span>
-                            )}
-                          </div>
-                          <div className="mt-1.5 flex items-center gap-1 text-xs text-gray-500 min-w-0">
-                            <span className="w-4 text-center shrink-0" aria-hidden="true">📍</span>
-                            {tournament.locationUrl ? (
-                              <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">{tournament.location}</a>
-                            ) : (
-                              <span className="truncate">{tournament.location}</span>
-                            )}
-                          </div>
                         </div>
-                        <div className="flex items-center justify-between sm:justify-end gap-3 sm:min-w-[180px]">
+
+                        <div className="flex-shrink-0 text-xs font-medium">
+                          {tournament.status === 'postponed' ? (
+                            <span className="inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">Postponed</span>
+                          ) : isNearTerm || tournament.confirmed ? (
+                            <span className="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-green-700">Confirmed</span>
+                          ) : (
+                            <span className="text-gray-400">TBC</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="mt-2 flex items-center gap-1.5 text-xs text-gray-500">
+                        <span aria-hidden="true">📅</span>
+                        {hasDates
+                          ? formatTournamentDateCompact(tournament.startDate, tournament.endDate)
+                          : tournament.month?.replace(/\s+\d{4}$/, '') ?? 'TBA'}
+                      </p>
+                      <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-gray-500">
+                        <span className="shrink-0" aria-hidden="true">📍</span>
+                        {tournament.locationUrl ? (
+                          <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
+                            {locationLabel}
+                          </a>
+                        ) : <span className="truncate">{locationLabel}</span>}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between gap-2">
+                        {tournament.startDate && (
                           <span className="inline-flex items-center rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                             {formatTimeAway(tournament.startDate)}
                           </span>
-                          {tournament.registrationUrl && !isTournamentInProgress(tournament) ? (
-                            <TrackedLink
-                              event="Register click"
-                              href={tournament.registrationUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition-colors">
-                              Register
-                              <ArrowRight className="h-3 w-3" aria-hidden="true" />
-                            </TrackedLink>
-                          ) : null}
-                        </div>
+                        )}
+                        {tournament.registrationUrl && !isTournamentInProgress(tournament) && (
+                          <TrackedLink
+                            event="Register click"
+                            href={tournament.registrationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ml-auto inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100">
+                            Register
+                            <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                          </TrackedLink>
+                        )}
                       </div>
                     </div>
-                  )
-                })}
-              </div>
+                  </div>
+                )
+              })}
             </div>
-          </section>
+          </CollapsibleSection>
         )}
 
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold tracking-tight text-gray-800">COMPLETED ({tournaments.length})</h2>
-            {(sortedUpcomingTournaments.length === 0 || season !== currentYear) && (
-              <SeasonSelector seasons={seasons} currentSeason={season} />
+          <div className={sectionHeaderClassName}>
+            <h2 className={sectionTitleClassName}>COMPLETED ({tournaments.length})</h2>
+            {(sortedActiveTournaments.length === 0 || season !== currentYear) && (
+              <div className="hidden sm:block">
+                <SeasonSelector seasons={seasons} currentSeason={season} />
+              </div>
             )}
           </div>
 
           <TournamentTable tournaments={tournaments} />
         </section>
-
-        {sortedPlannedTournaments.length > 0 && season === currentYear && (
-          <section>
-            <h2 className="text-sm font-bold tracking-tight text-gray-800 mb-4">PLANNED ({sortedPlannedTournaments.length})</h2>
-
-            <div className="bg-white/95 rounded-lg shadow-elevation-low overflow-hidden">
-              <div className="divide-y divide-gray-100">
-                {sortedPlannedTournaments.map((tournament, index) => {
-                  const hasDates = Boolean(tournament.startDate && tournament.endDate)
-
-                  const detailHref =
-                    typeof tournament.detailsUrl === 'string'
-                      ? tournament.detailsUrl
-                      : tournament.detailsUrl === undefined && hasDates && /^\d+$/.test(tournament.id)
-                        ? `/tournament/${tournament.id}`
-                        : null
-
-                  return (
-                    <div
-                      key={tournament.id}
-                      className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'} hover:bg-gray-200 transition-colors`}>
-                      <div className="min-w-0">
-                        {detailHref ? (
-                          <Link href={detailHref} className="text-sm text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
-                            {tournament.short_name || tournament.name}
-                          </Link>
-                        ) : (
-                          <span className="text-sm text-blue-600 font-medium">
-                            {tournament.short_name || tournament.name}
-                          </span>
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">
-                          {hasDates
-                            ? `${dayjs(tournament.startDate!).format('MMM Do')}–${dayjs(tournament.endDate!).format('Do')}`
-                            : tournament.month ?? 'TBA'}
-                          <span className="mx-1.5">•</span>
-                          {tournament.locationUrl ? (
-                            <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{tournament.location}</a>
-                          ) : (
-                            tournament.location
-                          )}
-                        </p>
-                      </div>
-                      <div className="flex-shrink-0 ml-4 text-xs text-gray-400">
-                        {tournament.status === 'postponed' ? (
-                          <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
-                            Postponed
-                          </span>
-                        ) : tournament.confirmed ? (
-                          <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                            Confirmed
-                          </span>
-                        ) : (
-                          <span className="text-xs font-medium text-gray-400">
-                            TBC
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </section>
-        )}
       </div>
     </div>
   )

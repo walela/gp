@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from 'lucide-react'
-import { formatTournamentDateWithOrdinals, inferTournamentLocation } from '@/utils/tournament'
+import { formatTournamentDateCompact, inferTournamentLocation } from '@/utils/tournament'
 import {
   CustomTable,
   CustomTableHeader,
@@ -138,8 +138,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
               className="cursor-pointer select-none text-right hidden sm:table-cell"
               onClick={() => handleSort('avgTop10TPR')} onKeyDown={e => e.key === 'Enter' && handleSort('avgTop10TPR')} role="button" tabIndex={0}>
               <div className="flex items-center gap-1 justify-end">
-                <span className="hidden lg:inline">Avg Top 10 TPR</span>
-                <span className="lg:hidden">Avg TPR</span>
+                <span>Avg Top 10 TPR</span>
                 <span className="text-muted-foreground">
                   {getSortIcon("avgTop10TPR")}
                 </span>
@@ -161,7 +160,7 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
           {sortedTournaments.map((tournament, index) => {
             const location = tournament.location || inferTournamentLocation(tournament.name)
             const rounds = tournament.rounds ?? 6
-            const dates = formatTournamentDateWithOrdinals(tournament?.start_date, tournament?.end_date)
+            const dates = formatTournamentDateCompact(tournament?.start_date, tournament?.end_date)
 
             return (
               <CustomTableRow
@@ -174,11 +173,11 @@ export function TournamentTable({ tournaments }: TournamentTableProps) {
                       className="text-blue-600 hover:text-blue-700 hover:underline underline-offset-4 font-medium">
                       {tournament.short_name || tournament.name}
                     </Link>
-                    <div className="text-xs text-gray-500 sm:hidden space-x-2">
-                      <span>{dates}</span>
-                      <span className="lg:hidden">•</span>
-                      <span className="lg:hidden">{rounds} rounds</span>
-                    </div>
+                    <div
+                      className="text-xs text-gray-500 before:content-[attr(data-mobile-summary)] sm:hidden"
+                      data-mobile-summary={`${dates} • ${rounds} rounds`}
+                      aria-label={`${dates}, ${rounds} rounds`}
+                    />
                   </div>
                 </CustomTableCell>
                 <CustomTableCell className="whitespace-nowrap hidden sm:table-cell">{dates}</CustomTableCell>
