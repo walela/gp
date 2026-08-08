@@ -1,6 +1,5 @@
 'use client'
 
-import { Palette } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import {
   DropdownMenu,
@@ -31,10 +30,10 @@ export function DesignThemePicker({ className }: { className?: string }) {
         aria-label={`Change design theme (current: ${current.label})`}
         title={`Theme: ${current.label}`}
         className={cn(
-          'flex items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-600 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-800 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+          'text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           className
         )}>
-        <Palette className="h-4 w-4 shrink-0" aria-hidden="true" />
+        Theme
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel>Design theme</DropdownMenuLabel>
