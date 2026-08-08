@@ -108,11 +108,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   const tournaments = await getTournamentData(season)
   const nearTermTournamentIds = new Set(upcomingTournaments.map(tournament => tournament.id))
-  const activeTournamentsByDate = sortTournamentsBySchedule([...upcomingTournaments, ...plannedTournaments])
-  const sortedActiveTournaments = [
-    ...activeTournamentsByDate.filter(tournament => nearTermTournamentIds.has(tournament.id) || tournament.confirmed),
-    ...activeTournamentsByDate.filter(tournament => !nearTermTournamentIds.has(tournament.id) && !tournament.confirmed)
-  ]
+  const sortedActiveTournaments = sortTournamentsBySchedule([...upcomingTournaments, ...plannedTournaments])
   const sectionHeaderClassName =
     '-mx-3 mb-4 flex items-center justify-between border-y border-gray-200/80 bg-white/70 px-5 py-4 sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0'
   const sectionTitleClassName =
