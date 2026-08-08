@@ -9,10 +9,7 @@ export function Header() {
       <div className="container mx-auto max-w-7xl px-3">
         <div className="flex h-14 items-center justify-between gap-4">
           <Link href="/" className="flex items-center min-w-0">
-            <span className="font-semibold truncate text-base sm:text-lg tracking-tight">
-              <span className="hidden sm:inline">Chess Kenya Grand Prix Tracker</span>
-              <span className="sm:hidden">GP Tracker 2026</span>
-            </span>
+            <span className="truncate text-base font-semibold tracking-tight sm:text-lg">CK GP 2026</span>
           </Link>
           <div className="flex items-center gap-3">
             <MainNav />
