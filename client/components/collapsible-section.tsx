@@ -26,6 +26,7 @@ export function CollapsibleSection({
     <section>
       <div className={headerClassName}>
         <button
+          data-collapsible-trigger
           type="button"
           aria-expanded={isOpen}
           aria-controls={contentId}

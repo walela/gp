@@ -308,6 +308,14 @@ html[data-theme='neo-brutalist']
   border-style: solid !important;
   border-color: #000 !important;
 }
+/* A disclosure heading is already framed by its section rule; treating the
+   full-width trigger like a boxed form button creates a redundant inner box. */
+html[data-theme='brutalist'] button[data-collapsible-trigger][data-collapsible-trigger],
+html[data-theme='neo-brutalist'] button[data-collapsible-trigger][data-collapsible-trigger] {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
 html[data-theme='neo-brutalist'] h1,
 html[data-theme='neo-brutalist'] h2,
 html[data-theme='neo-brutalist'] h3 {
