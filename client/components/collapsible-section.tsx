@@ -33,7 +33,7 @@ export function CollapsibleSection({
           onClick={() => setIsOpen(open => !open)}
           className="group flex min-w-0 flex-1 items-center justify-between gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
           <h2 className={titleClassName}>{title}</h2>
-          <span className="-mr-1 flex size-7 shrink-0 items-center justify-center rounded-full text-gray-500 transition-colors duration-200 group-hover:bg-gray-100 group-hover:text-gray-700">
+          <span className="-mr-1 flex size-5 shrink-0 items-center justify-center rounded-full text-gray-500 transition-colors duration-200 group-hover:bg-gray-100 group-hover:text-gray-700">
             <ChevronRight
               strokeWidth={2.25}
               className={cn(
