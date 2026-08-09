@@ -171,7 +171,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                       </time>
                     </div>
 
-                    <div className="my-1.5 min-w-0 rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low">
+                    <div data-upcoming-card className="my-1.5 min-w-0 rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low">
                       <div className="flex min-w-0 items-center justify-between gap-3">
                         <div className="min-w-0">
                           {detailHref ? (

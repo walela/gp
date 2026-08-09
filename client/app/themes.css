@@ -365,9 +365,16 @@ html[data-theme='swiss'] h2 {
   padding-top: 8px !important;
   padding-bottom: 0 !important;
 }
-/* Cards are plain ruled boxes — no fill, no shadow */
-html[data-theme='swiss'] [data-slot='card'] {
+/* Cards are plain ruled boxes — no fill, no shadow. Upcoming timeline
+   panels are custom divs rather than shared Card components, so include
+   their explicit hook to keep the hierarchy intact. */
+html[data-theme='swiss'] :is([data-slot='card'], [data-upcoming-card]) {
   border: 1px solid #111 !important;
+  box-shadow: none !important;
+}
+html[data-theme='swiss'] [data-upcoming-card] {
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
 }
 /* Data table = classic Swiss double-rule system on white:
    thick rule above the heads, thin rule below, uppercase tracked labels */
