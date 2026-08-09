@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { DesignThemePicker } from '@/components/design-theme-picker'
 import { MainNav } from '@/components/layout/main-nav'
 import { Separator } from '@/components/ui/separator'
 
@@ -10,7 +11,10 @@ export function Header() {
           <Link href="/" className="flex items-center min-w-0">
             <span className="truncate text-base font-semibold tracking-tight sm:text-lg">CK GP 2026</span>
           </Link>
-          <MainNav />
+          <div className="flex items-center gap-1">
+            <MainNav />
+            <DesignThemePicker />
+          </div>
         </div>
       </div>
       <Separator />

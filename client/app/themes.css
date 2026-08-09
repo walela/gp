@@ -542,15 +542,6 @@ html[data-theme='glass']
   -webkit-backdrop-filter: blur(26px) saturate(190%) !important;
   border: 1px solid rgba(255, 255, 255, 0.82) !important;
 }
-/* Keep the now-floating theme control itself part of the glass system. */
-html[data-theme='glass'] [data-theme-picker] {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.32)) !important;
-  backdrop-filter: blur(22px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(190%) !important;
-  border-color: rgba(255, 255, 255, 0.82) !important;
-  box-shadow: 0 10px 28px rgba(72, 66, 155, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-}
-
 /* CONTENT CLARITY — the dense rankings table drops most of its translucency
    so the glass elsewhere reads as intentional. (:has scopes this to the data
    card, leaving the floating control/filter cards fully glassy.) */

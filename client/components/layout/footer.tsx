@@ -1,6 +1,5 @@
 import React from 'react'
 import { ExternalLink } from 'lucide-react'
-import { DesignThemePicker } from '@/components/design-theme-picker'
 import { TrackedLink } from '@/components/tracked-link'
 
 export function Footer() {
@@ -26,7 +25,6 @@ export function Footer() {
             <span>GitHub</span>
             <ExternalLink size={10} className="opacity-70" />
           </TrackedLink>
-          <DesignThemePicker className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-3 z-40 rounded-full border border-border/70 bg-background/80 px-3 py-1.5 shadow-elevation-low backdrop-blur-md sm:right-6" />
         </div>
       </div>
     </footer>
