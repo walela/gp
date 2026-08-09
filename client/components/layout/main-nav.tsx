@@ -39,7 +39,7 @@ export function MainNav() {
     <NavigationMenu>
       <NavigationMenuList className="hidden sm:flex">
         {routes.map(route => {
-          const isHighlighted = route.href !== '/admin' && (pendingHref === route.href || (!pendingHref && route.active))
+          const isPending = route.href !== '/admin' && pendingHref === route.href
 
           return (
             <NavigationMenuItem key={route.href}>
@@ -51,7 +51,9 @@ export function MainNav() {
                   className={route.href === '/admin'
                     ? 'inline-flex h-9 items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-3 text-sm font-semibold text-amber-800 shadow-sm transition-colors hover:border-amber-400 hover:bg-amber-100'
                     : `${navigationMenuTriggerStyle()} relative rounded-none bg-transparent text-sm hover:bg-transparent focus:bg-transparent sm:text-[15px] after:absolute after:inset-x-4 after:bottom-0 after:h-0.5 after:origin-center after:rounded-full after:bg-primary after:transition-transform after:duration-150 ${
-                      isHighlighted ? 'after:scale-x-100' : 'after:scale-x-0'
+                      !pendingHref && route.active ? 'text-primary' : 'text-muted-foreground/85'
+                    } ${
+                      isPending ? 'after:scale-x-100' : 'after:scale-x-0'
                     }`
                   }
                 >
@@ -71,7 +73,7 @@ export function MainNav() {
       {/* Mobile Navigation */}
       <div className="sm:hidden flex gap-4">
         {routes.map(route => {
-          const isHighlighted = route.href !== '/admin' && (pendingHref === route.href || (!pendingHref && route.active))
+          const isPending = route.href !== '/admin' && pendingHref === route.href
 
           return (
             <Link
@@ -81,8 +83,10 @@ export function MainNav() {
               onClick={() => !route.active && setPendingNavigation({ href: route.href, fromPathname: pathname })}
               className={route.href === '/admin'
                 ? 'inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-sm font-semibold text-amber-800'
-                : `relative inline-flex items-center gap-2 text-sm font-medium text-muted-foreground/85 after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:origin-center after:rounded-full after:bg-primary after:transition-transform after:duration-150 ${
-                  isHighlighted ? 'after:scale-x-100' : 'after:scale-x-0'
+                : `relative inline-flex items-center gap-2 text-sm font-medium after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:origin-center after:rounded-full after:bg-primary after:transition-transform after:duration-150 ${
+                  !pendingHref && route.active ? 'text-primary' : 'text-muted-foreground/85'
+                } ${
+                  isPending ? 'after:scale-x-100' : 'after:scale-x-0'
                 }`
               }>
               {route.href === '/admin' && (
