@@ -172,7 +172,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                     </div>
 
                     <div className="my-1.5 min-w-0 rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low">
-                      <div className="flex min-w-0 items-start justify-between gap-3">
+                      <div className="flex min-w-0 items-center justify-between gap-3">
                         <div className="min-w-0">
                           {detailHref ? (
                             <Link href={detailHref} className="text-sm font-medium text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline sm:text-base">
