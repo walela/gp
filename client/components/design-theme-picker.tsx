@@ -26,6 +26,7 @@ export function DesignThemePicker({ className }: { className?: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        data-theme-picker
         suppressHydrationWarning
         aria-label={`Change design theme (current: ${current.label})`}
         title={`Theme: ${current.label}`}
