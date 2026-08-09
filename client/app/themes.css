@@ -537,10 +537,13 @@ html[data-theme='glass'] header {
 /* keep popovers / dropdowns (theme picker, season) readable + frosted */
 html[data-theme='glass']
   :is([data-slot='dropdown-menu-content'], [data-slot='popover-content'], [data-slot='select-content']) {
-  background-color: rgba(255, 255, 255, 0.72) !important;
-  backdrop-filter: blur(26px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(190%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.82) !important;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(238, 242, 255, 0.92)) !important;
+  backdrop-filter: blur(32px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.94) !important;
+  box-shadow:
+    0 22px 60px rgba(55, 48, 130, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 /* CONTENT CLARITY — the dense rankings table drops most of its translucency
    so the glass elsewhere reads as intentional. (:has scopes this to the data
