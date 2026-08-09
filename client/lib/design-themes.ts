@@ -30,6 +30,7 @@ export const THEME_STORAGE_KEY = 'gp-design-theme'
 export const THEMED_PATHS = [
   '/',
   '/rankings',
+  '/tournaments',
   '/ladies',
   '/insights',
   '/tournament',
