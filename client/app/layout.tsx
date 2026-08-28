@@ -18,19 +18,22 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-// Theme fonts, self-hosted via next/font so each design looks the same on every
-// OS instead of falling back to whatever the visitor happens to have installed.
+// Alternate-theme fonts stay available, but only the default Inter face is
+// preloaded. The browser fetches these on demand when a theme uses them.
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
+  preload: false,
 })
 const archivo = Archivo({
   subsets: ['latin'],
   variable: '--font-archivo',
+  preload: false,
 })
 const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
   variable: '--font-source-serif',
+  preload: false,
 })
 
 const fontVariables = [
