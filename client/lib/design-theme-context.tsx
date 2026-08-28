@@ -34,7 +34,9 @@ function readStoredTheme(): DesignThemeId {
   if (typeof window === 'undefined') return DEFAULT_THEME
   try {
     const saved = window.localStorage.getItem(THEME_STORAGE_KEY)
-    return isDesignThemeId(saved) ? saved : DEFAULT_THEME
+    if (isDesignThemeId(saved)) return saved
+    if (saved) window.localStorage.setItem(THEME_STORAGE_KEY, DEFAULT_THEME)
+    return DEFAULT_THEME
   } catch {
     return DEFAULT_THEME
   }

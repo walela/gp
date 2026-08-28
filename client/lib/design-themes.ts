@@ -1,10 +1,8 @@
 export type DesignThemeId =
   | 'default'
-  | 'brutalist'
   | 'neo-brutalist'
   | 'swiss'
   | 'editorial'
-  | 'glass'
 
 export interface DesignThemeMeta {
   id: DesignThemeId
@@ -15,11 +13,9 @@ export interface DesignThemeMeta {
 // Order shown in the picker. "default" is the untouched baseline.
 export const DESIGN_THEMES: DesignThemeMeta[] = [
   { id: 'default', label: 'Default', blurb: 'The original look' },
-  { id: 'brutalist', label: 'Brutalist', blurb: 'Raw HTML, hard black grid' },
   { id: 'neo-brutalist', label: 'Neo-Brutalist', blurb: 'Chunky borders, offset shadows' },
   { id: 'swiss', label: 'Swiss', blurb: 'Ruled tables, tabular figures, red index' },
   { id: 'editorial', label: 'Editorial', blurb: 'Serif headlines, warm paper' },
-  { id: 'glass', label: 'Liquid Glass', blurb: 'Frosted panels, blur, soft depth' },
 ]
 
 export const DEFAULT_THEME: DesignThemeId = 'default'

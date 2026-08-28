@@ -5,7 +5,6 @@ import {
   Archivo,
   Source_Serif_4,
 } from 'next/font/google'
-import localFont from 'next/font/local'
 import './globals.css'
 import './themes.css'
 import { Header } from '@/components/layout/header'
@@ -25,13 +24,6 @@ const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
 })
-// Clash Grotesk (Indian Type Foundry) is self-hosted from its Fontshare
-// release — it isn't on Google Fonts. Variable file covers weights 200–700.
-const clashGrotesk = localFont({
-  src: './fonts/ClashGrotesk-Variable.woff2',
-  weight: '200 700',
-  variable: '--font-clash',
-})
 const archivo = Archivo({
   subsets: ['latin'],
   variable: '--font-archivo',
@@ -44,7 +36,6 @@ const sourceSerif = Source_Serif_4({
 const fontVariables = [
   inter,
   bricolage,
-  clashGrotesk,
   archivo,
   sourceSerif,
 ]
@@ -64,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             flash. Mirrors THEME_STORAGE_KEY + isThemedPath() in design-themes.ts. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('gp-design-theme');if(!t||t==='default')return;var p=location.pathname;var themed=p==='/'||['/rankings','/tournaments','/ladies','/insights','/tournament','/player'].some(function(x){return p===x||p.indexOf(x+'/')===0;});if(themed)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('gp-design-theme');var valid=['neo-brutalist','swiss','editorial'];if(!t||t==='default')return;if(valid.indexOf(t)<0){localStorage.setItem('gp-design-theme','default');return;}var p=location.pathname;var themed=p==='/'||['/rankings','/tournaments','/ladies','/insights','/tournament','/player'].some(function(x){return p===x||p.indexOf(x+'/')===0;});if(themed)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
           }}
         />
         {/* Neobrutalist background - subtle Kenyan palette undertones */}

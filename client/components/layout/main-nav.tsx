@@ -47,6 +47,7 @@ export function MainNav() {
                 <Link
                   href={route.href}
                   aria-current={route.active ? 'page' : undefined}
+                  aria-busy={isPending || undefined}
                   onClick={() => !route.active && setPendingNavigation({ href: route.href, fromPathname: pathname })}
                   className={route.href === '/admin'
                     ? 'inline-flex h-9 items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-3 text-sm font-semibold text-amber-800 shadow-sm transition-colors hover:border-amber-400 hover:bg-amber-100'
@@ -80,6 +81,7 @@ export function MainNav() {
               key={route.href}
               href={route.href}
               aria-current={route.active ? 'page' : undefined}
+              aria-busy={isPending || undefined}
               onClick={() => !route.active && setPendingNavigation({ href: route.href, fromPathname: pathname })}
               className={route.href === '/admin'
                 ? 'inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-sm font-semibold text-amber-800'
