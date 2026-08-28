@@ -12,7 +12,7 @@ interface SortableHeaderProps {
   className?: string
 }
 
-export function SortableHeader({ column, label, align = 'left', basePath = '/rankings', className }: SortableHeaderProps) {
+export function SortableHeader({ column, label, align = 'left', basePath = '/', className }: SortableHeaderProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const sort = searchParams.get('sort')

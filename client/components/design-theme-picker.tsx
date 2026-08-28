@@ -1,6 +1,6 @@
 'use client'
 
-import { Settings } from 'lucide-react'
+import { Palette } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import {
   DropdownMenu,
@@ -35,7 +35,7 @@ export function DesignThemePicker({ className }: { className?: string }) {
           'inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           className
         )}>
-        <Settings className="size-[18px]" aria-hidden="true" />
+        <Palette className="size-[18px]" aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel>Design theme</DropdownMenuLabel>

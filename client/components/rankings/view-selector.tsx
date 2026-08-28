@@ -7,6 +7,7 @@ import { ExportButton } from '@/components/ui/export-button'
 
 interface ViewSelectorProps {
   view: string
+  basePath?: string
   exportUrl?: string
   exportFilename?: string
 }
@@ -18,14 +19,14 @@ const viewOptions = [
   { value: 'best_4', label: 'Best 4' }
 ]
 
-export function ViewSelector({ view, exportUrl, exportFilename }: ViewSelectorProps) {
+export function ViewSelector({ view, basePath = '/', exportUrl, exportFilename }: ViewSelectorProps) {
   const searchParams = useSearchParams()
   
   const getViewUrl = (viewValue: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('view', viewValue)
     params.set('sort', viewValue)
-    return `/rankings?${params.toString()}`
+    return `${basePath}?${params.toString()}`
   }
   
   return (

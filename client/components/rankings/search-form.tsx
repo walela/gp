@@ -8,9 +8,15 @@ import { trackEvent } from '@/lib/analytics'
 
 interface SearchFormProps {
   defaultValue?: string
+  basePath?: string
+  placeholder?: string
 }
 
-export function SearchForm({ defaultValue = '' }: SearchFormProps) {
+export function SearchForm({
+  defaultValue = '',
+  basePath = '/',
+  placeholder = 'Search player list...'
+}: SearchFormProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
@@ -29,7 +35,8 @@ export function SearchForm({ defaultValue = '' }: SearchFormProps) {
       }
       params.delete('page') // Reset to first page on new search
       
-      router.push(`/rankings?${params.toString()}`)
+      const query = params.toString()
+      router.push(query ? `${basePath}?${query}` : basePath)
     })
   }
 
@@ -39,7 +46,7 @@ export function SearchForm({ defaultValue = '' }: SearchFormProps) {
         <Input
           type="search"
           name="q"
-          placeholder="Search player list..."
+          placeholder={placeholder}
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           className="h-11 rounded-md border-gray-200 bg-white/90 pr-12 shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0 focus-visible:border-blue-500"
@@ -57,4 +64,4 @@ export function SearchForm({ defaultValue = '' }: SearchFormProps) {
       </form>
     </div>
   )
-} 
+}

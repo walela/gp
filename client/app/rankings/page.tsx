@@ -218,12 +218,13 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
             currentSeason={season}
           />
         </div>
-        <SearchForm defaultValue={search} />
+        <SearchForm defaultValue={search} basePath={rankingsBasePath} />
       </div>
 
       <div className="mb-0 w-full">
         <ViewSelector
           view={view}
+          basePath={rankingsBasePath}
           exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/rankings/export?sort=${sort}&dir=${dir}&season=${season}${gender ? `&gender=${gender}` : ''}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
           exportFilename={`GP_${category}_rankings_${season}${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
         />
