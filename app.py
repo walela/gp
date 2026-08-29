@@ -237,6 +237,7 @@ def tournament(tournament_id):
         location = data.get("location")
         section = data.get("section", "open")
         results = data["results"]
+        stats = db.get_tournament_stats(tournament_id)
 
         rounds = data.get("rounds") or infer_rounds(tournament_name)
         location = location or infer_location(tournament_name)
@@ -277,6 +278,8 @@ def tournament(tournament_id):
                     "rounds": rounds,
                     "section": section,
                     "sibling_id": sibling_id,
+                    "avgTop10TPR": stats["avg_top10_tpr"],
+                    "avgTop24Rating": stats["avg_top24_rating"],
                     "results": results,
                     "total": len(results),
                     "page": 1,
@@ -301,6 +304,8 @@ def tournament(tournament_id):
                 "rounds": rounds,
                 "section": section,
                 "sibling_id": sibling_id,
+                "avgTop10TPR": stats["avg_top10_tpr"],
+                "avgTop24Rating": stats["avg_top24_rating"],
                 "results": paginated_results,
                 "total": len(results),
                 "page": page,
@@ -329,6 +334,7 @@ def rankings():
     dir = request.args.get("dir", "desc")
     page = int(request.args.get("page", "1"))
     search_query = request.args.get("q")  # Get the search query
+    include_top = request.args.get("include_top", "false").lower() == "true"
     per_page = 25
 
     # Get season (default to current year)
@@ -347,6 +353,20 @@ def rankings():
     reverse = dir == "desc"
 
     rank_change_map = db.get_rank_changes(top_n=25, season=season)
+
+    # The rankings page needs the Best 3 leaders for qualifier highlighting.
+    # Return them with the main response when requested so alternate sorts,
+    # searches, and later pages do not trigger a second full rankings request.
+    top_rankings = None
+    if include_top:
+        top_rankings = [
+            dict(player)
+            for player in sorted(
+                player_rankings,
+                key=lambda player: player["best_3"] if player["best_3"] is not None else -float("inf"),
+                reverse=True,
+            )[:12]
+        ]
 
     # Filter by search query if provided
     if search_query:
@@ -403,14 +423,16 @@ def rankings():
         player["previous_rank"] = change_info.get("previous_rank") if change_info else None
         player["is_new"] = change_info.get("is_new") if change_info else False
 
-    return jsonify(
-        {
-            "rankings": current_page_rankings,
-            "total": len(player_rankings),
-            "page": page,
-            "total_pages": total_pages,
-        }
-    )
+    payload = {
+        "rankings": current_page_rankings,
+        "total": len(player_rankings),
+        "page": page,
+        "total_pages": total_pages,
+    }
+    if top_rankings is not None:
+        payload["top_rankings"] = top_rankings
+
+    return jsonify(payload)
 
 
 @app.route("/api/player/<fide_id>")

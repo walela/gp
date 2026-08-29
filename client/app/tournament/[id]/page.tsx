@@ -10,7 +10,7 @@ import {
   CustomTableCell
 } from '@/components/ui/custom-table'
 import { SortableHeader } from '@/components/rankings/sortable-header'
-import { getTournament, getTournamentAllResults, TournamentResult } from '@/services/api'
+import { getTournament } from '@/services/api'
 import { notFound } from 'next/navigation'
 import { Pagination } from '@/components/ui/pagination'
 import { CalendarDays, MapPin, Users, Trophy, ExternalLink, Star } from 'lucide-react'
@@ -24,31 +24,23 @@ import { Metadata } from 'next'
 export const revalidate = 0
 
 interface TournamentPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     sort?: string
     dir?: 'asc' | 'desc'
     page?: string
-  }
+  }>
 }
 
-// Function to calculate average TPR of top 10 players
-function calculateAverageTopTpr(results: TournamentResult[]) {
-  // Filter out invalid TPRs
-  const validTprResults = results.filter(r => r.tpr !== null)
-
-  if (validTprResults.length === 0) {
-    return 0
-  }
-
-  // Sort by TPR in descending order
-  const sortedResults = [...validTprResults].sort((a, b) => (b.tpr || 0) - (a.tpr || 0))
-  // Take top 10 or all if less than 10
-  const top10 = sortedResults.slice(0, Math.min(10, sortedResults.length))
-  // Calculate average
-  return Math.round(top10.reduce((sum, r) => sum + (r.tpr || 0), 0) / top10.length)
+async function resolveTournamentRequest(searchParams: TournamentPageProps['searchParams']) {
+  const params = await searchParams
+  return {
+    sort: params.sort || 'points',
+    dir: params.dir || 'desc',
+    page: Number(params.page || '1'),
+  } as const
 }
 
 // Function to get tournament organizer
@@ -66,9 +58,12 @@ function getTournamentOrganizer(name: string) {
   return localClub ? `Chess Kenya & ${localClub}` : 'Chess Kenya'
 }
 
-export async function generateMetadata({ params }: TournamentPageProps): Promise<Metadata> {
-  const { id } = await params
-  const tournament = await getTournament(id, { page: 1 })
+export async function generateMetadata({ params, searchParams }: TournamentPageProps): Promise<Metadata> {
+  const [{ id }, requestOptions] = await Promise.all([
+    params,
+    resolveTournamentRequest(searchParams),
+  ])
+  const tournament = await getTournament(id, requestOptions)
   
   if (!tournament) {
     return {
@@ -101,29 +96,21 @@ export async function generateMetadata({ params }: TournamentPageProps): Promise
 }
 
 export default async function TournamentPage({ params, searchParams }: TournamentPageProps) {
-  // Properly await the params and searchParams objects
-  const { id } = await params
-  const searchParamsData = await searchParams
-  const sort = searchParamsData.sort || 'points'
-  const dir = (searchParamsData.dir || 'desc') as 'asc' | 'desc'
-  const page = Number(searchParamsData.page || '1')
+  const [{ id }, requestOptions] = await Promise.all([
+    params,
+    resolveTournamentRequest(searchParams),
+  ])
+  const { sort, dir, page } = requestOptions
 
-  // Fetch paginated tournament data for display
-  const tournament = await getTournament(id, {
-    sort,
-    dir,
-    page
-  })
-
-  // Fetch all tournament results for TPR calculation
-  const allResults = await getTournamentAllResults(id)
+  // generateMetadata uses this same URL, allowing Next to memoize the request
+  // across metadata and page rendering.
+  const tournament = await getTournament(id, requestOptions)
 
   if (!tournament) {
     notFound()
   }
 
-  // Calculate average TPR of top 10 players using all results
-  const averageTopTpr = calculateAverageTopTpr(allResults)
+  const averageTopTpr = tournament.avgTop10TPR ?? 0
   const hasSibling = !!tournament.sibling_id
   const section = tournament.section || 'open'
   const openId = section === 'open' ? id : tournament.sibling_id!

@@ -141,35 +141,22 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   const highlightCount = 9
   const topPlayersFetchCount = highlightCount + 3
 
-  // Main table data request.
-  const rankingsPromise = getRankings({
+  // The first unfiltered Best 3 page already contains the qualifier leaders.
+  // Other views ask the same API response to include a compact top-12 list,
+  // avoiding a second full rankings request and duplicate database work.
+  const canReuseCurrentRankingsForTopPlayers = sort === defaultSort && dir === 'desc' && page === 1 && !search
+
+  const rankingsData = await getRankings({
     sort,
     dir,
     page,
     q: search,
     season,
-    gender
+    gender,
+    includeTop: !canReuseCurrentRankingsForTopPlayers
   })
-
-  // Top-player request used for qualifier highlighting.
-  // Avoid duplicate fetch when the current page already has the required ordering.
-  const canReuseCurrentRankingsForTopPlayers = sort === defaultSort && dir === 'desc' && page === 1 && !search
-  const topPlayersPromise = canReuseCurrentRankingsForTopPlayers
-    ? null
-    : getRankings({
-        sort: defaultSort,
-        dir: 'desc',
-        page: 1,
-        season,
-        gender
-      })
-
-  const [rankingsData, topPlayersData] = await Promise.all([
-    rankingsPromise,
-    topPlayersPromise
-  ])
   const { rankings, total_pages } = rankingsData
-  const topPlayers = (topPlayersData?.rankings ?? rankings).slice(0, topPlayersFetchCount)
+  const topPlayers = (rankingsData.top_rankings ?? rankings).slice(0, topPlayersFetchCount)
 
   // Season-specific qualifier config: Kenya #1 and Junior Champion FIDE IDs
   const qualifierConfig: Record<number, Record<string, { kenyaNumber1?: string; juniorChampion?: string }>> = {

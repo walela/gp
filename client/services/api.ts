@@ -52,6 +52,8 @@ export interface TournamentDetails {
   location?: string
   section?: 'open' | 'ladies'
   sibling_id?: string | null
+  avgTop10TPR?: number
+  avgTop24Rating?: number
 }
 
 export interface PlayerResult {
@@ -101,6 +103,7 @@ export interface PlayerRanking {
 
 export interface RankingsResponse {
   rankings: PlayerRanking[]
+  top_rankings?: PlayerRanking[]
   total: number
   page: number
   total_pages: number
@@ -159,7 +162,8 @@ export async function getRankings({
   page = 1,
   q,
   season,
-  gender
+  gender,
+  includeTop = false
 }: {
   sort?: string
   dir?: 'asc' | 'desc'
@@ -167,6 +171,7 @@ export async function getRankings({
   q?: string
   season?: number
   gender?: 'f' | 'm'
+  includeTop?: boolean
 } = {}) {
   let url = `${API_BASE}/rankings?sort=${sort}&dir=${dir}&page=${page}`
   if (q) {
@@ -177,6 +182,9 @@ export async function getRankings({
   }
   if (gender) {
     url += `&gender=${gender}`
+  }
+  if (includeTop) {
+    url += '&include_top=true'
   }
   const res = await fetch(url, GP_DATA_CACHE)
   const data = await res.json()

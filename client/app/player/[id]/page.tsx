@@ -7,15 +7,39 @@ import { Metadata } from 'next'
 export const revalidate = 0
 
 interface PlayerPageProps {
-  params: { id: string }
-  searchParams: { season?: string; gender?: string }
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ season?: string; gender?: string }>
 }
 
-export async function generateMetadata({ params }: PlayerPageProps): Promise<Metadata> {
-  const { id } = await params
+type DisplayRanking = PlayerRanking & { currentRank?: number }
+
+async function resolvePlayerRequest(searchParams: PlayerPageProps['searchParams']) {
+  const [resolvedSearchParams, { seasons }] = await Promise.all([
+    searchParams,
+    getSeasons(),
+  ])
+  const currentYear = new Date().getFullYear()
+
+  return {
+    seasons,
+    season: resolvedSearchParams.season
+      ? Number(resolvedSearchParams.season)
+      : (seasons[0] || currentYear),
+    gender: resolvedSearchParams.gender,
+  }
+}
+
+export async function generateMetadata({ params, searchParams }: PlayerPageProps): Promise<Metadata> {
+  const [{ id }, requestOptions] = await Promise.all([
+    params,
+    resolvePlayerRequest(searchParams),
+  ])
   
   try {
-    const player = await getPlayer(id)
+    const player = await getPlayer(id, {
+      season: requestOptions.season,
+      gender: requestOptions.gender,
+    })
     
     if (!player) {
       return {
@@ -52,29 +76,28 @@ export async function generateMetadata({ params }: PlayerPageProps): Promise<Met
 }
 
 export default async function PlayerPage({ params, searchParams }: PlayerPageProps) {
-  // Properly await params to access its properties
-  const { id } = await params
-  const resolvedSearchParams = await searchParams
-
-  // Get available seasons
-  const { seasons } = await getSeasons()
-  const currentYear = new Date().getFullYear()
-  const season = resolvedSearchParams.season ? Number(resolvedSearchParams.season) : (seasons[0] || currentYear)
+  const [{ id }, requestOptions] = await Promise.all([
+    params,
+    resolvePlayerRequest(searchParams),
+  ])
+  const { seasons, season, gender } = requestOptions
 
   let player: PlayerDetails | null = null
-  let playerRanking: PlayerRanking | null = null
+  let playerRanking: DisplayRanking | null = null
   let error: Error | null = null
 
   try {
-    const gender = resolvedSearchParams.gender
-    player = await getPlayer(id, { season, gender })
-    if (!player) {
+    // generateMetadata uses this same URL, allowing Next to memoize the request
+    // across metadata and page rendering.
+    const loadedPlayer = await getPlayer(id, { season, gender })
+    if (!loadedPlayer) {
       // Optionally handle 'player not found' scenario specifically if API returns null/undefined
       throw new Error('Player not found')
     }
+    player = loadedPlayer
 
-    if (player.ranking) {
-      const { current_rank, ...restRanking } = player.ranking
+    if (loadedPlayer.ranking) {
+      const { current_rank, ...restRanking } = loadedPlayer.ranking
       playerRanking = {
         ...restRanking,
         currentRank: current_rank ?? undefined
@@ -85,7 +108,7 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
     if (!playerRanking) {
       try {
         const rankingsData = await getRankings({ sort: 'best_4', dir: 'desc', season })
-        const rankingIndex = rankingsData.rankings.findIndex(r => r.fide_id === player.fide_id)
+        const rankingIndex = rankingsData.rankings.findIndex(r => r.fide_id === loadedPlayer.fide_id)
         if (rankingIndex !== -1) {
           playerRanking = {
             ...rankingsData.rankings[rankingIndex],
