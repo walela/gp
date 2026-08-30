@@ -127,7 +127,8 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   const currentYear = new Date().getFullYear()
   const season = params.season ? Number(params.season) : (seasons[0] || currentYear)
 
-  const defaultSort = 'best_3'
+  const defaultSort = 'best_4'
+  const qualifierSort = 'best_4'
 
   const sort = params.sort || defaultSort
   const dir = params.dir || 'desc'
@@ -141,10 +142,10 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   const highlightCount = 9
   const topPlayersFetchCount = highlightCount + 3
 
-  // The first unfiltered Best 3 page already contains the qualifier leaders.
+  // The first unfiltered Best 4 page already contains the qualifier leaders.
   // Other views ask the same API response to include a compact top-12 list,
   // avoiding a second full rankings request and duplicate database work.
-  const canReuseCurrentRankingsForTopPlayers = sort === defaultSort && dir === 'desc' && page === 1 && !search
+  const canReuseCurrentRankingsForTopPlayers = sort === qualifierSort && dir === 'desc' && page === 1 && !search
 
   const rankingsData = await getRankings({
     sort,
@@ -158,14 +159,14 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   const { rankings, total_pages } = rankingsData
   const topPlayers = (rankingsData.top_rankings ?? rankings).slice(0, topPlayersFetchCount)
 
-  // Season-specific qualifier config: Kenya #1 and Junior Champion FIDE IDs
-  const qualifierConfig: Record<number, Record<string, { kenyaNumber1?: string; juniorChampion?: string }>> = {
+  // Season-specific qualifier config: Kenya #1, Junior Champion, and qualifier exclusions
+  const qualifierConfig: Record<number, Record<string, { kenyaNumber1?: string; juniorChampion?: string; excluded?: string[] }>> = {
     2025: {
       open: { kenyaNumber1: '10814647', juniorChampion: '10831533' },    // McCligeyo, Kyle Kuka
       ladies: { kenyaNumber1: '10802886', juniorChampion: '10822755' },  // Ndirangu (Joyce), Cassidy Maina
     },
     2026: {
-      open: { kenyaNumber1: '10824014' },   // Simiyu, Jadon
+      open: { kenyaNumber1: '10824014', excluded: ['10814582'] },  // Simiyu, Jadon; Kaloki Hawi
       ladies: { kenyaNumber1: '10822755' },  // Elizabeth Cassidy Maina
     }
   }
@@ -173,17 +174,21 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   const seasonConfig = qualifierConfig[season]?.[category]
   const kenyaNumber1Id = seasonConfig?.kenyaNumber1 ?? null
   const juniorChampionId = seasonConfig?.juniorChampion ?? null
+  const qualifierExcludedIds = new Set(seasonConfig?.excluded ?? [])
+  const eligibleTopPlayers = topPlayers.filter(player =>
+    !qualifierExcludedIds.has(player.fide_id || player.name)
+  )
 
   // Count how many "special" qualifiers (Kenya #1, junior champ) fall inside the top 9
   // Each one frees up a spot for the next player
-  const topPlayerIds = topPlayers.map(p => p.fide_id || p.name)
+  const topPlayerIds = eligibleTopPlayers.map(p => p.fide_id || p.name)
   const specialInTop9 = [kenyaNumber1Id, juniorChampionId].filter(id =>
     id && topPlayerIds.slice(0, highlightCount).includes(id)
   ).length
   const effectiveHighlightCount = highlightCount + specialInTop9
 
   const automaticQualifierIds = new Set(
-    topPlayers.slice(0, effectiveHighlightCount).map(player => player.fide_id || player.name)
+    eligibleTopPlayers.slice(0, effectiveHighlightCount).map(player => player.fide_id || player.name)
   )
 
   // For past seasons, no provisional - results are final

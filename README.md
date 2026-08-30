@@ -1,151 +1,182 @@
 # GP Tracker
 
-A web application to track chess Grand Prix tournaments in Kenya, view player performances, and monitor tournament progress.
+GP Tracker powers [1700chess.sh](https://www.1700chess.sh), a tracker for the
+Chess Kenya Grand Prix circuit. It publishes completed and upcoming events,
+Open and Ladies rankings, player histories, tournament standings, exports, and
+season insights.
 
-## Features
-
-- View upcoming and completed tournaments
-- Track player performance metrics (TPR, points)
-- Filter and display Kenyan players
-- Mobile-responsive design
-- Real-time tournament data from chess-results.com
-
-## Tech Stack
+## Architecture
 
 ### Backend
-- Python 3.9+
-- Flask web framework
-- BeautifulSoup4 for data scraping
-- SQLite database
+
+- Python 3.9+ and Flask 3
+- SQLite for tournaments, players, results, ranking snapshots, and calculated rankings
+- Beautiful Soup and Requests for Chess-Results scraping
+- Gunicorn on Fly.io with a persistent `/data/gp_tracker.db` volume
+
+The backend entry point is `app.py`. Persistence and ranking calculations live
+in `db.py`; Chess-Results parsing lives in `chess_results.py`; per-player result
+validation lives in `result_validator.py`.
 
 ### Frontend
-- Next.js 13 (App Router)
-- TypeScript
-- Tailwind CSS
-- shadcn/ui components
 
-## Local Setup
+- Next.js 16 App Router
+- React 19 and TypeScript
+- Tailwind CSS 4
+- Radix UI primitives and shadcn-style components
+- Vercel hosting and Speed Insights
+
+The frontend is in `client/`. Public data requests go through
+`client/services/api.ts` and share the `gp-data` Next.js cache tag.
+
+## Local development
 
 ### Prerequisites
 
-- [uv](https://github.com/astral-sh/uv) (Python package/dependency manager)
-- Node.js 18+ and npm
+- [uv](https://github.com/astral-sh/uv)
+- Node.js and npm
 
-### Quick start (recommended)
-
-1. Make the helper script executable (first time only):
-   ```bash
-   chmod +x dev.sh
-   ```
-2. Run the combined dev environment:
-   ```bash
-   ./dev.sh
-   ```
-   This will:
-   - create/refresh a `.venv` using `uv`
-   - install Python requirements
-   - install frontend dependencies (`client/node_modules`)
-   - start the Flask API on http://127.0.0.1:5004 (logs in `.logs/backend.log`)
-   - start the Next.js dev server on http://localhost:3000
-   - point the frontend at the local API automatically
-   - open the frontend in your browser when it is ready
-
-You can override the default ports when needed:
+Run both applications with:
 
 ```bash
-BACKEND_PORT=5014 FRONTEND_PORT=3014 ./dev.sh
+./dev.sh
 ```
 
-Disable browser opening when needed:
+This creates or refreshes `.venv`, installs dependencies when needed, and starts:
+
+- Flask API: http://127.0.0.1:5004
+- Next.js frontend: http://localhost:3000
+- Backend log: `.logs/backend.log`
+
+Useful overrides:
 
 ```bash
 OPEN_BROWSER=0 ./dev.sh
+BACKEND_PORT=5014 FRONTEND_PORT=3014 ./dev.sh
 ```
 
-### Manual setup (optional)
-
-If you prefer managing processes yourself, you can still do it manually:
-
-#### Backend
+For a manual setup:
 
 ```bash
 uv venv
 uv pip install -r requirements.txt
-uv run python app.py  # serves on http://127.0.0.1:5004 by default
+uv run python app.py
 ```
-
-#### Frontend
 
 ```bash
 cd client
 npm install
-npm run dev  # serves on http://localhost:3000
+NEXT_PUBLIC_API_URL=http://127.0.0.1:5004/api npm run dev
 ```
 
-### Frontend environment configuration
+## Tournament update workflow
 
-`./dev.sh` sets this automatically. If you run the frontend manually, create `client/.env.local` so the Next.js app talks to your local Flask instance:
+The supported update path is the admin scraper at `/admin/scrape`, backed by:
 
+1. `POST /api/admin/scrape/sections`
+2. `POST /api/admin/scrape/preview`
+3. `POST /api/admin/scrape/validate`
+4. `POST /api/admin/scrape/commit`
+
+Use the numeric ID from a Chess-Results `tnr<id>.aspx` URL. Always inspect the
+available sections first because Open and Ladies may use different source IDs.
+The commit step saves the validated results and recalculates rankings.
+
+After committing a completed tournament, remove its entry from
+`client/lib/active-tournaments.ts`. Postponed or unfinished events should remain
+there with corrected dates or status.
+
+Ranking rules:
+
+- Only eligible Kenyan players count.
+- Results with `result_status = 'valid'` or legacy `NULL` status count.
+- Open rankings use Open-section results only.
+- Ladies rankings include female players from all sections and every player in a Ladies section.
+- Rankings use the average of a player's best one, two, three, or four TPRs, prioritizing players with more qualifying tournaments.
+
+Some old CLI maintenance scripts are not the canonical scrape path.
+`scripts/scrape_2026_tournaments.py` and `scripts/backfill_ladies_2025.py`
+currently contain broken multiline string literals; use the admin flow instead.
+
+## Public API
+
+The main read endpoints are:
+
+- `GET /api/tournaments`
+- `GET /api/tournament/<id>`
+- `GET /api/rankings`
+- `GET /api/player/<fide_id>`
+- `GET /api/seasons`
+- `GET /api/<season>/insights`
+
+Tournament, ranking, and player CSV exports are also available from their
+respective `/export` routes. Admin endpoints require a bearer token matching
+`ADMIN_PASSWORD`.
+
+## Deployment and cache revalidation
+
+Pushes to `main` trigger the Fly.io backend deployment in
+`.github/workflows/fly-deploy.yml`; Vercel deploys the Next.js frontend.
+
+Public frontend fetches are cached for up to one day with the `gp-data` tag. A
+successful Fly deployment is not enough to prove the frontend is fresh. The
+workflow must also make an authenticated request to:
+
+```text
+https://www.1700chess.sh/api/revalidate
 ```
-NEXT_PUBLIC_API_URL=http://127.0.0.1:5004/api
+
+`REVALIDATE_SECRET` must have the same strong value in GitHub Actions and the
+production Vercel project. The Fly workflow stages that value on the backend so
+admin mutations can request the same invalidation. Do not log or commit it.
+
+After deployment, verify a cache-busted public page plus the tournament detail,
+Open rankings, and Ladies rankings. A `401` from the revalidation endpoint means
+authentication was missing or incorrect; `503` means Vercel does not have the
+secret configured.
+
+## Verification
+
+Backend checks:
+
+```bash
+python3 -B -m py_compile app.py db.py chess_results.py result_validator.py
+.venv/bin/python -m pytest -q scripts/test_result_validator.py
 ```
 
-### Results cache revalidation
+Frontend checks:
 
-Public API fetches are cached in the Next.js Data Cache for up to one day and
-share the `gp-data` cache tag. The frontend remains dynamically rendered, so
-site-code deployments are not held behind the data cache.
-
-Set the same strong `REVALIDATE_SECRET` value in:
-
-- Vercel, for the protected `/api/revalidate` route.
-- GitHub Actions, so deployments invalidate cached results. The workflow also
-  synchronizes this value to Fly so production admin edits invalidate the cache.
-
-The Fly deployment workflow fails before deploying when its GitHub Actions
-secret is missing, rather than publishing new data with a stale frontend cache.
-
-Fly can optionally set `FRONTEND_REVALIDATE_URL` when the frontend revalidation
-endpoint is not `https://www.1700chess.sh/api/revalidate`. If a webhook is missed,
-the one-day cache lifetime provides automatic recovery.
-
-### Font references
-
-- Maple Mono official download: https://font.subf.dev/en/download/
-- Maple Mono GitHub releases: https://github.com/subframe7536/maple-font/releases
-
-## Project Structure
-
+```bash
+cd client
+npm run lint
+npm run build
 ```
+
+Database spot checks:
+
+```bash
+sqlite3 -header -column gp_tracker.db "select id, name, short_name, start_date, end_date, location, rounds, section, source_id from tournaments order by start_date desc, name desc;"
+sqlite3 -header -column gp_tracker.db "select season, count(*) from player_rankings group by season order by season desc;"
+```
+
+## Project structure
+
+```text
 .
-├── app.py              # Flask application entry point
-├── db.py              # Database models and utilities
-├── requirements.txt    # Python dependencies
-├── scraper/           # Chess-results.com scraping functionality
-│   ├── __init__.py
-│   └── chess_results.py
-└── client/            # Next.js frontend
-    ├── app/          # App Router pages and layouts
-    ├── components/   # Reusable UI components
-    └── services/     # API client and utilities
+├── app.py                         # Flask routes and admin API
+├── chess_results.py               # Chess-Results scraper
+├── result_validator.py            # Walkover/incomplete/withdrawn validation
+├── player_eligibility.py          # GP eligibility exclusions
+├── tournament_metadata.py         # Metadata inference helpers
+├── db.py                          # SQLite schema, queries, and rankings
+├── gp_tracker.db                  # Versioned data snapshot deployed to Fly
+├── scripts/                       # Maintenance and verification utilities
+├── client/
+│   ├── app/                       # Next.js pages and route handlers
+│   ├── components/                # UI components
+│   ├── lib/                       # Static tournament data and cache config
+│   └── services/                  # Public and admin API clients
+├── dev.sh                         # Combined local environment
+├── Dockerfile
+└── fly.toml
 ```
-
-## Development
-
-1. The backend provides a REST API for:
-   - Tournament data
-   - Player statistics
-   - Real-time updates from chess-results.com
-
-2. The frontend features:
-   - Responsive layout for mobile and desktop
-   - Real-time tournament updates
-   - Player performance tracking
-   - Tournament history and standings
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request

@@ -20,18 +20,6 @@ export interface Tournament {
 
 // Tournaments happening within roughly the next two months
 export const upcomingTournaments: Tournament[] = [
-  {
-    id: 'minichess-gp-2026',
-    name: 'Minichess Open Chess Championship - Grand Prix Circuit',
-    short_name: 'Minichess GP',
-    startDate: '2026-08-29',
-    endDate: '2026-08-30',
-    location: 'KICC, Nairobi',
-    locationUrl: 'https://maps.google.com/?q=KICC,+Nairobi,+Kenya',
-    confirmed: true,
-    registrationUrl: 'https://forms.gle/8Kd598aSVEnKQE1b9',
-    detailsUrl: null
-  }
 ]
 
 // Grand Prix tournaments beyond the 60-day window
