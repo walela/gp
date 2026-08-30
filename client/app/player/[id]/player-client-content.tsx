@@ -32,6 +32,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
   const [sortField, setSortField] = useState<SortField>('date')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const isFemale = player.gender === 'F'
+  const isMemorialized = player.fide_id === '10814582'
   // Calculate performance metrics
   const totalTournaments = player.results.length
   const bestTpr = totalTournaments > 0 ? Math.max(...player.results.map(r => r.tpr || 0)) : null
@@ -127,7 +128,30 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
       <div className="overflow-hidden rounded-lg border border-gray-200/60 bg-white/95 shadow-elevation-low sm:border-gray-200 sm:bg-white">
         <div className="border-b border-gray-200/60 bg-gray-50/80 px-3 py-2.5 sm:border-gray-200 sm:bg-gray-50 sm:px-4 sm:py-4">
           <div className="flex flex-col space-y-2 sm:space-y-3">
-            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">{player.name}</h1>
+            <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:text-2xl">
+              <span className="inline-flex items-start">
+                {player.name}
+                {isMemorialized && (
+                  <svg
+                    viewBox="0 0 16 20"
+                    className="ml-px mt-0.5 h-3 w-2.5 shrink-0 text-stone-800 sm:h-3.5 sm:w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                    aria-label="Remembered"
+                    role="img">
+                    <title>Remembered</title>
+                    <path d="M8 1.5v17M3.5 7.25h9" />
+                  </svg>
+                )}
+              </span>
+              {isMemorialized && (
+                <span className="whitespace-nowrap font-medium tracking-normal text-stone-600" aria-label="2007 to 2026">
+                  (2007–2026)
+                </span>
+              )}
+            </h1>
 
             {player.fide_id && (
               <a
