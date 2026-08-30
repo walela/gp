@@ -151,7 +151,7 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
                   href="https://www.chess.com/news/view/former-kenya-no-1-hawi-kaloki-dies-at-19-weeks-before-chess-olympiad"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="whitespace-nowrap font-medium tracking-normal text-stone-600 underline decoration-stone-400 underline-offset-4 transition-colors hover:text-stone-800 hover:decoration-stone-600"
+                  className="relative whitespace-nowrap text-lg font-medium tracking-normal text-stone-600 transition-colors after:absolute after:inset-x-px after:bottom-0 after:h-px after:bg-stone-400 after:content-[''] hover:text-stone-800 hover:after:bg-stone-600 sm:text-xl"
                   aria-label="Read about Hawi Kaloki, 2007 to 2026">
                   (2007–2026)
                 </a>
