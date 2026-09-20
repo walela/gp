@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -11,11 +11,22 @@ import {
   navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu'
 
+const RANKINGS_UPDATE_EXPIRES_AT = new Date('2026-09-21T10:00:00+03:00').getTime()
+
 export function MainNav() {
   const pathname = usePathname()
   const [pendingNavigation, setPendingNavigation] = useState<{ href: string, fromPathname: string } | null>(null)
+  const [showRankingsUpdate, setShowRankingsUpdate] = useState(() => Date.now() < RANKINGS_UPDATE_EXPIRES_AT)
   const isDev = process.env.NODE_ENV === 'development'
   const pendingHref = pendingNavigation?.fromPathname === pathname ? pendingNavigation.href : null
+
+  useEffect(() => {
+    const remaining = RANKINGS_UPDATE_EXPIRES_AT - Date.now()
+    if (remaining <= 0) return
+
+    const timeout = window.setTimeout(() => setShowRankingsUpdate(false), remaining)
+    return () => window.clearTimeout(timeout)
+  }, [])
 
   const routes = [
     {
@@ -63,6 +74,9 @@ export function MainNav() {
                       <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true" />
                     )}
                     {route.label}
+                    {route.href === '/' && showRankingsUpdate && (
+                      <span className="absolute -right-2 top-0 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                    )}
                   </span>
                 </Link>
               </NavigationMenuLink>
@@ -94,7 +108,12 @@ export function MainNav() {
               {route.href === '/admin' && (
                 <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true" />
               )}
-              <span>{route.label}</span>
+              <span className="relative inline-flex items-center gap-1.5">
+                {route.label}
+                {route.href === '/' && showRankingsUpdate && (
+                  <span className="absolute -right-2 top-0 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                )}
+              </span>
             </Link>
           )
         })}
