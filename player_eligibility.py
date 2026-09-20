@@ -12,6 +12,12 @@ INELIGIBLE_GP_PLAYER_FIDE_IDS = {
     "2004348",   # Gilruth Peter
     "10830987",  # Chvoro Viacheslav
     "10848525",  # Bhavsar Nisha Nileshbhai
+    "10829326",  # Chitundu Limbikani
+    "10891536",  # Deng Achuoth Atem
+    "10891544",  # Nyok Ayual Jock
+    "554010039",  # Deng Abuoi Chol
+    "10895345",  # Kuir Maleek Kuir
+    "10891463",  # Pager Thuch Alaak Daniel
 }
 
 INELIGIBLE_GP_PLAYER_NAMES = {
@@ -24,6 +30,20 @@ INELIGIBLE_GP_PLAYER_NAMES = {
     "bhavsar nisha nileshbhai",
     "nisha nileshbhai bhavsar",
     "nisha bhavsar",
+    "chitundu limbikani",
+    "limbikani chitundu",
+    "deng achuoth atem",
+    "atem deng achuoth",
+    "nyok ayual jock",
+    "jock nyok ayual",
+    "deng abuoi chol",
+    "chol deng abuoi",
+    "kuir maleek kuir",
+    "maleek kuir kuir",
+    "michael atem biar",
+    "atem biar michael",
+    "pager thuch alaak daniel",
+    "alaak daniel pager thuch",
 }
 
 

@@ -339,7 +339,7 @@ class Database:
             # Get tournament name and dates
             c.execute(
                 '''
-                SELECT name, start_date, end_date, short_name, location, rounds, section
+                SELECT name, start_date, end_date, short_name, location, rounds, section, source_id
                 FROM tournaments
                 WHERE id = ?
                 ''',
@@ -355,6 +355,7 @@ class Database:
             location = tournament_row['location']
             rounds = tournament_row['rounds']
             section = tournament_row['section'] if 'section' in tournament_row.keys() else 'open'
+            source_id = tournament_row['source_id'] if 'source_id' in tournament_row.keys() else None
             
             # Get results, joining players correctly
             try:
@@ -425,6 +426,7 @@ class Database:
                 'location': location,
                 'rounds': rounds,
                 'section': section,
+                'source_id': source_id,
                 'results': results
             }
     

@@ -236,6 +236,7 @@ def tournament(tournament_id):
         end_date = data.get("end_date")
         location = data.get("location")
         section = data.get("section", "open")
+        source_id = data.get("source_id") or tournament_id
         results = data["results"]
         stats = db.get_tournament_stats(tournament_id)
 
@@ -272,6 +273,7 @@ def tournament(tournament_id):
                 {
                     "name": tournament_name,
                     "id": tournament_id,
+                    "source_id": source_id,
                     "start_date": start_date,
                     "end_date": end_date,
                     "location": location,
@@ -298,6 +300,7 @@ def tournament(tournament_id):
                 "name": tournament_name,
                 "short_name": short_name,
                 "id": tournament_id,
+                "source_id": source_id,
                 "start_date": start_date,
                 "end_date": end_date,
                 "location": location,

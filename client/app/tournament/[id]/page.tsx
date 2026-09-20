@@ -67,7 +67,7 @@ export async function generateMetadata({ params, searchParams }: TournamentPageP
   
   if (!tournament) {
     return {
-      title: 'Tournament Not Found - Chess Kenya 2025 Grand Prix',
+      title: 'Tournament Not Found - Chess Kenya Grand Prix',
       description: 'The requested tournament could not be found.'
     }
   }
@@ -76,10 +76,12 @@ export async function generateMetadata({ params, searchParams }: TournamentPageP
   const locationDisplay = rawLocation.includes('Kenya') ? rawLocation : `${rawLocation}, Kenya`
   const shortName = tournament.short_name || getShortTournamentName(tournament.name)
   const dateStr = formatTournamentDate(tournament.start_date, tournament.end_date)
+  const tournamentYear = tournament.start_date?.slice(0, 4)
+  const seriesName = tournamentYear ? `Chess Kenya ${tournamentYear} Grand Prix` : 'Chess Kenya Grand Prix'
   
   return {
-    title: `${shortName} Results - Chess Kenya 2025 Grand Prix`,
-    description: `View results, standings and player performances from the ${shortName} chess tournament held ${dateStr} in ${locationDisplay}. Part of the Chess Kenya 2025 Grand Prix series.`,
+    title: `${shortName} Results - ${seriesName}`,
+    description: `View results, standings and player performances from the ${shortName} chess tournament held ${dateStr} in ${locationDisplay}. Part of the ${seriesName} series.`,
     openGraph: {
       title: `${shortName} Chess Tournament Results`,
       description: `${tournament.total} players competed in the ${shortName} tournament. View complete results, TPR ratings and standings.`,
@@ -234,7 +236,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
               </div>
               <TrackedLink
                 event="Outbound: chess-results"
-                href={`https://chess-results.com/tnr${tournament.id}.aspx?lan=1`}
+                href={`https://chess-results.com/tnr${tournament.source_id || tournament.id}.aspx?lan=1`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium text-blue-600 hover:underline">

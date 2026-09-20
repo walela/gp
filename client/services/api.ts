@@ -42,6 +42,7 @@ export interface TournamentDetails {
   name: string
   short_name?: string
   id: string
+  source_id?: string | null
   results: TournamentResult[]
   total: number
   page: number

@@ -25,14 +25,15 @@ export const upcomingTournaments: Tournament[] = [
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
   {
-    id: 'jumuiya-2026',
-    name: 'Jumuiya Ya Afrika Mashariki Open - Grand Prix',
-    short_name: 'Jumuiya Open',
-    startDate: '2026-09-19',
-    endDate: '2026-09-20',
-    location: 'SABIS International School, Runda',
+    id: 'nairobi-county-open-2026',
+    name: 'Nairobi County Open - Grand Prix',
+    short_name: 'Nairobi County Open',
+    startDate: '2026-09-26',
+    endDate: '2026-09-27',
+    location: 'Nairobi',
+    locationUrl: 'https://maps.google.com/?q=Nairobi,+Kenya',
     confirmed: true,
-    registrationUrl: 'https://forms.gle/pTNQTupnMBVUSENH7',
+    registrationUrl: 'https://ncca.or.ke/Events/register/13',
     detailsUrl: null
   },
   {
@@ -43,16 +44,17 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-10-11',
     location: 'TBA',
     confirmed: true,
+    registrationUrl: 'https://mchessacademy.co.ke/tournaments',
     detailsUrl: null
   },
   {
-    id: 'kajiado-open-2026',
-    name: 'Kajiado Open - Grand Prix',
-    short_name: 'Kajiado Open',
-    startDate: '2026-10-24',
+    id: 'kisii-open-2026',
+    name: 'Kisii Open Chess Championship - Grand Prix',
+    short_name: 'Kisii Open',
+    startDate: '2026-10-23',
     endDate: '2026-10-25',
-    location: 'Kajiado',
-    confirmed: false,
+    location: 'Kisii',
+    confirmed: true,
     detailsUrl: null
   },
   {
@@ -66,24 +68,22 @@ export const plannedTournaments: Tournament[] = [
     detailsUrl: null
   },
   {
-    id: 'nairobi-county-open-2026',
-    name: 'Nairobi County Open - Grand Prix',
-    short_name: 'Nairobi County Open',
-    startDate: '2026-09-26',
-    endDate: '2026-09-27',
-    location: 'Nairobi',
-    locationUrl: 'https://maps.google.com/?q=Nairobi,+Kenya',
-    confirmed: true,
-    registrationUrl: 'https://ncca.or.ke/Events/register/13',
-    detailsUrl: null
-  },
-  {
     id: 'kenya-open-2026',
     name: 'KCB Kenya Open - Grand Prix',
     short_name: 'KCB Kenya Open',
     startDate: '2026-10-17',
     endDate: '2026-10-20',
     location: 'TBA',
+    confirmed: true,
+    detailsUrl: null
+  },
+  {
+    id: 'karen-open-2026',
+    name: 'Karen Open Grand Prix Tournament',
+    short_name: 'Karen Open',
+    startDate: '2026-11-28',
+    endDate: '2026-11-29',
+    location: 'Karen',
     confirmed: true,
     detailsUrl: null
   }
