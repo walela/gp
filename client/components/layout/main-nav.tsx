@@ -11,7 +11,7 @@ import {
   navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu'
 
-const RANKINGS_UPDATE_EXPIRES_AT = new Date('2026-09-21T10:00:00+03:00').getTime()
+const RANKINGS_UPDATE_EXPIRES_AT = new Date('2026-09-28T10:00:00+03:00').getTime()
 
 export function MainNav() {
   const pathname = usePathname()

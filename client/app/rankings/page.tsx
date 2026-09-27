@@ -126,6 +126,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   const { seasons } = await getSeasons()
   const currentYear = new Date().getFullYear()
   const season = params.season ? Number(params.season) : (seasons[0] || currentYear)
+  const isCurrentSeason = season === currentYear
 
   const defaultSort = 'best_4'
   const qualifierSort = 'best_4'
@@ -237,16 +238,12 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">
                 <SortableHeader column="name" label="Name" basePath={rankingsBasePath} className="w-full" />
               </CustomTableHead>
-              {season !== currentYear && (
-                <>
-                  <CustomTableHead className="w-[40px] text-center sm:hidden">
-                    <span className="sr-only">Qualified</span>
-                  </CustomTableHead>
-                  <CustomTableHead className="w-[40px] text-center hidden sm:table-cell">
-                    Qualified
-                  </CustomTableHead>
-                </>
-              )}
+              <CustomTableHead className="w-[40px] text-center sm:hidden">
+                <span className="sr-only">{isCurrentSeason ? 'Change' : 'Qualified'}</span>
+              </CustomTableHead>
+              <CustomTableHead className="w-[40px] text-center hidden sm:table-cell">
+                {isCurrentSeason ? 'Change' : 'Qualified'}
+              </CustomTableHead>
               <CustomTableHead className="hidden sm:table-cell text-right">
                 <SortableHeader
                   column="tournaments_played"
@@ -298,7 +295,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                 const isDefinitelyQualified = isKenyaNumber1 || isJuniorChampion
                 const hasQualified = isHighlightedQualifier || isDefinitelyQualified
                 const movement = view === 'best_4' ? getRankMovement(player) : null
-                const movementBadge = !hasQualified && movement ? (
+                const movementBadge = (isCurrentSeason || !hasQualified) && movement ? (
                   <span
                     aria-label={movement.ariaLabel}
                     className={cn(
@@ -412,7 +409,16 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                         )}
                       </div>
                     </CustomTableCell>
-                    {season !== currentYear && (
+                    {isCurrentSeason ? (
+                      <>
+                        <CustomTableCell className="text-center sm:hidden">
+                          {movementBadge}
+                        </CustomTableCell>
+                        <CustomTableCell className="hidden sm:table-cell text-center">
+                          {movementBadge}
+                        </CustomTableCell>
+                      </>
+                    ) : (
                       <>
                         <CustomTableCell className="text-center sm:hidden">
                           {movementBadge || qualifierBadgeMobile ? (

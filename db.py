@@ -2,7 +2,6 @@ import sqlite3
 import logging
 import math
 import os
-from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
 
 from player_eligibility import is_gp_eligible_player
@@ -117,6 +116,8 @@ class Database:
                 c.execute('ALTER TABLE player_rankings ADD COLUMN gender TEXT')
             if 'rank' not in ranking_columns:
                 c.execute('ALTER TABLE player_rankings ADD COLUMN rank INTEGER')
+            if 'previous_rank' not in ranking_columns:
+                c.execute('ALTER TABLE player_rankings ADD COLUMN previous_rank INTEGER')
 
             c.execute('''
                 CREATE TABLE IF NOT EXISTS ranking_snapshots (
@@ -531,174 +532,39 @@ class Database:
                 # Open rankings: filter for NULL gender (Open section only)
                 query += ' AND gender IS NULL'
 
+            query += ' ORDER BY rank'
             c.execute(query, params)
             return [dict(row) for row in c.fetchall()]
 
     @staticmethod
-    def _ranking_priority(player: Dict[str, Any]) -> Tuple[int, float, float]:
-        """Generate a sort key matching the cascading best-N priority used for GP rankings."""
-        tournaments = player.get("tournaments_played", 0) or 0
-        best_1 = player.get("best_1") or 0
-        best_2 = player.get("best_2") or 0
-        best_3 = player.get("best_3") or 0
-        best_4 = player.get("best_4") or 0
+    def _ranking_sort_key(ranking: tuple) -> Tuple[int, float]:
+        """Cascading best-N priority for ranking tuples from _calculate_rankings_from_results."""
+        # ranking: 4=tournaments_played, 5=best_1, 7=best_2, 8=best_3, 9=best_4
+        tournaments_played = ranking[4]
+        if tournaments_played >= 4 and ranking[9] > 0:
+            return (4, ranking[9])
+        if tournaments_played >= 3 and ranking[8] > 0:
+            return (3, ranking[8])
+        if tournaments_played >= 2 and ranking[7] > 0:
+            return (2, ranking[7])
+        if tournaments_played >= 1 and ranking[5] > 0:
+            return (1, ranking[5])
+        return (0, 0)
 
-        if tournaments >= 4 and best_4 > 0:
-            return (4, best_4, best_3)
-        if tournaments >= 3 and best_3 > 0:
-            return (3, best_3, best_2)
-        if tournaments >= 2 and best_2 > 0:
-            return (2, best_2, best_1)
-        if tournaments >= 1 and best_1 > 0:
-            return (1, best_1, 0)
-        return (0, 0, 0)
+    @classmethod
+    def _assign_ranks(cls, rankings: List[tuple]) -> List[tuple]:
+        ordered = sorted(rankings, key=cls._ranking_sort_key, reverse=True)
+        return [ranking + (rank,) for rank, ranking in enumerate(ordered, 1)]
 
-    def _store_ranking_snapshot(self, ranking_records: List[Dict[str, Any]], season: Optional[int] = None):
-        """Persist a snapshot of the current ranking order for change tracking."""
-        if not ranking_records:
-            return
-
-        sorted_records = sorted(
-            ranking_records,
-            key=self._ranking_priority,
-            reverse=True,
-        )
-
-        snapshot_time = datetime.utcnow().isoformat()
-        snapshot_rows = [
-            (
-                snapshot_time,
-                record["player_id"],
-                record.get("fide_id"),
-                index + 1,
-                record.get("tournaments_played"),
-                record.get("best_4"),
-                season or record.get("season"),
-            )
-            for index, record in enumerate(sorted_records)
-        ]
-
-        with sqlite3.connect(self.db_file) as conn:
-            c = conn.cursor()
-            c.executemany(
-                '''
-                INSERT INTO ranking_snapshots (snapshot_time, player_id, fide_id, rank, tournaments_played, best_4, season)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''',
-                snapshot_rows,
-            )
-            conn.commit()
-
-    def get_rank_changes(self, top_n: int = 25, season: Optional[int] = None) -> Dict[int, Dict[str, Optional[int]]]:
-        """Compute rank deltas for players in the latest snapshot compared to the previous snapshot."""
-        with sqlite3.connect(self.db_file) as conn:
-            conn.row_factory = sqlite3.Row
-            c = conn.cursor()
-
-            query = '''
-                SELECT DISTINCT snapshot_time
-                FROM ranking_snapshots
-            '''
-            params = []
-            if season:
-                query += ' WHERE season = ?'
-                params.append(season)
-            query += ' ORDER BY snapshot_time DESC LIMIT 10'
-
-            c.execute(query, params)
-            snapshot_times = [row["snapshot_time"] for row in c.fetchall()]
-
-            if len(snapshot_times) < 2:
-                return {}
-
-            def fetch_rows(snapshot_time: str) -> List[sqlite3.Row]:
-                c.execute(
-                    '''
-                    SELECT player_id, rank, tournaments_played, best_4
-                    FROM ranking_snapshots
-                    WHERE snapshot_time = ?
-                    ''',
-                    (snapshot_time,),
-                )
-                return c.fetchall()
-
-            latest_time = snapshot_times[0]
-            latest_rows = fetch_rows(latest_time)
-            latest_top_signature = sorted(
-                (row["rank"], row["player_id"])
-                for row in latest_rows
-                if row["rank"] <= top_n
-            )
-
-            previous_rows: Optional[List[sqlite3.Row]] = None
-            previous_time: Optional[str] = None
-
-            for candidate_time in snapshot_times[1:]:
-                candidate_rows = fetch_rows(candidate_time)
-                candidate_signature = sorted(
-                    (row["rank"], row["player_id"])
-                    for row in candidate_rows
-                    if row["rank"] <= top_n
-                )
-                if candidate_signature != latest_top_signature:
-                    previous_rows = candidate_rows
-                    previous_time = candidate_time
-                    break
-
-            if previous_rows is None or previous_time is None:
-                return {}
-
-            previous_map = {
-                row["player_id"]: (
-                    row["rank"],
-                    row["tournaments_played"],
-                    row["best_4"],
-                )
-                for row in previous_rows
-            }
-
-            changes: Dict[int, Dict[str, Optional[int]]] = {}
-            for row in latest_rows:
-                current_rank = row["rank"]
-                if current_rank > top_n:
-                    continue
-
-                player_id = row["player_id"]
-                previous_entry = previous_map.get(player_id)
-
-                latest_tournaments = row["tournaments_played"]
-                latest_best4 = row["best_4"]
-                has_latest_best4 = (latest_tournaments or 0) >= 4 and (latest_best4 or 0) > 0
-
-                if previous_entry is None:
-                    changes[player_id] = {
-                        "rank_change": None,
-                        "previous_rank": None,
-                        "is_new": True,
-                    }
-                    continue
-
-                previous_rank, prev_tournaments, prev_best4 = previous_entry
-                prev_has_best4 = (prev_tournaments or 0) >= 4 and (prev_best4 or 0) > 0
-                prev_has_data = prev_tournaments is not None or prev_best4 is not None
-
-                is_new = has_latest_best4 and prev_has_data and not prev_has_best4
-                if is_new:
-                    changes[player_id] = {
-                        "rank_change": None,
-                        "previous_rank": previous_rank,
-                        "is_new": True,
-                    }
-                    continue
-
-                rank_change = previous_rank - current_rank
-                changes[player_id] = {
-                    "rank_change": rank_change,
-                    "previous_rank": previous_rank,
-                    "is_new": False,
-                }
-
-            return changes
+    @staticmethod
+    def _results_before(all_results: Dict[int, List], start_date: Optional[str]) -> Dict[int, List]:
+        """Drop results from tournaments starting on or after start_date."""
+        if start_date is None:
+            return all_results
+        return {
+            player_id: [r for r in results if (r["tournament"]["start_date"] or "") < start_date]
+            for player_id, results in all_results.items()
+        }
 
     def get_available_seasons(self) -> List[int]:
         """Get list of seasons (years) that have tournament data."""
@@ -731,42 +597,38 @@ class Database:
             conn.commit()
 
         for current_season in seasons_to_process:
-            # Calculate Open rankings (only Open section results)
+            # Open rankings use only Open section results; Ladies rankings use
+            # female players' results from all sections.
             open_results = self.get_all_results(season=current_season, section='open')
-            open_rankings = self._calculate_rankings_from_results(open_results, current_season, gender_filter=None)
-
-            # Calculate Ladies rankings (female players from all sections)
             all_results = self.get_all_results(season=current_season)
-            ladies_rankings = self._calculate_rankings_from_results(all_results, current_season, gender_filter='F')
 
-            # Sort and assign ranks to each category
-            def cascading_sort_key(player_tuple):
-                # player_tuple: 4=tournaments_played, 5=best_1, 7=best_2, 8=best_3, 9=best_4
-                tp = player_tuple[4]
-                if tp >= 4 and player_tuple[9] > 0:
-                    return (4, player_tuple[9])
-                elif tp >= 3 and player_tuple[8] > 0:
-                    return (3, player_tuple[8])
-                elif tp >= 2 and player_tuple[7] > 0:
-                    return (2, player_tuple[7])
-                elif tp >= 1 and player_tuple[5] > 0:
-                    return (1, player_tuple[5])
-                return (0, 0)
+            # previous_rank is each player's rank before the most recent event,
+            # so rank changes reflect that event rather than recalculation history.
+            latest_start_date = max(
+                (r["tournament"]["start_date"] for results in all_results.values() for r in results
+                 if r["tournament"]["start_date"]),
+                default=None,
+            )
 
-            open_rankings.sort(key=cascading_sort_key, reverse=True)
-            ladies_rankings.sort(key=cascading_sort_key, reverse=True)
-
-            # Add rank to each tuple
-            open_with_rank = [t + (i,) for i, t in enumerate(open_rankings, 1)]
-            ladies_with_rank = [t + (i,) for i, t in enumerate(ladies_rankings, 1)]
-            all_rankings = open_with_rank + ladies_with_rank
+            all_rankings = []
+            for results, gender_filter in ((open_results, None), (all_results, 'F')):
+                current = self._assign_ranks(
+                    self._calculate_rankings_from_results(results, current_season, gender_filter)
+                )
+                previous = self._assign_ranks(
+                    self._calculate_rankings_from_results(
+                        self._results_before(results, latest_start_date), current_season, gender_filter
+                    )
+                )
+                previous_ranks = {ranking[0]: ranking[-1] for ranking in previous}
+                all_rankings.extend(ranking + (previous_ranks.get(ranking[0]),) for ranking in current)
 
             with sqlite3.connect(self.db_file) as conn:
                 c = conn.cursor()
                 c.executemany('''
                     INSERT INTO player_rankings
-                    (player_id, name, fide_id, rating, tournaments_played, best_1, tournament_1, best_2, best_3, best_4, season, gender, rank)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (player_id, name, fide_id, rating, tournaments_played, best_1, tournament_1, best_2, best_3, best_4, season, gender, rank, previous_rank)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''', all_rankings)
                 conn.commit()
                 logger.info(f"Recalculated and stored rankings for {c.rowcount} players in season {current_season}.")

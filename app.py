@@ -30,6 +30,7 @@ CORS(app)  # Enable CORS for all routes
 db = Database()
 
 PLAYERS_PER_PAGE = 30
+RANK_CHANGE_TOP_N = 25
 REQUEST_LOGGING_ENABLED = os.environ.get("REQUEST_LOGGING_ENABLED", "true").lower() == "true"
 REQUEST_IP_LOGGING_ENABLED = os.environ.get("REQUEST_IP_LOGGING_ENABLED", "true").lower() == "true"
 SLOW_REQUEST_MS = int(os.environ.get("SLOW_REQUEST_MS", "1000"))
@@ -370,8 +371,6 @@ def rankings():
             return (1, player["best_1"])  # Priority 1 (lowest)
         return (0, 0)  # No valid data
 
-    rank_change_map = db.get_rank_changes(top_n=25, season=season)
-
     # The rankings page needs the Best 4 leaders for qualifier highlighting.
     # Return them with the main response when requested so alternate sorts,
     # searches, and later pages do not trigger a second full rankings request.
@@ -420,10 +419,11 @@ def rankings():
     current_page_rankings = player_rankings[start:end]
 
     for player in current_page_rankings:
-        change_info = rank_change_map.get(player.get("player_id")) if player.get("player_id") is not None else None
-        player["rank_change"] = change_info.get("rank_change") if change_info else None
-        player["previous_rank"] = change_info.get("previous_rank") if change_info else None
-        player["is_new"] = change_info.get("is_new") if change_info else False
+        rank = player.get("rank")
+        previous_rank = player.get("previous_rank")
+        tracks_movement = rank is not None and rank <= RANK_CHANGE_TOP_N
+        player["rank_change"] = previous_rank - rank if tracks_movement and previous_rank is not None else None
+        player["is_new"] = tracks_movement and previous_rank is None
 
     payload = {
         "rankings": current_page_rankings,

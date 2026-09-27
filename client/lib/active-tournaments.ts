@@ -25,18 +25,6 @@ export const upcomingTournaments: Tournament[] = [
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
   {
-    id: 'nairobi-county-open-2026',
-    name: 'Nairobi County Open - Grand Prix',
-    short_name: 'Nairobi County Open',
-    startDate: '2026-09-26',
-    endDate: '2026-09-27',
-    location: 'Nairobi',
-    locationUrl: 'https://maps.google.com/?q=Nairobi,+Kenya',
-    confirmed: true,
-    registrationUrl: 'https://ncca.or.ke/Events/register/13',
-    detailsUrl: null
-  },
-  {
     id: 'mombasa-open-2026',
     name: 'Mombasa Open - Grand Prix',
     short_name: 'Mombasa Open',
