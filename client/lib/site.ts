@@ -13,7 +13,8 @@ export function pageMetadata({ title, description, path }: {
 }): Metadata {
   const fullTitle = title === SITE_NAME ? title : `${title} - ${SITE_NAME}`
   return {
-    title: title === SITE_NAME ? { absolute: title } : title,
+    // The root layout's title template skips pages in its own segment, such as the home page.
+    title: { absolute: fullTitle },
     description,
     alternates: { canonical: path },
     openGraph: { title: fullTitle, description, url: path, siteName: SITE_NAME, type: 'website', locale: 'en_KE' },
