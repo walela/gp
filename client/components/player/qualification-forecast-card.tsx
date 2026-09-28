@@ -301,11 +301,11 @@ function OddsChange({ p, before, event }: { p: number; before: number; event: st
     <span
       aria-label={description}
       title={description}
-      className={cn('flex items-center gap-1 text-sm font-medium leading-5 tabular-nums', up ? 'text-emerald-700' : 'text-red-600')}
+      className={cn('flex items-center gap-1 text-xs font-medium leading-4 tabular-nums', up ? 'text-emerald-700' : 'text-red-600')}
     >
       {up ? '+' : '\u2212'}{magnitude}
-      <span className={cn('flex size-4 items-center justify-center rounded-full text-white', up ? 'bg-emerald-700' : 'bg-red-600')}>
-        <Arrow className="size-3" strokeWidth={3} aria-hidden />
+      <span className={cn('flex size-3.5 items-center justify-center rounded-full text-white', up ? 'bg-emerald-700' : 'bg-red-600')}>
+        <Arrow className="size-2.5" strokeWidth={3} aria-hidden />
       </span>
     </span>
   )
@@ -349,7 +349,7 @@ function Headline({ title, forecast, event }: { title: ReactNode; forecast: Play
   )
 }
 
-const CARD_TITLE = <h2 className="text-lg font-semibold leading-7 text-gray-900">Qualification Odds</h2>
+const CARD_TITLE = <h2 className="text-lg font-semibold leading-7 text-gray-600">Qualification Odds</h2>
 
 function CategoryForecast({ forecast, single, event }: {
   forecast: PlayerCategoryForecast
@@ -368,7 +368,7 @@ function CategoryForecast({ forecast, single, event }: {
           </h3>
         ) : (
           <Headline
-            title={<h3 className="text-base font-semibold leading-6 text-gray-900">{CATEGORY_LABEL[category]}</h3>}
+            title={<h3 className="text-base font-semibold leading-6 text-gray-600">{CATEGORY_LABEL[category]}</h3>}
             forecast={forecast}
             event={event}
           />
