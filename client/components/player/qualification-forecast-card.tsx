@@ -1,7 +1,7 @@
 'use client'
 
 import { Fragment, useId, useState, type ReactNode } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ArrowDown, ArrowUp, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   chanceTier,
@@ -79,16 +79,20 @@ function Driver({ title, value, tone, children }: {
   const [open, setOpen] = useState(false)
   const panelId = useId()
   return (
-    <div className="border-t border-gray-100 first:border-t-0">
+    <div className="border-b border-gray-200 last:border-b-0 odd:bg-white even:bg-gray-200/50">
       <button
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen(o => !o)}
-        className="flex w-full items-center gap-3 py-2.5 text-left"
+        className="flex h-13 w-full items-center gap-3 px-3 text-left sm:h-14 sm:px-4"
       >
-        <span className="min-w-0 flex-1 text-sm text-gray-900">{title}</span>
-        {value && <span className={cn('text-sm font-semibold tabular-nums text-gray-900', tone && TONE_TEXT[tone])}>{value}</span>}
+        <span className="line-clamp-2 min-w-0 flex-1 text-sm leading-5 text-gray-900 sm:text-base sm:leading-6">{title}</span>
+        {value && (
+          <span className={cn('text-sm font-semibold tabular-nums text-gray-900 sm:text-base', tone && TONE_TEXT[tone])}>
+            {value}
+          </span>
+        )}
         <ChevronDown
           className={cn(
             'size-4 shrink-0 text-gray-400 transition-transform duration-200 ease-in-out motion-reduce:transition-none',
@@ -106,7 +110,7 @@ function Driver({ title, value, tone, children }: {
         )}
       >
         <div className="overflow-hidden">
-          <div className="mb-3 rounded-md bg-gray-50 px-3 py-2">{children}</div>
+          <div className="mx-3 mb-3 rounded-md bg-white px-3 py-2 ring-1 ring-inset ring-gray-200 sm:mx-4">{children}</div>
         </div>
       </div>
     </div>
@@ -286,7 +290,28 @@ function BreakdownDriver({ f, p }: { f: ForecastFactors; p: number }) {
   )
 }
 
-function Chance({ forecast }: { forecast: PlayerCategoryForecast }) {
+function OddsChange({ p, before, event }: { p: number; before: number; event: string }) {
+  const change = (Math.round(p * 1000) - Math.round(before * 1000)) / 10
+  if (change === 0) return null
+  const up = change > 0
+  const magnitude = Math.abs(change).toFixed(1)
+  const description = `${up ? 'Up' : 'Down'} ${magnitude} points since before ${event}`
+  const Arrow = up ? ArrowUp : ArrowDown
+  return (
+    <span
+      aria-label={description}
+      title={description}
+      className={cn('flex items-center gap-1 text-sm font-medium leading-5 tabular-nums', up ? 'text-emerald-700' : 'text-red-600')}
+    >
+      {up ? '+' : '\u2212'}{magnitude}
+      <span className={cn('flex size-4 items-center justify-center rounded-full text-white', up ? 'bg-emerald-700' : 'bg-red-600')}>
+        <Arrow className="size-3" strokeWidth={3} aria-hidden />
+      </span>
+    </span>
+  )
+}
+
+function TierPill({ forecast }: { forecast: PlayerCategoryForecast }) {
   const { entry } = forecast
   if (entry.status !== 'forecast') {
     return (
@@ -295,36 +320,60 @@ function Chance({ forecast }: { forecast: PlayerCategoryForecast }) {
       </span>
     )
   }
-  const p = entry.p ?? 0
-  const tier = chanceTier(p)
+  const tier = chanceTier(entry.p ?? 0)
   return (
-    <span className="flex items-center gap-2">
-      <span className="text-xl font-semibold leading-none tabular-nums text-gray-900">{formatChance(p)}</span>
-      <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset', TIER_PILL[tier])}>
-        {TIER_LABEL[tier]}
-      </span>
+    <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset', TIER_PILL[tier])}>
+      {TIER_LABEL[tier]}
     </span>
   )
 }
 
-function CategoryForecast({ forecast, single }: { forecast: PlayerCategoryForecast; single: boolean }) {
+function Headline({ title, forecast, event }: { title: ReactNode; forecast: PlayerCategoryForecast; event: string }) {
+  const { entry } = forecast
+  const p = entry.p ?? 0
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 flex-col items-start gap-1.5">
+        {title}
+        <TierPill forecast={forecast} />
+      </div>
+      {entry.status === 'forecast' && (
+        <div className="flex shrink-0 flex-col items-end">
+          <span className="text-xl font-semibold leading-6 tabular-nums text-gray-900">{formatChance(p)}</span>
+          {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
+        </div>
+      )}
+    </div>
+  )
+}
+
+const CARD_TITLE = <h2 className="text-base font-semibold leading-6 text-gray-900">Qualification Odds</h2>
+
+function CategoryForecast({ forecast, single, event }: {
+  forecast: PlayerCategoryForecast
+  single: boolean
+  event: string
+}) {
   const { category, entry } = forecast
   const f = entry.factors
   const title = entry.p_junior_title ?? 0
   return (
-    <div className="px-3 pt-3 sm:px-4">
-      {single ? (
-        <h3 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-          {entry.status === 'forecast' ? 'Factors' : CATEGORY_LABEL[category]}
-        </h3>
-      ) : (
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="text-base font-semibold text-gray-900">{CATEGORY_LABEL[category]}</h3>
-          <Chance forecast={forecast} />
-        </div>
-      )}
+    <div>
+      <div className="px-3 py-2.5 sm:px-4">
+        {single ? (
+          <h3 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+            {entry.status === 'forecast' ? 'Factors' : CATEGORY_LABEL[category]}
+          </h3>
+        ) : (
+          <Headline
+            title={<h3 className="text-base font-semibold leading-6 text-gray-900">{CATEGORY_LABEL[category]}</h3>}
+            forecast={forecast}
+            event={event}
+          />
+        )}
+      </div>
       {entry.status === 'forecast' ? (
-        <div className="mt-1">
+        <div className="border-t border-gray-200">
           <GapDriver forecast={forecast} />
           {f && <WeakestDriver f={f} />}
           {f && <PerformanceDriver f={f} />}
@@ -333,7 +382,7 @@ function CategoryForecast({ forecast, single }: { forecast: PlayerCategoryForeca
           {f && <BreakdownDriver f={f} p={entry.p ?? 0} />}
         </div>
       ) : (
-        <p className="mt-0.5 pb-3 text-sm text-gray-700">
+        <p className="px-3 pb-3 text-sm text-gray-700 sm:px-4">
           {entry.status === 'kenya1' ? 'Qualifies automatically as Kenya #1.' : 'Qualified as national junior champion.'}
         </p>
       )}
@@ -346,19 +395,25 @@ export function QualificationForecastCard({ forecast }: { forecast: PlayerForeca
   const single = forecast.categories.length === 1
   return (
     <section className="overflow-hidden rounded-lg border border-gray-200/60 bg-white/95 shadow-elevation-low sm:border-gray-200 sm:bg-white">
-      <div className="flex items-center justify-between gap-3 border-b border-gray-200/60 bg-gray-50/80 h-12 px-3 sm:border-gray-200 sm:bg-gray-50 sm:px-4">
-        <p className="min-w-0 text-sm text-muted-foreground">After {forecast.afterEvent}</p>
-        {single && <div className="shrink-0"><Chance forecast={primary} /></div>}
-      </div>
+      {single ? (
+        <div className="border-b border-gray-200/60 bg-gray-50/80 px-3 py-2.5 sm:border-gray-200 sm:bg-gray-50 sm:px-4">
+          <Headline title={CARD_TITLE} forecast={primary} event={forecast.afterEvent} />
+        </div>
+      ) : (
+        <div className="flex h-12 items-center border-b border-gray-200/60 bg-gray-50/80 px-3 sm:border-gray-200 sm:bg-gray-50 sm:px-4">
+          {CARD_TITLE}
+        </div>
+      )}
       {forecast.categories.map((c, i) => (
         <Fragment key={c.category}>
           {i > 0 && <div className="h-2 border-y border-gray-200/60 bg-gray-50 sm:border-gray-200" aria-hidden />}
-          <CategoryForecast forecast={c} single={single} />
+          <CategoryForecast forecast={c} single={single} event={forecast.afterEvent} />
         </Fragment>
       ))}
       {forecast.categories.some(c => c.entry.status === 'forecast') && (
-        <p className="border-t border-gray-100 px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
-          From {forecast.sims.toLocaleString('en-US')} simulated seasons. Trust the tier more than the exact number.
+        <p className="border-t border-gray-200 px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
+          Based on {forecast.sims.toLocaleString('en-US')} simulations using each player&apos;s rating, form, upside
+          and how often they play. These odds are only approximate.
         </p>
       )}
     </section>

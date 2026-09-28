@@ -5,6 +5,8 @@ export interface ForecastEntry {
   rank: number
   status: ForecastStatus
   p?: number
+  // Same model, on the morning of the latest event.
+  p_before?: number
   p_play?: number
   // best4 percentiles (10th, 50th, 90th) are among simulated seasons that reach four valid results.
   p_four?: number

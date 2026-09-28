@@ -375,12 +375,7 @@ export default function PlayerClientContent({
         )}
       </div>
 
-      {qualificationForecast && (
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Qualification Odds</h2>
-          <QualificationForecastCard forecast={qualificationForecast} />
-        </div>
-      )}
+      {qualificationForecast && <QualificationForecastCard forecast={qualificationForecast} />}
     </div>
   )
 }
