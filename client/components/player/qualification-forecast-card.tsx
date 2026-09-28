@@ -333,21 +333,23 @@ function Headline({ title, forecast, event }: { title: ReactNode; forecast: Play
   const p = entry.p ?? 0
   return (
     <div className="flex items-center justify-between gap-3">
-      <div className="flex min-w-0 flex-col items-start gap-1.5">
+      <div className="min-w-0">
         {title}
+        {entry.status === 'forecast' && (
+          <div className="mt-0.5 flex items-center gap-2">
+            <span className="text-xl font-semibold leading-7 tabular-nums text-gray-900">{formatChance(p)}</span>
+            {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
+          </div>
+        )}
+      </div>
+      <div className="shrink-0">
         <TierPill forecast={forecast} />
       </div>
-      {entry.status === 'forecast' && (
-        <div className="flex shrink-0 flex-col items-end">
-          <span className="text-xl font-semibold leading-6 tabular-nums text-gray-900">{formatChance(p)}</span>
-          {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
-        </div>
-      )}
     </div>
   )
 }
 
-const CARD_TITLE = <h2 className="text-base font-semibold leading-6 text-gray-900">Qualification Odds</h2>
+const CARD_TITLE = <h2 className="text-lg font-semibold leading-7 text-gray-900">Qualification Odds</h2>
 
 function CategoryForecast({ forecast, single, event }: {
   forecast: PlayerCategoryForecast
