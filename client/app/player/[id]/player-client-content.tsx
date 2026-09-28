@@ -221,6 +221,8 @@ export default function PlayerClientContent({
         </div>
       </div>
 
+      {qualificationForecast && <QualificationForecastCard forecast={qualificationForecast} />}
+
       {/* Tournament History */}
       <div className="space-y-2">
         <h2 className="text-lg font-semibold">Tournament History</h2>
@@ -374,8 +376,6 @@ export default function PlayerClientContent({
         </div>
         )}
       </div>
-
-      {qualificationForecast && <QualificationForecastCard forecast={qualificationForecast} />}
     </div>
   )
 }

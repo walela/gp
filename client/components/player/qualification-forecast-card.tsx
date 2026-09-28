@@ -1,7 +1,7 @@
 'use client'
 
-import { Fragment, useId, useState, type ReactNode } from 'react'
-import { ArrowDown, ArrowUp, ChevronDown } from 'lucide-react'
+import { createContext, Fragment, useContext, useId, useState, type ReactNode } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
 import {
@@ -71,6 +71,9 @@ function DetailRow({ label, children, total }: { label: string; children: ReactN
   )
 }
 
+// One open factor per category, keyed by title.
+const OpenFactor = createContext<[string | null, (title: string | null) => void]>([null, () => {}])
+
 function Driver({ title, value, tone, flush, children }: {
   title: string
   value?: ReactNode
@@ -78,10 +81,19 @@ function Driver({ title, value, tone, flush, children }: {
   flush?: boolean
   children: ReactNode
 }) {
-  const [open, setOpen] = useState(false)
+  const [openTitle, setOpenTitle] = useContext(OpenFactor)
+  const open = openTitle === title
+  const setOpen = (next: boolean) => setOpenTitle(next ? title : null)
   const panelId = useId()
   return (
-    <div className="border-b border-gray-200 last:border-b-0 odd:bg-white even:bg-gray-200/50">
+    <div
+      className={cn(
+        'relative border-b border-gray-200 last:border-b-0 odd:bg-white even:bg-gray-200/50',
+        'before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:z-10 before:w-[3px] before:bg-blue-600',
+        'before:opacity-0 before:transition-opacity before:duration-200 motion-reduce:before:transition-none',
+        open && 'before:opacity-100',
+      )}
+    >
       <button
         type="button"
         aria-expanded={open}
@@ -92,7 +104,9 @@ function Driver({ title, value, tone, flush, children }: {
         }}
         className="flex h-13 w-full items-center gap-3 px-3 text-left sm:h-14 sm:px-4"
       >
-        <span className="line-clamp-2 min-w-0 flex-1 text-sm leading-5 text-gray-900 sm:text-base sm:leading-6">{title}</span>
+        <span className={cn('line-clamp-2 min-w-0 flex-1 text-sm leading-5 text-gray-900 sm:text-base sm:leading-6', open && 'font-medium')}>
+          {title}
+        </span>
         {value && (
           <span className={cn('text-sm font-semibold tabular-nums text-gray-900 sm:text-base', tone && TONE_TEXT[tone])}>
             {value}
@@ -101,7 +115,7 @@ function Driver({ title, value, tone, flush, children }: {
         <ChevronDown
           className={cn(
             'size-4 shrink-0 text-gray-400 transition-transform duration-200 ease-in-out motion-reduce:transition-none',
-            open && 'rotate-180',
+            open && 'rotate-180 text-gray-700',
           )}
           aria-hidden
         />
@@ -288,17 +302,15 @@ function OddsChange({ p, before, event }: { p: number; before: number; event: st
   const up = change > 0
   const magnitude = Math.abs(change).toFixed(1)
   const description = `${up ? 'Up' : 'Down'} ${magnitude} points since before ${event}`
-  const Arrow = up ? ArrowUp : ArrowDown
   return (
     <span
       aria-label={description}
       title={description}
-      className={cn('flex items-center gap-1 text-xs font-medium leading-4 tabular-nums', up ? 'text-emerald-700' : 'text-red-600')}
+      className={cn('flex items-baseline gap-1 text-base font-medium tabular-nums', up ? 'text-emerald-700' : 'text-red-600')}
     >
-      {up ? '+' : '\u2212'}{magnitude}
-      <span className={cn('flex size-3.5 items-center justify-center rounded-full text-white', up ? 'bg-emerald-700' : 'bg-red-600')}>
-        <Arrow className="size-2.5" strokeWidth={3} aria-hidden />
-      </span>
+      <span className="text-xs" aria-hidden>{up ? '\u25B2' : '\u25BC'}</span>
+      {magnitude}
+      <span className="text-sm font-normal text-gray-400">pp</span>
     </span>
   )
 }
@@ -307,41 +319,41 @@ function TierPill({ forecast }: { forecast: PlayerCategoryForecast }) {
   const { entry } = forecast
   if (entry.status !== 'forecast') {
     return (
-      <span className="rounded-full bg-emerald-600 px-2.5 py-1 text-sm font-medium text-white ring-1 ring-inset ring-emerald-700">
+      <span className="rounded-full bg-emerald-600 px-3.5 py-1 text-sm font-medium text-white ring-1 ring-inset ring-emerald-700">
         Qualified
       </span>
     )
   }
   const tier = chanceTier(entry.p ?? 0)
   return (
-    <span className={cn('rounded-full px-2.5 py-1 text-sm font-medium ring-1 ring-inset', TIER_PILL[tier])}>
+    <span className={cn('rounded-full px-3.5 py-1 text-sm font-medium ring-1 ring-inset', TIER_PILL[tier])}>
       {TIER_LABEL[tier]}
     </span>
   )
 }
 
-function Headline({ title, forecast, event }: { title: ReactNode; forecast: PlayerCategoryForecast; event: string }) {
+function Headline({ title, forecast, event }: { title: string; forecast: PlayerCategoryForecast; event: string }) {
   const { entry } = forecast
   const p = entry.p ?? 0
   return (
-    <div className="flex items-center justify-between gap-3">
-      <div className="min-w-0">
-        {title}
-        {entry.status === 'forecast' && (
-          <div className="mt-0.5 flex items-center gap-2">
-            <span className="text-xl font-semibold leading-7 tabular-nums text-gray-900">{formatChance(p)}</span>
-            {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
-          </div>
-        )}
-      </div>
-      <div className="shrink-0">
+    <div className="px-3 py-3 sm:px-4">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground">{title}</h2>
         <TierPill forecast={forecast} />
       </div>
+      {entry.status === 'forecast' ? (
+        <div className="mt-1 flex items-baseline gap-2">
+          <span className="text-2xl font-semibold tracking-tight tabular-nums text-gray-900">{formatChance(p)}</span>
+          {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
+        </div>
+      ) : (
+        <p className="mt-1 text-sm text-gray-700">
+          {entry.status === 'kenya1' ? 'Qualifies automatically as Kenya #1.' : 'Qualified as national junior champion.'}
+        </p>
+      )}
     </div>
   )
 }
-
-const CARD_TITLE = <h2 className="text-lg font-semibold leading-7 text-gray-600">Qualification Odds</h2>
 
 const SECTION_GAP = <div className="h-2 border-y border-gray-200/60 bg-gray-50 sm:border-gray-200" aria-hidden />
 
@@ -353,53 +365,39 @@ function CategoryForecast({ forecast, single, event }: {
   const { category, entry } = forecast
   const f = entry.factors
   const title = entry.p_junior_title ?? 0
+  const openFactor = useState<string | null>(null)
   return (
     <div>
-      <div className="px-3 py-2.5 sm:px-4">
-        {single ? (
-          <h3 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-            {entry.status === 'forecast' ? 'Factors' : CATEGORY_LABEL[category]}
+      <Headline
+        title={single ? 'Qualification Odds' : `${CATEGORY_LABEL[category]} qualification odds`}
+        forecast={forecast}
+        event={event}
+      />
+      {entry.status === 'forecast' && (
+        <>
+          <h3 className="border-y border-gray-200 bg-gray-50 px-3 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground sm:px-4">
+            Factors
           </h3>
-        ) : (
-          <Headline
-            title={<h3 className="text-base font-semibold leading-6 text-gray-600">{CATEGORY_LABEL[category]}</h3>}
-            forecast={forecast}
-            event={event}
-          />
-        )}
-      </div>
-      {entry.status === 'forecast' ? (
-        <div className="border-t border-gray-200">
-          <GapDriver forecast={forecast} />
-          {f && <WeakestDriver f={f} />}
-          {f && <PerformanceDriver f={f} />}
-          {f && <EventsDriver f={f} />}
-          {title >= 0.01 && <TitleDriver title={title} entryChance={entry.p_title_entry} />}
-          {f && <BreakdownDriver f={f} />}
-        </div>
-      ) : (
-        <p className="px-3 pb-3 text-sm text-gray-700 sm:px-4">
-          {entry.status === 'kenya1' ? 'Qualifies automatically as Kenya #1.' : 'Qualified as national junior champion.'}
-        </p>
+          <OpenFactor.Provider value={openFactor}>
+            <div>
+              {f && <PerformanceDriver f={f} />}
+              {f && <WeakestDriver f={f} />}
+              {f && <EventsDriver f={f} />}
+              <GapDriver forecast={forecast} />
+              {f && <BreakdownDriver f={f} />}
+              {title >= 0.01 && <TitleDriver title={title} entryChance={entry.p_title_entry} />}
+            </div>
+          </OpenFactor.Provider>
+        </>
       )}
     </div>
   )
 }
 
 export function QualificationForecastCard({ forecast }: { forecast: PlayerForecast }) {
-  const [primary] = forecast.categories
   const single = forecast.categories.length === 1
   return (
     <section className="overflow-hidden rounded-lg border border-gray-200/60 bg-white/95 shadow-elevation-low sm:border-gray-200 sm:bg-white">
-      {single ? (
-        <div className="border-b border-gray-200/60 bg-gray-50/80 px-3 py-2.5 sm:border-gray-200 sm:bg-gray-50 sm:px-4">
-          <Headline title={CARD_TITLE} forecast={primary} event={forecast.afterEvent} />
-        </div>
-      ) : (
-        <div className="flex h-12 items-center border-b border-gray-200/60 bg-gray-50/80 px-3 sm:border-gray-200 sm:bg-gray-50 sm:px-4">
-          {CARD_TITLE}
-        </div>
-      )}
       {forecast.categories.map((c, i) => (
         <Fragment key={c.category}>
           {i > 0 && SECTION_GAP}
@@ -411,7 +409,7 @@ export function QualificationForecastCard({ forecast }: { forecast: PlayerForeca
           {SECTION_GAP}
           <p className="px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
             Based on {forecast.sims.toLocaleString('en-US')} simulations using each player&apos;s rating, form, upside
-            and how often they play. These odds are only approximate.
+            and how often they play. These odds are probabilistic estimates and only approximate.
           </p>
         </>
       )}
