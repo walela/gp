@@ -19,6 +19,7 @@ from flask import Response
 from dotenv import load_dotenv
 
 from tournament_metadata import infer_location, infer_rounds
+from player_names import name_matches_query
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "backend", ".env"))
 
@@ -387,9 +388,8 @@ def rankings():
 
     # Filter by search query if provided
     if search_query:
-        search_query_lower = search_query.lower()
         player_rankings = [
-            p for p in player_rankings if search_query_lower in p["name"].lower()
+            p for p in player_rankings if name_matches_query(p["name"], search_query)
         ]
 
     # Map frontend sort keys to data keys
@@ -680,9 +680,8 @@ def export_rankings():
 
         # Filter by search query if provided
         if search_query:
-            search_query_lower = search_query.lower()
             player_rankings = [
-                p for p in player_rankings if search_query_lower in p["name"].lower()
+                p for p in player_rankings if name_matches_query(p["name"], search_query)
             ]
 
         # Map frontend sort keys to data keys

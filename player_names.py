@@ -115,6 +115,15 @@ def player_name_key(name: str) -> str:
     return " ".join(sorted(re.findall(r"[^\W_]+", name.lower())))
 
 
+def name_matches_query(name: str, query: str) -> bool:
+    """Search match where every query word appears in some name word, in any order."""
+    name_words = re.findall(r"[^\W_]+", name.lower())
+    return all(
+        any(q in w for w in name_words)
+        for q in re.findall(r"[^\W_]+", query.lower())
+    )
+
+
 def _is_given(token: str) -> bool:
     return token.lower() in GIVEN_NAMES
 
