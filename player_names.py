@@ -146,8 +146,18 @@ def _surname_index(tokens: List[str]) -> int:
     return signal[-1] if signal else len(tokens) - 1
 
 
+def _render(surname_words: List[str], given_words: List[str]) -> str:
+    # The comma is only needed to show where the surname ends in longer names.
+    if len(surname_words) + len(given_words) <= 2:
+        return " ".join(surname_words + given_words)
+    return f"{' '.join(surname_words)}, {' '.join(given_words)}"
+
+
 def format_player_name(name: str, reference: Optional[str] = None) -> str:
-    """Return a cleaned name as "Surname, Given names".
+    """Return a cleaned name surname-first: "Chumba Allan", "Mwanza, Terrence Gachie".
+
+    Two-word output has no comma, so it no longer records which word is the
+    surname; compare stored names directly rather than reformatting them.
 
     An existing comma is trusted unless it plainly splits a given name from the
     surname the wrong way round (e.g. "Alexander, Muriithi"). `reference` is an
@@ -167,7 +177,7 @@ def format_player_name(name: str, reference: Optional[str] = None) -> str:
         surname_all_given = all(_is_given(t) or _is_neutral(t) for t in surname_words)
         given_has_other = any(not _is_given(t) and not _is_neutral(t) for t in given_words)
         if surname_words and given_words and not (surname_all_given and given_has_other):
-            return f"{' '.join(surname_words)}, {' '.join(given_words)}"
+            return _render(surname_words, given_words)
         tokens = surname_words + given_words
     else:
         tokens = source.split()
@@ -175,4 +185,4 @@ def format_player_name(name: str, reference: Optional[str] = None) -> str:
     if len(tokens) < 2:
         return " ".join(tokens)
     i = _surname_index(tokens)
-    return f"{tokens[i]}, {' '.join(tokens[:i] + tokens[i + 1:])}"
+    return _render([tokens[i]], tokens[:i] + tokens[i + 1:])

@@ -348,7 +348,7 @@ class Database:
             candidates = [p for p in candidates if p["id"] in preferred_ids] or candidates
         if len(candidates) > 1:
             wanted = format_player_name(name).lower()
-            candidates = [p for p in candidates if format_player_name(p["name"]).lower() == wanted]
+            candidates = [p for p in candidates if p["name"].lower() == wanted]
             if len(candidates) != 1:
                 logger.warning("Ambiguous player name %r; creating a new player record", name)
         return candidates[0] if len(candidates) == 1 else None
