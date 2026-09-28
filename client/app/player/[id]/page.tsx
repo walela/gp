@@ -1,4 +1,6 @@
 import { getPlayer, PlayerDetails, getRankings, PlayerRanking, getSeasons } from '@/services/api'
+import { getPlayerForecast } from '@/lib/qualification-forecast'
+import type { PlayerForecast } from '@/lib/qualification-odds'
 import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 import { Metadata } from 'next'
@@ -84,6 +86,7 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
 
   let player: PlayerDetails | null = null
   let playerRanking: DisplayRanking | null = null
+  let qualificationForecast: PlayerForecast | null = null
   let error: Error | null = null
 
   try {
@@ -120,6 +123,12 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
         // Continue without ranking data
       }
     }
+
+    qualificationForecast = await getPlayerForecast(
+      loadedPlayer.fide_id,
+      season,
+      gender?.toLowerCase() === 'f' ? 'ladies' : 'open'
+    )
   } catch (err) {
     console.error('Error fetching player:', err)
     error = err instanceof Error ? err : new Error('An unknown error occurred')
@@ -182,7 +191,13 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PlayerClientContent player={player} playerRanking={playerRanking} seasons={seasons} currentSeason={season} />
+      <PlayerClientContent
+        player={player}
+        playerRanking={playerRanking}
+        qualificationForecast={qualificationForecast}
+        seasons={seasons}
+        currentSeason={season}
+      />
     </>
   )
 }

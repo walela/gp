@@ -18,17 +18,26 @@ import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
 import { SeasonSelector } from '@/components/season-selector'
+import { QualificationForecastCard } from '@/components/player/qualification-forecast-card'
+import type { PlayerForecast } from '@/lib/qualification-odds'
 
 interface PlayerClientContentProps {
   player: PlayerDetails
   playerRanking: (PlayerRanking & { currentRank?: number }) | null
+  qualificationForecast: PlayerForecast | null
   seasons: number[]
   currentSeason: number
 }
 
 type SortField = 'date' | 'tournament' | 'start_rank' | 'rating' | 'points' | 'tpr'
 
-export default function PlayerClientContent({ player, playerRanking, seasons, currentSeason }: PlayerClientContentProps) {
+export default function PlayerClientContent({
+  player,
+  playerRanking,
+  qualificationForecast,
+  seasons,
+  currentSeason,
+}: PlayerClientContentProps) {
   const [sortField, setSortField] = useState<SortField>('date')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const isFemale = player.gender === 'F'
@@ -365,6 +374,13 @@ export default function PlayerClientContent({ player, playerRanking, seasons, cu
         </div>
         )}
       </div>
+
+      {qualificationForecast && (
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold">Qualification Odds</h2>
+          <QualificationForecastCard forecast={qualificationForecast} />
+        </div>
+      )}
     </div>
   )
 }

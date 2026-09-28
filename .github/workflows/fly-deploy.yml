@@ -21,6 +21,9 @@ jobs:
             exit 1
           fi
 
+      - name: Verify the qualification forecast matches the deployed data
+        run: python3 scripts/update_forecast.py --check
+
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Sync cache revalidation secret to Fly
         env:

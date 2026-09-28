@@ -18,6 +18,7 @@ import { SearchForm } from '@/components/rankings/search-form'
 import { Pagination } from '@/components/ui/pagination'
 import { SeasonSelector } from '@/components/season-selector'
 import { CategoryToggle } from '@/components/category-toggle'
+import { getQualifierConfig } from '@/lib/qualifiers'
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -160,19 +161,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   const { rankings, total_pages } = rankingsData
   const topPlayers = (rankingsData.top_rankings ?? rankings).slice(0, topPlayersFetchCount)
 
-  // Season-specific qualifier config: Kenya #1, Junior Champion, and qualifier exclusions
-  const qualifierConfig: Record<number, Record<string, { kenyaNumber1?: string; juniorChampion?: string; excluded?: string[] }>> = {
-    2025: {
-      open: { kenyaNumber1: '10814647', juniorChampion: '10831533' },    // McCligeyo, Kyle Kuka
-      ladies: { kenyaNumber1: '10802886', juniorChampion: '10822755' },  // Ndirangu (Joyce), Cassidy Maina
-    },
-    2026: {
-      open: { kenyaNumber1: '10824014', excluded: ['10814582'] },  // Simiyu, Jadon; Kaloki Hawi
-      ladies: { kenyaNumber1: '10809090' },  // Mongeli Sasha
-    }
-  }
-
-  const seasonConfig = qualifierConfig[season]?.[category]
+  const seasonConfig = getQualifierConfig(season, category)
   const kenyaNumber1Id = seasonConfig?.kenyaNumber1 ?? null
   const juniorChampionId = seasonConfig?.juniorChampion ?? null
   const qualifierExcludedIds = new Set(seasonConfig?.excluded ?? [])

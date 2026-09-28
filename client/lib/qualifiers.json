@@ -1,0 +1,25 @@
+{
+  "2025": {
+    "open": {
+      "kenyaNumber1": "10814647",
+      "juniorChampion": "10831533",
+      "names": "Kenya #1 McCligeyo; junior champion Kyle Kuka"
+    },
+    "ladies": {
+      "kenyaNumber1": "10802886",
+      "juniorChampion": "10822755",
+      "names": "Kenya #1 Joyce Ndirangu; junior champion Cassidy Maina"
+    }
+  },
+  "2026": {
+    "open": {
+      "kenyaNumber1": "10824014",
+      "excluded": ["10814582"],
+      "names": "Kenya #1 Jadon Simiyu; Hawi Kaloki excluded"
+    },
+    "ladies": {
+      "kenyaNumber1": "10809090",
+      "names": "Kenya #1 Sasha Mongeli"
+    }
+  }
+}

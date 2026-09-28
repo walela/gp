@@ -40,7 +40,18 @@ When a Grand Prix event is finished, update it in this order:
    - Once an event is scraped and saved as completed, remove it from `upcomingTournaments`.
    - If an event is postponed or not completed, update/move its static record instead of removing it.
 
-6. Deploy and verify cache revalidation.
+6. Regenerate the qualification forecast.
+   - Run `python3 scripts/update_forecast.py` and commit `client/lib/qualification-forecast.json` with the data.
+   - It reads `gp_tracker.db`, the upcoming events in `client/lib/active-tournaments.ts`, `client/lib/qualifiers.json`
+     (Kenya #1, junior champion, excluded players; also used by the rankings page) and `data/fide_bio_ken.csv`.
+   - Set `juniorChampion` in `client/lib/qualifiers.json` once the national junior championship is decided.
+   - New events get default forecast settings; add an `EVENT_PARAMS` entry in `qualification_model.py` when the
+     format, draw or chance of a Ladies section is known.
+   - The deploy workflow runs `python3 scripts/update_forecast.py --check` and fails if the forecast is stale.
+     Player pages also hide the forecast when the API's tournaments differ from the modelled ones.
+   - Refresh birth years and sex occasionally with `python3 scripts/update_fide_bio.py`.
+
+7. Deploy and verify cache revalidation.
    - A successful Fly deployment does not by itself refresh the frontend. Public API fetches use the Next.js Data Cache with the `gp-data` tag.
    - The Fly workflow must successfully call `https://www.1700chess.sh/api/revalidate` after deploying data.
    - Verify the public site, tournament detail, Open rankings, and Ladies rankings after deployment. Do not treat a correct Fly API response as sufficient proof that the frontend is fresh.
