@@ -124,11 +124,7 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
       }
     }
 
-    qualificationForecast = await getPlayerForecast(
-      loadedPlayer.fide_id,
-      season,
-      gender?.toLowerCase() === 'f' ? 'ladies' : 'open'
-    )
+    qualificationForecast = await getPlayerForecast(loadedPlayer.fide_id, season)
   } catch (err) {
     console.error('Error fetching player:', err)
     error = err instanceof Error ? err : new Error('An unknown error occurred')

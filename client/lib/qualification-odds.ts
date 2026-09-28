@@ -15,6 +15,8 @@ export interface ForecastEntry {
   // Only for juniors eligible for the national junior title.
   p_title_entry?: number
   factors?: ForecastFactors
+  // Only for players too far off the pace to simulate; null without four results.
+  best4_now?: number | null
 }
 
 export type FactorGroup = 'adults_open' | 'juniors_open' | 'women_open' | 'ladies'

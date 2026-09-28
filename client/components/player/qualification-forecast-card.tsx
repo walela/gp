@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useState, type ReactNode } from 'react'
+import { Fragment, useId, useState, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -113,8 +113,22 @@ function Driver({ title, value, tone, children }: {
   )
 }
 
+function OffPaceDriver({ best4, line }: { best4: number | null; line: number | null }) {
+  const gap = best4 != null && line != null ? best4 - line : null
+  return (
+    <Driver title="Current Best 4 TPR vs. cutoff" value={gap == null ? 'No Best 4' : signed(gap)} tone="bad">
+      <dl>
+        {best4 != null && <DetailRow label="Current Best 4">{best4}</DetailRow>}
+        {line != null && <DetailRow label="Projected cutoff">{line}</DetailRow>}
+      </dl>
+      <p className="mt-1 text-xs text-muted-foreground">Too far below the cutoff to simulate.</p>
+    </Driver>
+  )
+}
+
 function GapDriver({ forecast }: { forecast: PlayerCategoryForecast }) {
   const { entry, cutoff } = forecast
+  if (entry.best4_now !== undefined) return <OffPaceDriver best4={entry.best4_now} line={cutoff[1]} />
   const f = entry.factors
   const best4 = entry.best4?.[1]
   const line = cutoff[1]
@@ -293,23 +307,22 @@ function Chance({ forecast }: { forecast: PlayerCategoryForecast }) {
   )
 }
 
-function CategoryForecast({ forecast, showChance, onlyCategory }: {
-  forecast: PlayerCategoryForecast
-  showChance: boolean
-  onlyCategory: boolean
-}) {
+function CategoryForecast({ forecast, single }: { forecast: PlayerCategoryForecast; single: boolean }) {
   const { category, entry } = forecast
   const f = entry.factors
   const title = entry.p_junior_title ?? 0
-  const label = entry.status !== 'forecast'
-    ? CATEGORY_LABEL[category]
-    : onlyCategory ? 'Factors' : `${CATEGORY_LABEL[category]} factors`
   return (
     <div className="px-3 pt-3 sm:px-4">
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{label}</h3>
-        {showChance && <Chance forecast={forecast} />}
-      </div>
+      {single ? (
+        <h3 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+          {entry.status === 'forecast' ? 'Factors' : CATEGORY_LABEL[category]}
+        </h3>
+      ) : (
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-base font-semibold text-gray-900">{CATEGORY_LABEL[category]}</h3>
+          <Chance forecast={forecast} />
+        </div>
+      )}
       {entry.status === 'forecast' ? (
         <div className="mt-1">
           <GapDriver forecast={forecast} />
@@ -330,17 +343,19 @@ function CategoryForecast({ forecast, showChance, onlyCategory }: {
 
 export function QualificationForecastCard({ forecast }: { forecast: PlayerForecast }) {
   const [primary] = forecast.categories
+  const single = forecast.categories.length === 1
   return (
     <section className="overflow-hidden rounded-lg border border-gray-200/60 bg-white/95 shadow-elevation-low sm:border-gray-200 sm:bg-white">
       <div className="flex items-center justify-between gap-3 border-b border-gray-200/60 bg-gray-50/80 h-12 px-3 sm:border-gray-200 sm:bg-gray-50 sm:px-4">
         <p className="min-w-0 text-sm text-muted-foreground">After {forecast.afterEvent}</p>
-        <div className="shrink-0"><Chance forecast={primary} /></div>
+        {single && <div className="shrink-0"><Chance forecast={primary} /></div>}
       </div>
-      <div className="divide-y divide-gray-100">
-        {forecast.categories.map((c, i) => (
-          <CategoryForecast key={c.category} forecast={c} showChance={i > 0} onlyCategory={forecast.categories.length === 1} />
-        ))}
-      </div>
+      {forecast.categories.map((c, i) => (
+        <Fragment key={c.category}>
+          {i > 0 && <div className="h-2 border-y border-gray-200/60 bg-gray-50 sm:border-gray-200" aria-hidden />}
+          <CategoryForecast forecast={c} single={single} />
+        </Fragment>
+      ))}
       {forecast.categories.some(c => c.entry.status === 'forecast') && (
         <p className="border-t border-gray-100 px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
           From {forecast.sims.toLocaleString('en-US')} simulated seasons. Trust the tier more than the exact number.

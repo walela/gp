@@ -1279,6 +1279,7 @@
      "status": "forecast"
     },
     "10827943": {
+     "best4_now": null,
      "p": 0.0,
      "rank": 32,
      "status": "forecast"
@@ -2221,6 +2222,7 @@
      "status": "forecast"
     },
     "10874968": {
+     "best4_now": null,
      "p": 0.0,
      "rank": 33,
      "status": "forecast"
@@ -2560,6 +2562,7 @@
      "status": "forecast"
     },
     "554000343": {
+     "best4_now": null,
      "p": 0.0,
      "rank": 31,
      "status": "forecast"
@@ -2706,6 +2709,7 @@
      "status": "forecast"
     },
     "10800360": {
+     "best4_now": 1783,
      "p": 0.0,
      "rank": 30,
      "status": "forecast"
@@ -4240,11 +4244,13 @@
      "status": "forecast"
     },
     "10824421": {
+     "best4_now": 1647,
      "p": 0.0,
      "rank": 36,
      "status": "forecast"
     },
     "10825606": {
+     "best4_now": 1651,
      "p": 0.0,
      "rank": 35,
      "status": "forecast"
@@ -4982,6 +4988,7 @@
      "status": "forecast"
     },
     "10842870": {
+     "best4_now": 1609,
      "p": 0.0,
      "rank": 38,
      "status": "forecast"
@@ -5186,16 +5193,19 @@
      "status": "forecast"
     },
     "10847979": {
+     "best4_now": 1740,
      "p": 0.0,
      "rank": 32,
      "status": "forecast"
     },
     "10848533": {
+     "best4_now": 1700,
      "p": 0.0,
      "rank": 33,
      "status": "forecast"
     },
     "10857630": {
+     "best4_now": 1540,
      "p": 0.0,
      "rank": 39,
      "status": "forecast"
@@ -5268,6 +5278,7 @@
      "status": "forecast"
     },
     "10890688": {
+     "best4_now": 1643,
      "p": 0.0,
      "rank": 37,
      "status": "forecast"
@@ -5340,11 +5351,13 @@
      "status": "forecast"
     },
     "554016827": {
+     "best4_now": 1672,
      "p": 0.0,
      "rank": 34,
      "status": "forecast"
     },
     "554017920": {
+     "best4_now": 1534,
      "p": 0.0,
      "rank": 40,
      "status": "forecast"
@@ -5356,7 +5369,7 @@
   "data": "1b38162b33eb32c1",
   "events": "4fadf50a09031095",
   "fide_bio": "858e94ad6545280d",
-  "model": "511721c57b4c9735",
+  "model": "6b977d4846b28beb",
   "qualifiers": "4c9846cec9ecea45",
   "season": 2026
  },

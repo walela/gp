@@ -30,12 +30,12 @@ async function matchesPublishedResults(season: number): Promise<boolean> {
 
 export async function getPlayerForecast(
   fideId: string | null | undefined,
-  season: number,
-  preferred: ForecastCategory = 'open'
+  season: number
 ): Promise<PlayerForecast | null> {
   if (!fideId || season !== forecast.season) return null
 
-  const order: ForecastCategory[] = preferred === 'ladies' ? ['ladies', 'open'] : ['open', 'ladies']
+  // Only women have Ladies odds, and a woman who makes both teams takes the Ladies place.
+  const order: ForecastCategory[] = ['ladies', 'open']
   const categories = order.flatMap(category => {
     const entry = forecast.categories[category].players[fideId]
     return entry ? [{ category, entry, cutoff: forecast.categories[category].cutoff }] : []

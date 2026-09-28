@@ -699,11 +699,14 @@ def tournament_counts(season):
 
 
 def category_ranks(con, season, category):
+    """fide_id -> (rank, current Best 4 or None)."""
     gender = "F" if category == "ladies" else ""
-    return dict(con.execute(
-        "SELECT fide_id, rank FROM player_rankings WHERE season = ? AND COALESCE(gender, '') = ? AND fide_id IS NOT NULL",
+    rows = con.execute(
+        """SELECT fide_id, rank, best_4 FROM player_rankings
+           WHERE season = ? AND COALESCE(gender, '') = ? AND fide_id IS NOT NULL""",
         (season, gender),
-    ).fetchall())
+    ).fetchall()
+    return {fid: (rank, round(best4) if best4 else None) for fid, rank, best4 in rows}
 
 
 def player_factors(p, events, season, by_new):
@@ -763,13 +766,14 @@ def forecast_category(con, season, as_of, category, events, qualifiers, ladies_t
     )
     modelled = {p["fide_id"]: p for p in contenders}
     title_entry = {p["fide_id"]: p["p_title_attend"] for p in juniors}
-    ranks = category_ranks(con, season, category)
+    ranking = category_ranks(con, season, category)
+    ranks = {fid: rank for fid, (rank, _) in ranking.items()}
     published = {fid for fid, rank in ranks.items() if rank <= PUBLISHED_RANKS}
     published |= {fid for fid in modelled if fid in ranks and counts[fid] / SIMS >= PUBLISHED_MIN_P}
     published |= {fid for fid in kenya1 | {champion} if fid in ranks}
     players = {}
     for fide_id in sorted(published, key=ranks.get):
-        rank = ranks[fide_id]
+        rank, best4_now = ranking[fide_id]
         if fide_id in dead:
             continue
         if fide_id in kenya1:
@@ -792,6 +796,9 @@ def forecast_category(con, season, as_of, category, events, qualifiers, ladies_t
             })
             if fide_id in title_entry:
                 entry["p_title_entry"] = round(title_entry[fide_id], 3)
+        else:
+            # Too far off the pace to simulate; the page shows how far.
+            entry["best4_now"] = best4_now
         players[fide_id] = entry
     return {"cutoff": [pct(cutoffs, 0.1), pct(cutoffs, 0.5), pct(cutoffs, 0.9)], "players": players}
 
