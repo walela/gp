@@ -12,6 +12,9 @@ import { Footer } from '@/components/layout/footer'
 import { DesignThemeProvider } from '@/lib/design-theme-context'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Script from 'next/script'
+import { SITE_NAME, SITE_URL } from '@/lib/site'
+import { Suspense } from 'react'
+import { NavigationProgress } from '@/components/navigation-progress'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -46,8 +49,10 @@ const fontVariables = [
   .join(' ')
 
 export const metadata: Metadata = {
-  title: 'Chess Kenya Grand Prix',
-  description: 'Track Chess Kenya Grand Prix tournaments and rankings'
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: `%s - ${SITE_NAME}` },
+  description: 'Rankings, results and qualification odds for the Chess Kenya Grand Prix.',
+  openGraph: { siteName: SITE_NAME, type: 'website', locale: 'en_KE' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -72,6 +77,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#1a1a1a06_1px,transparent_1px),linear-gradient(to_bottom,#1a1a1a06_1px,transparent_1px)] bg-[size:48px_48px]" />
         </div>
         
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <DesignThemeProvider>
           <div className="relative flex min-h-screen flex-col">
             <Header />

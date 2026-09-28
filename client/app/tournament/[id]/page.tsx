@@ -19,6 +19,7 @@ import { ExportButton } from '@/components/ui/export-button'
 import { TrackedLink } from '@/components/tracked-link'
 import { SectionSelector } from '@/components/tournament/section-selector'
 import { Metadata } from 'next'
+import { pageMetadata, SITE_URL } from '@/lib/site'
 
 // Render HTML per request while allowing explicitly cached data fetches.
 export const revalidate = 0
@@ -65,11 +66,9 @@ export async function generateMetadata({ params, searchParams }: TournamentPageP
   ])
   const tournament = await getTournament(id, requestOptions)
   
-  if (!tournament) {
-    return {
-      title: 'Tournament Not Found - Chess Kenya Grand Prix',
-      description: 'The requested tournament could not be found.'
-    }
+  // The API answers unknown IDs with an error object rather than a 404.
+  if (!tournament?.name) {
+    return { title: 'Tournament Not Found', robots: { index: false } }
   }
 
   const rawLocation = tournament.location || inferTournamentLocation(tournament.name)
@@ -77,24 +76,13 @@ export async function generateMetadata({ params, searchParams }: TournamentPageP
   const shortName = tournament.short_name || getShortTournamentName(tournament.name)
   const dateStr = formatTournamentDate(tournament.start_date, tournament.end_date)
   const tournamentYear = tournament.start_date?.slice(0, 4)
-  const seriesName = tournamentYear ? `Chess Kenya ${tournamentYear} Grand Prix` : 'Chess Kenya Grand Prix'
-  
-  return {
-    title: `${shortName} Results - ${seriesName}`,
-    description: `View results, standings and player performances from the ${shortName} chess tournament held ${dateStr} in ${locationDisplay}. Part of the ${seriesName} series.`,
-    openGraph: {
-      title: `${shortName} Chess Tournament Results`,
-      description: `${tournament.total} players competed in the ${shortName} tournament. View complete results, TPR ratings and standings.`,
-      type: 'website',
-      siteName: 'Chess Kenya Grand Prix',
-      url: `https://1700chess.sh/tournament/${id}`
-    },
-    twitter: {
-      card: 'summary',
-      title: `${shortName} Results`,
-      description: `View results from the ${shortName} chess tournament with ${tournament.total} players.`
-    }
-  }
+  const ladies = tournament.section === 'ladies'
+
+  return pageMetadata({
+    title: `${shortName}${ladies ? ' Ladies' : ''}${tournamentYear && !shortName.includes(tournamentYear) ? ` ${tournamentYear}` : ''} Results`,
+    description: `Results, performance ratings and standings for the ${tournament.total} players at ${shortName}${ladies ? ' (Ladies)' : ''}, held ${dateStr} in ${locationDisplay}.`,
+    path: `/tournament/${id}`,
+  })
 }
 
 export default async function TournamentPage({ params, searchParams }: TournamentPageProps) {
@@ -108,7 +96,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
   // across metadata and page rendering.
   const tournament = await getTournament(id, requestOptions)
 
-  if (!tournament) {
+  if (!tournament?.name) {
     notFound()
   }
 
@@ -147,7 +135,7 @@ export default async function TournamentPage({ params, searchParams }: Tournamen
     },
     eventStatus: 'https://schema.org/EventCompleted',
     maximumAttendeeCapacity: tournament.total,
-    url: `https://1700chess.sh/tournament/${id}`,
+    url: `${SITE_URL}/tournament/${id}`,
     description: `Chess tournament with ${tournament.total} participants, ${resolvedRounds} rounds`
   }
 

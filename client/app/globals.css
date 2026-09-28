@@ -144,6 +144,20 @@
   }
 }
 
+/* Navigation progress: eases towards 90% and waits there for the page to arrive. */
+@theme {
+  --animate-nav-progress: nav-progress 8s cubic-bezier(0.1, 0.7, 0.2, 1) forwards;
+
+  @keyframes nav-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(0.9);
+    }
+  }
+}
+
 /* Chess pattern animation */
 @keyframes pan {
   0% {

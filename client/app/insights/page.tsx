@@ -1,6 +1,7 @@
 import { getInsights, getSeasons } from '@/services/api'
 import { SeasonSelector } from '@/components/season-selector'
 import { Metadata } from 'next'
+import { pageMetadata } from '@/lib/site'
 import {
   Target, TrendingUp, Zap, Ghost, Award, BarChart3,
   Trophy, Dumbbell, Scale, Clock, AlertTriangle, Activity, Crosshair
@@ -9,10 +10,11 @@ import {
 // Render HTML per request while allowing explicitly cached data fetches.
 export const revalidate = 0
 
-export const metadata: Metadata = {
-  title: 'Season Insights - Chess Kenya Grand Prix',
-  description: 'Data-driven analysis of the Chess Kenya Grand Prix season. Explore patterns, outliers, and what it takes to qualify.',
-}
+export const metadata: Metadata = pageMetadata({
+  title: 'Season Insights',
+  description: 'Patterns and outliers from the Chess Kenya Grand Prix season, and what it takes to qualify.',
+  path: '/insights',
+})
 
 const CATEGORY_CONFIG: Record<string, { icon: React.ElementType; color: string; bg: string; border: string }> = {
   'The Field': { icon: BarChart3, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },

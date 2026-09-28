@@ -4,6 +4,7 @@ import { TournamentTable } from '@/components/tournament-table'
 import { upcomingTournaments, plannedTournaments, type Tournament } from '@/lib/active-tournaments'
 import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
+import { pageMetadata } from '@/lib/site'
 import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
 import { TrackedLink } from '@/components/tracked-link'
@@ -14,23 +15,11 @@ import { CollapsibleSection } from '@/components/collapsible-section'
 // Render HTML per request while allowing explicitly cached data fetches.
 export const revalidate = 0
 
-export const metadata: Metadata = {
-  title: 'Chess Kenya Grand Prix - Official Tournament Tracker',
-  description:
-    'Track Chess Kenya Grand Prix tournaments, view results, player rankings and upcoming events. Official standings for the chess season in Kenya.',
-  openGraph: {
-    title: 'Chess Kenya Grand Prix',
-    description: 'Official tournament tracker for Chess Kenya Grand Prix. View results, rankings and upcoming chess tournaments across Kenya.',
-    type: 'website',
-    siteName: 'Chess Kenya Grand Prix',
-    url: 'https://1700chess.sh'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Chess Kenya Grand Prix',
-    description: 'Track chess tournaments, results and rankings for the Kenya Grand Prix series'
-  }
-}
+export const metadata: Metadata = pageMetadata({
+  title: 'Tournaments',
+  description: 'Results from completed Chess Kenya Grand Prix tournaments and dates for upcoming ones.',
+  path: '/tournaments',
+})
 
 function formatTimeAway(startDateIso: string) {
   const startDate = dayjs(startDateIso).startOf('day')

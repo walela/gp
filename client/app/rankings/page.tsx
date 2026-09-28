@@ -20,23 +20,24 @@ import { SeasonSelector } from '@/components/season-selector'
 import { CategoryToggle } from '@/components/category-toggle'
 import { getQualifierConfig } from '@/lib/qualifiers'
 import { Metadata } from 'next'
+import { pageMetadata, SITE_NAME } from '@/lib/site'
 import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = {
-  title: 'Player Rankings - Chess Kenya Grand Prix',
-  description: 'View the latest Chess Kenya Grand Prix rankings and standings. Track player performance across tournaments with TPR ratings and points.',
-  openGraph: {
-    title: 'Chess Kenya Grand Prix Rankings',
-    description: 'Official rankings for the Chess Kenya Grand Prix series. View top players, tournament performances and TPR ratings.',
-    type: 'website',
-    siteName: 'Chess Kenya Grand Prix',
-    url: 'https://1700chess.sh'
-  },
-  twitter: {
-    card: 'summary',
-    title: 'Chess Kenya GP Rankings',
-    description: 'View the latest Chess Kenya Grand Prix player rankings and standings'
-  }
+export async function generateMetadata({ searchParams }: RankingsPageProps): Promise<Metadata> {
+  const { category, season } = await searchParams
+  const ladies = category === 'ladies'
+  const query = new URLSearchParams()
+  if (ladies) query.set('category', 'ladies')
+  if (season) query.set('season', season)
+  const path = query.size > 0 ? `/?${query}` : '/'
+  const label = `${season ? `${season} ` : ''}${ladies ? 'Ladies' : 'Open'} Rankings`
+  return pageMetadata({
+    title: ladies || season ? label : SITE_NAME,
+    description: ladies
+      ? 'Ladies standings for the Chess Kenya Grand Prix, ranked by each player\'s best four tournament performances.'
+      : 'Open standings for the Chess Kenya Grand Prix, ranked by each player\'s best four tournament performances.',
+    path,
+  })
 }
 
 // Render HTML per request while allowing explicitly cached data fetches.

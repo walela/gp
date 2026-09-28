@@ -4,6 +4,7 @@ import type { PlayerForecast } from '@/lib/qualification-odds'
 import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
 import { Metadata } from 'next'
+import { pageMetadata, SITE_URL } from '@/lib/site'
 
 // Render HTML per request while allowing explicitly cached data fetches.
 export const revalidate = 0
@@ -44,36 +45,20 @@ export async function generateMetadata({ params, searchParams }: PlayerPageProps
     })
     
     if (!player) {
-      return {
-        title: 'Player Not Found - Chess Kenya 2025 Grand Prix',
-        description: 'The requested player could not be found.'
-      }
+      return { title: 'Player Not Found', robots: { index: false } }
     }
 
-    const ratingText = player.current_fide_rating ? `FIDE ${player.current_fide_rating}` : 'Unrated'
-    const tournamentsPlayed = player.results.length
-    
-    return {
-      title: `${player.name} - ${ratingText} - Chess Kenya Grand Prix`,
-      description: `View ${player.name}'s chess tournament results, ratings and performance in the Chess Kenya 2025 Grand Prix. ${tournamentsPlayed} tournaments played. ${ratingText} player from ${player.federation}.`,
-      openGraph: {
-        title: `${player.name} - Chess Kenya Player Profile`,
-        description: `${ratingText} chess player from ${player.federation}. View tournament results and performance ratings.`,
-        type: 'profile',
-        siteName: 'Chess Kenya Grand Prix',
-        url: `https://1700chess.sh/player/${id}`
-      },
-      twitter: {
-        card: 'summary',
-        title: `${player.name} - ${ratingText}`,
-        description: `Chess player profile: ${tournamentsPlayed} tournaments in Kenya Grand Prix`
-      }
-    }
+    const ratingText = player.current_fide_rating ? `FIDE ${player.current_fide_rating}` : 'unrated'
+    const played = player.results.length
+    const season = requestOptions.season
+
+    return pageMetadata({
+      title: player.name,
+      description: `${player.name} (${ratingText}): ${played} Grand Prix ${played === 1 ? 'tournament' : 'tournaments'} in ${season}, with results, performance ratings and ranking.`,
+      path: `/player/${id}`,
+    })
   } catch {
-    return {
-      title: 'Error - Chess Kenya 2025 Grand Prix',
-      description: 'An error occurred while loading player information.'
-    }
+    return { title: 'Player', robots: { index: false } }
   }
 }
 
@@ -169,7 +154,7 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
       '@type': 'Organization',
       name: 'Chess Kenya'
     },
-    url: `https://1700chess.sh/player/${id}`,
+    url: `${SITE_URL}/player/${id}`,
     ...(player.current_fide_rating && {
       award: `FIDE Rating: ${player.current_fide_rating}`
     }),

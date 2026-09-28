@@ -1,9 +1,8 @@
 import { MetadataRoute } from 'next'
 import { getTournaments } from '@/services/api'
+import { SITE_URL as BASE_URL } from '@/lib/site'
 
 export const revalidate = 86400
-
-const BASE_URL = 'https://1700chess.sh'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Base routes
@@ -11,13 +10,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: BASE_URL,
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      changeFrequency: 'weekly' as const,
       priority: 1,
+    },
+    {
+      url: `${BASE_URL}/?category=ladies`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
     },
     {
       url: `${BASE_URL}/tournaments`,
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      changeFrequency: 'weekly' as const,
       priority: 0.9,
     },
   ]
