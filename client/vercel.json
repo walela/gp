@@ -2,5 +2,6 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "regions": ["cpt1"]
 }

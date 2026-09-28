@@ -17,7 +17,9 @@ const forecast = forecastJson as unknown as ForecastFile
 
 // Results edited outside the release workflow (e.g. the production admin page) reach the API
 // without a new forecast, so only show odds while the API's tournaments match the ones modelled.
-async function matchesPublishedResults(season: number): Promise<boolean> {
+// Doesn't depend on the player, so pages can run it alongside their player request.
+export async function forecastMatchesResults(season: number): Promise<boolean> {
+  if (season !== forecast.season) return false
   try {
     const tournaments = await getTournaments({ season })
     const modelled = Object.keys(forecast.tournaments)
@@ -28,11 +30,12 @@ async function matchesPublishedResults(season: number): Promise<boolean> {
   }
 }
 
-export async function getPlayerForecast(
+export function getPlayerForecast(
   fideId: string | null | undefined,
-  season: number
-): Promise<PlayerForecast | null> {
-  if (!fideId || season !== forecast.season) return null
+  season: number,
+  matchesResults: boolean
+): PlayerForecast | null {
+  if (!fideId || season !== forecast.season || !matchesResults) return null
 
   // Only women have Ladies odds, and a woman who makes both teams takes the Ladies place.
   const order: ForecastCategory[] = ['ladies', 'open']
@@ -40,7 +43,7 @@ export async function getPlayerForecast(
     const entry = forecast.categories[category].players[fideId]
     return entry ? [{ category, entry, cutoff: forecast.categories[category].cutoff }] : []
   })
-  if (categories.length === 0 || !(await matchesPublishedResults(season))) return null
+  if (categories.length === 0) return null
 
   return {
     season: forecast.season,

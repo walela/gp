@@ -1,5 +1,5 @@
 import { getPlayer, PlayerDetails, getRankings, PlayerRanking, getSeasons } from '@/services/api'
-import { getPlayerForecast } from '@/lib/qualification-forecast'
+import { forecastMatchesResults, getPlayerForecast } from '@/lib/qualification-forecast'
 import type { PlayerForecast } from '@/lib/qualification-odds'
 import Link from 'next/link'
 import PlayerClientContent from './player-client-content'
@@ -92,7 +92,10 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
   try {
     // generateMetadata uses this same URL, allowing Next to memoize the request
     // across metadata and page rendering.
-    const loadedPlayer = await getPlayer(id, { season, gender })
+    const [loadedPlayer, forecastCurrent] = await Promise.all([
+      getPlayer(id, { season, gender }),
+      forecastMatchesResults(season),
+    ])
     if (!loadedPlayer) {
       // Optionally handle 'player not found' scenario specifically if API returns null/undefined
       throw new Error('Player not found')
@@ -124,7 +127,7 @@ export default async function PlayerPage({ params, searchParams }: PlayerPagePro
       }
     }
 
-    qualificationForecast = await getPlayerForecast(loadedPlayer.fide_id, season)
+    qualificationForecast = getPlayerForecast(loadedPlayer.fide_id, season, forecastCurrent)
   } catch (err) {
     console.error('Error fetching player:', err)
     error = err instanceof Error ? err : new Error('An unknown error occurred')
