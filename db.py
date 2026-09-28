@@ -2,9 +2,11 @@ import sqlite3
 import logging
 import math
 import os
+from collections import defaultdict
 from typing import Dict, List, Optional, Tuple, Any
 
 from player_eligibility import is_gp_eligible_player
+from player_names import clean_player_name, format_player_name, player_name_key
 from tournament_metadata import infer_location, infer_rounds, infer_short_name
 
 logger = logging.getLogger(__name__)
@@ -206,6 +208,20 @@ class Database:
             # If saving a ladies section, mark all players as female
             is_ladies_section = section == "ladies"
 
+            players_by_name_key: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+            for row in c.execute('SELECT id, name, fide_id FROM players').fetchall():
+                players_by_name_key[player_name_key(row['name'])].append(dict(row))
+            # Two entrants in one tournament are never the same player, even if
+            # their names match.
+            claimed_player_ids = set()
+            # On a re-scrape, an ambiguous name resolves to whoever already holds
+            # a result in this tournament.
+            existing_entrant_ids = {
+                row[0] for row in c.execute(
+                    'SELECT player_id FROM results WHERE tournament_id = ?', (tournament_id,)
+                ).fetchall()
+            }
+
             for result in results:
                 if hasattr(result, "player"):
                     player_obj = result.player
@@ -229,7 +245,7 @@ class Database:
 
                 player_data = result_dict.get("player", {})
                 player_fide_id = player_data.get("fide_id")
-                player_name = player_data.get("name")
+                player_name = clean_player_name(player_data.get("name") or "")
                 player_federation = player_data.get("federation")
                 player_gender = 'F' if is_ladies_section else player_data.get("gender")
                 player_rating = result_dict.get("rating") or player_data.get("rating")
@@ -251,26 +267,36 @@ class Database:
                     if existing_player:
                         player_db_id = existing_player[0]
 
+                name_key = player_name_key(player_name)
                 if player_db_id is None:
-                    c.execute(
-                        'SELECT id FROM players WHERE lower(name) = lower(?) AND (fide_id IS NULL OR fide_id = "")',
-                        (player_name,),
+                    # A FIDE ID result may only claim an unrated record: two
+                    # different FIDE IDs are two different players.
+                    name_match = self._match_player_by_name(
+                        players_by_name_key[name_key],
+                        player_name,
+                        claimed_player_ids,
+                        existing_entrant_ids,
+                        unrated_only=bool(player_fide_id),
                     )
-                    existing_player_by_name = c.fetchone()
-                    if existing_player_by_name:
-                        player_db_id = existing_player_by_name[0]
+                    if name_match:
+                        player_db_id = name_match["id"]
                         if player_fide_id:
                             c.execute('UPDATE players SET fide_id = ? WHERE id = ?', (player_fide_id, player_db_id))
+                            name_match["fide_id"] = player_fide_id
 
                 if player_db_id is None:
+                    display_name = format_player_name(player_name)
                     c.execute(
                         '''
                         INSERT INTO players (fide_id, name, federation, gender)
                         VALUES (?, ?, ?, ?)
                         ''',
-                        (player_fide_id, player_name, player_federation, player_gender),
+                        (player_fide_id, display_name, player_federation, player_gender),
                     )
                     player_db_id = c.lastrowid
+                    players_by_name_key[name_key].append(
+                        {"id": player_db_id, "name": display_name, "fide_id": player_fide_id}
+                    )
                 elif player_gender == 'F':
                     # Ladies-section membership or a source sex marker establishes
                     # eligibility for the Ladies rankings without removing the
@@ -301,8 +327,31 @@ class Database:
                         result_status,
                     ),
                 )
+                claimed_player_ids.add(player_db_id)
 
             conn.commit()
+
+    @staticmethod
+    def _match_player_by_name(
+        candidates: List[Dict[str, Any]],
+        name: str,
+        exclude_ids: set,
+        preferred_ids: set,
+        unrated_only: bool,
+    ) -> Optional[Dict[str, Any]]:
+        """Return the one existing player a name refers to, or None if absent or ambiguous."""
+        candidates = [
+            p for p in candidates
+            if p["id"] not in exclude_ids and not (unrated_only and p["fide_id"])
+        ]
+        if len(candidates) > 1:
+            candidates = [p for p in candidates if p["id"] in preferred_ids] or candidates
+        if len(candidates) > 1:
+            wanted = format_player_name(name).lower()
+            candidates = [p for p in candidates if format_player_name(p["name"]).lower() == wanted]
+            if len(candidates) != 1:
+                logger.warning("Ambiguous player name %r; creating a new player record", name)
+        return candidates[0] if len(candidates) == 1 else None
 
     def get_all_tournaments(self, season: Optional[int] = None) -> List[Dict]:
         """Get all tournaments, optionally filtered by season."""
