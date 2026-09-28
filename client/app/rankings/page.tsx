@@ -168,7 +168,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
     },
     2026: {
       open: { kenyaNumber1: '10824014', excluded: ['10814582'] },  // Simiyu, Jadon; Kaloki Hawi
-      ladies: { kenyaNumber1: '10822755' },  // Elizabeth Cassidy Maina
+      ladies: { kenyaNumber1: '10809090' },  // Mongeli Sasha
     }
   }
 
