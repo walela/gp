@@ -3,6 +3,7 @@
 import { Fragment, useId, useState, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { trackEvent } from '@/lib/analytics'
 import {
   chanceTier,
   formatChance,
@@ -70,10 +71,11 @@ function DetailRow({ label, children, total }: { label: string; children: ReactN
   )
 }
 
-function Driver({ title, value, tone, children }: {
+function Driver({ title, value, tone, flush, children }: {
   title: string
   value?: ReactNode
   tone?: Tone
+  flush?: boolean
   children: ReactNode
 }) {
   const [open, setOpen] = useState(false)
@@ -84,7 +86,10 @@ function Driver({ title, value, tone, children }: {
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen(o => !o)}
+        onClick={() => {
+          if (!open) trackEvent(`Odds: ${title}`)
+          setOpen(!open)
+        }}
         className="flex h-13 w-full items-center gap-3 px-3 text-left sm:h-14 sm:px-4"
       >
         <span className="line-clamp-2 min-w-0 flex-1 text-sm leading-5 text-gray-900 sm:text-base sm:leading-6">{title}</span>
@@ -110,7 +115,11 @@ function Driver({ title, value, tone, children }: {
         )}
       >
         <div className="overflow-hidden">
-          <div className="mx-3 mb-3 rounded-md bg-white px-3 py-2 ring-1 ring-inset ring-gray-200 sm:mx-4">{children}</div>
+          {flush ? (
+            <div className="border-t border-gray-200">{children}</div>
+          ) : (
+            <div className="mx-3 mb-3 rounded-md bg-white px-3 py-2 ring-1 ring-inset ring-gray-200 sm:mx-4">{children}</div>
+          )}
         </div>
       </div>
     </div>
@@ -248,44 +257,27 @@ function TitleDriver({ title, entryChance }: { title: number; entryChance?: numb
 // Below 1% of seasons (200 of 20,000) a row's qualify rate is mostly noise.
 const MIN_ROW_SHARE = 0.01
 
-// The middle half of seasons by new results.
-function likelyRange(byNew: ForecastFactors['by_new']): [number, number] {
-  let before = 0
-  let lo = 0
-  let hi = byNew.length - 1
-  byNew.forEach(([share], n) => {
-    if (before < 0.25 && before + share >= 0.25) lo = n
-    if (before < 0.75 && before + share >= 0.75) hi = n
-    before += share
-  })
-  return [lo, hi]
-}
-
-function BreakdownDriver({ f, p }: { f: ForecastFactors; p: number }) {
-  const [lo, hi] = likelyRange(f.by_new)
+function BreakdownDriver({ f }: { f: ForecastFactors }) {
   return (
-    <Driver title="Odds by number of new results">
-      <table className="w-full text-sm tabular-nums">
+    <Driver title="Odds by further tournaments played" flush>
+      <table className="w-full text-sm tabular-nums text-gray-900">
         <thead>
-          <tr className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            <th className="py-1 text-left font-medium">New results</th>
-            <th className="py-1 text-right font-medium">Chance</th>
-            <th className="py-1 text-right font-medium">Qualifies</th>
+          <tr className="h-8 bg-gray-50 text-[11px] uppercase tracking-wide text-muted-foreground">
+            <th className="px-3 text-left font-medium sm:px-4">Plays</th>
+            <th className="px-3 text-right font-medium sm:px-4">Chance</th>
+            <th className="px-3 text-right font-medium sm:px-4">Odds</th>
           </tr>
         </thead>
         <tbody>
           {f.by_new.map(([share, qualifies], n) => (
-            <tr key={n} className={cn('border-t border-gray-200', n >= lo && n <= hi && 'bg-blue-50 font-medium')}>
-              <td className="px-1 py-1">{n}</td>
-              <td className="py-1 text-right">{formatChance(share)}</td>
-              <td className="px-1 py-1 text-right">{qualifies == null || share < MIN_ROW_SHARE ? '\u2013' : formatChance(qualifies)}</td>
+            <tr key={n} className="h-10 border-t border-gray-200 odd:bg-white even:bg-gray-200/50">
+              <td className="px-3 sm:px-4">{n === 0 ? 'None' : `${n} more`}</td>
+              <td className="px-3 text-right sm:px-4">{formatChance(share)}</td>
+              <td className="px-3 text-right sm:px-4">{qualifies == null || share < MIN_ROW_SHARE ? '\u2013' : formatChance(qualifies)}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p className="mt-2 text-xs text-muted-foreground">
-        Each row&apos;s chance times its qualify rate, summed, gives the {formatChance(p)}. Shaded rows are the likely range.
-      </p>
     </Driver>
   )
 }
@@ -351,6 +343,8 @@ function Headline({ title, forecast, event }: { title: ReactNode; forecast: Play
 
 const CARD_TITLE = <h2 className="text-lg font-semibold leading-7 text-gray-600">Qualification Odds</h2>
 
+const SECTION_GAP = <div className="h-2 border-y border-gray-200/60 bg-gray-50 sm:border-gray-200" aria-hidden />
+
 function CategoryForecast({ forecast, single, event }: {
   forecast: PlayerCategoryForecast
   single: boolean
@@ -381,7 +375,7 @@ function CategoryForecast({ forecast, single, event }: {
           {f && <PerformanceDriver f={f} />}
           {f && <EventsDriver f={f} />}
           {title >= 0.01 && <TitleDriver title={title} entryChance={entry.p_title_entry} />}
-          {f && <BreakdownDriver f={f} p={entry.p ?? 0} />}
+          {f && <BreakdownDriver f={f} />}
         </div>
       ) : (
         <p className="px-3 pb-3 text-sm text-gray-700 sm:px-4">
@@ -408,15 +402,18 @@ export function QualificationForecastCard({ forecast }: { forecast: PlayerForeca
       )}
       {forecast.categories.map((c, i) => (
         <Fragment key={c.category}>
-          {i > 0 && <div className="h-2 border-y border-gray-200/60 bg-gray-50 sm:border-gray-200" aria-hidden />}
+          {i > 0 && SECTION_GAP}
           <CategoryForecast forecast={c} single={single} event={forecast.afterEvent} />
         </Fragment>
       ))}
       {forecast.categories.some(c => c.entry.status === 'forecast') && (
-        <p className="border-t border-gray-200 px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
-          Based on {forecast.sims.toLocaleString('en-US')} simulations using each player&apos;s rating, form, upside
-          and how often they play. These odds are only approximate.
-        </p>
+        <>
+          {SECTION_GAP}
+          <p className="px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
+            Based on {forecast.sims.toLocaleString('en-US')} simulations using each player&apos;s rating, form, upside
+            and how often they play. These odds are only approximate.
+          </p>
+        </>
       )}
     </section>
   )
