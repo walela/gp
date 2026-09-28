@@ -89,6 +89,9 @@ class Database:
                     PRIMARY KEY (tournament_id, player_id)
                 )
             ''')
+            result_columns = {row[1] for row in c.execute('PRAGMA table_info(results)')}
+            if 'rating_change' not in result_columns:
+                c.execute('ALTER TABLE results ADD COLUMN rating_change REAL')
             
             # Create player_rankings table
             c.execute('''
@@ -237,6 +240,7 @@ class Database:
                         "tpr": getattr(result, "tpr", None),
                         "has_walkover": getattr(result, "has_walkover", False),
                         "start_rank": getattr(result, "start_rank", None),
+                        "rating_change": getattr(result, "rating_change", None),
                         "rating": getattr(result, "rating", None),
                         "result_status": getattr(result, "result_status", None),
                     }
@@ -253,6 +257,7 @@ class Database:
                 tpr = result_dict.get("tpr")
                 has_walkover = bool(result_dict.get("has_walkover", False))
                 start_rank = result_dict.get("start_rank")
+                rating_change = result_dict.get("rating_change")
                 result_status = result_dict.get("result_status")
 
                 if not player_name:
@@ -306,14 +311,15 @@ class Database:
                 c.execute(
                     '''
                     INSERT INTO results
-                    (tournament_id, player_id, rating, points, tpr, has_walkover, start_rank, result_status)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    (tournament_id, player_id, rating, points, tpr, has_walkover, start_rank, rating_change, result_status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(tournament_id, player_id) DO UPDATE SET
                         rating = excluded.rating,
                         points = excluded.points,
                         tpr = excluded.tpr,
                         has_walkover = excluded.has_walkover,
                         start_rank = COALESCE(excluded.start_rank, results.start_rank),
+                        rating_change = COALESCE(excluded.rating_change, results.rating_change),
                         result_status = COALESCE(excluded.result_status, results.result_status)
                     ''',
                     (
@@ -324,6 +330,7 @@ class Database:
                         tpr,
                         has_walkover,
                         start_rank,
+                        rating_change,
                         result_status,
                     ),
                 )

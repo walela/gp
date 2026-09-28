@@ -136,6 +136,7 @@ export interface ScrapedResult {
   has_walkover: boolean
   rank: number
   start_rank: number
+  rating_change?: number | null
   result_status?: string
 }
 

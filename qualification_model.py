@@ -188,6 +188,11 @@ def rating_gain(fide_id, rating, tpr, rounds, year, points=None):
     return k * rounds * (score - expected)
 
 
+def known_or_estimated_gain(fide_id, rating, tpr, rounds, year, points, known):
+    """Chess-Results' own rating change when scraped: unlike the estimate, it skips games against unrated players."""
+    return known if known is not None else rating_gain(fide_id, rating, tpr, rounds, year, points)
+
+
 def group_params(section, junior, female):
     if section == "open" and female:
         return FEMALE_OPEN[junior]
@@ -202,7 +207,8 @@ def player_residuals(con, as_of):
     """Standardised TPR residuals (vs projected rating and group) for every valid rated result before as_of."""
     rows = con.execute(
         """
-        SELECT r.player_id, p.fide_id, p.gender, r.rating, r.tpr, r.points, t.start_date, COALESCE(t.rounds, 6), t.section
+        SELECT r.player_id, p.fide_id, p.gender, r.rating, r.tpr, r.points, t.start_date, COALESCE(t.rounds, 6), t.section,
+               r.rating_change
         FROM results r
         JOIN players p ON p.id = r.player_id
         JOIN tournaments t ON t.id = r.tournament_id
@@ -213,14 +219,14 @@ def player_residuals(con, as_of):
     ).fetchall()
     history = collections.defaultdict(list)
     residuals = collections.defaultdict(list)
-    for pid, fide_id, gender, rating, tpr, points, start_date, rounds, section in rows:
+    for pid, fide_id, gender, rating, tpr, points, start_date, rounds, section, change in rows:
         date = dt.date.fromisoformat(start_date)
         pending = sum(
-            rating_gain(fide_id, r, t, n, date.year, pts)
-            for d, r, t, n, pts in history[pid]
+            known_or_estimated_gain(fide_id, r, t, n, date.year, pts, c)
+            for d, r, t, n, pts, c in history[pid]
             if r == rating and (date - d).days <= PENDING_DAYS
         )
-        history[pid].append((date, rating, tpr, rounds, points))
+        history[pid].append((date, rating, tpr, rounds, points, change))
         female = gender == "F" or section == "ladies" or fide_id in FEMALE
         offset, sd = group_params(section, is_junior(fide_id, date.year), female)
         residuals[pid].append((tpr - rating - pending - offset) / sd)
@@ -253,7 +259,7 @@ def load_players(season, as_of, category="open"):
     rows = con.execute(
         f"""
         SELECT p.id, p.name, p.fide_id, p.gender, r.rating, r.tpr, r.points, COALESCE(r.result_status, 'valid'),
-               t.start_date, COALESCE(t.rounds, 6), t.section, t.short_name
+               t.start_date, COALESCE(t.rounds, 6), t.section, t.short_name, r.rating_change
         FROM results r
         JOIN players p ON p.id = r.player_id
         JOIN tournaments t ON t.id = r.tournament_id
@@ -307,7 +313,7 @@ def load_players(season, as_of, category="open"):
     )
 
     players = {}
-    for pid, name, fide_id, gender, rating, tpr, points, status, start_date, rounds, section, short_name in rows:
+    for pid, name, fide_id, gender, rating, tpr, points, status, start_date, rounds, section, short_name, change in rows:
         if not is_gp_eligible_player(fide_id, name):
             continue
         p = players.setdefault(pid, {
@@ -330,7 +336,7 @@ def load_players(season, as_of, category="open"):
         if status == "valid" and tpr:
             p["tprs"].append(tpr)
             if rating:
-                p["rated"].append((dt.date.fromisoformat(start_date), rating, tpr, rounds, points))
+                p["rated"].append((dt.date.fromisoformat(start_date), rating, tpr, rounds, points, change))
 
     config = CATEGORIES[category]
     contenders = []
@@ -339,8 +345,8 @@ def load_players(season, as_of, category="open"):
         if p["rating"]:
             # Recent events at the current rating haven't reached the FIDE list yet.
             pending = sum(
-                rating_gain(p["fide_id"], r, tpr, rounds, season, pts)
-                for d, r, tpr, rounds, pts in p["rated"]
+                known_or_estimated_gain(p["fide_id"], r, tpr, rounds, season, pts, c)
+                for d, r, tpr, rounds, pts, c in p["rated"]
                 if r == p["rating"] and (as_of_date - d).days <= PENDING_DAYS
             )
             p["projected"] = round(p["rating"] + pending)
@@ -677,7 +683,7 @@ def fingerprint(con, season, events):
         "tournaments": con.execute(
             "SELECT id, start_date, end_date, section, rounds, short_name FROM tournaments ORDER BY id").fetchall(),
         "results": con.execute(
-            """SELECT tournament_id, player_id, rating, points, tpr, COALESCE(result_status, 'valid')
+            """SELECT tournament_id, player_id, rating, points, tpr, COALESCE(result_status, 'valid'), rating_change
                FROM results ORDER BY tournament_id, player_id""").fetchall(),
         "players": con.execute("SELECT id, fide_id, gender, federation FROM players ORDER BY id").fetchall(),
     }

@@ -40,6 +40,8 @@ class TournamentResult:
     has_walkover: bool
     rank: int
     start_rank: int
+    # Chess-Results' FIDE rating change, which leaves out games against unrated opponents.
+    rating_change: Optional[float] = None
 
 class ChessResultsScraper:
     def __init__(self):
@@ -478,7 +480,8 @@ class ChessResultsScraper:
                 tpr=tpr,
                 has_walkover=player_details["has_walkover"],
                 rank=rank,
-                start_rank=start_rank
+                start_rank=start_rank,
+                rating_change=player_details["rating_change"],
             )
             
             results.append(result)
@@ -495,7 +498,7 @@ class ChessResultsScraper:
     
     def _get_player_details(self, tournament_id: str, start_rank: int) -> Dict[str, Any]:
         """Return FIDE ID, performance rating, and walkover state from player details."""
-        details = {"fide_id": None, "tpr": None, "has_walkover": False}
+        details = {"fide_id": None, "tpr": None, "has_walkover": False, "rating_change": None}
         try:
             response = self._request(
                 "GET",
@@ -525,6 +528,12 @@ class ChessResultsScraper:
                 match = re.search(r'-?\d+', performance_text)
                 if match:
                     details["tpr"] = int(match.group())
+
+            change_row = player_soup.find('td', string=re.compile(r'^\s*FIDE rtg \+/-\s*$', re.IGNORECASE))
+            if change_row and change_row.find_next_sibling('td'):
+                match = re.search(r'-?\d+(?:[.,]\d+)?', change_row.find_next_sibling('td').get_text(strip=True))
+                if match:
+                    details["rating_change"] = float(match.group().replace(',', '.'))
 
             for table in player_soup.find_all('table', {'class': 'CRs1'}):
                 if "Rd." in table.text:

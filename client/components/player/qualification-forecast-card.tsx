@@ -332,6 +332,16 @@ function TierPill({ forecast }: { forecast: PlayerCategoryForecast }) {
   )
 }
 
+function OddsFigure({ text }: { text: string }) {
+  const bound = /^[<>]/.test(text) ? text[0] : null
+  return (
+    <span className="text-2xl font-semibold tracking-tight tabular-nums text-gray-900">
+      {bound && <span className="mr-0.5 text-[0.75em] font-normal text-gray-500">{bound}</span>}
+      {bound ? text.slice(1) : text}
+    </span>
+  )
+}
+
 function Headline({ title, forecast, event }: { title: string; forecast: PlayerCategoryForecast; event: string }) {
   const { entry } = forecast
   const p = entry.p ?? 0
@@ -343,7 +353,7 @@ function Headline({ title, forecast, event }: { title: string; forecast: PlayerC
       </div>
       {entry.status === 'forecast' ? (
         <div className="mt-1 flex items-baseline gap-2">
-          <span className="text-2xl font-semibold tracking-tight tabular-nums text-gray-900">{formatChance(p)}</span>
+          <OddsFigure text={formatChance(p)} />
           {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
         </div>
       ) : (

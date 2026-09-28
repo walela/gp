@@ -1328,6 +1328,7 @@ def admin_scrape_preview():
                 "has_walkover": r.has_walkover,
                 "rank": r.rank,
                 "start_rank": r.start_rank,
+                "rating_change": r.rating_change,
             })
         return jsonify({
             "name": name,
