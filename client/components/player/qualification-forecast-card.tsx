@@ -315,14 +315,14 @@ function TierPill({ forecast }: { forecast: PlayerCategoryForecast }) {
   const { entry } = forecast
   if (entry.status !== 'forecast') {
     return (
-      <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-emerald-700">
+      <span className="rounded-full bg-emerald-600 px-2.5 py-1 text-sm font-medium text-white ring-1 ring-inset ring-emerald-700">
         Qualified
       </span>
     )
   }
   const tier = chanceTier(entry.p ?? 0)
   return (
-    <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset', TIER_PILL[tier])}>
+    <span className={cn('rounded-full px-2.5 py-1 text-sm font-medium ring-1 ring-inset', TIER_PILL[tier])}>
       {TIER_LABEL[tier]}
     </span>
   )
