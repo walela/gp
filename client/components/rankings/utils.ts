@@ -27,7 +27,7 @@ export function getRankMovement(player: PlayerRanking): {
   if (isNew) {
     return {
       label: 'NEW',
-      className: 'bg-purple-100 text-purple-700',
+      className: 'bg-cyan-100 text-cyan-700',
       ariaLabel: 'New entrant in top rankings'
     }
   }

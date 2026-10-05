@@ -31,7 +31,7 @@ export function ViewSelector({ view, basePath = '/', exportUrl, exportFilename }
   
   return (
     <div className="flex items-center justify-between gap-2 w-full">
-      <div className="inline-flex divide-x divide-gray-200 rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-sm">
+      <div data-slot="view-selector" className="inline-flex divide-x divide-gray-200 rounded-t-lg bg-white/90 backdrop-blur-sm border border-b-0 shadow-sm">
         {viewOptions.map(option => {
           const isActive = view === option.value;
           return (

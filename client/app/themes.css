@@ -434,3 +434,231 @@ html[data-theme='editorial'] [data-slot='card'] {
   border: 1px solid var(--t-line) !important;
   box-shadow: var(--t-shadow-lg) !important;
 }
+
+/* ============================================================
+   THEME: Warm Paper
+   Ivory paper under an ink header band, serif titles, mono
+   figures, gold for Kenya #1 and navy for the qualifying line.
+   ============================================================ */
+html[data-theme='warm-paper'] {
+  --t-bg: #f1ede4;
+  --t-canvas: #f1ede4;
+  --t-surface: #faf7f1;
+  --t-surface-2: #f3eee4;
+  --t-surface-3: #e9e2d4;
+  --t-thead-bg: #faf7f1;
+  --t-thead-ink: #7a7165;
+  --t-ink: #1c1915;
+  --t-ink-2: #7a7165;
+  --t-link: #1c1915;
+  --t-link-2: #1c1915;
+  --t-accent: #1c1915;
+  --t-accent-ink: #f4efe5;
+  --t-line: #e3dccd;
+  --t-chip: #efe8da;
+  --t-chip-ink: #1c1915;
+  --t-radius: 6px;
+  --t-radius-pill: 9999px;
+  --t-shadow: none;
+  --t-shadow-lg: none;
+  --t-font: var(--font-inter), Inter, system-ui, sans-serif;
+  --t-font-head: var(--font-source-serif), 'Iowan Old Style', Georgia, serif;
+  --t-mono: var(--font-jetbrains-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+  --t-header: #1b1916;
+  --t-header-ink: #f1ebdf;
+  --t-header-ink-2: #a69e90;
+  --t-gold: #b5832f;
+  --t-navy: #2f4b73;
+  --t-teal: #3f7a78;
+  --t-up: #4d8a5a;
+  --t-down: #b4493b;
+}
+html[data-theme='warm-paper'] :is(h1, h2, h3) {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Ink header band */
+html[data-theme='warm-paper'] header,
+html[data-theme='warm-paper'] header [data-slot='separator-root'] {
+  background-color: var(--t-header) !important;
+  border-color: var(--t-header) !important;
+  box-shadow: none !important;
+}
+html[data-theme='warm-paper'] header [data-brand] span {
+  font-family: var(--t-font-head) !important;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--t-header-ink) !important;
+}
+html[data-theme='warm-paper'] header :is(a, button, [class*='text-muted-foreground'], .text-primary) {
+  color: var(--t-header-ink-2) !important;
+}
+html[data-theme='warm-paper'] header :is(a[aria-current='page'], a:hover, button:hover) {
+  color: var(--t-header-ink) !important;
+}
+html[data-theme='warm-paper'] header a::after {
+  background-color: var(--t-gold) !important;
+}
+html[data-theme='warm-paper'] header a[aria-current='page']::after {
+  scale: 1 !important;
+}
+html[data-theme='warm-paper'] header [data-theme-picker]:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Open/Ladies: serif titles with a gold rule under the active one */
+html[data-theme='warm-paper'] [data-slot='segmented-control'] {
+  background-color: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  gap: 1.25rem;
+}
+html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed] {
+  font-family: var(--t-font-head) !important;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  font-weight: 500;
+  padding: 0 0 4px !important;
+  border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='true'] {
+  color: var(--t-ink) !important;
+  border-bottom-color: var(--t-gold) !important;
+}
+html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='false'] {
+  color: #a0957f !important;
+}
+html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='false']:hover {
+  color: var(--t-ink-2) !important;
+}
+
+/* Best TPR / Best 2 / ... as a pill group above the sheet */
+html[data-theme='warm-paper'] [data-slot='view-selector'] {
+  background-color: var(--t-surface-3) !important;
+  border: 1px solid var(--t-line) !important;
+  border-radius: 8px !important;
+  padding: 3px;
+  gap: 2px;
+  margin-bottom: 12px;
+  box-shadow: none !important;
+}
+html[data-theme='warm-paper'] [data-slot='view-selector'] > * {
+  border: 0 !important;
+  border-radius: 6px !important;
+  padding: 6px 14px !important;
+  font-size: 13px;
+  color: var(--t-ink-2) !important;
+}
+html[data-theme='warm-paper'] [data-slot='view-selector'] > :not(.bg-primary):hover {
+  background-color: transparent !important;
+  color: var(--t-ink) !important;
+}
+html[data-theme='warm-paper'] [data-slot='view-selector'] > .bg-primary {
+  background-color: var(--t-surface) !important;
+  color: var(--t-ink) !important;
+  box-shadow: 0 1px 2px rgba(28, 25, 21, 0.1) !important;
+}
+
+/* Controls */
+html[data-theme='warm-paper'] button.from-blue-500 {
+  background: var(--t-ink) !important;
+  color: var(--t-accent-ink) !important;
+  border-color: var(--t-ink) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+html[data-theme='warm-paper'] button.from-blue-500:hover {
+  background: #34302a !important;
+}
+html[data-theme='warm-paper'] form button.bg-slate-100 {
+  background-color: var(--t-surface-2) !important;
+  color: var(--t-ink-2) !important;
+}
+html[data-theme='warm-paper'] form button.bg-slate-100:hover {
+  background-color: var(--t-surface-3) !important;
+  color: var(--t-ink) !important;
+}
+html[data-theme='warm-paper'] :is(input, [data-slot='dropdown-menu-trigger']):focus-visible {
+  border-color: var(--t-ink-2) !important;
+  --tw-ring-color: var(--t-ink-2) !important;
+}
+
+/* The sheet */
+html[data-theme='warm-paper'] [data-slot='card'] {
+  border: 1px solid var(--t-line) !important;
+  border-radius: var(--t-radius) !important;
+}
+html[data-theme='warm-paper'] thead {
+  border-bottom: 1px solid var(--t-line) !important;
+}
+html[data-theme='warm-paper'] thead :is(th, span, div) {
+  font-family: var(--t-mono) !important;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+html[data-theme='warm-paper'] tbody tr:nth-child(even),
+html[data-theme='warm-paper'] tbody tr:nth-child(odd) {
+  background-color: var(--t-surface) !important;
+}
+html[data-theme='warm-paper'] tbody tr {
+  border-bottom: 1px solid var(--t-line) !important;
+}
+html[data-theme='warm-paper'] tbody tr:hover {
+  background-color: var(--t-surface-2) !important;
+}
+html[data-theme='warm-paper'] tbody tr.border-l-amber-500 {
+  border-left-color: var(--t-gold) !important;
+  background-color: #f6efdf !important;
+}
+html[data-theme='warm-paper'] tbody tr.border-l-blue-600 {
+  border-left-color: var(--t-navy) !important;
+}
+html[data-theme='warm-paper'] tbody tr:is(.border-l-teal-600, .border-l-cyan-500) {
+  border-left-color: var(--t-teal) !important;
+}
+
+/* Mono figures */
+html[data-theme='warm-paper'] tbody :is(th[scope='row'], .tabular-nums, [data-rank-movement]) {
+  font-family: var(--t-mono) !important;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+html[data-theme='warm-paper'] tbody th[scope='row'] {
+  color: var(--t-ink-2) !important;
+}
+html[data-theme='warm-paper'] tbody th[scope='row'] .text-blue-700 {
+  color: var(--t-navy) !important;
+}
+html[data-theme='warm-paper'] tbody :is(.text-amber-700, .text-amber-600) {
+  color: var(--t-gold) !important;
+}
+html[data-theme='warm-paper'] tbody :is(.text-cyan-700, .text-cyan-600, .text-teal-700) {
+  color: var(--t-teal) !important;
+}
+
+/* Rank movement as bare coloured arrows */
+html[data-theme='warm-paper'] [data-rank-movement] {
+  background-color: transparent !important;
+  padding: 0 !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+}
+html[data-theme='warm-paper'] [data-rank-movement].text-green-700 {
+  color: var(--t-up) !important;
+}
+html[data-theme='warm-paper'] [data-rank-movement].text-red-700 {
+  color: var(--t-down) !important;
+}
+html[data-theme='warm-paper'] [data-rank-movement].text-cyan-700 {
+  color: var(--t-gold) !important;
+}
+html[data-theme='warm-paper'] [data-rank-movement].text-gray-500 {
+  color: #c2b8a6 !important;
+}

@@ -11,8 +11,11 @@ import {
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
 import { Baby, ChevronRight, Crown } from 'lucide-react'
-import { getRankings, getSeasons, type PlayerRanking } from '@/services/api'
+import { getRankings, getSeasons } from '@/services/api'
 import { cn } from '@/lib/utils'
+import { getDisplayName, getRankMovement } from '@/components/rankings/utils'
+import { forecastMatchesResults, getCategoryForecast } from '@/lib/qualification-forecast'
+import { TIER_LABEL, chanceTier, formatChance, type ForecastEntry } from '@/lib/qualification-odds'
 import { ViewSelector } from '@/components/rankings/view-selector'
 import { SearchForm } from '@/components/rankings/search-form'
 import { Pagination } from '@/components/ui/pagination'
@@ -43,69 +46,20 @@ export async function generateMetadata({ searchParams }: RankingsPageProps): Pro
 // Render HTML per request while allowing explicitly cached data fetches.
 export const revalidate = 0
 
-// Smart name abbreviation function for very long names
-function getDisplayName(fullName: string): string {
-  // If name is reasonably short, return as-is
-  if (fullName.length <= 22) {
-    return fullName
+function QualifyingOdds({ entry, excluded }: { entry?: ForecastEntry, excluded: boolean }) {
+  if (excluded) {
+    return <span className="text-gray-400" title="Not eligible to qualify">—</span>
   }
-
-  // For very long names, abbreviate only the last word
-  const parts = fullName.trim().split(' ')
-  if (parts.length >= 2) {
-    // Keep everything except the last part, then abbreviate the last part
-    const allButLast = parts.slice(0, -1).join(' ')
-    const lastPart = parts[parts.length - 1]
-
-    return `${allButLast} ${lastPart.charAt(0)}.`
+  if (entry?.status === 'kenya1') {
+    return <span title="Qualifies as Kenya #1">Qualified</span>
   }
-
-  // Single name that's too long - just truncate
-  return fullName.substring(0, 20) + '...'
-}
-
-function getRankMovement(player: PlayerRanking): {
-  label: string
-  className: string
-  ariaLabel: string
-} | null {
-  const change = player.rank_change ?? null
-  const isNew = player.is_new ?? false
-
-  if (isNew) {
-    return {
-      label: 'NEW',
-      className: 'bg-cyan-100 text-cyan-700',
-      ariaLabel: 'New entrant in top rankings'
-    }
+  if (entry?.status === 'junior_champion') {
+    return <span title="Qualifies as national junior champion">Qualified</span>
   }
-
-  if (change === null) {
-    return null
+  if (entry?.p == null) {
+    return <span className="text-gray-400" title="Not a contender in the forecast">—</span>
   }
-
-  if (change > 0) {
-    return {
-      label: `↑${change}`,
-      className: 'bg-green-100 text-green-700',
-      ariaLabel: `Moved up ${change} ${change === 1 ? 'spot' : 'spots'}`
-    }
-  }
-
-  const magnitude = Math.abs(change)
-  if (magnitude === 0) {
-    return {
-      label: '-',
-      className: 'text-gray-500',
-      ariaLabel: 'No change in ranking'
-    }
-  }
-
-  return {
-    label: `↓${magnitude}`,
-    className: 'bg-red-100 text-red-700',
-    ariaLabel: `Moved down ${magnitude} ${magnitude === 1 ? 'spot' : 'spots'}`
-  }
+  return <span title={TIER_LABEL[chanceTier(entry.p)]}>{formatChance(entry.p)}</span>
 }
 
 export interface RankingsPageProps {
@@ -150,16 +104,20 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   // avoiding a second full rankings request and duplicate database work.
   const canReuseCurrentRankingsForTopPlayers = sort === qualifierSort && dir === 'desc' && page === 1 && !search
 
-  const rankingsData = await getRankings({
-    sort,
-    dir,
-    page,
-    q: search,
-    season,
-    gender,
-    includeTop: !canReuseCurrentRankingsForTopPlayers
-  })
+  const [rankingsData, forecastCurrent] = await Promise.all([
+    getRankings({
+      sort,
+      dir,
+      page,
+      q: search,
+      season,
+      gender,
+      includeTop: !canReuseCurrentRankingsForTopPlayers
+    }),
+    forecastMatchesResults(season),
+  ])
   const { rankings, total_pages } = rankingsData
+  const odds = getCategoryForecast(category, season, forecastCurrent)
   const topPlayers = (rankingsData.top_rankings ?? rankings).slice(0, topPlayersFetchCount)
 
   const seasonConfig = getQualifierConfig(season, category)
@@ -218,7 +176,12 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
           'w-full border-0 rounded-b-lg bg-white/95 p-0 gap-0 shadow-elevation-low',
           'sm:rounded-tr-lg'
         )}>
-        <CustomTable className="h-full">
+        <CustomTable
+          className={cn(
+            'h-full',
+            'max-sm:[&_td]:px-1.5 max-sm:[&_th]:px-1.5',
+            'md:[&_td]:px-4 md:[&_th]:px-4 xl:[&_td]:px-6 xl:[&_th]:px-6'
+          )}>
           <CustomTableHeader>
             <CustomTableRow>
               <CustomTableHead className="w-[36px] text-right">
@@ -255,12 +218,18 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
               <CustomTableHead className={cn('text-right', view === 'best_4' ? 'table-cell' : 'hidden md:table-cell')}>
                 <SortableHeader column="best_4" label="Best 4" align="right" basePath={rankingsBasePath} className="w-full" />
               </CustomTableHead>
+              {odds && (
+                <CustomTableHead className="text-right">
+                  <span className="hidden sm:inline-block whitespace-normal">Qualifying odds</span>
+                  <span className="sm:hidden">Odds</span>
+                </CustomTableHead>
+              )}
             </CustomTableRow>
           </CustomTableHeader>
           <CustomTableBody>
             {rankings.length === 0 ? (
               <CustomTableRow>
-                <CustomTableCell colSpan={9} className="text-center py-12">
+                <CustomTableCell colSpan={10} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
                       <Crown className="h-5 w-5" aria-hidden="true" />
@@ -287,6 +256,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                 const movement = view === 'best_4' ? getRankMovement(player) : null
                 const movementBadge = (isCurrentSeason || !hasQualified) && movement ? (
                   <span
+                    data-rank-movement
                     aria-label={movement.ariaLabel}
                     className={cn(
                       'rounded-sm px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
@@ -354,12 +324,12 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                       )}
                     </CustomTableCell>
                     <CustomTableCell>
-                      <div className="truncate">
+                      <div className="truncate max-w-[7rem] sm:max-w-none">
                         {player.fide_id ? (
                           <Link
                             href={`/player/${player.fide_id}${category === 'ladies' ? '?gender=f' : ''}`}
                             className={cn(
-                              'font-medium group flex items-center gap-2',
+                              'font-medium group flex min-w-0 items-center gap-2',
                               isKenyaNumber1
                                 ? 'text-amber-700 hover:text-amber-800'
                                 : isJuniorChampion
@@ -371,10 +341,10 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                                       : 'text-blue-600 hover:text-blue-700'
                             )}
                             title={player.name}>
-                            <span className="flex items-center gap-1 sm:gap-2 sm:group-hover:underline">
-                              {getDisplayName(player.name)}
+                            <span className="flex min-w-0 items-center gap-1 sm:gap-2 sm:group-hover:underline">
+                              <span className="truncate">{getDisplayName(player.name)}</span>
                               <ChevronRight
-                                className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-blue-500 sm:hidden"
+                                className="h-3 w-3 shrink-0 text-muted-foreground transition-colors group-hover:text-blue-500 sm:hidden"
                                 aria-hidden="true"
                               />
                             </span>
@@ -382,7 +352,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                         ) : (
                           <span
                             className={cn(
-                              'font-medium flex items-center gap-2',
+                              'font-medium flex min-w-0 items-center gap-2',
                               isKenyaNumber1
                                 ? 'text-amber-700'
                                 : isJuniorChampion
@@ -394,7 +364,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                                       : ''
                             )}
                             title={player.name}>
-                            {getDisplayName(player.name)}
+                            <span className="truncate">{getDisplayName(player.name)}</span>
                           </span>
                         )}
                       </div>
@@ -455,6 +425,14 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                         <span className="text-gray-400">—</span>
                       )}
                     </CustomTableCell>
+                    {odds && (
+                      <CustomTableCell className="text-right tabular-nums whitespace-nowrap">
+                        <QualifyingOdds
+                          entry={player.fide_id ? odds[player.fide_id] : undefined}
+                          excluded={qualifierExcludedIds.has(playerId)}
+                        />
+                      </CustomTableCell>
+                    )}
                   </CustomTableRow>
                 )
               })

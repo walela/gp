@@ -30,6 +30,15 @@ export async function forecastMatchesResults(season: number): Promise<boolean> {
   }
 }
 
+export function getCategoryForecast(
+  category: ForecastCategory,
+  season: number,
+  matchesResults: boolean
+): Record<string, ForecastEntry> | null {
+  if (season !== forecast.season || !matchesResults) return null
+  return forecast.categories[category].players
+}
+
 export function getPlayerForecast(
   fideId: string | null | undefined,
   season: number,
