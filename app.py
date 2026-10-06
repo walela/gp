@@ -340,6 +340,8 @@ def rankings():
     page = int(request.args.get("page", "1"))
     search_query = request.args.get("q")  # Get the search query
     include_top = request.args.get("include_top", "false").lower() == "true"
+    # The rankings page sorts by qualifying odds itself, so it needs every player at once.
+    show_all = request.args.get("all", "false").lower() == "true"
     per_page = 25
 
     # Get season (default to current year)
@@ -413,6 +415,9 @@ def rankings():
             reverse=reverse,
         )
 
+    if show_all:
+        page = 1
+        per_page = max(len(player_rankings), 1)
     total_pages = (len(player_rankings) + per_page - 1) // per_page
     start = (page - 1) * per_page
     end = start + per_page

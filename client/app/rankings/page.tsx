@@ -11,7 +11,7 @@ import {
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
 import { Baby, ChevronRight, Crown } from 'lucide-react'
-import { getRankings, getSeasons } from '@/services/api'
+import { getRankings, getSeasons, type PlayerRanking } from '@/services/api'
 import { cn } from '@/lib/utils'
 import { getDisplayName, getRankMovement } from '@/components/rankings/utils'
 import { forecastMatchesResults, getCategoryForecast } from '@/lib/qualification-forecast'
@@ -62,6 +62,33 @@ function QualifyingOdds({ entry, excluded }: { entry?: ForecastEntry, excluded: 
   return <span title={TIER_LABEL[chanceTier(entry.p)]}>{formatChance(entry.p)}</span>
 }
 
+const PAGE_SIZE = 25
+
+// Players without odds stay last in either direction, in the order they arrived (Best 4).
+function sortByOdds(
+  players: PlayerRanking[],
+  odds: Record<string, ForecastEntry> | null,
+  excludedIds: Set<string>,
+  dir: 'asc' | 'desc'
+): PlayerRanking[] {
+  const oddsValue = (player: PlayerRanking): number | null => {
+    const entry = player.fide_id ? odds?.[player.fide_id] : undefined
+    if (!entry || excludedIds.has(player.fide_id || player.name)) return null
+    if (entry.status !== 'forecast') return 2
+    return entry.p ?? null
+  }
+  return players
+    .map((player, index) => ({ player, index, value: oddsValue(player) }))
+    .sort((a, b) => {
+      if (a.value === null || b.value === null) {
+        if (a.value === b.value) return a.index - b.index
+        return a.value === null ? 1 : -1
+      }
+      return (dir === 'asc' ? a.value - b.value : b.value - a.value) || a.index - b.index
+    })
+    .map(({ player }) => player)
+}
+
 export interface RankingsPageProps {
   searchParams: {
     sort?: string
@@ -104,26 +131,35 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   // avoiding a second full rankings request and duplicate database work.
   const canReuseCurrentRankingsForTopPlayers = sort === qualifierSort && dir === 'desc' && page === 1 && !search
 
+  // The API doesn't know the forecast, so odds sorting fetches everyone in Best 4 order and pages here.
+  const sortsByOdds = sort === 'odds'
+
   const [rankingsData, forecastCurrent] = await Promise.all([
     getRankings({
-      sort,
-      dir,
-      page,
+      sort: sortsByOdds ? defaultSort : sort,
+      dir: sortsByOdds ? 'desc' : dir,
+      page: sortsByOdds ? 1 : page,
       q: search,
       season,
       gender,
-      includeTop: !canReuseCurrentRankingsForTopPlayers
+      includeTop: !canReuseCurrentRankingsForTopPlayers,
+      all: sortsByOdds
     }),
     forecastMatchesResults(season),
   ])
-  const { rankings, total_pages } = rankingsData
   const odds = getCategoryForecast(category, season, forecastCurrent)
-  const topPlayers = (rankingsData.top_rankings ?? rankings).slice(0, topPlayersFetchCount)
 
   const seasonConfig = getQualifierConfig(season, category)
   const kenyaNumber1Id = seasonConfig?.kenyaNumber1 ?? null
   const juniorChampionId = seasonConfig?.juniorChampion ?? null
   const qualifierExcludedIds = new Set(seasonConfig?.excluded ?? [])
+
+  const oddsSorted = sortsByOdds ? sortByOdds(rankingsData.rankings, odds, qualifierExcludedIds, dir) : null
+  const rankings = oddsSorted ? oddsSorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) : rankingsData.rankings
+  const total_pages = oddsSorted ? Math.ceil(oddsSorted.length / PAGE_SIZE) : rankingsData.total_pages
+  const topPlayers = (rankingsData.top_rankings ?? rankings).slice(0, topPlayersFetchCount)
+  const exportSort = sortsByOdds ? defaultSort : sort
+  const exportDir = sortsByOdds ? 'desc' : dir
   const eligibleTopPlayers = topPlayers.filter(player =>
     !qualifierExcludedIds.has(player.fide_id || player.name)
   )
@@ -166,8 +202,8 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
         <ViewSelector
           view={view}
           basePath={rankingsBasePath}
-          exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/rankings/export?sort=${sort}&dir=${dir}&season=${season}${gender ? `&gender=${gender}` : ''}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
-          exportFilename={`GP_${category}_rankings_${season}${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${sort}.csv`}
+          exportUrl={`${process.env.NEXT_PUBLIC_API_URL || 'https://gp-tracker-hidden-rain-8594.fly.dev/api'}/rankings/export?sort=${exportSort}&dir=${exportDir}&season=${season}${gender ? `&gender=${gender}` : ''}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+          exportFilename={`GP_${category}_rankings_${season}${search ? `_search_${search.replace(' ', '_')}` : ''}_by_${exportSort}.csv`}
         />
       </div>
 
@@ -179,7 +215,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
         <CustomTable
           className={cn(
             'h-full',
-            'md:[&_td]:px-4 md:[&_th]:px-4 xl:[&_td]:px-6 xl:[&_th]:px-6'
+            'md:[&_td]:px-4 md:[&_th]:px-4 lg:[&_td]:px-3 lg:[&_th]:px-3 xl:[&_td]:px-6 xl:[&_th]:px-6'
           )}>
           <CustomTableHeader>
             <CustomTableRow>
@@ -219,7 +255,13 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
               </CustomTableHead>
               {odds && (
                 <CustomTableHead className="hidden lg:table-cell text-right">
-                  <span className="inline-block whitespace-normal">Qualifying odds</span>
+                  <SortableHeader
+                    column="odds"
+                    label="Qualifying odds"
+                    align="right"
+                    basePath={rankingsBasePath}
+                    className="w-full whitespace-normal"
+                  />
                 </CustomTableHead>
               )}
             </CustomTableRow>

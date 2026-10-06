@@ -164,7 +164,8 @@ export async function getRankings({
   q,
   season,
   gender,
-  includeTop = false
+  includeTop = false,
+  all = false
 }: {
   sort?: string
   dir?: 'asc' | 'desc'
@@ -173,6 +174,7 @@ export async function getRankings({
   season?: number
   gender?: 'f' | 'm'
   includeTop?: boolean
+  all?: boolean
 } = {}) {
   let url = `${API_BASE}/rankings?sort=${sort}&dir=${dir}&page=${page}`
   if (q) {
@@ -186,6 +188,9 @@ export async function getRankings({
   }
   if (includeTop) {
     url += '&include_top=true'
+  }
+  if (all) {
+    url += '&all=true'
   }
   const res = await fetch(url, GP_DATA_CACHE)
   const data = await res.json()
