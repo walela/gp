@@ -179,7 +179,6 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
         <CustomTable
           className={cn(
             'h-full',
-            'max-sm:[&_td]:px-1.5 max-sm:[&_th]:px-1.5',
             'md:[&_td]:px-4 md:[&_th]:px-4 xl:[&_td]:px-6 xl:[&_th]:px-6'
           )}>
           <CustomTableHeader>
@@ -219,9 +218,8 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                 <SortableHeader column="best_4" label="Best 4" align="right" basePath={rankingsBasePath} className="w-full" />
               </CustomTableHead>
               {odds && (
-                <CustomTableHead className="text-right">
-                  <span className="hidden sm:inline-block whitespace-normal">Qualifying odds</span>
-                  <span className="sm:hidden">Odds</span>
+                <CustomTableHead className="hidden lg:table-cell text-right">
+                  <span className="inline-block whitespace-normal">Qualifying odds</span>
                 </CustomTableHead>
               )}
             </CustomTableRow>
@@ -324,12 +322,12 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                       )}
                     </CustomTableCell>
                     <CustomTableCell>
-                      <div className="truncate max-w-[7rem] sm:max-w-none">
+                      <div className="truncate">
                         {player.fide_id ? (
                           <Link
                             href={`/player/${player.fide_id}${category === 'ladies' ? '?gender=f' : ''}`}
                             className={cn(
-                              'font-medium group flex min-w-0 items-center gap-2',
+                              'font-medium group flex items-center gap-2',
                               isKenyaNumber1
                                 ? 'text-amber-700 hover:text-amber-800'
                                 : isJuniorChampion
@@ -341,10 +339,10 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                                       : 'text-blue-600 hover:text-blue-700'
                             )}
                             title={player.name}>
-                            <span className="flex min-w-0 items-center gap-1 sm:gap-2 sm:group-hover:underline">
-                              <span className="truncate">{getDisplayName(player.name)}</span>
+                            <span className="flex items-center gap-1 sm:gap-2 sm:group-hover:underline">
+                              {getDisplayName(player.name)}
                               <ChevronRight
-                                className="h-3 w-3 shrink-0 text-muted-foreground transition-colors group-hover:text-blue-500 sm:hidden"
+                                className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-blue-500 sm:hidden"
                                 aria-hidden="true"
                               />
                             </span>
@@ -352,7 +350,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                         ) : (
                           <span
                             className={cn(
-                              'font-medium flex min-w-0 items-center gap-2',
+                              'font-medium flex items-center gap-2',
                               isKenyaNumber1
                                 ? 'text-amber-700'
                                 : isJuniorChampion
@@ -364,7 +362,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                                       : ''
                             )}
                             title={player.name}>
-                            <span className="truncate">{getDisplayName(player.name)}</span>
+                            {getDisplayName(player.name)}
                           </span>
                         )}
                       </div>
@@ -426,7 +424,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                       )}
                     </CustomTableCell>
                     {odds && (
-                      <CustomTableCell className="text-right tabular-nums whitespace-nowrap">
+                      <CustomTableCell className="hidden lg:table-cell text-right tabular-nums whitespace-nowrap">
                         <QualifyingOdds
                           entry={player.fide_id ? odds[player.fide_id] : undefined}
                           excluded={qualifierExcludedIds.has(playerId)}

@@ -500,67 +500,21 @@ html[data-theme='warm-paper'] header :is(a[aria-current='page'], a:hover, button
 html[data-theme='warm-paper'] header a::after {
   background-color: var(--t-gold) !important;
 }
-html[data-theme='warm-paper'] header a[aria-current='page']::after {
-  scale: 1 !important;
-}
 html[data-theme='warm-paper'] header [data-theme-picker]:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Open/Ladies: serif titles with a gold rule under the active one */
+/* Open/Ladies keeps the default raised-segment look rather than the shared inverted fill */
 html[data-theme='warm-paper'] [data-slot='segmented-control'] {
-  background-color: transparent !important;
-  border: 0 !important;
-  padding: 0 !important;
-  gap: 1.25rem;
-}
-html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed] {
-  font-family: var(--t-font-head) !important;
-  font-size: 1.75rem;
-  line-height: 1.15;
-  font-weight: 500;
-  padding: 0 0 4px !important;
-  border-radius: 0 !important;
-  border-bottom: 2px solid transparent !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
+  background-color: var(--t-surface-3) !important;
 }
 html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='true'] {
-  color: var(--t-ink) !important;
-  border-bottom-color: var(--t-gold) !important;
-}
-html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='false'] {
-  color: #a0957f !important;
-}
-html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='false']:hover {
-  color: var(--t-ink-2) !important;
-}
-
-/* Best TPR / Best 2 / ... as a pill group above the sheet */
-html[data-theme='warm-paper'] [data-slot='view-selector'] {
-  background-color: var(--t-surface-3) !important;
-  border: 1px solid var(--t-line) !important;
-  border-radius: 8px !important;
-  padding: 3px;
-  gap: 2px;
-  margin-bottom: 12px;
-  box-shadow: none !important;
-}
-html[data-theme='warm-paper'] [data-slot='view-selector'] > * {
-  border: 0 !important;
-  border-radius: 6px !important;
-  padding: 6px 14px !important;
-  font-size: 13px;
-  color: var(--t-ink-2) !important;
-}
-html[data-theme='warm-paper'] [data-slot='view-selector'] > :not(.bg-primary):hover {
-  background-color: transparent !important;
-  color: var(--t-ink) !important;
-}
-html[data-theme='warm-paper'] [data-slot='view-selector'] > .bg-primary {
   background-color: var(--t-surface) !important;
   color: var(--t-ink) !important;
   box-shadow: 0 1px 2px rgba(28, 25, 21, 0.1) !important;
+}
+html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='false']:hover {
+  color: var(--t-ink) !important;
 }
 
 /* Controls */
@@ -590,7 +544,6 @@ html[data-theme='warm-paper'] :is(input, [data-slot='dropdown-menu-trigger']):fo
 /* The sheet */
 html[data-theme='warm-paper'] [data-slot='card'] {
   border: 1px solid var(--t-line) !important;
-  border-radius: var(--t-radius) !important;
 }
 html[data-theme='warm-paper'] thead {
   border-bottom: 1px solid var(--t-line) !important;
