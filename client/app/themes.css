@@ -1046,11 +1046,36 @@ html[data-theme='felt'] button.from-blue-500 {
 html[data-theme='felt'] button.from-blue-500:hover {
   background: #d6b25c !important;
 }
-html[data-theme='felt'] :not(thead) > .odd\:bg-white:nth-child(odd) {
+html[data-theme='felt'] form button.bg-slate-100 {
+  background-color: #ece3cd !important;
+  color: #4a5f55 !important;
+}
+html[data-theme='felt'] form button.bg-slate-100:hover {
+  background-color: #c8a24a !important;
+  color: #14261f !important;
+}
+html[data-theme='felt'] :not(thead) > .odd\:bg-white:nth-child(odd):not([class*='border-l-']) {
   background-color: var(--t-surface) !important;
 }
-html[data-theme='felt'] :not(thead) > .even\:bg-gray-200\/50:nth-child(even) {
+html[data-theme='felt'] :not(thead) > .even\:bg-gray-200\/50:nth-child(even):not([class*='border-l-']) {
   background-color: var(--t-surface-2) !important;
+}
+html[data-theme='felt'] tbody tr[class*='border-l-'] {
+  background-color: #f3e4bd !important;
+  border-left: 3px solid #c8a24a !important;
+}
+html[data-theme='felt'] tbody tr[class*='border-l-']:hover {
+  background-color: #eedba9 !important;
+}
+html[data-theme='felt'] tbody tr:is(.border-l-teal-600, .border-l-cyan-500) {
+  background-color: #e2e8d6 !important;
+  border-left-color: #2f6b55 !important;
+}
+html[data-theme='felt'] tbody tr:is(.border-l-teal-600, .border-l-cyan-500):hover {
+  background-color: #d6dfc6 !important;
+}
+html[data-theme='felt'] tbody tr[class*='border-l-'] + tr:not([class*='border-l-']) {
+  border-top: 2px solid #c8a24a !important;
 }
 
 /* Timeline: faint chalk rail, cream tiles, brass next-up tile */
