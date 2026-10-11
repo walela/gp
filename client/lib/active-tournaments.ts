@@ -30,7 +30,7 @@ export const plannedTournaments: Tournament[] = [
     short_name: 'Kisii Open',
     startDate: '2026-10-23',
     endDate: '2026-10-25',
-    location: 'Kisii',
+    location: 'Kisii ATC',
     confirmed: true,
     registrationDeadline: '2026-10-15',
     registrationUrl: 'https://forms.gle/iS6Pn7Yk5DSubxMy7',
@@ -52,7 +52,8 @@ export const plannedTournaments: Tournament[] = [
     short_name: 'KCB Kenya Open',
     startDate: '2026-10-17',
     endDate: '2026-10-20',
-    location: 'TBA',
+    location: 'KCB Leadership Centre, Karen',
+    rounds: 8,
     confirmed: true,
     registrationUrl: 'https://www.alphapass.co.ke/event/kcb-open',
     detailsUrl: null
