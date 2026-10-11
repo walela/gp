@@ -70,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             flash. Mirrors THEME_STORAGE_KEY + isThemedPath() in design-themes.ts. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('gp-design-theme');var valid=['neo-brutalist','swiss','editorial','warm-paper'];if(!t||t==='default')return;if(valid.indexOf(t)<0){localStorage.setItem('gp-design-theme','default');return;}var p=location.pathname;var themed=p==='/'||['/rankings','/tournaments','/ladies','/insights','/tournament','/player'].some(function(x){return p===x||p.indexOf(x+'/')===0;});if(themed)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('gp-design-theme');var valid=['neo-brutalist','brutalist','swiss','editorial','warm-paper'];if(!t||t==='default')return;if(valid.indexOf(t)<0){localStorage.setItem('gp-design-theme','default');return;}var p=location.pathname;var themed=p==='/'||['/rankings','/tournaments','/ladies','/insights','/tournament','/player'].some(function(x){return p===x||p.indexOf(x+'/')===0;});if(themed)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
           }}
         />
         {/* Neobrutalist background - subtle Kenyan palette undertones */}

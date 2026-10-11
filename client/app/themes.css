@@ -615,3 +615,211 @@ html[data-theme='warm-paper'] [data-rank-movement].text-cyan-700 {
 html[data-theme='warm-paper'] [data-rank-movement].text-gray-500 {
   color: #c2b8a6 !important;
 }
+
+/* ---------- Upcoming timeline accents ----------
+   The next event's tile, card bar, rail caps and the Register button use blue
+   utilities found only on the timeline; map them onto each theme's accent. */
+html[data-theme] [data-upcoming-card] > .bg-blue-500 {
+  background-color: var(--t-accent) !important;
+}
+html[data-theme] .fill-blue-500 {
+  fill: var(--t-accent) !important;
+  color: var(--t-accent) !important;
+}
+html[data-theme] time.bg-blue-50 {
+  background-color: var(--t-chip) !important;
+  border-color: var(--t-accent) !important;
+  color: var(--t-chip-ink) !important;
+}
+html[data-theme] time.bg-blue-50 .text-blue-500 {
+  color: var(--t-ink-2) !important;
+}
+html[data-theme] [data-upcoming-card] a.bg-blue-100 {
+  background-color: var(--t-chip) !important;
+  border-color: var(--t-line) !important;
+  color: var(--t-link) !important;
+}
+html[data-theme] [data-upcoming-card] a.bg-blue-100:hover {
+  background-color: var(--t-surface-3) !important;
+}
+
+/* ============================================================
+   THEME: Brutalist (raw)
+   Monospace everywhere, an exposed grid, hard black rules, no
+   radius or shadow, and one safety-orange accent.
+   ============================================================ */
+html[data-theme='brutalist'] {
+  --t-bg: #ffffff;
+  --t-canvas:
+    linear-gradient(to right, rgba(0, 0, 0, 0.055) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.055) 1px, transparent 1px) 0 0 / 24px 24px,
+    #ffffff;
+  --t-surface: #ffffff;
+  --t-surface-2: #ffffff;
+  --t-surface-3: #f2f2f2;
+  --t-thead-bg: #000000;
+  --t-thead-ink: #ffffff;
+  --t-ink: #000000;
+  --t-ink-2: #545454;
+  --t-link: #000000;
+  --t-link-2: #000000;
+  --t-accent: #ff4f00;
+  --t-accent-ink: #000000;
+  --t-line: #000000;
+  --t-chip: #ffffff;
+  --t-chip-ink: #000000;
+  --t-radius: 0px;
+  --t-radius-pill: 0px;
+  --t-border-w: 2px;
+  --t-shadow: none;
+  --t-shadow-lg: none;
+  --t-font: var(--font-jetbrains-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+  --t-font-head: var(--t-font);
+}
+html[data-theme='brutalist'] ::selection {
+  background: #ff4f00;
+  color: #000;
+}
+html[data-theme='brutalist'] :focus-visible {
+  outline: 3px solid #ff4f00 !important;
+  outline-offset: 2px;
+}
+html[data-theme='brutalist'] :is(h1, h2, h3) {
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+/* Section labels get a solid orange block */
+html[data-theme='brutalist'] h2::before {
+  content: '';
+  display: inline-block;
+  width: 0.62em;
+  height: 0.62em;
+  margin-right: 0.5em;
+  background: #ff4f00;
+  vertical-align: 0.02em;
+}
+
+/* Header: white bar, 3px rule, inverted wordmark */
+html[data-theme='brutalist'] header {
+  border-bottom-width: 0 !important;
+  box-shadow: none !important;
+}
+html[data-theme='brutalist'] header [data-slot='separator-root'] {
+  background-color: #000 !important;
+  height: 3px !important;
+}
+html[data-theme='brutalist'] header [data-brand] span {
+  background: #000;
+  color: #fff !important;
+  padding: 3px 8px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+html[data-theme='brutalist'] header a::after {
+  background-color: #ff4f00 !important;
+}
+
+/* Every box is a hard 2px frame */
+html[data-theme='brutalist']
+  :is([data-slot='card'], [data-upcoming-card], input, [data-slot='dropdown-menu-trigger'],
+      [data-slot='segmented-control'], [data-slot='dropdown-menu-content']) {
+  border: 2px solid #000 !important;
+  box-shadow: none !important;
+}
+html[data-theme='brutalist'] button[data-collapsible-trigger] {
+  border: 0 !important;
+}
+
+/* Tables: black head band, full cell grid, no zebra */
+html[data-theme='brutalist'] thead :is(th, span, div, a, button) {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 700;
+}
+html[data-theme='brutalist'] tbody tr:nth-child(odd),
+html[data-theme='brutalist'] tbody tr:nth-child(even) {
+  background-color: #fff !important;
+}
+html[data-theme='brutalist'] tbody tr {
+  border-bottom: 1px solid #000 !important;
+}
+html[data-theme='brutalist'] :is(thead, tbody) :is(td, th):not(:last-child) {
+  border-right: 1px solid #000 !important;
+}
+html[data-theme='brutalist'] thead :is(td, th):not(:last-child) {
+  border-right-color: #3a3a3a !important;
+}
+html[data-theme='brutalist'] tbody tr:hover {
+  background-color: #f2f2f2 !important;
+  box-shadow: inset 4px 0 0 #ff4f00;
+}
+
+/* Text links: underlined, inverted on hover */
+html[data-theme='brutalist'] main a:not(:has(div, p, img, li, table)) {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+html[data-theme='brutalist'] main a:not(:has(div, p, img, li, table)):hover {
+  background-color: #000 !important;
+  color: #fff !important;
+  text-decoration: none;
+}
+html[data-theme='brutalist'] main a:not(:has(div, p, img, li, table)):hover * {
+  color: inherit !important;
+}
+
+/* Primary action: orange slab, black frame */
+html[data-theme='brutalist'] button.from-blue-500 {
+  background: #ff4f00 !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  box-shadow: none !important;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+html[data-theme='brutalist'] button.from-blue-500:hover {
+  background: #000 !important;
+  color: #fff !important;
+}
+html[data-theme='brutalist'] :not(thead) > :is(.odd\:bg-white:nth-child(odd), .even\:bg-gray-200\/50:nth-child(even)) {
+  background-color: #fff !important;
+}
+
+/* Chips: square, outlined */
+html[data-theme='brutalist'] .rounded-full:is(.bg-gray-100, .bg-gray-200) {
+  border: 1.5px solid #000 !important;
+}
+
+/* Timeline: black rail, framed tiles, orange next-up tile */
+html[data-theme='brutalist'] .bg-gray-300 {
+  background-color: #000 !important;
+}
+html[data-theme='brutalist'] time.size-11 {
+  border: 2px solid #000 !important;
+  box-shadow: none !important;
+}
+html[data-theme='brutalist'] time.bg-blue-50 {
+  background-color: #ff4f00 !important;
+  border-color: #000 !important;
+  color: #000 !important;
+}
+html[data-theme='brutalist'] time.bg-blue-50 .text-blue-500 {
+  color: #000 !important;
+}
+html[data-theme='brutalist'] .fill-blue-500 {
+  fill: #000 !important;
+  color: #000 !important;
+}
+html[data-theme='brutalist'] [data-upcoming-card] a.bg-blue-100 {
+  background-color: #fff !important;
+  border: 2px solid #000 !important;
+  color: #000 !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+}

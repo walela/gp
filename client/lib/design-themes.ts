@@ -1,6 +1,7 @@
 export type DesignThemeId =
   | 'default'
   | 'neo-brutalist'
+  | 'brutalist'
   | 'swiss'
   | 'editorial'
   | 'warm-paper'
@@ -15,6 +16,7 @@ export interface DesignThemeMeta {
 export const DESIGN_THEMES: DesignThemeMeta[] = [
   { id: 'default', label: 'Default', blurb: 'The original look' },
   { id: 'neo-brutalist', label: 'Neo-Brutalist', blurb: 'Chunky borders, offset shadows' },
+  { id: 'brutalist', label: 'Brutalist', blurb: 'Raw mono type, hard grid, safety orange' },
   { id: 'swiss', label: 'Swiss', blurb: 'Ruled tables, tabular figures, red index' },
   { id: 'editorial', label: 'Editorial', blurb: 'Serif headlines, oxblood accents' },
   { id: 'warm-paper', label: 'Warm Paper', blurb: 'Ivory paper, ink header, mono figures' },
