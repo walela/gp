@@ -8,6 +8,14 @@ editing qualification_model.py:
     python3 scripts/update_forecast.py --check    # exit 1 if the published forecast is stale
 
 The deploy workflow runs --check, so stale odds can't reach production.
+
+Player pages show each change from the odds published before the latest event, taken from the
+existing forecast file (a rerun after the same event keeps that baseline). If the local file
+was already regenerated after a new event before the previous forecast was published, pass the
+published one:
+
+    git show origin/main:client/lib/qualification-forecast.json > /tmp/published.json
+    python3 scripts/update_forecast.py --baseline /tmp/published.json
 """
 import argparse
 import json
@@ -25,6 +33,7 @@ OUTPUT = os.path.join(ROOT, "client", "lib", "qualification-forecast.json")
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true", help="verify instead of regenerating")
+    parser.add_argument("--baseline", help="published forecast to measure changes from (default: the existing file)")
     args = parser.parse_args()
 
     if args.check:
@@ -44,8 +53,13 @@ def main():
         print("Qualification forecast is current.")
         return
 
+    previous = None
+    baseline = args.baseline or (OUTPUT if os.path.exists(OUTPUT) else None)
+    if baseline:
+        with open(baseline) as f:
+            previous = json.load(f)
     try:
-        forecast = model.build_forecast()
+        forecast = model.build_forecast(previous=previous)
     except model.StaleInputs as e:
         sys.exit(f"Can't build the forecast: {e}")
     with open(OUTPUT, "w") as f:

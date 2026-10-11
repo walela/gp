@@ -810,7 +810,7 @@ def simulate_category(season, as_of, category, events, qualifiers, ladies_team=N
     return contenders, juniors, results
 
 
-def forecast_category(con, season, as_of, category, events, qualifiers, ladies_team=None, before=None):
+def forecast_category(con, season, as_of, category, events, qualifiers, ladies_team=None):
     q = qualifiers[category]
     kenya1, champion, dead = q["kenya1"], q["champion"], q["dead"]
     contenders, juniors, results = simulate_category(season, as_of, category, events, qualifiers, ladies_team)
@@ -834,8 +834,6 @@ def forecast_category(con, season, as_of, category, events, qualifiers, ladies_t
             players[fide_id] = {"rank": rank, "status": "junior_champion"}
             continue
         entry = {"rank": rank, "status": "forecast", "p": round(counts[fide_id] / SIMS, 3)}
-        if before is not None:
-            entry["p_before"] = before.get(fide_id, 0.0)
         if fide_id in modelled:
             finals = final_best4[fide_id]
             entry.update({
@@ -864,44 +862,32 @@ def ladies_team(ladies, qualifiers):
     return team
 
 
-def odds_before_latest(con, season, events, qualifiers):
-    """Each category's odds on the morning of the latest event, from the same model, so the change
-    shows what that event's results did rather than any model update."""
-    rows = con.execute(
-        """SELECT short_name, name, start_date, end_date, COALESCE(rounds, 6) FROM tournaments
-           WHERE section = 'open' AND substr(start_date, 1, 4) = ? ORDER BY start_date DESC LIMIT 2""",
-        (str(season),),
-    ).fetchall()
-    if len(rows) < 2:
-        return None
-    short_name, name, start, end, rounds = rows[0]
-    days = (dt.date.fromisoformat(end or start) - dt.date.fromisoformat(start)).days
-    fmt = "8" if rounds >= 8 else "6x3" if days >= 2 else "6"
-    latest = {"params": (short_name or name, fmt) + DEFAULT_EVENT}
-    odds = {}
-    for category in ("ladies", "open"):
-        team = None
-        if category == "open":
-            team = ladies_team({"players": {f: {"status": "forecast", "p": p} for f, p in odds["ladies"].items()}}, qualifiers)
-        _, _, (counts, *_) = simulate_category(season, start, category, [latest] + events, qualifiers, team)
-        odds[category] = {fid: round(c / SIMS, 3) for fid, c in counts.items()}
-    return odds
+def apply_baseline(forecast, previous):
+    """Set each player's p_before to the odds published before the latest event, so the change matches
+    what players saw. Regenerating after the same event keeps the earlier baseline."""
+    same_event = previous["after"]["id"] == forecast["after"]["id"]
+    for category, c in forecast["categories"].items():
+        old = previous["categories"].get(category, {}).get("players", {})
+        for fide_id, entry in c["players"].items():
+            if entry["status"] == "forecast":
+                prev = old.get(fide_id, {})
+                entry["p_before"] = prev.get("p_before", 0.0) if same_event else prev.get("p", 0.0)
 
 
-def build_forecast(season=None):
+def build_forecast(season=None, previous=None):
+    """previous is the published forecast the changes are measured from; without it there are none."""
     con = sqlite3.connect(DB_FILE)
     season = season or latest_season(con)
     as_of = season_as_of(con, season)
     events = upcoming_events(con, season)
     qualifiers = load_qualifiers(season)
-    before = odds_before_latest(con, season, events, qualifiers) or {}
-    ladies = forecast_category(con, season, as_of, "ladies", events, qualifiers, before=before.get("ladies"))
+    ladies = forecast_category(con, season, as_of, "ladies", events, qualifiers)
     latest = con.execute(
         """SELECT id, short_name, name FROM tournaments WHERE section = 'open' AND substr(start_date, 1, 4) = ?
            ORDER BY start_date DESC LIMIT 1""",
         (str(season),),
     ).fetchone()
-    return {
+    forecast = {
         "season": season,
         "as_of": as_of,
         "after": {"id": latest[0], "name": latest[1] or latest[2]},
@@ -911,11 +897,13 @@ def build_forecast(season=None):
         "tournaments": tournament_counts(season),
         "fingerprint": fingerprint(con, season, events),
         "categories": {
-            "open": forecast_category(con, season, as_of, "open", events, qualifiers, ladies_team(ladies, qualifiers),
-                                      before=before.get("open")),
+            "open": forecast_category(con, season, as_of, "open", events, qualifiers, ladies_team(ladies, qualifiers)),
             "ladies": ladies,
         },
     }
+    if previous:
+        apply_baseline(forecast, previous)
+    return forecast
 
 
 def check_forecast(forecast):

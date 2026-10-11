@@ -47,7 +47,11 @@ When a Grand Prix event is finished, update it in this order:
    - Set `juniorChampion` in `client/lib/qualifiers.json` once the national junior championship is decided.
    - New events get default forecast settings; add an `EVENT_PARAMS` entry in `qualification_model.py` when the
      format, draw or chance of a Ladies section is known.
-   - The deploy workflow runs `python3 scripts/update_forecast.py --check` and fails if the forecast is stale.
+   - Player pages show each odds change from the forecast published before the latest event, read from the existing
+ `client/lib/qualification-forecast.json`; reruns after the same event keep that baseline. If the file was already
+ regenerated for a new event before the previous one was pushed, pass the published forecast with `--baseline`
+ (see the script's docstring).
+ - The deploy workflow runs `python3 scripts/update_forecast.py --check` and fails if the forecast is stale.
      Player pages also hide the forecast when the API's tournaments differ from the modelled ones.
    - Current ratings come from the FIDE list in `data/fide_bio_ken.csv`, plus Chess-Results rating changes for events
  that ended after `rated_through` in `data/fide_list.json`. When FIDE publishes a new monthly list (the 1st), run
