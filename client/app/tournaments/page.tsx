@@ -9,7 +9,7 @@ import { SeasonSelector } from '@/components/season-selector'
 import { getSeasons } from '@/services/api'
 import { TrackedLink } from '@/components/tracked-link'
 import { formatTournamentDateCompact } from '@/utils/tournament'
-import { ArrowRight, Diamond } from 'lucide-react'
+import { ArrowRight, CalendarDays, Diamond, Flag, MapPin } from 'lucide-react'
 import { CollapsibleSection } from '@/components/collapsible-section'
 
 // Render HTML per request while allowing explicitly cached data fetches.
@@ -25,16 +25,11 @@ function formatTimeAway(startDateIso: string) {
   const startDate = dayjs(startDateIso).startOf('day')
   const now = dayjs().startOf('day')
   const daysAway = startDate.diff(now, 'day')
-  const weeksAway = Math.floor(daysAway / 7)
-  const remainingDays = daysAway % 7
 
   if (daysAway <= 0) return daysAway === 0 ? 'Today' : 'In progress'
   if (daysAway === 1) return 'Tomorrow'
-  if (daysAway < 7) return `${daysAway} days away`
-  if (weeksAway === 1 && remainingDays === 0) return '1 week away'
-  if (weeksAway === 1) return `1 week ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
-  if (remainingDays === 0) return `${weeksAway} weeks away`
-  return `${weeksAway} weeks ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} away`
+  if (daysAway < 14) return `in ${daysAway} days`
+  return `in ${Math.round(daysAway / 7)} weeks`
 }
 
 function getTournamentSortValue(tournament: Tournament) {
@@ -124,6 +119,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               {sortedActiveTournaments.map((tournament, index) => {
                 const hasDates = Boolean(tournament.startDate && tournament.endDate)
                 const isNearTerm = nearTermTournamentIds.has(tournament.id)
+                const canRegister = Boolean(tournament.registrationUrl) && !isTournamentInProgress(tournament)
                 const monthLabel = tournament.startDate
                   ? dayjs(tournament.startDate).format('MMM').toUpperCase()
                   : tournament.month?.split(/\s+/)[0].slice(0, 3).toUpperCase() ?? 'TBA'
@@ -140,28 +136,31 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 return (
                   <div
                     key={tournament.id}
-                    className="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-1 sm:grid-cols-[4.5rem_minmax(0,1fr)]">
+                    className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-1 sm:grid-cols-[4.5rem_minmax(0,1fr)]">
                     <div className="relative flex items-center justify-center">
                       {index === 0 && (
-                        <Diamond className="absolute left-1/2 top-0 z-10 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 fill-blue-600 text-blue-600 drop-shadow-sm" aria-hidden="true" />
+                        <Diamond className="absolute left-1/2 top-0 z-10 size-4 -translate-x-1/2 -translate-y-1/2 fill-blue-600 text-blue-600 drop-shadow-sm" aria-hidden="true" />
                       )}
-                      <span className="absolute bottom-[calc(50%+1.375rem)] left-1/2 top-0 w-px -translate-x-1/2 bg-gray-400" aria-hidden="true" />
-                      <span className="absolute bottom-0 left-1/2 top-[calc(50%+1.375rem)] w-px -translate-x-1/2 bg-gray-400" aria-hidden="true" />
+                      <span className="absolute bottom-[calc(50%+1.375rem)] left-1/2 top-0 w-0.5 -translate-x-1/2 bg-gray-300" aria-hidden="true" />
+                      <span className="absolute bottom-0 left-1/2 top-[calc(50%+1.375rem)] w-0.5 -translate-x-1/2 bg-gray-300" aria-hidden="true" />
+                      <span className="absolute -right-1 left-[calc(50%+1.375rem)] top-1/2 h-0.5 -translate-y-1/2 bg-gray-300" aria-hidden="true" />
                       {index === sortedActiveTournaments.length - 1 && (
-                        <Diamond className="absolute bottom-0 left-1/2 z-10 h-2.5 w-2.5 -translate-x-1/2 translate-y-1/2 fill-blue-600 text-blue-600 drop-shadow-sm" aria-hidden="true" />
+                        <Diamond className="absolute bottom-0 left-1/2 z-10 size-4 -translate-x-1/2 translate-y-1/2 fill-blue-600 text-blue-600 drop-shadow-sm" aria-hidden="true" />
                       )}
                       <time
                         dateTime={tournament.startDate}
-                        className="relative z-10 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-400 bg-transparent text-gray-600">
-                        <span className="flex max-w-full flex-col items-center text-[9px] font-medium leading-none">
-                          <span>{monthLabel}</span>
-                          <span className="mt-1 text-sm tabular-nums">{dayLabel}</span>
+                        className={`relative z-10 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border shadow-sm ${
+                          index === 0 ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300 bg-white text-gray-700'
+                        }`}>
+                        <span className="flex max-w-full flex-col items-center text-[9px] font-semibold uppercase leading-none tracking-wide">
+                          <span className={index === 0 ? 'text-blue-100' : 'text-gray-500'}>{monthLabel}</span>
+                          <span className="mt-1 text-sm font-bold tabular-nums">{dayLabel}</span>
                         </span>
                       </time>
                     </div>
 
                     <div data-upcoming-card className="my-1.5 min-w-0 rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low">
-                      <div className="flex min-w-0 items-center justify-between gap-3">
+                      <div className="flex min-h-6 min-w-0 items-center justify-between gap-3">
                         <div className="min-w-0">
                           {detailHref ? (
                             <Link href={detailHref} className="text-sm font-medium text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline sm:text-base">
@@ -178,34 +177,44 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           {tournament.status === 'postponed' ? (
                             <span className="inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">Postponed</span>
                           ) : isNearTerm || tournament.confirmed ? (
-                            <span className="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-green-700">Confirmed</span>
+                            !canRegister && (
+                              <span className="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-green-700">Confirmed</span>
+                            )
                           ) : (
                             <span className="text-gray-400">TBC</span>
                           )}
                         </div>
                       </div>
 
-                      <p className="mt-2 flex items-center gap-1.5 text-xs text-gray-500">
-                        <span aria-hidden="true">📅</span>
-                        {hasDates
-                          ? formatTournamentDateCompact(tournament.startDate, tournament.endDate)
-                          : tournament.month?.replace(/\s+\d{4}$/, '') ?? 'TBA'}
-                      </p>
-                      <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-gray-500">
-                        <span className="shrink-0" aria-hidden="true">📍</span>
-                        {tournament.locationUrl ? (
-                          <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
-                            {locationLabel}
-                          </a>
-                        ) : <span className="truncate">{locationLabel}</span>}
-                      </p>
-                      <div className="mt-3 flex items-center justify-between gap-2">
+                      <div className="mt-3 space-y-2 text-xs text-gray-500">
+                        <p className="flex items-center gap-2">
+                          <CalendarDays className="size-3.5 shrink-0 text-gray-400" strokeWidth={1.75} aria-hidden="true" />
+                          {hasDates
+                            ? formatTournamentDateCompact(tournament.startDate, tournament.endDate)
+                            : tournament.month?.replace(/\s+\d{4}$/, '') ?? 'TBA'}
+                        </p>
+                        {tournament.rounds && (
+                          <p className="flex items-center gap-2">
+                            <Flag className="size-3.5 shrink-0 text-gray-400" strokeWidth={1.75} aria-hidden="true" />
+                            {tournament.rounds} rounds
+                          </p>
+                        )}
+                        <p className="flex min-w-0 items-center gap-2">
+                          <MapPin className="size-3.5 shrink-0 text-gray-400" strokeWidth={1.75} aria-hidden="true" />
+                          {tournament.locationUrl ? (
+                            <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
+                              {locationLabel}
+                            </a>
+                          ) : <span className="truncate">{locationLabel}</span>}
+                        </p>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between gap-2">
                         {tournament.startDate && (
                           <span className="inline-flex items-center rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                             {formatTimeAway(tournament.startDate)}
                           </span>
                         )}
-                        {tournament.registrationUrl && !isTournamentInProgress(tournament) && (
+                        {canRegister && (
                           <TrackedLink
                             event="Register click"
                             href={tournament.registrationUrl}
