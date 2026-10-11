@@ -32,7 +32,7 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-10-25',
     location: 'Kisii ATC',
     locationUrl: 'https://maps.google.com/?q=Kisii+ATC,+Kisii,+Kenya',
-    rounds: 6,
+    rounds: 8,
     confirmed: true,
     registrationDeadline: '2026-10-15',
     registrationUrl: 'https://forms.gle/iS6Pn7Yk5DSubxMy7',
