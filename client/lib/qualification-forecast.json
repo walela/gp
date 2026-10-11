@@ -2824,6 +2824,71 @@
      "rank": 93,
      "status": "forecast"
     },
+    "10801693": {
+     "best4": [
+      1766,
+      1819,
+      1872
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.279,
+        0.0
+       ],
+       [
+        0.457,
+        0.0
+       ],
+       [
+        0.22,
+        0.0
+       ],
+       [
+        0.042,
+        0.0
+       ],
+       [
+        0.002,
+        0.0
+       ]
+      ],
+      "entered": [
+       5,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 1.5,
+      "expected_tpr": 1803,
+      "form": 1696,
+      "form_adj": -36,
+      "group": "adults_open",
+      "group_adj": -9,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "near_lock_needed": null,
+      "now": [
+       2,
+       1826
+      ],
+      "p_improve": null,
+      "rating": 1840,
+      "swing": 127,
+      "walkover": 0.299,
+      "weakest": null
+     },
+     "p": 7.124764e-07,
+     "p_before": 0.0,
+     "p_four": 0.526,
+     "p_junior_title": 0.0,
+     "p_play": 0.721,
+     "p_standings": 0.0,
+     "p_text": "0.0000712476%",
+     "rank": 94,
+     "status": "forecast"
+    },
     "10801952": {
      "best4": [
       1924,
