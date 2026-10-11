@@ -44,6 +44,8 @@ export interface ForecastFactors {
   walkover: number
   boost: 'bubble' | 'near_lock' | null
   near_lock_entry: number
+  // Further events a near-locked player must enter; null without the near-lock boost.
+  near_lock_needed: number | null
   // [share of seasons, chance of qualifying in them], indexed by new valid results (0 to events_left).
   by_new: Array<[number, number | null]>
 }

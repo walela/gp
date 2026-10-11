@@ -135,8 +135,10 @@ JUNIOR_2025_BOYS = {
     "10856102", "10896015", "10836659", "554001765", "10846590", "10865497", "554001897", "10885153",
 }
 JUNIOR_2025_GIRLS_KNOWN = {"10822755", "10814507", "10843981"}
-# Chance a near-locked player (see near_lock_attendance) enters at least one remaining event.
+# Chance a near-locked player (see near_lock_attendance) enters the remaining events they need:
+# one more for a player on 3 results, or the lower multi rate for two or more.
 NEAR_LOCK_ENTRY = 0.95
+NEAR_LOCK_ENTRY_MULTI = 0.75
 # Late 2025 (last 6 events), players on 4+ results within 50 of the current 9th place entered
 # at 1.42x (Open) / 1.32x (Ladies) their season rate, vs ~1.09x for everyone else late (already
 # in the event draw factors), so ~1.25x on top. Safe players and distant chasers entered less,
@@ -400,29 +402,33 @@ def bubble_attendance(contenders, excluded):
 
 
 def near_lock_attendance(contenders, events, category):
-    """Raise attendance for players whose 4th result would lock them even well below par.
+    """Raise attendance for players whose missing results would lock them even well below par.
 
     2025 showed no extra turnout for players needing a 4th result, but none of them were
-    this safe, so this is a judgement default rather than a measured one.
+    this safe, and nobody in 2025 was this safe while two or more short, so both entry
+    rates are judgement defaults rather than measured ones.
     """
     line = max(CATEGORIES[category]["thresholds"])
 
-    def p_entry(p, rate):
-        p_none = 1.0
+    def p_entries(p, rate, needed):
+        dist = [1.0]
         for name, _, cancel, attend, _, draw in events:
-            p_none *= 1 - (1 - cancel) * min(0.95, rate * attend * draw * p["region_mult"][region(name)])
-        return 1 - p_none
+            q = (1 - cancel) * min(0.95, rate * attend * draw * p["region_mult"][region(name)])
+            dist = [a * (1 - q) + b * q for a, b in zip(dist + [0.0], [0.0] + dist)]
+        return sum(dist[needed:])
 
     for p in contenders:
-        if len(p["tprs"]) != 3 or 4 * line - sum(p["tprs"]) > p["mu"] - 2 * p["sigma"]:
+        needed = 4 - len(p["tprs"])
+        if not 1 <= needed <= len(events) or (4 * line - sum(p["tprs"])) / needed > p["mu"] - 2 * p["sigma"]:
             continue
-        if p_entry(p, p["p_attend"]) >= NEAR_LOCK_ENTRY:
+        target = NEAR_LOCK_ENTRY if needed == 1 else NEAR_LOCK_ENTRY_MULTI
+        if p_entries(p, p["p_attend"], needed) >= target:
             continue
         lo, hi = p["p_attend"], 5.0
         for _ in range(40):
             mid = (lo + hi) / 2
-            lo, hi = (mid, hi) if p_entry(p, mid) < NEAR_LOCK_ENTRY else (lo, mid)
-        p["p_attend"], p["near_lock"] = hi, True
+            lo, hi = (mid, hi) if p_entries(p, mid, needed) < target else (lo, mid)
+        p["p_attend"], p["near_lock"] = hi, (needed, target)
 
 
 def ranking_key(tprs):
@@ -753,7 +759,8 @@ def player_factors(p, events, season, by_new):
         "walkover": round(void, 3),
         "boost": "near_lock" if p.get("near_lock") else "bubble" if p.get("bubble") else None,
         "bubble_factor": BUBBLE_TURNOUT,
-        "near_lock_entry": NEAR_LOCK_ENTRY,
+        "near_lock_entry": p["near_lock"][1] if p.get("near_lock") else NEAR_LOCK_ENTRY,
+        "near_lock_needed": p["near_lock"][0] if p.get("near_lock") else None,
         "by_new": [[round(s / SIMS, 3), round(q / s, 3) if s else None] for s, q in by_new],
     }
 

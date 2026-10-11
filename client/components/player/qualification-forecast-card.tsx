@@ -236,7 +236,7 @@ function EventsDriver({ f }: { f: ForecastFactors }) {
       <dl>
         <DetailRow label="Events entered">{f.entered[0]} of {f.entered[1]}</DetailRow>
         {f.boost === 'near_lock' && (
-          <DetailRow label="Plays again (near lock)"><span className="text-emerald-700">{formatChance(f.near_lock_entry)}</span></DetailRow>
+          <DetailRow label={f.near_lock_needed && f.near_lock_needed > 1 ? `Plays ${f.near_lock_needed} more (near lock)` : 'Plays again (near lock)'}><span className="text-emerald-700">{formatChance(f.near_lock_entry)}</span></DetailRow>
         )}
         <DetailRow label="Walkover risk">
           <span className={f.walkover >= HIGH_WALKOVER ? 'text-red-600' : undefined}>{formatChance(f.walkover)}</span>
