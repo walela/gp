@@ -353,7 +353,7 @@ function Headline({ title, forecast, event }: { title: string; forecast: PlayerC
       </div>
       {entry.status === 'forecast' ? (
         <div className="mt-1 flex items-baseline gap-2">
-          <OddsFigure text={formatChance(p)} />
+          <OddsFigure text={entry.p_text ?? formatChance(p)} />
           {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
         </div>
       ) : (
