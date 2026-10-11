@@ -49,7 +49,10 @@ When a Grand Prix event is finished, update it in this order:
      format, draw or chance of a Ladies section is known.
    - The deploy workflow runs `python3 scripts/update_forecast.py --check` and fails if the forecast is stale.
      Player pages also hide the forecast when the API's tournaments differ from the modelled ones.
-   - Refresh birth years and sex occasionally with `python3 scripts/update_fide_bio.py`.
+   - Current ratings come from the FIDE list in `data/fide_bio_ken.csv`, plus Chess-Results rating changes for events
+ that ended after `rated_through` in `data/fide_list.json`. When FIDE publishes a new monthly list (the 1st), run
+ `python3 scripts/update_fide_bio.py` (it also refreshes birth years and sex), then confirm `rated_through` covers
+ exactly the events FIDE rated; edit it if an event was rated late. Then regenerate the forecast.
 
 7. Deploy and verify cache revalidation.
    - A successful Fly deployment does not by itself refresh the frontend. Public API fetches use the Next.js Data Cache with the `gp-data` tag.

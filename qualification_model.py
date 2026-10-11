@@ -3,8 +3,8 @@
 Each simulated season plays the remaining events: a player enters each with a
 probability from their attendance so far, their result is void (walkover) at
 the observed rate, and otherwise their TPR is drawn from a normal distribution
-around their projected rating (FIDE rating plus estimated gains from events not
-yet on the list), with offsets by section and age and a season-wide late lift.
+around their projected rating (rating on the latest FIDE list plus rating changes
+from events since), with offsets by section and age and a season-wide late lift.
 The spread is the group spread nudged toward the player's own history and
 scaled by event format. Each event carries an El Nino cancellation and turnout
 risk, and the national junior champion is drawn each season. Ladies rankings
@@ -35,10 +35,13 @@ from player_eligibility import is_gp_eligible_player
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DB_FILE = os.path.join(ROOT, "gp_tracker.db")
 FIDE_BIO = os.path.join(ROOT, "data", "fide_bio_ken.csv")
+FIDE_LIST = os.path.join(ROOT, "data", "fide_list.json")
 QUALIFIERS = os.path.join(ROOT, "client", "lib", "qualifiers.json")
 ACTIVE_TOURNAMENTS = os.path.join(ROOT, "client", "lib", "active-tournaments.ts")
 
-PENDING_DAYS = 40  # events this recent may not be in the FIDE list yet
+# Only for dates before the stored FIDE list (backtests): events within this many days before a
+# rating was seen, at that rating, are assumed not to be on the list it came from.
+PENDING_DAYS = 40
 # Strength = projected rating blended with the median section-adjusted TPR this season.
 # Predicting later-season TPRs (148 results, cutoffs Oct 2025, Jun and Aug 2026), 75/25 beat
 # the projected rating alone at every cutoff; median alone was slightly worse than rating and
@@ -153,18 +156,23 @@ CATEGORIES = {
 
 
 def load_fide_bio():
-    """Birth years and women from the Kenyan extract of the FIDE list (scripts/update_fide_bio.py)."""
-    years, female = {}, set()
+    """Birth years, women and standard ratings from the Kenyan extract of the FIDE list
+    (scripts/update_fide_bio.py), and the latest event end date that list covers."""
+    years, female, ratings = {}, set(), {}
     with open(FIDE_BIO, newline="") as f:
         for row in csv.DictReader(f):
             if row["birth_year"]:
                 years[row["fide_id"]] = int(row["birth_year"])
             if row["sex"] == "F":
                 female.add(row["fide_id"])
-    return years, female
+            if row["rating"]:
+                ratings[row["fide_id"]] = int(row["rating"])
+    with open(FIDE_LIST) as f:
+        rated_through = dt.date.fromisoformat(json.load(f)["rated_through"])
+    return years, female, ratings, rated_through
 
 
-BIRTH_YEARS, FEMALE = load_fide_bio()
+BIRTH_YEARS, FEMALE, FIDE_RATINGS, FIDE_RATED_THROUGH = load_fide_bio()
 
 
 def is_junior(fide_id, year):
@@ -315,6 +323,19 @@ def load_players(season, as_of, category="open"):
     )
 
     players = {}
+    # Rating changes since the FIDE list from every section, since a Ladies event moves an Open
+    # rating too. Without a Chess-Results change, only a completed result can be estimated.
+    since_list = collections.defaultdict(list)
+    for pid, rating, tpr, rounds, points, change, status in con.execute(
+        """SELECT r.player_id, r.rating, r.tpr, COALESCE(t.rounds, 6), r.points, r.rating_change,
+                  COALESCE(r.result_status, 'valid')
+           FROM results r JOIN tournaments t ON t.id = r.tournament_id
+           WHERE r.rating > 0 AND COALESCE(t.end_date, t.start_date) > ? AND t.start_date < ?""",
+        (FIDE_RATED_THROUGH.isoformat(), as_of),
+    ):
+        if change is not None or (status == "valid" and tpr):
+            since_list[pid].append((rating, tpr, rounds, points, change))
+
     for pid, name, fide_id, gender, rating, tpr, points, status, start_date, rounds, section, short_name, change in rows:
         if not is_gp_eligible_player(fide_id, name):
             continue
@@ -330,7 +351,7 @@ def load_players(season, as_of, category="open"):
         if (short_name, start_date) in with_ladies:
             p["apps_with_ladies"] += 1
         if rating:
-            p["rating"] = rating
+            p["rating"], p["rating_seen"] = rating, dt.date.fromisoformat(start_date)
         # Form also counts events that ended in a walkover: players who drop out tend to do so
         # when an event is going badly, so completed events alone flatter them.
         if tpr:
@@ -344,13 +365,21 @@ def load_players(season, as_of, category="open"):
     contenders = []
     for p in players.values():
         junior = is_junior(p["fide_id"], season)
-        if p["rating"]:
-            # Recent events at the current rating haven't reached the FIDE list yet.
+        listed = FIDE_RATINGS.get(p["fide_id"]) if as_of_date > FIDE_RATED_THROUGH else None
+        if listed:
+            p["rating"] = listed
+            pending = sum(
+                known_or_estimated_gain(p["fide_id"], r, tpr, rounds, season, pts, c)
+                for r, tpr, rounds, pts, c in since_list[p["id"]]
+            )
+        elif p["rating"]:
+            # The stored rating only refreshes when the player plays again, so count from when it was seen.
             pending = sum(
                 known_or_estimated_gain(p["fide_id"], r, tpr, rounds, season, pts, c)
                 for d, r, tpr, rounds, pts, c in p["rated"]
-                if r == p["rating"] and (as_of_date - d).days <= PENDING_DAYS
+                if r == p["rating"] and (p["rating_seen"] - d).days <= PENDING_DAYS
             )
+        if p["rating"]:
             p["projected"] = round(p["rating"] + pending)
             base = p["projected"]
             if p["form_tprs"]:
@@ -700,6 +729,7 @@ def fingerprint(con, season, events):
         "model": _file_sha(os.path.abspath(__file__)),
         "qualifiers": _file_sha(QUALIFIERS),
         "fide_bio": _file_sha(FIDE_BIO),
+        "fide_list": _file_sha(FIDE_LIST),
     }
 
 
@@ -905,5 +935,6 @@ def check_forecast(forecast):
         "model": "qualification_model.py changed",
         "qualifiers": "client/lib/qualifiers.json changed",
         "fide_bio": "data/fide_bio_ken.csv changed",
+        "fide_list": "data/fide_list.json changed",
     }
     return [labels[k] for k in labels if stored.get(k) != current[k]]
