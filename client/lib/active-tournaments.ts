@@ -32,6 +32,8 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-10-25',
     location: 'Kisii',
     confirmed: true,
+    registrationDeadline: '2026-10-15',
+    registrationUrl: 'https://forms.gle/iS6Pn7Yk5DSubxMy7',
     detailsUrl: null
   },
   {
