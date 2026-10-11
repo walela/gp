@@ -150,10 +150,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                       <time
                         dateTime={tournament.startDate}
                         className={`relative z-10 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border shadow-sm ${
-                          index === 0 ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 bg-white text-gray-700'
+                          index === 0 ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700'
                         }`}>
                         <span className="flex max-w-full flex-col items-center text-[9px] font-semibold uppercase leading-none tracking-wide">
-                          <span className={index === 0 ? 'text-blue-100' : 'text-gray-500'}>{monthLabel}</span>
+                          <span className={index === 0 ? 'text-blue-500' : 'text-gray-500'}>{monthLabel}</span>
                           <span className="mt-1 text-sm font-bold tabular-nums">{dayLabel}</span>
                         </span>
                       </time>
@@ -161,18 +161,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
                     <div
                       data-upcoming-card
-                      className={`relative my-1.5 min-w-0 overflow-hidden rounded-lg px-4 py-4 shadow-elevation-low ${
-                        index === 0 ? 'bg-gradient-to-r from-blue-50 to-white/95' : 'bg-white/95'
-                      }`}>
+                      className="relative my-1.5 min-w-0 overflow-hidden rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low">
                       {index === 0 && <span className="absolute inset-y-0 left-0 w-1 bg-blue-500" aria-hidden="true" />}
                       <div className="flex min-h-6 min-w-0 items-center justify-between gap-3">
                         <div className="min-w-0">
                           {detailHref ? (
-                            <Link href={detailHref} className="text-sm font-medium text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline sm:text-base">
+                            <Link href={detailHref} className="text-sm font-semibold text-gray-900 underline-offset-4 hover:text-blue-700 hover:underline sm:text-base">
                               {tournament.short_name || tournament.name}
                             </Link>
                           ) : (
-                            <span className="text-sm font-medium text-blue-600 sm:text-base">
+                            <span className="text-sm font-semibold text-gray-900 sm:text-base">
                               {tournament.short_name || tournament.name}
                             </span>
                           )}
@@ -225,7 +223,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                             href={tournament.registrationUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="ml-auto inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100">
+                            className="ml-auto inline-flex items-center gap-1 rounded-md border border-blue-300 bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-400 hover:bg-blue-200/70">
                             Register
                             <ArrowRight className="h-3 w-3" aria-hidden="true" />
                           </TrackedLink>
