@@ -149,12 +149,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                       )}
                       <time
                         dateTime={tournament.startDate}
-                        className={`relative z-10 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border shadow-sm ${
-                          index === 0 ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700'
+                        data-next={index === 0 || undefined}
+                        className={`relative z-10 flex size-11 shrink-0 flex-col overflow-hidden rounded-lg border bg-white shadow-sm ${
+                          index === 0 ? 'border-blue-300' : 'border-gray-300'
                         }`}>
-                        <span className="flex max-w-full flex-col items-center text-[9px] font-semibold uppercase leading-none tracking-wide">
-                          <span className={index === 0 ? 'text-blue-500' : 'text-gray-500'}>{monthLabel}</span>
-                          <span className="mt-1 text-sm font-bold tabular-nums">{dayLabel}</span>
+                        <span
+                          data-month
+                          className={`py-[3px] text-center text-[9px] font-semibold uppercase leading-none tracking-wide ${
+                            index === 0 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'
+                          }`}>
+                          {monthLabel}
+                        </span>
+                        <span
+                          className={`flex flex-1 items-center justify-center text-sm font-bold leading-none tabular-nums ${
+                            index === 0 ? 'text-blue-700' : 'text-gray-800'
+                          }`}>
+                          {dayLabel}
                         </span>
                       </time>
                     </div>

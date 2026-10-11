@@ -626,13 +626,16 @@ html[data-theme] .fill-blue-500 {
   fill: var(--t-accent) !important;
   color: var(--t-accent) !important;
 }
-html[data-theme] time.bg-blue-50 {
-  background-color: var(--t-chip) !important;
-  border-color: var(--t-accent) !important;
-  color: var(--t-chip-ink) !important;
-}
-html[data-theme] time.bg-blue-50 .text-blue-500 {
+html[data-theme] time [data-month] {
+  background-color: var(--t-surface-3) !important;
   color: var(--t-ink-2) !important;
+}
+html[data-theme] time[data-next] {
+  border-color: var(--t-accent) !important;
+}
+html[data-theme] time[data-next] [data-month] {
+  background-color: var(--t-accent) !important;
+  color: var(--t-accent-ink) !important;
 }
 html[data-theme] [data-upcoming-card] a.bg-blue-100 {
   background-color: var(--t-chip) !important;
@@ -882,12 +885,18 @@ html[data-theme='brutalist'] time.size-11 {
   border: 2px solid #000 !important;
   box-shadow: none !important;
 }
-html[data-theme='brutalist'] time.bg-blue-50 {
-  background-color: #ff4f00 !important;
+html[data-theme='brutalist'] time [data-month] {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+html[data-theme='brutalist'] time[data-next] {
   border-color: #000 !important;
+}
+html[data-theme='brutalist'] time[data-next] [data-month] {
+  background-color: #ff4f00 !important;
   color: #000 !important;
 }
-html[data-theme='brutalist'] time.bg-blue-50 .text-blue-500 {
+html[data-theme='brutalist'] time[data-next] .text-blue-700 {
   color: #000 !important;
 }
 html[data-theme='brutalist'] .fill-blue-500 {
@@ -904,4 +913,160 @@ html[data-theme='brutalist'] [data-upcoming-card] a.bg-blue-100 {
 html[data-theme='brutalist'] [data-upcoming-card] a.bg-blue-100:hover {
   background-color: #000 !important;
   color: #fff !important;
+}
+
+/* ============================================================
+   THEME: Felt (dark-ish)
+   A club-table green canvas with cream sheets laid on top and
+   brass for highlights. The canvas is dark; everything you read
+   sits on a light surface, so this is not a dark mode.
+   ============================================================ */
+html[data-theme='felt'] {
+  --t-bg: #143429;
+  --t-canvas:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(120% 75% at 50% 0%, #22503f 0%, #173d30 45%, #0f2a21 100%);
+  /* On the canvas: cream ink */
+  --t-ink: #f2ecdc;
+  --t-ink-2: #a9c0b3;
+  --t-link: #f2ecdc;
+  --t-link-2: #ffffff;
+  --t-line: rgba(242, 236, 220, 0.16);
+  /* Sheets */
+  --t-surface: #f7f2e6;
+  --t-surface-2: #efe8d7;
+  --t-surface-3: #e5dcc7;
+  --t-thead-bg: #1d4537;
+  --t-thead-ink: #efe6cf;
+  --t-accent: #c8a24a;
+  --t-accent-ink: #14261f;
+  --t-chip: #ece3cd;
+  --t-chip-ink: #1a2a23;
+  --t-radius: 10px;
+  --t-radius-pill: 9999px;
+  --t-shadow: 0 1px 0 rgba(0, 0, 0, 0.18), 0 10px 28px -10px rgba(0, 0, 0, 0.5);
+  --t-shadow-lg: 0 20px 48px -14px rgba(0, 0, 0, 0.6);
+  --t-font: var(--font-inter), Inter, system-ui, sans-serif;
+  --t-font-head: var(--font-young-serif), Georgia, serif;
+}
+/* Anything drawn on a light surface switches back to dark ink. The shadcn
+   tokens are re-derived here because they resolve where they are declared. */
+html[data-theme='felt']
+  :is(.bg-white, .bg-white\/90, .bg-white\/95, [data-slot='card'], [data-upcoming-card], table,
+      input, textarea, select, time.size-11, [data-slot='segmented-control'],
+      [data-slot='dropdown-menu-trigger'], [data-slot='dropdown-menu-content'],
+      [data-slot='popover-content'], [data-slot='select-content'], [data-slot='tooltip-content'],
+      [role='menu'], [role='dialog'], [role='listbox'],
+      .bg-blue-50, .bg-blue-50\/70, .bg-blue-100, .bg-amber-100, .bg-cyan-50, .bg-cyan-100,
+      .bg-teal-50, .bg-teal-100, .bg-gray-50, .bg-gray-100, .bg-gray-200) {
+  --t-ink: #1b2a23;
+  --t-ink-2: #5d6d64;
+  --t-link: #1f5c46;
+  --t-link-2: #143f30;
+  --t-line: #ddd3bd;
+  --background: var(--t-surface);
+  --foreground: var(--t-ink);
+  --card-foreground: var(--t-ink);
+  --popover-foreground: var(--t-ink);
+  --secondary-foreground: var(--t-ink);
+  --accent-foreground: var(--t-ink);
+  --muted-foreground: var(--t-ink-2);
+  --border: var(--t-line);
+  --input: var(--t-line);
+  color: var(--t-ink);
+}
+/* The mobile section band is white below sm and transparent above it */
+@media (max-width: 639px) {
+  html[data-theme='felt'] .bg-white\/70 {
+    background-color: rgba(10, 32, 25, 0.55) !important;
+    border-color: rgba(242, 236, 220, 0.12) !important;
+  }
+}
+html[data-theme='felt'] ::selection {
+  background: #c8a24a;
+  color: #14261f;
+}
+html[data-theme='felt'] :is(h1, h2, h3) {
+  font-weight: 400 !important;
+  letter-spacing: 0.01em;
+}
+
+/* Header: a darker band of the same felt */
+html[data-theme='felt'] header,
+html[data-theme='felt'] header [data-slot='separator-root'] {
+  background-color: #0d241c !important;
+  border-color: rgba(242, 236, 220, 0.08) !important;
+  box-shadow: none !important;
+}
+html[data-theme='felt'] header [data-brand] span {
+  font-family: var(--t-font-head) !important;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: #f2ecdc !important;
+}
+html[data-theme='felt'] header a::after {
+  background-color: #c8a24a !important;
+}
+html[data-theme='felt'] header [data-theme-picker]:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+html[data-theme='felt'] footer {
+  background-color: transparent !important;
+}
+
+/* Sheets lift off the felt */
+html[data-theme='felt'] [data-slot='card'] {
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+html[data-theme='felt'] .inline-flex.divide-x {
+  overflow: hidden;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+html[data-theme='felt'] .inline-flex.divide-x.rounded-t-lg {
+  border-radius: var(--t-radius) var(--t-radius) 0 0 !important;
+}
+html[data-theme='felt'] div:has(> div > .inline-flex.divide-x.rounded-t-lg) + [data-slot='card'],
+html[data-theme='felt'] div:has(> div > .inline-flex.divide-x.rounded-t-lg) + [data-slot='card'] > div:first-child {
+  border-top-left-radius: 0 !important;
+}
+html[data-theme='felt'] [data-slot='segmented-control'] button[aria-pressed='true'] {
+  background-color: #1d4537 !important;
+  color: #f2ecdc !important;
+}
+html[data-theme='felt'] tbody tr.border-l-amber-500 {
+  border-left-color: #c8a24a !important;
+}
+
+html[data-theme='felt'] button.from-blue-500 {
+  background: #c8a24a !important;
+  color: #14261f !important;
+  border-color: #c8a24a !important;
+  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.6) !important;
+}
+html[data-theme='felt'] button.from-blue-500:hover {
+  background: #d6b25c !important;
+}
+html[data-theme='felt'] :not(thead) > .odd\:bg-white:nth-child(odd) {
+  background-color: var(--t-surface) !important;
+}
+html[data-theme='felt'] :not(thead) > .even\:bg-gray-200\/50:nth-child(even) {
+  background-color: var(--t-surface-2) !important;
+}
+
+/* Timeline: faint chalk rail, cream tiles, brass next-up tile */
+html[data-theme='felt'] .bg-gray-300 {
+  background-color: rgba(242, 236, 220, 0.22) !important;
+}
+html[data-theme='felt'] time.size-11 {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+html[data-theme='felt'] time[data-next] {
+  border-color: #c8a24a !important;
+}
+html[data-theme='felt'] time[data-next] [data-month] {
+  background-color: #c8a24a !important;
+  color: #14261f !important;
+}
+html[data-theme='felt'] time[data-next] .text-blue-700 {
+  color: #14261f !important;
 }

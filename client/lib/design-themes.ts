@@ -5,6 +5,7 @@ export type DesignThemeId =
   | 'swiss'
   | 'editorial'
   | 'warm-paper'
+  | 'felt'
 
 export interface DesignThemeMeta {
   id: DesignThemeId
@@ -20,6 +21,7 @@ export const DESIGN_THEMES: DesignThemeMeta[] = [
   { id: 'swiss', label: 'Swiss', blurb: 'Ruled tables, tabular figures, red index' },
   { id: 'editorial', label: 'Editorial', blurb: 'Serif headlines, oxblood accents' },
   { id: 'warm-paper', label: 'Warm Paper', blurb: 'Ivory paper, ink header, mono figures' },
+  { id: 'felt', label: 'Felt', blurb: 'Club-table green, cream sheets, brass' },
 ]
 
 export const DEFAULT_THEME: DesignThemeId = 'default'
