@@ -25,17 +25,6 @@ export const upcomingTournaments: Tournament[] = [
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
   {
-    id: 'mombasa-open-2026',
-    name: 'Mombasa Open - Grand Prix',
-    short_name: 'Mombasa Open',
-    startDate: '2026-10-09',
-    endDate: '2026-10-11',
-    location: 'TBA',
-    confirmed: true,
-    registrationUrl: 'https://mchessacademy.co.ke/tournaments',
-    detailsUrl: null
-  },
-  {
     id: 'kisii-open-2026',
     name: 'Kisii Open Chess Championship - Grand Prix',
     short_name: 'Kisii Open',

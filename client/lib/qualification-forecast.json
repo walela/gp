@@ -1,58 +1,54 @@
 {
  "after": {
-  "id": "1504505",
-  "name": "Nairobi County Open"
+  "id": "1513412",
+  "name": "Mombasa Open"
  },
- "as_of": "2026-09-27",
+ "as_of": "2026-10-10",
  "categories": {
   "ladies": {
    "cutoff": [
-    1781,
-    1800,
-    1826
+    1775,
+    1794,
+    1822
    ],
    "players": {
     "10800794": {
      "best4": [
-      1752,
-      1808,
-      1882
+      1748,
+      1796,
+      1864
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.02,
-        0.025
+        0.036,
+        0.045
        ],
        [
-        0.145,
-        0.313
+        0.218,
+        0.344
        ],
        [
-        0.32,
-        0.569
+        0.394,
+        0.586
        ],
        [
-        0.326,
-        0.738
+        0.282,
+        0.744
        ],
        [
-        0.159,
-        0.831
-       ],
-       [
-        0.029,
-        0.896
+        0.07,
+        0.84
        ]
       ],
       "entered": [
        9,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.0,
+      "events_left": 4,
+      "expected_entries": 2.5,
       "expected_tpr": 1779,
       "form": 1663,
       "form_adj": -14,
@@ -70,47 +66,43 @@
       "walkover": 0.166,
       "weakest": 1664
      },
-     "p": 0.627,
-     "p_before": 0.728,
+     "p": 0.576,
+     "p_before": 0.637,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.98,
-     "p_standings": 0.627,
-     "rank": 9,
+     "p_play": 0.964,
+     "p_standings": 0.576,
+     "rank": 10,
      "status": "forecast"
     },
     "10802886": {
      "best4": [
       2164,
-      2209,
-      2275
+      2195,
+      2253
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.009,
+        0.016,
         1.0
        ],
        [
-        0.088,
+        0.139,
         1.0
        ],
        [
-        0.263,
+        0.36,
         1.0
        ],
        [
-        0.359,
+        0.361,
         1.0
        ],
        [
-        0.224,
-        1.0
-       ],
-       [
-        0.057,
+        0.123,
         1.0
        ]
       ],
@@ -118,11 +110,11 @@
        13,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.2,
-      "expected_tpr": 1943,
+      "events_left": 4,
+      "expected_entries": 2.7,
+      "expected_tpr": 1925,
       "form": 1818,
-      "form_adj": -18,
+      "form_adj": -11,
       "group": "ladies",
       "group_adj": 65,
       "lift": 8,
@@ -131,8 +123,8 @@
        4,
        2164
       ],
-      "p_improve": 0.589,
-      "rating": 1888,
+      "p_improve": 0.555,
+      "rating": 1863,
       "swing": 172,
       "walkover": 0.099,
       "weakest": 1872
@@ -141,52 +133,48 @@
      "p_before": 1.0,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.991,
+     "p_play": 0.984,
      "p_standings": 1.0,
      "rank": 1,
      "status": "forecast"
     },
     "10806601": {
      "best4": [
-      1665,
-      1719,
-      1778
+      1662,
+      1714,
+      1770
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.243,
+        0.297,
         0.0
        ],
        [
-        0.426,
+        0.457,
         0.0
        ],
        [
-        0.253,
-        0.032
+        0.209,
+        0.028
        ],
        [
-        0.069,
-        0.093
+        0.035,
+        0.077
        ],
        [
-        0.009,
-        0.126
-       ],
-       [
-        0.0,
-        0.429
+        0.001,
+        0.207
        ]
       ],
       "entered": [
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.2,
+      "events_left": 4,
+      "expected_entries": 1.0,
       "expected_tpr": 1743,
       "form": 1650,
       "form_adj": -7,
@@ -204,47 +192,43 @@
       "walkover": 0.061,
       "weakest": null
      },
-     "p": 0.016,
-     "p_before": 0.031,
-     "p_four": 0.331,
+     "p": 0.009,
+     "p_before": 0.018,
+     "p_four": 0.245,
      "p_junior_title": 0.0,
-     "p_play": 0.757,
-     "p_standings": 0.016,
-     "rank": 35,
+     "p_play": 0.703,
+     "p_standings": 0.009,
+     "rank": 38,
      "status": "forecast"
     },
     "10807853": {
      "best4": [
-      1570,
-      1604,
-      1649
+      1567,
+      1600,
+      1641
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.084,
+        0.109,
         0.0
        ],
        [
-        0.321,
+        0.399,
         0.0
        ],
        [
-        0.371,
+        0.367,
         0.0
        ],
        [
-        0.182,
+        0.115,
         0.0
        ],
        [
-        0.04,
-        0.0
-       ],
-       [
-        0.002,
+        0.009,
         0.0
        ]
       ],
@@ -252,8 +236,8 @@
        6,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.0,
+      "events_left": 4,
+      "expected_entries": 1.7,
       "expected_tpr": 1576,
       "form": 1523,
       "form_adj": 7,
@@ -273,124 +257,53 @@
      },
      "p": 0.0,
      "p_before": 0.0,
-     "p_four": 0.916,
+     "p_four": 0.891,
      "p_junior_title": 0.0,
-     "p_play": 0.916,
+     "p_play": 0.891,
      "p_standings": 0.0,
      "rank": 26,
-     "status": "forecast"
-    },
-    "10808515": {
-     "best4": [
-      1521,
-      1575,
-      1632
-     ],
-     "factors": {
-      "boost": null,
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.294,
-        0.0
-       ],
-       [
-        0.437,
-        0.0
-       ],
-       [
-        0.218,
-        0.0
-       ],
-       [
-        0.046,
-        0.0
-       ],
-       [
-        0.005,
-        0.0
-       ],
-       [
-        0.0,
-        0.0
-       ]
-      ],
-      "entered": [
-       3,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 1.1,
-      "expected_tpr": 1579,
-      "form": 1531,
-      "form_adj": 9,
-      "group": "ladies",
-      "group_adj": 65,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       2,
-       1596
-      ],
-      "p_improve": null,
-      "rating": 1497,
-      "swing": 140,
-      "walkover": 0.065,
-      "weakest": null
-     },
-     "p": 0.0,
-     "p_before": 0.0,
-     "p_four": 0.269,
-     "p_junior_title": 0.0,
-     "p_play": 0.706,
-     "p_standings": 0.0,
-     "rank": 39,
      "status": "forecast"
     },
     "10808590": {
      "best4": [
       1733,
-      1753,
-      1798
+      1748,
+      1788
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.016,
-        0.003
+        0.019,
+        0.015
        ],
        [
-        0.155,
-        0.036
+        0.199,
+        0.047
        ],
        [
-        0.382,
-        0.076
+        0.433,
+        0.088
        ],
        [
-        0.332,
-        0.148
+        0.31,
+        0.13
        ],
        [
-        0.106,
-        0.24
-       ],
-       [
-        0.01,
-        0.379
+        0.038,
+        0.268
        ]
       ],
       "entered": [
        6,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.5,
-      "expected_tpr": 1734,
+      "events_left": 4,
+      "expected_entries": 2.3,
+      "expected_tpr": 1729,
       "form": 1665,
-      "form_adj": 1,
+      "form_adj": 3,
       "group": "ladies",
       "group_adj": 65,
       "lift": 8,
@@ -399,66 +312,62 @@
        4,
        1733
       ],
-      "p_improve": 0.581,
-      "rating": 1660,
+      "p_improve": 0.567,
+      "rating": 1653,
       "swing": 127,
       "walkover": 0.058,
       "weakest": 1695
      },
-     "p": 0.113,
-     "p_before": 0.15,
+     "p": 0.099,
+     "p_before": 0.105,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.984,
-     "p_standings": 0.113,
-     "rank": 10,
+     "p_play": 0.981,
+     "p_standings": 0.099,
+     "rank": 11,
      "status": "forecast"
     },
     "10809090": {
-     "rank": 3,
+     "rank": 4,
      "status": "kenya1"
     },
     "10812091": {
      "best4": [
-      1607,
-      1661,
-      1741
+      1602,
+      1669,
+      1745
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.508,
-        0.014
+        0.539,
+        0.019
        ],
        [
-        0.373,
+        0.369,
         0.017
        ],
        [
-        0.103,
-        0.013
+        0.082,
+        0.02
        ],
        [
-        0.015,
-        0.036
-       ],
-       [
-        0.001,
-        0.059
+        0.009,
+        0.011
        ],
        [
         0.0,
-        null
+        0.0
        ]
       ],
       "entered": [
        2,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 0.7,
+      "events_left": 4,
+      "expected_entries": 0.6,
       "expected_tpr": 1699,
       "form": 1616,
       "form_adj": -18,
@@ -476,60 +385,120 @@
       "walkover": 0.152,
       "weakest": null
      },
-     "p": 0.015,
+     "p": 0.019,
      "p_before": 0.014,
-     "p_four": 0.016,
-     "p_junior_title": 0.015,
-     "p_play": 0.492,
+     "p_four": 0.009,
+     "p_junior_title": 0.018,
+     "p_play": 0.461,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
-     "rank": 79,
+     "rank": 92,
      "status": "forecast"
     },
-    "10813330": {
+    "10812679": {
      "best4": [
-      1794,
-      1838,
-      1896
+      1617,
+      1665,
+      1713
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.011,
-        0.621
+        0.578,
+        0.011
        ],
        [
-        0.106,
-        0.797
+        0.344,
+        0.009
        ],
        [
-        0.302,
-        0.896
+        0.072,
+        0.006
        ],
        [
-        0.364,
-        0.95
+        0.006,
+        0.017
        ],
        [
-        0.186,
-        0.969
-       ],
-       [
-        0.032,
-        0.972
+        0.0,
+        0.0
        ]
       ],
       "entered": [
-       10,
+       2,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.8,
+      "events_left": 4,
+      "expected_entries": 0.5,
+      "expected_tpr": 1683,
+      "form": 1662,
+      "form_adj": 4,
+      "group": "ladies",
+      "group_adj": 23,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       2,
+       1668
+      ],
+      "p_improve": null,
+      "rating": 1648,
+      "swing": 146,
+      "walkover": 0.07,
+      "weakest": null
+     },
+     "p": 0.01,
+     "p_before": 0.006,
+     "p_four": 0.079,
+     "p_junior_title": 0.01,
+     "p_play": 0.422,
+     "p_standings": 0.0,
+     "p_title_entry": 0.42,
+     "rank": 39,
+     "status": "forecast"
+    },
+    "10813330": {
+     "best4": [
+      1792,
+      1833,
+      1887
+     ],
+     "factors": {
+      "boost": "bubble",
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.01,
+        0.756
+       ],
+       [
+        0.111,
+        0.868
+       ],
+       [
+        0.36,
+        0.919
+       ],
+       [
+        0.401,
+        0.959
+       ],
+       [
+        0.118,
+        0.975
+       ]
+      ],
+      "entered": [
+       9,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 2.6,
       "expected_tpr": 1815,
       "form": 1659,
-      "form_adj": -27,
+      "form_adj": -28,
       "group": "ladies",
       "group_adj": 65,
       "lift": 8,
@@ -539,61 +508,57 @@
        1786
       ],
       "p_improve": 0.74,
-      "rating": 1769,
+      "rating": 1770,
       "swing": 140,
       "walkover": 0.039,
       "weakest": 1707
      },
-     "p": 0.918,
-     "p_before": 0.946,
+     "p": 0.934,
+     "p_before": 0.92,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.989,
-     "p_standings": 0.918,
-     "rank": 6,
+     "p_play": 0.99,
+     "p_standings": 0.934,
+     "rank": 7,
      "status": "forecast"
     },
     "10813985": {
      "best4": [
-      1683,
-      1719,
-      1764
+      1682,
+      1716,
+      1760
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.09,
-        0.011
+        0.099,
+        0.015
        ],
        [
-        0.355,
-        0.018
+        0.395,
+        0.022
        ],
        [
-        0.372,
-        0.038
+        0.381,
+        0.041
        ],
        [
-        0.157,
-        0.066
+        0.117,
+        0.075
        ],
        [
-        0.025,
-        0.1
-       ],
-       [
-        0.001,
-        0.174
+        0.008,
+        0.112
        ]
       ],
       "entered": [
        5,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.7,
+      "events_left": 4,
+      "expected_entries": 1.6,
       "expected_tpr": 1700,
       "form": 1676,
       "form_adj": 2,
@@ -611,60 +576,56 @@
       "walkover": 0.054,
       "weakest": null
      },
-     "p": 0.035,
-     "p_before": 0.056,
-     "p_four": 0.91,
-     "p_junior_title": 0.012,
-     "p_play": 0.91,
-     "p_standings": 0.023,
+     "p": 0.036,
+     "p_before": 0.036,
+     "p_four": 0.901,
+     "p_junior_title": 0.014,
+     "p_play": 0.901,
+     "p_standings": 0.022,
      "p_title_entry": 0.42,
      "rank": 22,
      "status": "forecast"
     },
     "10814507": {
      "best4": [
-      1813,
-      1852,
-      1909
+      1806,
+      1842,
+      1891
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.045,
-        0.144
+        0.113,
+        0.167
        ],
        [
-        0.228,
-        0.917
+        0.359,
+        0.929
        ],
        [
-        0.368,
-        0.981
+        0.362,
+        0.986
        ],
        [
-        0.263,
-        0.994
+        0.144,
+        0.992
        ],
        [
-        0.087,
-        0.995
-       ],
-       [
-        0.011,
-        0.995
+        0.021,
+        0.998
        ]
       ],
       "entered": [
-       7,
+       6,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.2,
-      "expected_tpr": 1842,
+      "events_left": 4,
+      "expected_entries": 1.6,
+      "expected_tpr": 1838,
       "form": 1850,
-      "form_adj": 2,
+      "form_adj": 3,
       "group": "women_open",
       "group_adj": -12,
       "lift": 8,
@@ -674,17 +635,17 @@
        1822
       ],
       "p_improve": null,
-      "rating": 1844,
+      "rating": 1839,
       "swing": 99,
       "walkover": 0.015,
       "weakest": null
      },
-     "p": 0.934,
-     "p_before": 0.966,
-     "p_four": 0.955,
-     "p_junior_title": 0.159,
-     "p_play": 0.955,
-     "p_standings": 0.918,
+     "p": 0.874,
+     "p_before": 0.911,
+     "p_four": 0.887,
+     "p_junior_title": 0.177,
+     "p_play": 0.887,
+     "p_standings": 0.844,
      "p_title_entry": 0.613,
      "rank": 20,
      "status": "forecast"
@@ -692,35 +653,31 @@
     "10814922": {
      "best4": [
       1855,
-      1894,
-      1958
+      1887,
+      1946
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.108,
+        0.148,
         1.0
        ],
        [
-        0.316,
+        0.384,
         1.0
        ],
        [
-        0.351,
+        0.329,
         1.0
        ],
        [
-        0.175,
+        0.122,
         1.0
        ],
        [
-        0.046,
-        1.0
-       ],
-       [
-        0.005,
+        0.016,
         1.0
        ]
       ],
@@ -728,8 +685,8 @@
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.9,
+      "events_left": 4,
+      "expected_entries": 1.6,
       "expected_tpr": 1932,
       "form": 1809,
       "form_adj": -17,
@@ -751,119 +708,111 @@
      "p_before": 1.0,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.892,
+     "p_play": 0.852,
      "p_standings": 1.0,
-     "rank": 4,
+     "rank": 5,
      "status": "forecast"
     },
     "10814949": {
      "best4": [
-      1812,
-      1891,
-      1968
+      2032,
+      2095,
+      2163
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.395,
+        0.394,
         0.0
        ],
        [
-        0.411,
+        0.417,
         0.0
        ],
        [
-        0.162,
-        0.0
-       ],
-       [
-        0.028,
-        0.917
-       ],
-       [
-        0.003,
+        0.161,
         1.0
        ],
        [
-        0.0,
+        0.026,
+        1.0
+       ],
+       [
+        0.002,
         1.0
        ]
       ],
       "entered": [
-       4,
+       5,
        18
       ],
-      "events_left": 5,
+      "events_left": 4,
       "expected_entries": 1.0,
-      "expected_tpr": 1830,
-      "form": 1790,
-      "form_adj": 11,
+      "expected_tpr": 1939,
+      "form": 2077,
+      "form_adj": 70,
       "group": "ladies",
       "group_adj": 65,
       "lift": 8,
       "near_lock_entry": 0.95,
       "now": [
-       1,
-       2142
+       2,
+       2273
       ],
       "p_improve": null,
-      "rating": 1746,
-      "swing": 161,
-      "walkover": 0.221,
+      "rating": 1796,
+      "swing": 165,
+      "walkover": 0.209,
       "weakest": null
      },
-     "p": 0.029,
-     "p_before": 0.061,
-     "p_four": 0.032,
+     "p": 0.19,
+     "p_before": 0.031,
+     "p_four": 0.19,
      "p_junior_title": 0.0,
-     "p_play": 0.605,
-     "p_standings": 0.029,
-     "rank": 68,
+     "p_play": 0.606,
+     "p_standings": 0.19,
+     "rank": 36,
      "status": "forecast"
     },
     "10816810": {
      "best4": [
-      1773,
-      1807,
-      1856
+      1763,
+      1796,
+      1839
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.005,
-        0.093
+        0.017,
+        0.142
        ],
        [
-        0.068,
-        0.418
+        0.202,
+        0.46
        ],
        [
-        0.252,
-        0.594
+        0.434,
+        0.614
        ],
        [
-        0.38,
-        0.716
+        0.295,
+        0.72
        ],
        [
-        0.249,
-        0.793
-       ],
-       [
-        0.045,
-        0.827
+        0.053,
+        0.797
        ]
       ],
       "entered": [
-       8,
+       7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.0,
+      "events_left": 4,
+      "expected_entries": 2.2,
       "expected_tpr": 1780,
       "form": 1722,
       "form_adj": 5,
@@ -881,56 +830,52 @@
       "walkover": 0.045,
       "weakest": 1620
      },
-     "p": 0.686,
-     "p_before": 0.703,
+     "p": 0.616,
+     "p_before": 0.661,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.995,
-     "p_standings": 0.686,
-     "rank": 8,
+     "p_play": 0.983,
+     "p_standings": 0.616,
+     "rank": 9,
      "status": "forecast"
     },
     "10817085": {
      "best4": [
-      1637,
-      1675,
-      1719
+      1638,
+      1673,
+      1715
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.314,
+        0.344,
         0.0
        ],
        [
-        0.428,
+        0.441,
         0.0
        ],
        [
-        0.207,
-        0.003
+        0.184,
+        0.005
        ],
        [
-        0.045,
-        0.008
+        0.03,
+        0.015
        ],
        [
-        0.006,
-        0.017
-       ],
-       [
-        0.0,
-        0.0
+        0.002,
+        0.03
        ]
       ],
       "entered": [
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.1,
+      "events_left": 4,
+      "expected_entries": 1.0,
       "expected_tpr": 1671,
       "form": 1623,
       "form_adj": 9,
@@ -949,55 +894,51 @@
       "weakest": null
      },
      "p": 0.001,
-     "p_before": 0.003,
-     "p_four": 0.686,
+     "p_before": 0.002,
+     "p_four": 0.656,
      "p_junior_title": 0.0,
-     "p_play": 0.686,
+     "p_play": 0.656,
      "p_standings": 0.001,
      "rank": 23,
      "status": "forecast"
     },
     "10820914": {
      "best4": [
-      1692,
-      1748,
-      1806
+      1690,
+      1744,
+      1801
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.497,
-        0.037
+        0.544,
+        0.049
        ],
        [
-        0.378,
-        0.039
+        0.361,
+        0.046
        ],
        [
-        0.109,
-        0.144
+        0.086,
+        0.158
        ],
        [
-        0.015,
-        0.329
-       ],
-       [
-        0.001,
-        0.75
+        0.009,
+        0.339
        ],
        [
         0.0,
-        null
+        0.286
        ]
       ],
       "entered": [
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 0.7,
+      "events_left": 4,
+      "expected_entries": 0.6,
       "expected_tpr": 1785,
       "form": 1716,
       "form_adj": -13,
@@ -1015,125 +956,117 @@
       "walkover": 0.061,
       "weakest": null
      },
-     "p": 0.055,
-     "p_before": 0.069,
-     "p_four": 0.125,
-     "p_junior_title": 0.038,
-     "p_play": 0.503,
-     "p_standings": 0.017,
+     "p": 0.06,
+     "p_before": 0.06,
+     "p_four": 0.096,
+     "p_junior_title": 0.048,
+     "p_play": 0.456,
+     "p_standings": 0.012,
      "p_title_entry": 0.42,
-     "rank": 34,
+     "rank": 37,
      "status": "forecast"
     },
     "10822755": {
      "best4": [
-      1952,
-      2025,
-      2121
-     ],
-     "factors": {
-      "boost": "near_lock",
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.073,
-        0.284
-       ],
-       [
-        0.268,
-        1.0
-       ],
-       [
-        0.371,
-        1.0
-       ],
-       [
-        0.216,
-        1.0
-       ],
-       [
-        0.066,
-        1.0
-       ],
-       [
-        0.006,
-        1.0
-       ]
-      ],
-      "entered": [
-       5,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 2.1,
-      "expected_tpr": 1944,
-      "form": 1760,
-      "form_adj": -51,
-      "group": "ladies",
-      "group_adj": 23,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       3,
-       1988
-      ],
-      "p_improve": null,
-      "rating": 1964,
-      "swing": 174,
-      "walkover": 0.104,
-      "weakest": null
-     },
-     "p": 0.948,
-     "p_before": 0.952,
-     "p_four": 0.927,
-     "p_junior_title": 0.286,
-     "p_play": 0.927,
-     "p_standings": 0.927,
-     "p_title_entry": 0.613,
-     "rank": 19,
-     "status": "forecast"
-    },
-    "10825606": {
-     "best4": [
-      1677,
-      1705,
-      1760
+      1942,
+      1979,
+      2048
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.026,
-        0.025
+        0.265,
+        1.0
        ],
        [
-        0.226,
-        0.025
+        0.431,
+        1.0
        ],
        [
-        0.399,
-        0.04
+        0.246,
+        1.0
        ],
        [
-        0.272,
-        0.069
-       ],
-       [
-        0.072,
-        0.135
+        0.054,
+        1.0
        ],
        [
         0.004,
-        0.239
+        1.0
        ]
       ],
       "entered": [
        6,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.2,
+      "events_left": 4,
+      "expected_entries": 1.2,
+      "expected_tpr": 1885,
+      "form": 1771,
+      "form_adj": -27,
+      "group": "ladies",
+      "group_adj": 23,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       4,
+       1942
+      ],
+      "p_improve": 0.769,
+      "rating": 1881,
+      "swing": 173,
+      "walkover": 0.099,
+      "weakest": 1695
+     },
+     "p": 1.0,
+     "p_before": 0.947,
+     "p_four": 1.0,
+     "p_junior_title": 0.213,
+     "p_play": 0.735,
+     "p_standings": 1.0,
+     "p_title_entry": 0.613,
+     "rank": 3,
+     "status": "forecast"
+    },
+    "10825606": {
+     "best4": [
+      1677,
+      1699,
+      1749
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.03,
+        0.032
+       ],
+       [
+        0.3,
+        0.029
+       ],
+       [
+        0.449,
+        0.044
+       ],
+       [
+        0.204,
+        0.075
+       ],
+       [
+        0.018,
+        0.141
+       ]
+      ],
+      "entered": [
+       6,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 1.9,
       "expected_tpr": 1690,
       "form": 1668,
       "form_adj": -8,
@@ -1151,48 +1084,44 @@
       "walkover": 0.016,
       "weakest": 1664
      },
-     "p": 0.052,
-     "p_before": 0.096,
+     "p": 0.047,
+     "p_before": 0.054,
      "p_four": 1.0,
-     "p_junior_title": 0.026,
-     "p_play": 0.974,
-     "p_standings": 0.027,
+     "p_junior_title": 0.029,
+     "p_play": 0.97,
+     "p_standings": 0.019,
      "p_title_entry": 0.42,
-     "rank": 13,
+     "rank": 14,
      "status": "forecast"
     },
     "10826866": {
      "best4": [
-      1524,
-      1561,
-      1603
+      1523,
+      1558,
+      1598
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.293,
-        0.001
-       ],
-       [
-        0.427,
+        0.329,
         0.0
        ],
        [
-        0.223,
+        0.44,
         0.0
        ],
        [
-        0.053,
+        0.197,
         0.0
        ],
        [
-        0.005,
+        0.033,
         0.0
        ],
        [
-        0.0,
+        0.002,
         0.0
        ]
       ],
@@ -1200,8 +1129,8 @@
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.1,
+      "events_left": 4,
+      "expected_entries": 1.0,
       "expected_tpr": 1540,
       "form": 1498,
       "form_adj": 10,
@@ -1221,55 +1150,51 @@
      },
      "p": 0.0,
      "p_before": 0.0,
-     "p_four": 0.707,
+     "p_four": 0.671,
      "p_junior_title": 0.0,
-     "p_play": 0.707,
+     "p_play": 0.671,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
-     "rank": 27,
+     "rank": 28,
      "status": "forecast"
     },
     "10827129": {
      "best4": [
       1652,
-      1691,
-      1762
+      1682,
+      1746
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.12,
-        0.021
+        0.167,
+        0.028
        ],
        [
-        0.325,
-        0.02
+        0.395,
+        0.025
        ],
        [
-        0.341,
-        0.05
+        0.32,
+        0.055
        ],
        [
-        0.169,
-        0.101
+        0.105,
+        0.112
        ],
        [
-        0.043,
-        0.187
-       ],
-       [
-        0.003,
-        0.369
+        0.012,
+        0.179
        ]
       ],
       "entered": [
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.9,
+      "events_left": 4,
+      "expected_entries": 1.5,
       "expected_tpr": 1728,
       "form": 1629,
       "form_adj": -23,
@@ -1287,64 +1212,60 @@
       "walkover": 0.099,
       "weakest": 1615
      },
-     "p": 0.052,
-     "p_before": 0.106,
+     "p": 0.046,
+     "p_before": 0.057,
      "p_four": 1.0,
-     "p_junior_title": 0.021,
-     "p_play": 0.88,
-     "p_standings": 0.032,
+     "p_junior_title": 0.025,
+     "p_play": 0.833,
+     "p_standings": 0.021,
      "p_title_entry": 0.42,
-     "rank": 14,
+     "rank": 15,
      "status": "forecast"
     },
     "10827943": {
      "best4_now": null,
      "p": 0.0,
      "p_before": 0.0,
-     "rank": 32,
+     "rank": 34,
      "status": "forecast"
     },
     "10827986": {
      "best4": [
       1729,
-      1773,
-      1819
+      1768,
+      1810
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.072,
-        0.01
+        0.092,
+        0.013
        ],
        [
-        0.306,
-        0.183
+        0.387,
+        0.204
        ],
        [
-        0.38,
-        0.299
+        0.387,
+        0.319
        ],
        [
-        0.198,
-        0.397
+        0.125,
+        0.417
        ],
        [
-        0.041,
-        0.472
-       ],
-       [
-        0.003,
-        0.614
+        0.009,
+        0.441
        ]
       ],
       "entered": [
        4,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.9,
+      "events_left": 4,
+      "expected_entries": 1.6,
       "expected_tpr": 1695,
       "form": 1738,
       "form_adj": 24,
@@ -1362,21 +1283,21 @@
       "walkover": 0.058,
       "weakest": 1551
      },
-     "p": 0.27,
-     "p_before": 0.015,
+     "p": 0.26,
+     "p_before": 0.28,
      "p_four": 1.0,
-     "p_junior_title": 0.013,
-     "p_play": 0.928,
-     "p_standings": 0.261,
+     "p_junior_title": 0.016,
+     "p_play": 0.908,
+     "p_standings": 0.246,
      "p_title_entry": 0.42,
-     "rank": 11,
+     "rank": 12,
      "status": "forecast"
     },
     "10831045": {
      "best4": [
-      1816,
-      1871,
-      1933
+      1823,
+      1879,
+      1942
      ],
      "factors": {
       "boost": null,
@@ -1384,26 +1305,22 @@
       "by_new": [
        [
         0.052,
-        0.825
+        0.906
        ],
        [
-        0.31,
-        0.98
+        0.336,
+        0.99
        ],
        [
-        0.405,
-        0.996
-       ],
-       [
-        0.197,
+        0.429,
         0.999
        ],
        [
-        0.035,
+        0.172,
         1.0
        ],
        [
-        0.002,
+        0.012,
         1.0
        ]
       ],
@@ -1411,11 +1328,11 @@
        5,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.9,
-      "expected_tpr": 1864,
+      "events_left": 4,
+      "expected_entries": 1.8,
+      "expected_tpr": 1894,
       "form": 1798,
-      "form_adj": -12,
+      "form_adj": -22,
       "group": "ladies",
       "group_adj": 23,
       "lift": 8,
@@ -1424,66 +1341,62 @@
        4,
        1802
       ],
-      "p_improve": 0.852,
-      "rating": 1845,
+      "p_improve": 0.881,
+      "rating": 1885,
       "swing": 150,
       "walkover": 0.052,
       "weakest": 1666
      },
-     "p": 0.983,
-     "p_before": 0.655,
+     "p": 0.991,
+     "p_before": 0.993,
      "p_four": 1.0,
-     "p_junior_title": 0.093,
+     "p_junior_title": 0.141,
      "p_play": 0.948,
-     "p_standings": 0.98,
+     "p_standings": 0.989,
      "p_title_entry": 0.42,
-     "rank": 5,
+     "rank": 6,
      "status": "forecast"
     },
     "10831053": {
      "best4": [
       1626,
       1629,
-      1673
+      1671
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.137,
-        0.002
-       ],
-       [
-        0.392,
-        0.002
-       ],
-       [
-        0.341,
-        0.002
-       ],
-       [
-        0.115,
+        0.143,
         0.003
        ],
        [
-        0.015,
-        0.013
+        0.423,
+        0.004
        ],
        [
-        0.0,
-        0.0
+        0.335,
+        0.004
+       ],
+       [
+        0.094,
+        0.005
+       ],
+       [
+        0.004,
+        0.011
        ]
       ],
       "entered": [
        4,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.6,
-      "expected_tpr": 1614,
+      "events_left": 4,
+      "expected_entries": 1.5,
+      "expected_tpr": 1618,
       "form": 1607,
-      "form_adj": 8,
+      "form_adj": 7,
       "group": "ladies",
       "group_adj": 23,
       "lift": 8,
@@ -1492,66 +1405,62 @@
        4,
        1626
       ],
-      "p_improve": 0.494,
-      "rating": 1575,
+      "p_improve": 0.504,
+      "rating": 1580,
       "swing": 145,
       "walkover": 0.061,
       "weakest": 1604
      },
-     "p": 0.003,
-     "p_before": 0.003,
+     "p": 0.004,
+     "p_before": 0.002,
      "p_four": 1.0,
-     "p_junior_title": 0.002,
-     "p_play": 0.863,
+     "p_junior_title": 0.004,
+     "p_play": 0.857,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
-     "rank": 16,
+     "rank": 17,
      "status": "forecast"
     },
     "10832939": {
      "best4": [
       1688,
-      1721,
-      1774
+      1704,
+      1751
      ],
      "factors": {
-      "boost": "bubble",
+      "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.036,
-        0.011
+        0.112,
+        0.008
        ],
        [
-        0.256,
+        0.391,
         0.016
        ],
        [
-        0.405,
-        0.043
+        0.365,
+        0.034
        ],
        [
-        0.241,
-        0.09
+        0.12,
+        0.067
        ],
        [
-        0.056,
-        0.157
-       ],
-       [
-        0.005,
-        0.245
+        0.012,
+        0.11
        ]
       ],
       "entered": [
        5,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.2,
-      "expected_tpr": 1696,
+      "events_left": 4,
+      "expected_entries": 1.7,
+      "expected_tpr": 1673,
       "form": 1648,
-      "form_adj": -6,
+      "form_adj": 2,
       "group": "ladies",
       "group_adj": 23,
       "lift": 8,
@@ -1560,66 +1469,62 @@
        4,
        1688
       ],
-      "p_improve": 0.61,
-      "rating": 1671,
+      "p_improve": 0.561,
+      "rating": 1640,
       "swing": 148,
       "walkover": 0.11,
       "weakest": 1622
      },
-     "p": 0.053,
-     "p_before": 0.086,
+     "p": 0.029,
+     "p_before": 0.034,
      "p_four": 1.0,
-     "p_junior_title": 0.012,
-     "p_play": 0.964,
-     "p_standings": 0.042,
+     "p_junior_title": 0.011,
+     "p_play": 0.888,
+     "p_standings": 0.018,
      "p_title_entry": 0.42,
-     "rank": 12,
+     "rank": 13,
      "status": "forecast"
     },
     "10833307": {
      "best4": [
       1781,
-      1798,
-      1849
+      1795,
+      1845
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.08,
-        0.36
+        0.098,
+        0.469
        ],
        [
-        0.294,
-        0.544
+        0.342,
+        0.625
        ],
        [
-        0.365,
-        0.681
+        0.388,
+        0.751
        ],
        [
-        0.206,
-        0.766
+        0.151,
+        0.808
        ],
        [
-        0.051,
-        0.815
-       ],
-       [
-        0.005,
-        0.872
+        0.021,
+        0.869
        ]
       ],
       "entered": [
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.0,
-      "expected_tpr": 1773,
+      "events_left": 4,
+      "expected_entries": 1.8,
+      "expected_tpr": 1777,
       "form": 1719,
-      "form_adj": -7,
+      "form_adj": -9,
       "group": "ladies",
       "group_adj": 23,
       "lift": 8,
@@ -1628,63 +1533,59 @@
        4,
        1781
       ],
-      "p_improve": 0.539,
-      "rating": 1749,
+      "p_improve": 0.549,
+      "rating": 1755,
       "swing": 139,
       "walkover": 0.094,
       "weakest": 1738
      },
-     "p": 0.64,
-     "p_before": 0.631,
+     "p": 0.691,
+     "p_before": 0.69,
      "p_four": 1.0,
-     "p_junior_title": 0.028,
-     "p_play": 0.92,
-     "p_standings": 0.625,
+     "p_junior_title": 0.037,
+     "p_play": 0.902,
+     "p_standings": 0.675,
      "p_title_entry": 0.42,
-     "rank": 7,
+     "rank": 8,
      "status": "forecast"
     },
     "10833609": {
      "best4": [
       1643,
-      1678,
-      1727
+      1667,
+      1710
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.008,
+        0.035,
         0.0
        ],
        [
-        0.094,
+        0.265,
         0.0
        ],
        [
-        0.295,
+        0.417,
         0.001
        ],
        [
-        0.369,
-        0.005
+        0.239,
+        0.004
        ],
        [
-        0.197,
-        0.007
-       ],
-       [
-        0.036,
-        0.022
+        0.044,
+        0.009
        ]
       ],
       "entered": [
-       10,
+       9,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.0,
+      "events_left": 4,
+      "expected_entries": 2.1,
       "expected_tpr": 1646,
       "form": 1591,
       "form_adj": 6,
@@ -1702,47 +1603,43 @@
       "walkover": 0.079,
       "weakest": 1577
      },
-     "p": 0.004,
-     "p_before": 0.011,
+     "p": 0.002,
+     "p_before": 0.003,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.992,
-     "p_standings": 0.004,
-     "rank": 15,
+     "p_play": 0.965,
+     "p_standings": 0.002,
+     "rank": 16,
      "status": "forecast"
     },
     "10835610": {
      "best4": [
-      1474,
-      1541,
-      1628
+      1469,
+      1530,
+      1612
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.047,
+        0.048,
         0.004
        ],
        [
-        0.3,
+        0.331,
         0.003
        ],
        [
-        0.406,
-        0.003
+        0.432,
+        0.002
        ],
        [
-        0.21,
+        0.177,
         0.005
        ],
        [
-        0.035,
-        0.003
-       ],
-       [
-        0.002,
+        0.013,
         0.0
        ]
       ],
@@ -1750,11 +1647,11 @@
        5,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.9,
-      "expected_tpr": 1595,
+      "events_left": 4,
+      "expected_entries": 1.8,
+      "expected_tpr": 1587,
       "form": 1401,
-      "form_adj": -55,
+      "form_adj": -51,
       "group": "ladies",
       "group_adj": 23,
       "lift": 8,
@@ -1764,65 +1661,61 @@
        1462
       ],
       "p_improve": null,
-      "rating": 1619,
+      "rating": 1607,
       "swing": 162,
       "walkover": 0.052,
       "weakest": null
      },
-     "p": 0.004,
-     "p_before": 0.005,
-     "p_four": 0.953,
-     "p_junior_title": 0.004,
-     "p_play": 0.953,
+     "p": 0.003,
+     "p_before": 0.003,
+     "p_four": 0.952,
+     "p_junior_title": 0.003,
+     "p_play": 0.952,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
-     "rank": 29,
+     "rank": 31,
      "status": "forecast"
     },
     "10835628": {
      "best4": [
-      1634,
-      1682,
-      1746
+      1632,
+      1675,
+      1735
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.064,
-        0.016
-       ],
-       [
-        0.297,
+        0.132,
         0.01
        ],
        [
-        0.381,
-        0.02
+        0.437,
+        0.015
        ],
        [
-        0.211,
-        0.045
+        0.336,
+        0.034
        ],
        [
-        0.044,
-        0.071
+        0.09,
+        0.052
        ],
        [
-        0.003,
-        0.074
+        0.005,
+        0.109
        ]
       ],
       "entered": [
-       6,
+       5,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.1,
-      "expected_tpr": 1676,
+      "events_left": 4,
+      "expected_entries": 1.5,
+      "expected_tpr": 1690,
       "form": 1656,
-      "form_adj": 4,
+      "form_adj": -1,
       "group": "ladies",
       "group_adj": 23,
       "lift": 8,
@@ -1832,69 +1725,128 @@
        1654
       ],
       "p_improve": null,
-      "rating": 1641,
+      "rating": 1660,
       "swing": 156,
       "walkover": 0.099,
       "weakest": null
      },
      "p": 0.024,
-     "p_before": 0.04,
-     "p_four": 0.936,
-     "p_junior_title": 0.009,
-     "p_play": 0.936,
-     "p_standings": 0.015,
+     "p_before": 0.028,
+     "p_four": 0.868,
+     "p_junior_title": 0.015,
+     "p_play": 0.868,
+     "p_standings": 0.01,
      "p_title_entry": 0.42,
      "rank": 24,
      "status": "forecast"
     },
-    "10836560": {
-     "best4_now": 1482,
-     "p": 0.0,
-     "p_before": 0.0,
-     "rank": 18,
-     "status": "forecast"
-    },
-    "10836667": {
+    "10835890": {
      "best4": [
-      1743,
-      1789,
-      1848
+      1483,
+      1523,
+      1570
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.036,
-        0.04
+        0.571,
+        0.0
        ],
        [
-        0.222,
-        0.165
+        0.346,
+        0.0
        ],
        [
-        0.385,
-        0.456
+        0.076,
+        0.0
        ],
        [
-        0.275,
-        0.655
+        0.007,
+        0.0
        ],
        [
-        0.075,
-        0.759
-       ],
-       [
-        0.006,
-        0.856
+        0.0,
+        0.0
        ]
       ],
       "entered": [
-       8,
+       3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.4,
+      "events_left": 4,
+      "expected_entries": 0.5,
+      "expected_tpr": 1564,
+      "form": 1412,
+      "form_adj": -26,
+      "group": "ladies",
+      "group_adj": 65,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       3,
+       1516
+      ],
+      "p_improve": null,
+      "rating": 1517,
+      "swing": 147,
+      "walkover": 0.07,
+      "weakest": null
+     },
+     "p": 0.0,
+     "p_before": 0.0,
+     "p_four": 0.429,
+     "p_junior_title": 0.0,
+     "p_play": 0.429,
+     "p_standings": 0.0,
+     "rank": 30,
+     "status": "forecast"
+    },
+    "10836560": {
+     "best4_now": 1482,
+     "p": 0.0,
+     "p_before": 0.0,
+     "rank": 19,
+     "status": "forecast"
+    },
+    "10836667": {
+     "best4": [
+      1737,
+      1779,
+      1834
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.063,
+        0.027
+       ],
+       [
+        0.342,
+        0.202
+       ],
+       [
+        0.42,
+        0.489
+       ],
+       [
+        0.162,
+        0.675
+       ],
+       [
+        0.013,
+        0.775
+       ]
+      ],
+      "entered": [
+       7,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 2.0,
       "expected_tpr": 1773,
       "form": 1792,
       "form_adj": 16,
@@ -1912,45 +1864,41 @@
       "walkover": 0.135,
       "weakest": null
      },
-     "p": 0.456,
-     "p_before": 0.591,
-     "p_four": 0.964,
-     "p_junior_title": 0.029,
-     "p_play": 0.964,
-     "p_standings": 0.437,
+     "p": 0.395,
+     "p_before": 0.43,
+     "p_four": 0.937,
+     "p_junior_title": 0.035,
+     "p_play": 0.937,
+     "p_standings": 0.37,
      "p_title_entry": 0.42,
      "rank": 21,
      "status": "forecast"
     },
     "10839143": {
      "best4": [
-      1585,
-      1680,
-      1713
+      1653,
+      1710,
+      1748
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.75,
-        0.017
+        0.783,
+        0.019
        ],
        [
-        0.227,
-        0.014
+        0.204,
+        0.021
        ],
        [
-        0.023,
-        0.022
-       ],
-       [
-        0.001,
-        0.0
+        0.013,
+        0.008
        ],
        [
         0.0,
-        null
+        0.0
        ],
        [
         0.0,
@@ -1961,8 +1909,8 @@
        1,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 0.3,
+      "events_left": 4,
+      "expected_entries": 0.2,
       "expected_tpr": 1709,
       "form": null,
       "form_adj": 0,
@@ -1980,60 +1928,56 @@
       "walkover": 0.082,
       "weakest": null
      },
-     "p": 0.016,
-     "p_before": 0.016,
-     "p_four": 0.001,
-     "p_junior_title": 0.016,
-     "p_play": 0.25,
+     "p": 0.019,
+     "p_before": 0.017,
+     "p_four": 0.0,
+     "p_junior_title": 0.019,
+     "p_play": 0.217,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
-     "rank": 71,
+     "rank": 83,
      "status": "forecast"
     },
     "10843981": {
      "best4": [
       1973,
-      1985,
-      2031
+      1973,
+      2002
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.001,
+        0.005,
         1.0
        ],
        [
-        0.026,
+        0.083,
         1.0
        ],
        [
-        0.143,
+        0.332,
         1.0
        ],
        [
-        0.361,
+        0.447,
         1.0
        ],
        [
-        0.363,
-        1.0
-       ],
-       [
-        0.106,
+        0.133,
         1.0
        ]
       ],
       "entered": [
-       12,
+       11,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.4,
-      "expected_tpr": 1838,
+      "events_left": 4,
+      "expected_entries": 2.7,
+      "expected_tpr": 1786,
       "form": 1750,
-      "form_adj": -30,
+      "form_adj": -14,
       "group": "women_open",
       "group_adj": -12,
       "lift": 8,
@@ -2042,8 +1986,8 @@
        4,
        1973
       ],
-      "p_improve": 0.27,
-      "rating": 1872,
+      "p_improve": 0.15,
+      "rating": 1804,
       "swing": 118,
       "walkover": 0.012,
       "weakest": 1912
@@ -2051,188 +1995,111 @@
      "p": 1.0,
      "p_before": 1.0,
      "p_four": 1.0,
-     "p_junior_title": 0.173,
-     "p_play": 0.999,
+     "p_junior_title": 0.122,
+     "p_play": 0.995,
      "p_standings": 1.0,
      "p_title_entry": 0.613,
      "rank": 2,
      "status": "forecast"
     },
-    "10844210": {
+    "10849025": {
      "best4": [
-      1544,
-      1604,
-      1672
+      1549,
+      1590,
+      1643
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.461,
-        0.004
-       ],
-       [
-        0.384,
-        0.004
-       ],
-       [
-        0.133,
-        0.002
-       ],
-       [
-        0.02,
-        0.007
-       ],
-       [
-        0.002,
+        0.206,
         0.0
        ],
        [
-        0.0,
-        null
-       ]
-      ],
-      "entered": [
-       2,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 0.8,
-      "expected_tpr": 1613,
-      "form": null,
-      "form_adj": 0,
-      "group": "ladies",
-      "group_adj": 23,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       2,
-       1605
-      ],
-      "p_improve": null,
-      "rating": null,
-      "swing": 158,
-      "walkover": 0.082,
-      "weakest": null
-     },
-     "p": 0.004,
-     "p_before": 0.004,
-     "p_four": 0.155,
-     "p_junior_title": 0.003,
-     "p_play": 0.539,
-     "p_standings": 0.0,
-     "p_title_entry": 0.42,
-     "rank": 37,
-     "status": "forecast"
-    },
-    "10844970": {
-     "best4": [
-      1511,
-      1566,
-      1625
-     ],
-     "factors": {
-      "boost": null,
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.598,
-        0.001
+        0.424,
+        0.0
        ],
        [
-        0.324,
-        0.001
+        0.286,
+        0.0
        ],
        [
-        0.07,
-        0.002
+        0.077,
+        0.0
        ],
        [
         0.007,
         0.0
-       ],
-       [
-        0.0,
-        0.0
-       ],
-       [
-        0.0,
-        null
        ]
       ],
       "entered": [
-       3,
+       6,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 0.6,
-      "expected_tpr": 1554,
-      "form": 1586,
-      "form_adj": 21,
+      "events_left": 4,
+      "expected_entries": 1.4,
+      "expected_tpr": 1570,
+      "form": 1526,
+      "form_adj": 10,
       "group": "ladies",
-      "group_adj": 23,
+      "group_adj": 65,
       "lift": 8,
       "near_lock_entry": 0.95,
       "now": [
-       2,
-       1592
+       3,
+       1593
       ],
       "p_improve": null,
-      "rating": 1502,
-      "swing": 154,
-      "walkover": 0.141,
+      "rating": 1487,
+      "swing": 156,
+      "walkover": 0.094,
       "weakest": null
      },
-     "p": 0.001,
-     "p_before": 0.001,
-     "p_four": 0.078,
-     "p_junior_title": 0.001,
-     "p_play": 0.402,
+     "p": 0.0,
+     "p_before": 0.0,
+     "p_four": 0.794,
+     "p_junior_title": 0.0,
+     "p_play": 0.794,
      "p_standings": 0.0,
-     "p_title_entry": 0.42,
-     "rank": 40,
+     "rank": 27,
      "status": "forecast"
     },
     "10874968": {
      "best4_now": null,
      "p": 0.0,
      "p_before": 0.0,
-     "rank": 33,
+     "rank": 35,
      "status": "forecast"
     },
     "10877894": {
      "best4": [
-      1582,
-      1621,
-      1672
+      1567,
+      1605,
+      1646
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.118,
+        0.119,
+        0.0
+       ],
+       [
+        0.409,
+        0.0
+       ],
+       [
+        0.363,
         0.001
        ],
        [
-        0.382,
+        0.103,
         0.001
        ],
        [
-        0.35,
-        0.001
-       ],
-       [
-        0.132,
-        0.002
-       ],
-       [
-        0.018,
-        0.006
-       ],
-       [
-        0.001,
+        0.006,
         0.0
        ]
       ],
@@ -2240,11 +2107,11 @@
        4,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.6,
-      "expected_tpr": 1549,
+      "events_left": 4,
+      "expected_entries": 1.5,
+      "expected_tpr": 1491,
       "form": 1606,
-      "form_adj": 30,
+      "form_adj": 48,
       "group": "ladies",
       "group_adj": 23,
       "lift": 8,
@@ -2254,16 +2121,16 @@
        1634
       ],
       "p_improve": null,
-      "rating": 1488,
+      "rating": 1412,
       "swing": 162,
       "walkover": 0.058,
       "weakest": null
      },
      "p": 0.001,
-     "p_before": 0.001,
-     "p_four": 0.882,
-     "p_junior_title": 0.001,
-     "p_play": 0.882,
+     "p_before": 0.0,
+     "p_four": 0.881,
+     "p_junior_title": 0.0,
+     "p_play": 0.881,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
      "rank": 25,
@@ -2272,35 +2139,31 @@
     "10879056": {
      "best4": [
       1488,
-      1499,
-      1556
+      1493,
+      1549
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.249,
+        0.29,
+        0.001
+       ],
+       [
+        0.436,
         0.0
        ],
        [
-        0.403,
+        0.222,
         0.0
        ],
        [
-        0.257,
+        0.048,
         0.0
        ],
        [
-        0.079,
-        0.0
-       ],
-       [
-        0.011,
-        0.0
-       ],
-       [
-        0.001,
+        0.003,
         0.0
        ]
       ],
@@ -2308,8 +2171,8 @@
        5,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.4,
+      "events_left": 4,
+      "expected_entries": 1.2,
       "expected_tpr": 1475,
       "form": 1490,
       "form_adj": 16,
@@ -2328,47 +2191,43 @@
       "weakest": 1401
      },
      "p": 0.0,
-     "p_before": 0.001,
+     "p_before": 0.0,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.751,
+     "p_play": 0.71,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
-     "rank": 17,
+     "rank": 18,
      "status": "forecast"
     },
     "10882278": {
      "best4": [
-      1431,
-      1473,
-      1533
+      1434,
+      1476,
+      1532
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.378,
-        0.0
-       ],
-       [
-        0.417,
-        0.0
-       ],
-       [
-        0.17,
+        0.429,
         0.001
        ],
        [
-        0.032,
-        0.002
-       ],
-       [
-        0.003,
+        0.41,
         0.0
        ],
        [
-        0.0,
+        0.137,
+        0.001
+       ],
+       [
+        0.024,
+        0.002
+       ],
+       [
+        0.001,
         0.0
        ]
       ],
@@ -2376,11 +2235,11 @@
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 0.9,
-      "expected_tpr": 1535,
+      "events_left": 4,
+      "expected_entries": 0.8,
+      "expected_tpr": 1551,
       "form": 1429,
-      "form_adj": -11,
+      "form_adj": -16,
       "group": "ladies",
       "group_adj": 65,
       "lift": 8,
@@ -2390,25 +2249,25 @@
        1452
       ],
       "p_improve": null,
-      "rating": 1473,
+      "rating": 1494,
       "swing": 143,
       "walkover": 0.075,
       "weakest": null
      },
-     "p": 0.0,
-     "p_before": 0.0,
-     "p_four": 0.622,
-     "p_junior_title": 0.0,
-     "p_play": 0.622,
+     "p": 0.001,
+     "p_before": 0.001,
+     "p_four": 0.571,
+     "p_junior_title": 0.001,
+     "p_play": 0.571,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
-     "rank": 30,
+     "rank": 32,
      "status": "forecast"
     },
-    "10894217": {
+    "554000025": {
      "best4": [
-      1511,
-      1570,
+      1528,
+      1571,
       1634
      ],
      "factors": {
@@ -2416,94 +2275,23 @@
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.521,
-        0.0
+        0.279,
+        0.003
        ],
        [
-        0.364,
-        0.0
+        0.456,
+        0.001
        ],
        [
-        0.101,
-        0.0
+        0.224,
+        0.001
        ],
        [
-        0.013,
-        0.0
+        0.039,
+        0.005
        ],
        [
-        0.001,
-        0.0
-       ],
-       [
-        0.0,
-        null
-       ]
-      ],
-      "entered": [
-       3,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 0.6,
-      "expected_tpr": 1561,
-      "form": 1540,
-      "form_adj": 17,
-      "group": "ladies",
-      "group_adj": 65,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       2,
-       1605
-      ],
-      "p_improve": null,
-      "rating": 1471,
-      "swing": 147,
-      "walkover": 0.07,
-      "weakest": null
-     },
-     "p": 0.0,
-     "p_before": 0.0,
-     "p_four": 0.115,
-     "p_junior_title": 0.0,
-     "p_play": 0.479,
-     "p_standings": 0.0,
-     "rank": 38,
-     "status": "forecast"
-    },
-    "554000025": {
-     "best4": [
-      1529,
-      1574,
-      1641
-     ],
-     "factors": {
-      "boost": null,
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.266,
-        0.002
-       ],
-       [
-        0.432,
-        0.002
-       ],
-       [
-        0.24,
-        0.002
-       ],
-       [
-        0.055,
-        0.002
-       ],
-       [
-        0.006,
-        0.009
-       ],
-       [
-        0.0,
+        0.002,
         0.0
        ]
       ],
@@ -2511,8 +2299,8 @@
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.2,
+      "events_left": 4,
+      "expected_entries": 1.1,
       "expected_tpr": 1585,
       "form": 1570,
       "form_adj": 6,
@@ -2532,53 +2320,49 @@
      },
      "p": 0.002,
      "p_before": 0.002,
-     "p_four": 0.734,
+     "p_four": 0.721,
      "p_junior_title": 0.002,
-     "p_play": 0.734,
+     "p_play": 0.721,
      "p_standings": 0.0,
      "p_title_entry": 0.42,
-     "rank": 28,
+     "rank": 29,
      "status": "forecast"
     },
     "554000343": {
      "best4_now": null,
      "p": 0.0,
      "p_before": 0.0,
-     "rank": 31,
+     "rank": 33,
      "status": "forecast"
     },
     "554011248": {
      "best4": [
-      1546,
-      1603,
-      1663
+      1543,
+      1599,
+      1658
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.335,
+        0.356,
         0.0
        ],
        [
-        0.422,
+        0.444,
         0.0
        ],
        [
-        0.199,
+        0.172,
         0.0
        ],
        [
-        0.04,
+        0.027,
         0.0
        ],
        [
-        0.005,
-        0.01
-       ],
-       [
-        0.0,
+        0.001,
         0.0
        ]
       ],
@@ -2586,9 +2370,9 @@
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.1,
-      "expected_tpr": 1611,
+      "events_left": 4,
+      "expected_entries": 1.0,
+      "expected_tpr": 1609,
       "form": 1490,
       "form_adj": -16,
       "group": "ladies",
@@ -2600,70 +2384,66 @@
        1614
       ],
       "p_improve": null,
-      "rating": 1554,
+      "rating": 1552,
       "swing": 147,
       "walkover": 0.152,
       "weakest": null
      },
      "p": 0.0,
      "p_before": 0.0,
-     "p_four": 0.244,
+     "p_four": 0.2,
      "p_junior_title": 0.0,
-     "p_play": 0.665,
+     "p_play": 0.644,
      "p_standings": 0.0,
-     "rank": 36,
+     "rank": 40,
      "status": "forecast"
     }
    }
   },
   "open": {
    "cutoff": [
-    2025,
-    2039,
-    2059
+    2021,
+    2034,
+    2052
    ],
    "players": {
     "10800166": {
      "best4": [
-      1899,
-      1947,
-      2013
+      1897,
+      1941,
+      2000
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.183,
+        0.237,
         0.0
        ],
        [
-        0.387,
+        0.438,
         0.001
        ],
        [
-        0.297,
-        0.041
+        0.257,
+        0.047
        ],
        [
-        0.113,
-        0.16
+        0.062,
+        0.178
        ],
        [
-        0.019,
-        0.309
-       ],
-       [
-        0.001,
-        0.368
+        0.006,
+        0.257
        ]
       ],
       "entered": [
        5,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.5,
+      "events_left": 4,
+      "expected_entries": 1.3,
       "expected_tpr": 1984,
       "form": 1910,
       "form_adj": -25,
@@ -2681,63 +2461,122 @@
       "walkover": 0.098,
       "weakest": null
      },
-     "p": 0.037,
-     "p_before": 0.054,
-     "p_four": 0.817,
+     "p": 0.025,
+     "p_before": 0.04,
+     "p_four": 0.763,
      "p_junior_title": 0.0,
-     "p_play": 0.817,
-     "p_standings": 0.037,
-     "rank": 44,
+     "p_play": 0.763,
+     "p_standings": 0.025,
+     "rank": 48,
+     "status": "forecast"
+    },
+    "10800190": {
+     "best4": [
+      1709,
+      1781,
+      1855
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.042,
+        0.0
+       ],
+       [
+        0.297,
+        0.0
+       ],
+       [
+        0.432,
+        0.0
+       ],
+       [
+        0.209,
+        0.0
+       ],
+       [
+        0.021,
+        0.0
+       ]
+      ],
+      "entered": [
+       8,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 2.0,
+      "expected_tpr": 1778,
+      "form": 1784,
+      "form_adj": 2,
+      "group": "adults_open",
+      "group_adj": -9,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       4,
+       1678
+      ],
+      "p_improve": 0.866,
+      "rating": 1777,
+      "swing": 140,
+      "walkover": 0.089,
+      "weakest": 1538
+     },
+     "p": 0.0,
+     "p_before": 0.0,
+     "p_four": 1.0,
+     "p_junior_title": 0.0,
+     "p_play": 0.959,
+     "p_standings": 0.0,
+     "rank": 38,
      "status": "forecast"
     },
     "10800360": {
      "best4_now": 1783,
      "p": 0.0,
      "p_before": 0.0,
-     "rank": 30,
+     "rank": 33,
      "status": "forecast"
     },
     "10800999": {
      "best4": [
-      1966,
-      2011,
-      2065
+      1947,
+      2001,
+      2050
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.025,
+        0.064,
         0.0
        ],
        [
-        0.157,
-        0.077
+        0.29,
+        0.094
        ],
        [
-        0.326,
-        0.183
+        0.393,
+        0.217
        ],
        [
-        0.321,
-        0.3
+        0.213,
+        0.33
        ],
        [
-        0.144,
-        0.417
-       ],
-       [
-        0.026,
-        0.531
+        0.04,
+        0.459
        ]
       ],
       "entered": [
-       9,
+       8,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.2,
+      "events_left": 4,
+      "expected_entries": 2.4,
       "expected_tpr": 1950,
       "form": 1956,
       "form_adj": 2,
@@ -2755,56 +2594,52 @@
       "walkover": 0.226,
       "weakest": 1781
      },
-     "p": 0.242,
-     "p_before": 0.303,
+     "p": 0.201,
+     "p_before": 0.235,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.975,
-     "p_standings": 0.242,
+     "p_play": 0.936,
+     "p_standings": 0.201,
      "rank": 17,
      "status": "forecast"
     },
     "10801529": {
      "best4": [
-      1781,
-      1839,
-      1902
+      1778,
+      1837,
+      1901
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.25,
-        0.047
+        0.265,
+        0.05
        ],
        [
-        0.438,
-        0.042
+        0.459,
+        0.05
        ],
        [
-        0.25,
-        0.042
+        0.229,
+        0.05
        ],
        [
-        0.058,
-        0.048
+        0.045,
+        0.046
        ],
        [
-        0.004,
-        0.068
-       ],
-       [
-        0.0,
-        0.0
+        0.002,
+        0.125
        ]
       ],
       "entered": [
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.2,
+      "events_left": 4,
+      "expected_entries": 1.1,
       "expected_tpr": 1836,
       "form": 1840,
       "form_adj": 1,
@@ -2822,124 +2657,116 @@
       "walkover": 0.062,
       "weakest": null
      },
-     "p": 0.044,
-     "p_before": 0.028,
-     "p_four": 0.312,
-     "p_junior_title": 0.044,
-     "p_play": 0.75,
+     "p": 0.05,
+     "p_before": 0.053,
+     "p_four": 0.276,
+     "p_junior_title": 0.05,
+     "p_play": 0.735,
      "p_standings": 0.0,
      "p_title_entry": 0.613,
-     "rank": 90,
+     "rank": 93,
      "status": "forecast"
     },
     "10801952": {
      "best4": [
-      1893,
-      1928,
-      1993
+      1924,
+      1948,
+      2004
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.082,
+        0.09,
         0.0
        ],
        [
-        0.272,
-        0.0
+        0.329,
+        0.003
        ],
        [
-        0.362,
-        0.01
+        0.377,
+        0.035
        ],
        [
-        0.215,
-        0.048
+        0.174,
+        0.08
        ],
        [
-        0.061,
-        0.098
-       ],
-       [
-        0.007,
-        0.174
+        0.03,
+        0.121
        ]
       ],
       "entered": [
-       8,
+       9,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.1,
-      "expected_tpr": 1899,
-      "form": 1878,
-      "form_adj": -7,
+      "events_left": 4,
+      "expected_entries": 1.9,
+      "expected_tpr": 1900,
+      "form": 1886,
+      "form_adj": -5,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
       "near_lock_entry": 0.95,
       "now": [
        4,
-       1893
+       1924
       ],
-      "p_improve": 0.616,
-      "rating": 1907,
-      "swing": 150,
-      "walkover": 0.075,
-      "weakest": 1832
+      "p_improve": 0.554,
+      "rating": 1906,
+      "swing": 149,
+      "walkover": 0.072,
+      "weakest": 1862
      },
-     "p": 0.021,
-     "p_before": 0.035,
+     "p": 0.032,
+     "p_before": 0.023,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.918,
-     "p_standings": 0.021,
+     "p_play": 0.91,
+     "p_standings": 0.032,
      "rank": 20,
      "status": "forecast"
     },
     "10802088": {
      "best4": [
       2059,
-      2105,
-      2163
+      2092,
+      2146
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.046,
-        0.971
-       ],
-       [
-        0.226,
+        0.119,
         0.993
        ],
        [
-        0.368,
-        0.996
-       ],
-       [
-        0.261,
+        0.38,
         0.999
        ],
        [
-        0.088,
+        0.352,
         1.0
        ],
        [
-        0.011,
+        0.132,
+        1.0
+       ],
+       [
+        0.018,
         1.0
        ]
       ],
       "entered": [
-       8,
+       7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.4,
+      "events_left": 4,
+      "expected_entries": 1.7,
       "expected_tpr": 2000,
       "form": 2022,
       "form_adj": 7,
@@ -2957,44 +2784,40 @@
       "walkover": 0.089,
       "weakest": 1902
      },
-     "p": 0.996,
-     "p_before": 0.995,
+     "p": 0.999,
+     "p_before": 0.996,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.954,
-     "p_standings": 0.996,
+     "p_play": 0.881,
+     "p_standings": 0.999,
      "rank": 2,
      "status": "forecast"
     },
     "10802746": {
      "best4": [
-      1686,
-      1760,
-      1835
+      1674,
+      1754,
+      1830
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.564,
+        0.592,
+        0.026
+       ],
+       [
+        0.341,
+        0.028
+       ],
+       [
+        0.063,
+        0.03
+       ],
+       [
+        0.005,
         0.021
-       ],
-       [
-        0.352,
-        0.023
-       ],
-       [
-        0.076,
-        0.017
-       ],
-       [
-        0.007,
-        0.007
-       ],
-       [
-        0.0,
-        0.0
        ],
        [
         0.0,
@@ -3005,8 +2828,8 @@
        1,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 0.6,
+      "events_left": 4,
+      "expected_entries": 0.5,
       "expected_tpr": 1769,
       "form": 1742,
       "form_adj": -5,
@@ -3024,57 +2847,53 @@
       "walkover": 0.067,
       "weakest": null
      },
-     "p": 0.022,
-     "p_before": 0.024,
-     "p_four": 0.007,
-     "p_junior_title": 0.022,
-     "p_play": 0.436,
+     "p": 0.027,
+     "p_before": 0.027,
+     "p_four": 0.005,
+     "p_junior_title": 0.027,
+     "p_play": 0.408,
      "p_standings": 0.0,
      "p_title_entry": 0.613,
-     "rank": 201,
+     "rank": 207,
      "status": "forecast"
     },
     "10804714": {
      "best4": [
       1956,
-      1976,
-      2025
+      1970,
+      2015
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.047,
+        0.071,
         0.0
        ],
        [
-        0.235,
-        0.006
+        0.323,
+        0.008
        ],
        [
-        0.365,
-        0.035
+        0.39,
+        0.042
        ],
        [
-        0.257,
-        0.096
+        0.185,
+        0.113
        ],
        [
-        0.085,
-        0.169
-       ],
-       [
-        0.011,
-        0.204
+        0.032,
+        0.189
        ]
       ],
       "entered": [
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.4,
+      "events_left": 4,
+      "expected_entries": 2.1,
       "expected_tpr": 1946,
       "form": 1956,
       "form_adj": 3,
@@ -3092,126 +2911,118 @@
       "walkover": 0.13,
       "weakest": 1935
      },
-     "p": 0.056,
-     "p_before": 0.081,
+     "p": 0.046,
+     "p_before": 0.067,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.953,
-     "p_standings": 0.056,
-     "rank": 13,
+     "p_play": 0.929,
+     "p_standings": 0.046,
+     "rank": 14,
      "status": "forecast"
     },
     "10805796": {
      "best4": [
-      1905,
-      1952,
-      2012
+      1883,
+      1929,
+      1984
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.123,
+        0.135,
         0.0
        ],
        [
-        0.351,
+        0.407,
         0.0
        ],
        [
-        0.344,
+        0.341,
+        0.016
+       ],
+       [
+        0.107,
         0.04
        ],
        [
-        0.151,
-        0.088
-       ],
-       [
-        0.029,
-        0.143
-       ],
-       [
-        0.002,
-        0.167
-       ]
-      ],
-      "entered": [
-       6,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 1.8,
-      "expected_tpr": 1915,
-      "form": 1946,
-      "form_adj": 10,
-      "group": "adults_open",
-      "group_adj": -9,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       3,
-       1936
-      ],
-      "p_improve": null,
-      "rating": 1906,
-      "swing": 135,
-      "walkover": 0.093,
-      "weakest": null
-     },
-     "p": 0.032,
-     "p_before": 0.047,
-     "p_four": 0.877,
-     "p_junior_title": 0.0,
-     "p_play": 0.877,
-     "p_standings": 0.032,
-     "rank": 43,
-     "status": "forecast"
-    },
-    "10806830": {
-     "best4": [
-      1996,
-      2034,
-      2079
-     ],
-     "factors": {
-      "boost": "bubble",
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.009,
-        0.0
-       ],
-       [
-        0.105,
-        0.219
-       ],
-       [
-        0.295,
-        0.395
-       ],
-       [
-        0.365,
-        0.503
-       ],
-       [
-        0.19,
-        0.601
-       ],
-       [
-        0.035,
-        0.677
+        0.011,
+        0.092
        ]
       ],
       "entered": [
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.8,
-      "expected_tpr": 1929,
-      "form": 2008,
-      "form_adj": 26,
+      "events_left": 4,
+      "expected_entries": 1.6,
+      "expected_tpr": 1878,
+      "form": 1887,
+      "form_adj": 3,
+      "group": "adults_open",
+      "group_adj": -9,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       4,
+       1883
+      ],
+      "p_improve": 0.785,
+      "rating": 1876,
+      "swing": 136,
+      "walkover": 0.089,
+      "weakest": 1724
+     },
+     "p": 0.011,
+     "p_before": 0.036,
+     "p_four": 1.0,
+     "p_junior_title": 0.0,
+     "p_play": 0.865,
+     "p_standings": 0.011,
+     "rank": 23,
+     "status": "forecast"
+    },
+    "10806830": {
+     "best4": [
+      1974,
+      2012,
+      2052
+     ],
+     "factors": {
+      "boost": "bubble",
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.025,
+        0.0
+       ],
+       [
+        0.238,
+        0.138
+       ],
+       [
+        0.422,
+        0.253
+       ],
+       [
+        0.265,
+        0.352
+       ],
+       [
+        0.05,
+        0.406
+       ]
+      ],
+      "entered": [
+       7,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 2.2,
+      "expected_tpr": 1871,
+      "form": 1904,
+      "form_adj": 10,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
@@ -3220,62 +3031,58 @@
        4,
        1974
       ],
-      "p_improve": 0.787,
-      "rating": 1904,
-      "swing": 144,
-      "walkover": 0.043,
+      "p_improve": 0.67,
+      "rating": 1862,
+      "swing": 147,
+      "walkover": 0.041,
       "weakest": 1791
      },
-     "p": 0.461,
-     "p_before": 0.512,
+     "p": 0.253,
+     "p_before": 0.405,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.991,
-     "p_standings": 0.461,
-     "rank": 10,
+     "p_play": 0.975,
+     "p_standings": 0.253,
+     "rank": 11,
      "status": "forecast"
     },
     "10808655": {
      "best4": [
       1994,
-      2044,
-      2095
+      2039,
+      2088
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.104,
-        0.003
+        0.131,
+        0.023
        ],
        [
-        0.391,
-        0.486
+        0.485,
+        0.56
        ],
        [
-        0.355,
-        0.713
+        0.314,
+        0.774
        ],
        [
-        0.127,
-        0.848
+        0.066,
+        0.875
        ],
        [
-        0.021,
-        0.893
-       ],
-       [
-        0.001,
-        0.828
+        0.004,
+        0.9
        ]
       ],
       "entered": [
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.6,
+      "events_left": 4,
+      "expected_entries": 1.4,
       "expected_tpr": 1969,
       "form": 2010,
       "form_adj": 14,
@@ -3293,56 +3100,52 @@
       "walkover": 0.041,
       "weakest": 1802
      },
-     "p": 0.572,
-     "p_before": 0.591,
+     "p": 0.579,
+     "p_before": 0.614,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.896,
-     "p_standings": 0.572,
-     "rank": 8,
+     "p_play": 0.869,
+     "p_standings": 0.579,
+     "rank": 9,
      "status": "forecast"
     },
     "10808868": {
      "best4": [
       2034,
-      2053,
-      2106
+      2043,
+      2091
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.002,
-        0.677
+        0.009,
+        0.806
        ],
        [
-        0.022,
-        0.69
+        0.098,
+        0.811
        ],
        [
-        0.127,
-        0.749
+        0.324,
+        0.829
        ],
        [
-        0.328,
-        0.795
+        0.401,
+        0.855
        ],
        [
-        0.373,
-        0.822
-       ],
-       [
-        0.149,
-        0.842
+        0.168,
+        0.867
        ]
       ],
       "entered": [
-       12,
+       11,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.8,
+      "events_left": 4,
+      "expected_entries": 2.8,
       "expected_tpr": 1947,
       "form": 2014,
       "form_adj": 22,
@@ -3360,87 +3163,20 @@
       "walkover": 0.072,
       "weakest": 2013
      },
-     "p": 0.803,
-     "p_before": 0.588,
+     "p": 0.844,
+     "p_before": 0.822,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.998,
-     "p_standings": 0.803,
-     "rank": 4,
+     "p_play": 0.991,
+     "p_standings": 0.844,
+     "rank": 5,
      "status": "forecast"
     },
     "10813420": {
      "best4": [
-      1955,
-      1996,
-      2049
-     ],
-     "factors": {
-      "boost": "bubble",
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.001,
-        0.0
-       ],
-       [
-        0.025,
-        0.008
-       ],
-       [
-        0.132,
-        0.056
-       ],
-       [
-        0.319,
-        0.115
-       ],
-       [
-        0.36,
-        0.177
-       ],
-       [
-        0.163,
-        0.239
-       ]
-      ],
-      "entered": [
-       12,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 3.7,
-      "expected_tpr": 1927,
-      "form": 1904,
-      "form_adj": -8,
-      "group": "adults_open",
-      "group_adj": -9,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       4,
-       1949
-      ],
-      "p_improve": 0.557,
-      "rating": 1936,
-      "swing": 129,
-      "walkover": 0.062,
-      "weakest": 1895
-     },
-     "p": 0.147,
-     "p_before": 0.194,
-     "p_four": 1.0,
-     "p_junior_title": 0.0,
-     "p_play": 0.999,
-     "p_standings": 0.147,
-     "rank": 16,
-     "status": "forecast"
-    },
-    "10814850": {
-     "best4": [
-      1949,
-      1974,
-      2021
+      1957,
+      1979,
+      2023
      ],
      "factors": {
       "boost": "bubble",
@@ -3451,35 +3187,94 @@
         0.0
        ],
        [
+        0.083,
+        0.013
+       ],
+       [
+        0.286,
+        0.034
+       ],
+       [
+        0.41,
+        0.071
+       ],
+       [
+        0.214,
+        0.115
+       ]
+      ],
+      "entered": [
+       12,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 2.9,
+      "expected_tpr": 1903,
+      "form": 1911,
+      "form_adj": 3,
+      "group": "adults_open",
+      "group_adj": -9,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       4,
+       1957
+      ],
+      "p_improve": 0.453,
+      "rating": 1901,
+      "swing": 128,
+      "walkover": 0.06,
+      "weakest": 1909
+     },
+     "p": 0.065,
+     "p_before": 0.159,
+     "p_four": 1.0,
+     "p_junior_title": 0.0,
+     "p_play": 0.993,
+     "p_standings": 0.065,
+     "rank": 13,
+     "status": "forecast"
+    },
+    "10814850": {
+     "best4": [
+      1949,
+      1969,
+      2013
+     ],
+     "factors": {
+      "boost": "bubble",
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.016,
+        0.0
+       ],
+       [
+        0.176,
+        0.007
+       ],
+       [
+        0.399,
+        0.029
+       ],
+       [
+        0.32,
+        0.06
+       ],
+       [
         0.089,
-        0.004
-       ],
-       [
-        0.275,
-        0.021
-       ],
-       [
-        0.36,
-        0.051
-       ],
-       [
-        0.219,
-        0.084
-       ],
-       [
-        0.05,
-        0.121
+        0.123
        ]
       ],
       "entered": [
        9,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.0,
-      "expected_tpr": 1843,
-      "form": 1888,
-      "form_adj": 14,
+      "events_left": 4,
+      "expected_entries": 2.4,
+      "expected_tpr": 1851,
+      "form": 1857,
+      "form_adj": 1,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
@@ -3488,62 +3283,58 @@
        4,
        1949
       ],
-      "p_improve": 0.467,
-      "rating": 1830,
-      "swing": 146,
-      "walkover": 0.041,
+      "p_improve": 0.488,
+      "rating": 1851,
+      "swing": 145,
+      "walkover": 0.04,
       "weakest": 1848
      },
-     "p": 0.049,
-     "p_before": 0.072,
+     "p": 0.043,
+     "p_before": 0.052,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.993,
-     "p_standings": 0.049,
-     "rank": 15,
+     "p_play": 0.984,
+     "p_standings": 0.043,
+     "rank": 16,
      "status": "forecast"
     },
     "10815244": {
      "best4": [
       1819,
-      1857,
-      1928
+      1853,
+      1923
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.137,
-        0.024
+        0.145,
+        0.023
        ],
        [
-        0.4,
-        0.021
+        0.43,
+        0.026
        ],
        [
-        0.337,
-        0.028
+        0.333,
+        0.029
        ],
        [
-        0.112,
-        0.03
+        0.087,
+        0.04
        ],
        [
-        0.014,
-        0.03
-       ],
-       [
-        0.001,
-        0.0
+        0.004,
+        0.094
        ]
       ],
       "entered": [
        4,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.6,
+      "events_left": 4,
+      "expected_entries": 1.5,
       "expected_tpr": 1830,
       "form": 1763,
       "form_adj": -19,
@@ -3561,57 +3352,53 @@
       "walkover": 0.054,
       "weakest": 1722
      },
-     "p": 0.025,
-     "p_before": 0.018,
+     "p": 0.028,
+     "p_before": 0.029,
      "p_four": 1.0,
-     "p_junior_title": 0.024,
-     "p_play": 0.863,
+     "p_junior_title": 0.026,
+     "p_play": 0.855,
      "p_standings": 0.002,
      "p_title_entry": 0.28,
-     "rank": 26,
+     "rank": 29,
      "status": "forecast"
     },
     "10815406": {
      "best4": [
       1935,
-      1968,
-      2027
+      1955,
+      2013
      ],
      "factors": {
-      "boost": "bubble",
+      "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.051,
+        0.143,
         0.0
        ],
        [
-        0.242,
-        0.007
+        0.373,
+        0.011
        ],
        [
-        0.359,
-        0.05
+        0.342,
+        0.062
        ],
        [
-        0.253,
-        0.11
+        0.126,
+        0.12
        ],
        [
-        0.084,
-        0.174
-       ],
-       [
-        0.01,
-        0.264
+        0.016,
+        0.184
        ]
       ],
       "entered": [
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.2,
+      "events_left": 4,
+      "expected_entries": 1.6,
       "expected_tpr": 1883,
       "form": 1870,
       "form_adj": -5,
@@ -3629,47 +3416,43 @@
       "walkover": 0.038,
       "weakest": 1836
      },
-     "p": 0.065,
-     "p_before": 0.091,
+     "p": 0.043,
+     "p_before": 0.077,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.949,
-     "p_standings": 0.065,
+     "p_play": 0.857,
+     "p_standings": 0.043,
      "rank": 19,
      "status": "forecast"
     },
     "10816127": {
      "best4": [
       2086,
-      2120,
-      2177
+      2111,
+      2164
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.004,
+        0.012,
         1.0
        ],
        [
-        0.05,
+        0.112,
         1.0
        ],
        [
-        0.194,
+        0.337,
         1.0
        ],
        [
-        0.352,
+        0.386,
         1.0
        ],
        [
-        0.299,
-        1.0
-       ],
-       [
-        0.101,
+        0.154,
         1.0
        ]
       ],
@@ -3677,8 +3460,8 @@
        13,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.4,
+      "events_left": 4,
+      "expected_entries": 2.7,
       "expected_tpr": 1985,
       "form": 1994,
       "form_adj": 3,
@@ -3697,110 +3480,102 @@
       "weakest": 1988
      },
      "p": 1.0,
-     "p_before": 0.999,
+     "p_before": 1.0,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.996,
+     "p_play": 0.988,
      "p_standings": 1.0,
      "rank": 1,
      "status": "forecast"
     },
     "10816593": {
      "best4": [
-      1874,
-      1939,
-      2011
+      1922,
+      1966,
+      2023
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.105,
+        0.089,
         0.0
        ],
        [
-        0.33,
-        0.001
+        0.349,
+        0.009
        ],
        [
-        0.357,
-        0.03
+        0.372,
+        0.072
        ],
        [
-        0.168,
-        0.12
+        0.162,
+        0.177
        ],
        [
-        0.037,
-        0.235
-       ],
-       [
-        0.003,
-        0.232
+        0.028,
+        0.297
        ]
       ],
       "entered": [
-       6,
+       7,
        18
       ],
-      "events_left": 5,
+      "events_left": 4,
       "expected_entries": 1.8,
-      "expected_tpr": 1896,
-      "form": 1824,
-      "form_adj": -24,
+      "expected_tpr": 1902,
+      "form": 1857,
+      "form_adj": -15,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
       "near_lock_entry": 0.95,
       "now": [
        4,
-       1874
+       1922
       ],
-      "p_improve": 0.864,
-      "rating": 1921,
-      "swing": 143,
-      "walkover": 0.043,
-      "weakest": 1702
+      "p_improve": 0.758,
+      "rating": 1918,
+      "swing": 141,
+      "walkover": 0.041,
+      "weakest": 1783
      },
-     "p": 0.04,
-     "p_before": 0.041,
+     "p": 0.067,
+     "p_before": 0.047,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.895,
-     "p_standings": 0.04,
-     "rank": 22,
+     "p_play": 0.911,
+     "p_standings": 0.067,
+     "rank": 21,
      "status": "forecast"
     },
     "10817328": {
      "best4": [
-      1773,
-      1845,
-      1924
+      1768,
+      1842,
+      1920
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.457,
-        0.043
+        0.503,
+        0.046
        ],
        [
-        0.403,
+        0.391,
         0.044
        ],
        [
-        0.122,
+        0.097,
+        0.043
+       ],
+       [
+        0.009,
         0.045
-       ],
-       [
-        0.017,
-        0.067
-       ],
-       [
-        0.001,
-        0.211
        ],
        [
         0.0,
@@ -3811,7 +3586,7 @@
        3,
        18
       ],
-      "events_left": 5,
+      "events_left": 4,
       "expected_entries": 0.7,
       "expected_tpr": 1889,
       "form": 1792,
@@ -3831,59 +3606,55 @@
       "weakest": null
      },
      "p": 0.044,
-     "p_before": 0.043,
-     "p_four": 0.14,
-     "p_junior_title": 0.043,
-     "p_play": 0.543,
+     "p_before": 0.045,
+     "p_four": 0.107,
+     "p_junior_title": 0.044,
+     "p_play": 0.497,
      "p_standings": 0.0,
      "p_title_entry": 0.28,
-     "rank": 93,
+     "rank": 96,
      "status": "forecast"
     },
     "10818251": {
      "best4": [
-      1971,
-      2043,
-      2133
+      1943,
+      2010,
+      2080
      ],
      "factors": {
-      "boost": "bubble",
+      "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.043,
-        0.153
+        0.079,
+        0.09
        ],
        [
-        0.234,
-        0.36
+        0.363,
+        0.255
        ],
        [
-        0.398,
-        0.628
+        0.406,
+        0.475
        ],
        [
-        0.258,
-        0.801
+        0.141,
+        0.648
        ],
        [
-        0.062,
-        0.903
-       ],
-       [
-        0.005,
-        0.956
+        0.011,
+        0.79
        ]
       ],
       "entered": [
        6,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.5,
-      "expected_tpr": 1915,
+      "events_left": 4,
+      "expected_entries": 2.0,
+      "expected_tpr": 1856,
       "form": 1806,
-      "form_adj": -32,
+      "form_adj": -13,
       "group": "juniors_open",
       "group_adj": 4,
       "lift": 8,
@@ -3892,198 +3663,186 @@
        4,
        1943
       ],
-      "p_improve": 0.764,
-      "rating": 1935,
+      "p_improve": 0.717,
+      "rating": 1857,
       "swing": 183,
       "walkover": 0.169,
       "weakest": 1649
      },
-     "p": 0.608,
-     "p_before": 0.551,
+     "p": 0.393,
+     "p_before": 0.469,
      "p_four": 1.0,
-     "p_junior_title": 0.137,
-     "p_play": 0.957,
-     "p_standings": 0.543,
+     "p_junior_title": 0.092,
+     "p_play": 0.921,
+     "p_standings": 0.328,
      "p_title_entry": 0.613,
      "rank": 18,
      "status": "forecast"
     },
     "10818677": {
      "best4": [
-      1895,
-      1942,
-      2004
+      1868,
+      1916,
+      1972
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.091,
+        0.143,
         0.0
        ],
        [
-        0.296,
+        0.393,
         0.0
        ],
        [
-        0.359,
-        0.013
+        0.334,
+        0.009
        ],
        [
-        0.193,
-        0.058
+        0.116,
+        0.03
        ],
        [
-        0.055,
-        0.138
-       ],
-       [
-        0.005,
-        0.22
+        0.014,
+        0.077
        ]
       ],
       "entered": [
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.9,
-      "expected_tpr": 1955,
-      "form": 1939,
-      "form_adj": -5,
+      "events_left": 4,
+      "expected_entries": 1.5,
+      "expected_tpr": 1923,
+      "form": 1900,
+      "form_adj": -8,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
       "near_lock_entry": 0.95,
       "now": [
-       3,
-       1904
+       4,
+       1868
       ],
-      "p_improve": null,
-      "rating": 1961,
-      "swing": 128,
-      "walkover": 0.041,
-      "weakest": null
+      "p_improve": 0.847,
+      "rating": 1932,
+      "swing": 131,
+      "walkover": 0.04,
+      "weakest": 1761
      },
-     "p": 0.025,
-     "p_before": 0.017,
-     "p_four": 0.909,
+     "p": 0.007,
+     "p_before": 0.027,
+     "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.909,
-     "p_standings": 0.025,
-     "rank": 46,
+     "p_play": 0.857,
+     "p_standings": 0.007,
+     "rank": 25,
      "status": "forecast"
     },
     "10819649": {
      "best4": [
-      1761,
-      1818,
-      1891
+      1844,
+      1844,
+      1933
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.335,
-        0.018
+        0.466,
+        0.029
        ],
        [
-        0.424,
-        0.018
+        0.398,
+        0.035
        ],
        [
-        0.198,
-        0.018
+        0.12,
+        0.033
        ],
        [
-        0.038,
-        0.023
+        0.017,
+        0.051
        ],
        [
-        0.004,
-        0.022
-       ],
-       [
-        0.0,
+        0.001,
         0.0
        ]
       ],
       "entered": [
-       3,
+       4,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.0,
-      "expected_tpr": 1811,
-      "form": 1847,
-      "form_adj": 16,
+      "events_left": 4,
+      "expected_entries": 0.7,
+      "expected_tpr": 1851,
+      "form": 1870,
+      "form_adj": 10,
       "group": "juniors_open",
       "group_adj": 4,
       "lift": 8,
       "near_lock_entry": 0.95,
       "now": [
-       3,
-       1801
+       4,
+       1844
       ],
-      "p_improve": null,
-      "rating": 1783,
+      "p_improve": 0.831,
+      "rating": 1829,
       "swing": 162,
-      "walkover": 0.058,
-      "weakest": null
+      "walkover": 0.054,
+      "weakest": 1654
      },
-     "p": 0.018,
+     "p": 0.032,
      "p_before": 0.019,
-     "p_four": 0.665,
-     "p_junior_title": 0.018,
-     "p_play": 0.665,
-     "p_standings": 0.0,
+     "p_four": 1.0,
+     "p_junior_title": 0.031,
+     "p_play": 0.534,
+     "p_standings": 0.001,
      "p_title_entry": 0.28,
-     "rank": 50,
+     "rank": 26,
      "status": "forecast"
     },
     "10823425": {
      "best4": [
       1956,
-      1988,
-      2034
+      1983,
+      2026
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.01,
+        0.018,
         0.0
        ],
        [
-        0.091,
+        0.142,
         0.017
        ],
        [
-        0.295,
-        0.043
+        0.389,
+        0.054
        ],
        [
-        0.382,
-        0.09
+        0.389,
+        0.101
        ],
        [
-        0.198,
-        0.149
-       ],
-       [
-        0.025,
-        0.218
+        0.062,
+        0.16
        ]
       ],
       "entered": [
        9,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 3.2,
+      "events_left": 4,
+      "expected_entries": 2.7,
       "expected_tpr": 1924,
       "form": 1941,
       "form_adj": 5,
@@ -4101,59 +3860,55 @@
       "walkover": 0.13,
       "weakest": 1895
      },
-     "p": 0.084,
-     "p_before": 0.13,
+     "p": 0.073,
+     "p_before": 0.093,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.99,
-     "p_standings": 0.084,
-     "rank": 14,
+     "p_play": 0.982,
+     "p_standings": 0.073,
+     "rank": 15,
      "status": "forecast"
     },
     "10823875": {
      "best4": [
       2025,
-      2041,
-      2085
+      2039,
+      2081
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.0,
-        1.0
+        0.001,
+        0.8
        ],
        [
-        0.002,
-        0.543
+        0.014,
+        0.724
        ],
        [
-        0.022,
-        0.57
+        0.108,
+        0.687
        ],
        [
-        0.142,
-        0.596
+        0.395,
+        0.704
        ],
        [
-        0.403,
-        0.615
-       ],
-       [
-        0.431,
-        0.633
+        0.483,
+        0.722
        ]
       ],
       "entered": [
        17,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 4.3,
-      "expected_tpr": 1874,
-      "form": 1856,
-      "form_adj": -6,
+      "events_left": 4,
+      "expected_entries": 3.4,
+      "expected_tpr": 1890,
+      "form": 1893,
+      "form_adj": 1,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
@@ -4162,66 +3917,62 @@
        4,
        2025
       ],
-      "p_improve": 0.288,
-      "rating": 1881,
-      "swing": 135,
+      "p_improve": 0.326,
+      "rating": 1890,
+      "swing": 134,
       "walkover": 0.024,
       "weakest": 1950
      },
-     "p": 0.619,
-     "p_before": 0.721,
+     "p": 0.711,
+     "p_before": 0.664,
      "p_four": 1.0,
      "p_junior_title": 0.0,
      "p_play": 1.0,
-     "p_standings": 0.619,
-     "rank": 6,
+     "p_standings": 0.711,
+     "rank": 7,
      "status": "forecast"
     },
     "10824014": {
-     "rank": 79,
+     "rank": 82,
      "status": "kenya1"
     },
     "10824065": {
      "best4": [
-      1816,
-      1877,
-      1936
+      1814,
+      1874,
+      1933
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.236,
-        0.01
-       ],
-       [
-        0.443,
+        0.248,
         0.012
        ],
        [
-        0.252,
+        0.463,
         0.013
        ],
        [
-        0.062,
-        0.015
+        0.241,
+        0.011
        ],
        [
-        0.006,
-        0.023
+        0.047,
+        0.014
        ],
        [
-        0.0,
-        0.0
+        0.002,
+        0.026
        ]
       ],
       "entered": [
        4,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.6,
+      "events_left": 4,
+      "expected_entries": 1.5,
       "expected_tpr": 1800,
       "form": 1950,
       "form_adj": 50,
@@ -4240,34 +3991,27 @@
       "weakest": null
      },
      "p": 0.012,
-     "p_before": 0.019,
-     "p_four": 0.321,
+     "p_before": 0.015,
+     "p_four": 0.289,
      "p_junior_title": 0.012,
-     "p_play": 0.764,
+     "p_play": 0.752,
      "p_standings": 0.0,
      "p_title_entry": 0.28,
-     "rank": 80,
-     "status": "forecast"
-    },
-    "10824421": {
-     "best4_now": 1647,
-     "p": 0.0,
-     "p_before": 0.0,
-     "rank": 36,
+     "rank": 83,
      "status": "forecast"
     },
     "10825606": {
      "best4_now": 1651,
      "p": 0.0,
      "p_before": 0.0,
-     "rank": 35,
+     "rank": 40,
      "status": "forecast"
     },
     "10827382": {
      "best4": [
-      1887,
-      1924,
-      1971
+      1898,
+      1918,
+      1960
      ],
      "factors": {
       "boost": null,
@@ -4278,90 +4022,82 @@
         0.0
        ],
        [
-        0.223,
+        0.246,
         0.0
        ],
        [
-        0.402,
-        0.0
+        0.434,
+        0.001
        ],
        [
-        0.271,
-        0.005
+        0.255,
+        0.004
        ],
        [
-        0.074,
-        0.007
-       ],
-       [
-        0.006,
-        0.018
+        0.04,
+        0.01
        ]
       ],
       "entered": [
-       7,
+       8,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.3,
-      "expected_tpr": 1875,
-      "form": 1902,
-      "form_adj": 9,
+      "events_left": 4,
+      "expected_entries": 2.1,
+      "expected_tpr": 1862,
+      "form": 1862,
+      "form_adj": 0,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
       "near_lock_entry": 0.95,
       "now": [
        4,
-       1882
+       1898
       ],
-      "p_improve": 0.746,
-      "rating": 1867,
-      "swing": 121,
-      "walkover": 0.043,
-      "weakest": 1778
+      "p_improve": 0.538,
+      "rating": 1863,
+      "swing": 118,
+      "walkover": 0.041,
+      "weakest": 1843
      },
      "p": 0.002,
-     "p_before": 0.005,
+     "p_before": 0.002,
      "p_four": 1.0,
      "p_junior_title": 0.0,
      "p_play": 0.975,
      "p_standings": 0.002,
-     "rank": 21,
+     "rank": 22,
      "status": "forecast"
     },
     "10830618": {
      "best4": [
       1831,
-      1847,
-      1888
+      1841,
+      1879
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.026,
+        0.028,
         0.0
        ],
        [
-        0.235,
+        0.27,
         0.0
        ],
        [
-        0.412,
+        0.452,
         0.0
        ],
        [
-        0.269,
+        0.231,
         0.0
        ],
        [
-        0.055,
-        0.0
-       ],
-       [
-        0.003,
+        0.02,
         0.0
        ]
       ],
@@ -4369,11 +4105,11 @@
        6,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.2,
-      "expected_tpr": 1785,
+      "events_left": 4,
+      "expected_entries": 2.0,
+      "expected_tpr": 1770,
       "form": 1807,
-      "form_adj": 7,
+      "form_adj": 12,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
@@ -4382,8 +4118,8 @@
        4,
        1831
       ],
-      "p_improve": 0.479,
-      "rating": 1779,
+      "p_improve": 0.436,
+      "rating": 1759,
       "swing": 127,
       "walkover": 0.048,
       "weakest": 1784
@@ -4392,55 +4128,51 @@
      "p_before": 0.0,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.974,
+     "p_play": 0.972,
      "p_standings": 0.0,
-     "rank": 25,
+     "rank": 28,
      "status": "forecast"
     },
     "10831029": {
      "best4": [
       2042,
-      2091,
-      2151
+      2085,
+      2141
      ],
      "factors": {
-      "boost": null,
+      "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.016,
-        0.702
+        0.009,
+        0.859
        ],
        [
-        0.17,
-        0.902
+        0.11,
+        0.944
        ],
        [
-        0.398,
-        0.964
+        0.387,
+        0.974
        ],
        [
-        0.33,
-        0.986
+        0.439,
+        0.989
        ],
        [
-        0.082,
-        0.993
-       ],
-       [
-        0.006,
-        0.982
+        0.055,
+        0.995
        ]
       ],
       "entered": [
        7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.4,
-      "expected_tpr": 2040,
+      "events_left": 4,
+      "expected_entries": 2.5,
+      "expected_tpr": 2020,
       "form": 1948,
-      "form_adj": -27,
+      "form_adj": -20,
       "group": "juniors_open",
       "group_adj": 4,
       "lift": 8,
@@ -4449,66 +4181,62 @@
        4,
        2035
       ],
-      "p_improve": 0.728,
-      "rating": 2055,
+      "p_improve": 0.686,
+      "rating": 2028,
       "swing": 144,
       "walkover": 0.04,
       "weakest": 1935
      },
-     "p": 0.959,
-     "p_before": 0.58,
+     "p": 0.978,
+     "p_before": 0.958,
      "p_four": 1.0,
-     "p_junior_title": 0.13,
-     "p_play": 0.984,
-     "p_standings": 0.951,
+     "p_junior_title": 0.12,
+     "p_play": 0.992,
+     "p_standings": 0.974,
      "p_title_entry": 0.28,
-     "rank": 3,
+     "rank": 4,
      "status": "forecast"
     },
     "10831533": {
      "best4": [
       2029,
-      2067,
-      2119
+      2072,
+      2124
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.099,
-        0.524
+        0.102,
+        0.698
        ],
        [
-        0.347,
-        0.849
+        0.379,
+        0.916
        ],
        [
-        0.358,
-        0.935
+        0.369,
+        0.975
        ],
        [
-        0.164,
-        0.967
+        0.135,
+        0.991
        ],
        [
-        0.03,
-        0.982
-       ],
-       [
-        0.003,
-        1.0
+        0.015,
+        0.997
        ]
       ],
       "entered": [
        4,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.8,
-      "expected_tpr": 2009,
+      "events_left": 4,
+      "expected_entries": 1.7,
+      "expected_tpr": 2032,
       "form": 2043,
-      "form_adj": 15,
+      "form_adj": 8,
       "group": "juniors_open",
       "group_adj": 4,
       "lift": 8,
@@ -4517,197 +4245,185 @@
        4,
        2029
       ],
-      "p_improve": 0.714,
-      "rating": 1982,
+      "p_improve": 0.755,
+      "rating": 2012,
       "swing": 152,
       "walkover": 0.054,
       "weakest": 1900
      },
-     "p": 0.871,
-     "p_before": 0.852,
+     "p": 0.927,
+     "p_before": 0.919,
      "p_four": 1.0,
-     "p_junior_title": 0.27,
-     "p_play": 0.901,
-     "p_standings": 0.813,
+     "p_junior_title": 0.32,
+     "p_play": 0.897,
+     "p_standings": 0.883,
      "p_title_entry": 0.613,
-     "rank": 5,
+     "rank": 6,
      "status": "forecast"
     },
     "10831940": {
      "best4": [
-      1999,
-      2039,
-      2091
-     ],
-     "factors": {
-      "boost": "bubble",
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.008,
-        0.0
-       ],
-       [
-        0.097,
-        0.221
-       ],
-       [
-        0.3,
-        0.435
-       ],
-       [
-        0.395,
-        0.601
-       ],
-       [
-        0.179,
-        0.716
-       ],
-       [
-        0.02,
-        0.807
-       ]
-      ],
-      "entered": [
-       7,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 2.8,
-      "expected_tpr": 1982,
-      "form": 2008,
-      "form_adj": 8,
-      "group": "adults_open",
-      "group_adj": -9,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       4,
-       1972
-      ],
-      "p_improve": 0.834,
-      "rating": 1975,
-      "swing": 130,
-      "walkover": 0.041,
-      "weakest": 1830
-     },
-     "p": 0.534,
-     "p_before": 0.638,
-     "p_four": 1.0,
-     "p_junior_title": 0.0,
-     "p_play": 0.992,
-     "p_standings": 0.534,
-     "rank": 11,
-     "status": "forecast"
-    },
-    "10833625": {
-     "best4": [
-      1835,
-      1849,
-      1906
+      2048,
+      2075,
+      2113
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.299,
-        0.0
+        0.025,
+        0.974
        ],
        [
-        0.421,
-        0.0
+        0.269,
+        0.986
        ],
        [
-        0.222,
-        0.0
+        0.446,
+        0.991
        ],
        [
-        0.052,
-        0.0
+        0.237,
+        0.993
        ],
        [
-        0.006,
-        0.0
-       ],
-       [
-        0.0,
-        0.0
+        0.022,
+        0.995
        ]
       ],
       "entered": [
-       5,
+       7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.2,
-      "expected_tpr": 1802,
-      "form": 1814,
-      "form_adj": 4,
+      "events_left": 4,
+      "expected_entries": 2.0,
+      "expected_tpr": 2002,
+      "form": 2058,
+      "form_adj": 18,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
       "near_lock_entry": 0.95,
       "now": [
        4,
-       1835
+       2048
       ],
-      "p_improve": 0.668,
-      "rating": 1799,
-      "swing": 135,
-      "walkover": 0.098,
-      "weakest": 1711
+      "p_improve": 0.627,
+      "rating": 1985,
+      "swing": 129,
+      "walkover": 0.04,
+      "weakest": 1949
+     },
+     "p": 0.99,
+     "p_before": 0.52,
+     "p_four": 1.0,
+     "p_junior_title": 0.0,
+     "p_play": 0.975,
+     "p_standings": 0.99,
+     "rank": 3,
+     "status": "forecast"
+    },
+    "10833625": {
+     "best4": [
+      1880,
+      1880,
+      1922
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.429,
+        0.0
+       ],
+       [
+        0.409,
+        0.0
+       ],
+       [
+        0.141,
+        0.001
+       ],
+       [
+        0.019,
+        0.0
+       ],
+       [
+        0.001,
+        0.0
+       ]
+      ],
+      "entered": [
+       6,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 0.8,
+      "expected_tpr": 1831,
+      "form": 1828,
+      "form_adj": -2,
+      "group": "adults_open",
+      "group_adj": -9,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       4,
+       1880
+      ],
+      "p_improve": 0.521,
+      "rating": 1834,
+      "swing": 134,
+      "walkover": 0.093,
+      "weakest": 1805
      },
      "p": 0.0,
      "p_before": 0.0,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.701,
+     "p_play": 0.571,
      "p_standings": 0.0,
      "rank": 24,
      "status": "forecast"
     },
     "10835083": {
      "best4": [
-      2000,
-      2044,
-      2095
+      1985,
+      2031,
+      2079
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
+        0.091,
+        0.003
+       ],
+       [
+        0.352,
+        0.385
+       ],
+       [
+        0.375,
+        0.613
+       ],
+       [
+        0.157,
+        0.741
+       ],
+       [
         0.025,
-        0.0
-       ],
-       [
-        0.164,
-        0.337
-       ],
-       [
-        0.348,
-        0.55
-       ],
-       [
-        0.312,
-        0.696
-       ],
-       [
-        0.129,
-        0.781
-       ],
-       [
-        0.021,
-        0.844
+        0.841
        ]
       ],
       "entered": [
-       8,
+       7,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.7,
+      "events_left": 4,
+      "expected_entries": 1.8,
       "expected_tpr": 1910,
       "form": 2010,
       "form_adj": 33,
@@ -4725,124 +4441,59 @@
       "walkover": 0.093,
       "weakest": 1765
      },
-     "p": 0.583,
-     "p_before": 0.647,
+     "p": 0.503,
+     "p_before": 0.563,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.975,
-     "p_standings": 0.583,
-     "rank": 9,
+     "p_play": 0.909,
+     "p_standings": 0.503,
+     "rank": 10,
      "status": "forecast"
     },
     "10836012": {
-     "best4": [
-      1799,
-      1840,
-      1905
-     ],
-     "factors": {
-      "boost": null,
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.015,
-        0.044
-       ],
-       [
-        0.147,
-        0.038
-       ],
-       [
-        0.366,
-        0.037
-       ],
-       [
-        0.337,
-        0.037
-       ],
-       [
-        0.125,
-        0.04
-       ],
-       [
-        0.01,
-        0.034
-       ]
-      ],
-      "entered": [
-       8,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 2.5,
-      "expected_tpr": 1801,
-      "form": 1760,
-      "form_adj": -10,
-      "group": "juniors_open",
-      "group_adj": 4,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       4,
-       1799
-      ],
-      "p_improve": 0.58,
-      "rating": 1799,
-      "swing": 161,
-      "walkover": 0.04,
-      "weakest": 1757
-     },
-     "p": 0.037,
-     "p_before": 0.039,
-     "p_four": 1.0,
-     "p_junior_title": 0.037,
-     "p_play": 0.985,
-     "p_standings": 0.001,
-     "p_title_entry": 0.613,
-     "rank": 29,
+     "best4_now": 1799,
+     "p": 0.0,
+     "p_before": 0.0,
+     "rank": 32,
      "status": "forecast"
     },
     "10842357": {
      "best4": [
-      2024,
-      2076,
-      2141
+      2022,
+      2071,
+      2132
      ],
      "factors": {
       "boost": "bubble",
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.006,
-        0.185
+        0.007,
+        0.373
        ],
        [
-        0.071,
-        0.579
+        0.092,
+        0.682
        ],
        [
-        0.295,
-        0.808
+        0.364,
+        0.85
        ],
        [
-        0.421,
-        0.895
+        0.468,
+        0.93
        ],
        [
-        0.186,
-        0.946
-       ],
-       [
-        0.02,
-        0.975
+        0.069,
+        0.963
        ]
       ],
       "entered": [
        8,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.9,
+      "events_left": 4,
+      "expected_entries": 2.6,
       "expected_tpr": 2005,
       "form": 1935,
       "form_adj": -19,
@@ -4860,45 +4511,169 @@
       "walkover": 0.04,
       "weakest": 1906
      },
-     "p": 0.853,
-     "p_before": 0.903,
+     "p": 0.876,
+     "p_before": 0.877,
      "p_four": 1.0,
-     "p_junior_title": 0.103,
-     "p_play": 0.994,
-     "p_standings": 0.833,
+     "p_junior_title": 0.112,
+     "p_play": 0.993,
+     "p_standings": 0.857,
      "p_title_entry": 0.28,
-     "rank": 7,
+     "rank": 8,
      "status": "forecast"
     },
     "10842810": {
      "best4": [
       1766,
-      1791,
-      1849
+      1786,
+      1847
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.226,
-        0.008
+        0.313,
+        0.017
        ],
        [
-        0.403,
+        0.441,
+        0.014
+       ],
+       [
+        0.205,
         0.009
        ],
        [
-        0.271,
-        0.007
+        0.038,
+        0.026
        ],
        [
-        0.086,
-        0.015
+        0.002,
+        0.023
+       ]
+      ],
+      "entered": [
+       5,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 1.1,
+      "expected_tpr": 1787,
+      "form": 1781,
+      "form_adj": 2,
+      "group": "juniors_open",
+      "group_adj": 4,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       4,
+       1766
+      ],
+      "p_improve": 0.691,
+      "rating": 1773,
+      "swing": 157,
+      "walkover": 0.117,
+      "weakest": 1660
+     },
+     "p": 0.014,
+     "p_before": 0.014,
+     "p_four": 1.0,
+     "p_junior_title": 0.014,
+     "p_play": 0.687,
+     "p_standings": 0.0,
+     "p_title_entry": 0.28,
+     "rank": 34,
+     "status": "forecast"
+    },
+    "10842853": {
+     "best4": [
+      1803,
+      1847,
+      1904
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.031,
+        0.041
        ],
        [
-        0.014,
-        0.014
+        0.224,
+        0.035
+       ],
+       [
+        0.435,
+        0.034
+       ],
+       [
+        0.282,
+        0.036
+       ],
+       [
+        0.029,
+        0.029
+       ]
+      ],
+      "entered": [
+       9,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 2.2,
+      "expected_tpr": 1790,
+      "form": 1726,
+      "form_adj": -17,
+      "group": "juniors_open",
+      "group_adj": 4,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       4,
+       1803
+      ],
+      "p_improve": 0.662,
+      "rating": 1795,
+      "swing": 156,
+      "walkover": 0.081,
+      "weakest": 1695
+     },
+     "p": 0.035,
+     "p_before": 0.037,
+     "p_four": 1.0,
+     "p_junior_title": 0.035,
+     "p_play": 0.969,
+     "p_standings": 0.0,
+     "p_title_entry": 0.613,
+     "rank": 31,
+     "status": "forecast"
+    },
+    "10843612": {
+     "best4": [
+      1842,
+      1842,
+      1866
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.324,
+        0.0
+       ],
+       [
+        0.464,
+        0.0
+       ],
+       [
+        0.182,
+        0.0
+       ],
+       [
+        0.028,
+        0.0
        ],
        [
         0.001,
@@ -4909,154 +4684,11 @@
        5,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 1.4,
-      "expected_tpr": 1763,
-      "form": 1781,
-      "form_adj": 10,
-      "group": "juniors_open",
-      "group_adj": 4,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       4,
-       1766
-      ],
-      "p_improve": 0.65,
-      "rating": 1741,
-      "swing": 157,
-      "walkover": 0.117,
-      "weakest": 1660
-     },
-     "p": 0.009,
-     "p_before": 0.01,
-     "p_four": 1.0,
-     "p_junior_title": 0.009,
-     "p_play": 0.774,
-     "p_standings": 0.0,
-     "p_title_entry": 0.28,
-     "rank": 31,
-     "status": "forecast"
-    },
-    "10842853": {
-     "best4": [
-      1810,
-      1861,
-      1927
-     ],
-     "factors": {
-      "boost": null,
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.023,
-        0.058
-       ],
-       [
-        0.185,
-        0.045
-       ],
-       [
-        0.388,
-        0.042
-       ],
-       [
-        0.305,
-        0.046
-       ],
-       [
-        0.092,
-        0.061
-       ],
-       [
-        0.008,
-        0.051
-       ]
-      ],
-      "entered": [
-       9,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 2.5,
-      "expected_tpr": 1816,
-      "form": 1726,
-      "form_adj": -26,
-      "group": "juniors_open",
-      "group_adj": 4,
-      "lift": 8,
-      "near_lock_entry": 0.95,
-      "now": [
-       4,
-       1803
-      ],
-      "p_improve": 0.709,
-      "rating": 1830,
-      "swing": 156,
-      "walkover": 0.081,
-      "weakest": 1695
-     },
-     "p": 0.046,
-     "p_before": 0.044,
-     "p_four": 1.0,
-     "p_junior_title": 0.044,
-     "p_play": 0.977,
-     "p_standings": 0.002,
-     "p_title_entry": 0.613,
-     "rank": 28,
-     "status": "forecast"
-    },
-    "10842870": {
-     "best4_now": 1609,
-     "p": 0.0,
-     "p_before": 0.0,
-     "rank": 38,
-     "status": "forecast"
-    },
-    "10843612": {
-     "best4": [
-      1842,
-      1842,
-      1871
-     ],
-     "factors": {
-      "boost": null,
-      "bubble_factor": 1.25,
-      "by_new": [
-       [
-        0.287,
-        0.0
-       ],
-       [
-        0.444,
-        0.0
-       ],
-       [
-        0.217,
-        0.0
-       ],
-       [
-        0.047,
-        0.0
-       ],
-       [
-        0.005,
-        0.0
-       ],
-       [
-        0.0,
-        0.0
-       ]
-      ],
-      "entered": [
-       5,
-       18
-      ],
-      "events_left": 5,
-      "expected_entries": 1.1,
-      "expected_tpr": 1772,
+      "events_left": 4,
+      "expected_entries": 1.0,
+      "expected_tpr": 1762,
       "form": 1852,
-      "form_adj": 26,
+      "form_adj": 30,
       "group": "adults_open",
       "group_adj": -9,
       "lift": 8,
@@ -5065,8 +4697,8 @@
        4,
        1842
       ],
-      "p_improve": 0.334,
-      "rating": 1747,
+      "p_improve": 0.307,
+      "rating": 1733,
       "swing": 120,
       "walkover": 0.054,
       "weakest": 1819
@@ -5075,43 +4707,39 @@
      "p_before": 0.0,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.713,
+     "p_play": 0.676,
      "p_standings": 0.0,
-     "rank": 23,
+     "rank": 27,
      "status": "forecast"
     },
     "10843981": {
      "best4": [
-      1812,
-      1864,
-      1929
+      1810,
+      1842,
+      1892
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.052,
+        0.055,
         0.0
        ],
        [
-        0.272,
+        0.307,
         0.0
        ],
        [
-        0.385,
+        0.408,
         0.0
        ],
        [
-        0.226,
+        0.199,
         0.0
        ],
        [
-        0.059,
-        0.0
-       ],
-       [
-        0.006,
+        0.031,
         0.0
        ]
       ],
@@ -5119,11 +4747,11 @@
        6,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 2.0,
-      "expected_tpr": 1837,
+      "events_left": 4,
+      "expected_entries": 1.9,
+      "expected_tpr": 1786,
       "form": 1749,
-      "form_adj": -31,
+      "form_adj": -14,
       "group": "women_open",
       "group_adj": -12,
       "lift": 8,
@@ -5132,8 +4760,8 @@
        4,
        1810
       ],
-      "p_improve": 0.83,
-      "rating": 1872,
+      "p_improve": 0.71,
+      "rating": 1804,
       "swing": 118,
       "walkover": 0.012,
       "weakest": 1715
@@ -5142,73 +4770,126 @@
      "p_before": 0.0,
      "p_four": 1.0,
      "p_junior_title": 0.0,
-     "p_play": 0.948,
+     "p_play": 0.945,
      "p_standings": 0.0,
-     "rank": 27,
+     "rank": 30,
      "status": "forecast"
     },
-    "10847979": {
-     "best4_now": 1740,
-     "p": 0.0,
-     "p_before": 0.0,
-     "rank": 32,
-     "status": "forecast"
-    },
-    "10848533": {
-     "best4_now": 1700,
-     "p": 0.0,
-     "p_before": 0.0,
-     "rank": 33,
-     "status": "forecast"
-    },
-    "10857630": {
-     "best4_now": 1540,
-     "p": 0.0,
-     "p_before": 0.0,
-     "rank": 39,
-     "status": "forecast"
-    },
-    "10882359": {
+    "10844716": {
      "best4": [
-      1774,
-      1862,
-      1941
+      1765,
+      1840,
+      1916
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.359,
-        0.032
+        0.676,
+        0.012
        ],
        [
-        0.432,
-        0.031
+        0.293,
+        0.012
        ],
        [
-        0.177,
-        0.028
+        0.03,
+        0.01
        ],
        [
-        0.029,
-        0.036
-       ],
-       [
-        0.003,
-        0.04
+        0.001,
+        0.0
        ],
        [
         0.0,
-        0.0
+        null
+       ]
+      ],
+      "entered": [
+       2,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 0.4,
+      "expected_tpr": 1752,
+      "form": 1930,
+      "form_adj": 64,
+      "group": "juniors_open",
+      "group_adj": 4,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       2,
+       1934
+      ],
+      "p_improve": null,
+      "rating": 1676,
+      "swing": 168,
+      "walkover": 0.067,
+      "weakest": null
+     },
+     "p": 0.012,
+     "p_before": 0.012,
+     "p_four": 0.031,
+     "p_junior_title": 0.012,
+     "p_play": 0.324,
+     "p_standings": 0.0,
+     "p_title_entry": 0.28,
+     "rank": 85,
+     "status": "forecast"
+    },
+    "10847979": {
+     "best4_now": 1745,
+     "p": 0.0,
+     "p_before": 0.0,
+     "rank": 35,
+     "status": "forecast"
+    },
+    "10848533": {
+     "best4_now": 1700,
+     "p": 0.0,
+     "p_before": 0.0,
+     "rank": 37,
+     "status": "forecast"
+    },
+    "10882359": {
+     "best4": [
+      1775,
+      1859,
+      1945
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.393,
+        0.034
+       ],
+       [
+        0.433,
+        0.035
+       ],
+       [
+        0.151,
+        0.035
+       ],
+       [
+        0.022,
+        0.046
+       ],
+       [
+        0.001,
+        0.083
        ]
       ],
       "entered": [
        3,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 0.9,
+      "events_left": 4,
+      "expected_entries": 0.8,
       "expected_tpr": 1864,
       "form": 1825,
       "form_adj": -9,
@@ -5226,64 +4907,116 @@
       "walkover": 0.054,
       "weakest": null
      },
-     "p": 0.031,
+     "p": 0.035,
      "p_before": 0.034,
-     "p_four": 0.032,
-     "p_junior_title": 0.031,
-     "p_play": 0.641,
+     "p_four": 0.022,
+     "p_junior_title": 0.035,
+     "p_play": 0.607,
      "p_standings": 0.0,
      "p_title_entry": 0.28,
-     "rank": 181,
+     "rank": 188,
      "status": "forecast"
     },
-    "10890688": {
-     "best4_now": 1643,
-     "p": 0.0,
-     "p_before": 0.0,
-     "rank": 37,
-     "status": "forecast"
-    },
-    "554003997": {
+    "10895418": {
      "best4": [
-      1770,
-      1842,
-      1918
+      1729,
+      1749,
+      1801
      ],
      "factors": {
       "boost": null,
       "bubble_factor": 1.25,
       "by_new": [
        [
-        0.53,
-        0.027
-       ],
-       [
-        0.363,
-        0.031
-       ],
-       [
-        0.094,
-        0.025
-       ],
-       [
-        0.012,
-        0.03
-       ],
-       [
-        0.001,
+        0.223,
         0.0
        ],
        [
+        0.464,
+        0.0
+       ],
+       [
+        0.259,
+        0.0
+       ],
+       [
+        0.051,
+        0.0
+       ],
+       [
+        0.002,
+        0.0
+       ]
+      ],
+      "entered": [
+       4,
+       18
+      ],
+      "events_left": 4,
+      "expected_entries": 1.2,
+      "expected_tpr": 1760,
+      "form": 1718,
+      "form_adj": -15,
+      "group": "adults_open",
+      "group_adj": -9,
+      "lift": 8,
+      "near_lock_entry": 0.95,
+      "now": [
+       4,
+       1729
+      ],
+      "p_improve": 0.686,
+      "rating": 1776,
+      "swing": 134,
+      "walkover": 0.058,
+      "weakest": 1675
+     },
+     "p": 0.0,
+     "p_before": 0.0,
+     "p_four": 1.0,
+     "p_junior_title": 0.0,
+     "p_play": 0.777,
+     "p_standings": 0.0,
+     "rank": 36,
+     "status": "forecast"
+    },
+    "554003997": {
+     "best4": [
+      1769,
+      1838,
+      1912
+     ],
+     "factors": {
+      "boost": null,
+      "bubble_factor": 1.25,
+      "by_new": [
+       [
+        0.579,
+        0.028
+       ],
+       [
+        0.346,
+        0.032
+       ],
+       [
+        0.069,
+        0.033
+       ],
+       [
+        0.005,
+        0.018
+       ],
+       [
         0.0,
-        null
+        0.0
        ]
       ],
       "entered": [
        2,
        18
       ],
-      "events_left": 5,
-      "expected_entries": 0.6,
+      "events_left": 4,
+      "expected_entries": 0.5,
       "expected_tpr": 1844,
       "form": null,
       "form_adj": 0,
@@ -5301,47 +5034,35 @@
       "walkover": 0.072,
       "weakest": null
      },
-     "p": 0.028,
-     "p_before": 0.03,
-     "p_four": 0.106,
-     "p_junior_title": 0.028,
-     "p_play": 0.47,
+     "p": 0.03,
+     "p_before": 0.031,
+     "p_four": 0.075,
+     "p_junior_title": 0.03,
+     "p_play": 0.421,
      "p_standings": 0.0,
      "p_title_entry": 0.28,
-     "rank": 89,
+     "rank": 92,
      "status": "forecast"
     },
     "554016827": {
      "best4_now": 1672,
      "p": 0.0,
      "p_before": 0.0,
-     "rank": 34,
-     "status": "forecast"
-    },
-    "554017920": {
-     "best4_now": 1534,
-     "p": 0.0,
-     "p_before": 0.0,
-     "rank": 40,
+     "rank": 39,
      "status": "forecast"
     }
    }
   }
  },
  "fingerprint": {
-  "data": "6c93cdc44ec7395c",
-  "events": "4fadf50a09031095",
+  "data": "905a400d65f5f086",
+  "events": "1cb37707fd59287d",
   "fide_bio": "858e94ad6545280d",
   "model": "76ce3cd92dc57158",
   "qualifiers": "4c9846cec9ecea45",
   "season": 2026
  },
  "remaining": [
-  {
-   "id": "mombasa-open-2026",
-   "name": "Mombasa Open",
-   "start_date": "2026-10-09"
-  },
   {
    "id": "kenya-open-2026",
    "name": "KCB Kenya Open",
@@ -5388,6 +5109,8 @@
   "1483832_ladies": 51,
   "1498298": 61,
   "1498300_ladies": 28,
-  "1504505": 56
+  "1504505": 56,
+  "1513412": 36,
+  "1513412_ladies": 27
  }
 }
