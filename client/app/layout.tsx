@@ -5,6 +5,7 @@ import {
   Archivo,
   Source_Serif_4,
   JetBrains_Mono,
+  Archivo_Black,
 } from 'next/font/google'
 import './globals.css'
 import './themes.css'
@@ -44,6 +45,12 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
   preload: false,
 })
+const archivoBlack = Archivo_Black({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-archivo-black',
+  preload: false,
+})
 
 const fontVariables = [
   inter,
@@ -51,6 +58,7 @@ const fontVariables = [
   archivo,
   sourceSerif,
   jetbrainsMono,
+  archivoBlack,
 ]
   .map(f => f.variable)
   .join(' ')

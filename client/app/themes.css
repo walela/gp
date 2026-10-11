@@ -645,8 +645,9 @@ html[data-theme] [data-upcoming-card] a.bg-blue-100:hover {
 
 /* ============================================================
    THEME: Brutalist (raw)
-   Monospace everywhere, an exposed grid, hard black rules, no
-   radius or shadow, and one safety-orange accent.
+   Heavy grotesk headings, a plain grotesk for names and prose,
+   mono for figures and labels. Two stroke weights: 2px frames,
+   1px inner grid. Orange marks the current selection only.
    ============================================================ */
 html[data-theme='brutalist'] {
   --t-bg: #ffffff;
@@ -673,8 +674,9 @@ html[data-theme='brutalist'] {
   --t-border-w: 2px;
   --t-shadow: none;
   --t-shadow-lg: none;
-  --t-font: var(--font-jetbrains-mono), ui-monospace, 'SF Mono', Menlo, monospace;
-  --t-font-head: var(--t-font);
+  --t-font: var(--font-archivo), 'Helvetica Neue', Arial, sans-serif;
+  --t-font-head: var(--font-archivo-black), 'Arial Black', Impact, sans-serif;
+  --t-mono: var(--font-jetbrains-mono), ui-monospace, 'SF Mono', Menlo, monospace;
 }
 html[data-theme='brutalist'] ::selection {
   background: #ff4f00;
@@ -686,66 +688,129 @@ html[data-theme='brutalist'] :focus-visible {
 }
 html[data-theme='brutalist'] :is(h1, h2, h3) {
   text-transform: uppercase;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+  line-height: 1;
 }
-/* Section labels get a solid orange block */
 html[data-theme='brutalist'] h2::before {
   content: '';
   display: inline-block;
   width: 0.62em;
   height: 0.62em;
   margin-right: 0.5em;
-  background: #ff4f00;
+  background: #000;
   vertical-align: 0.02em;
 }
+/* Figures, labels and chips in mono */
+html[data-theme='brutalist']
+  :is(.tabular-nums, tbody th[scope='row'], thead, [data-rank-movement], input,
+      .rounded-full, [data-upcoming-card] .text-xs, time) {
+  font-family: var(--t-mono) !important;
+}
 
-/* Header: white bar, 3px rule, inverted wordmark */
+/* Header: white bar, 2px rule, inverted wordmark */
 html[data-theme='brutalist'] header {
   border-bottom-width: 0 !important;
   box-shadow: none !important;
 }
 html[data-theme='brutalist'] header [data-slot='separator-root'] {
   background-color: #000 !important;
-  height: 3px !important;
+  height: 2px !important;
 }
 html[data-theme='brutalist'] header [data-brand] span {
   background: #000;
   color: #fff !important;
   padding: 3px 8px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-family: var(--t-font-head) !important;
+  font-weight: 400;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 html[data-theme='brutalist'] header a::after {
   background-color: #ff4f00 !important;
 }
+html[data-theme='brutalist'] header a[href='/admin'] {
+  background: #fff !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+}
+html[data-theme='brutalist'] header a[href='/admin'] * {
+  color: #000 !important;
+  background-color: #000 !important;
+}
+html[data-theme='brutalist'] header a[href='/admin'] :is(span, svg):not(:empty) {
+  background-color: transparent !important;
+}
 
-/* Every box is a hard 2px frame */
+/* Frames: one 2px weight */
 html[data-theme='brutalist']
   :is([data-slot='card'], [data-upcoming-card], input, [data-slot='dropdown-menu-trigger'],
-      [data-slot='segmented-control'], [data-slot='dropdown-menu-content']) {
+      [data-slot='segmented-control'], [data-slot='dropdown-menu-content'], .inline-flex.divide-x) {
   border: 2px solid #000 !important;
   box-shadow: none !important;
+}
+html[data-theme='brutalist'] .inline-flex.divide-x > :not(:last-child) {
+  border-left: 0 !important;
+  border-right: 2px solid #000 !important;
+}
+html[data-theme='brutalist'] .inline-flex.divide-x:has(> a[href*='view=']) {
+  border-bottom: 0 !important;
+}
+@media (max-width: 639px) {
+  html[data-theme='brutalist'] .inline-flex.divide-x:has(> a[href*='view=']) {
+    display: flex;
+    flex: 1;
+  }
+  html[data-theme='brutalist'] .inline-flex.divide-x:has(> a[href*='view=']) > a {
+    flex: 1;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 html[data-theme='brutalist'] button[data-collapsible-trigger] {
   border: 0 !important;
 }
 
-/* Tables: black head band, full cell grid, no zebra */
+/* Search: flush black-framed button, no soft fill */
+html[data-theme='brutalist'] form button.bg-slate-100 {
+  top: 2px !important;
+  right: 2px !important;
+  bottom: 2px !important;
+  background: #fff !important;
+  color: #000 !important;
+  border-left: 2px solid #000 !important;
+  border-radius: 0 !important;
+}
+html[data-theme='brutalist'] form button.bg-slate-100:hover {
+  background: #000 !important;
+  color: #fff !important;
+}
+html[data-theme='brutalist'] input:focus-visible {
+  --tw-ring-color: transparent !important;
+  border-color: #000 !important;
+}
+
+/* Tables: black head band, 1px inner grid, dense rows, no zebra */
 html[data-theme='brutalist'] thead :is(th, span, div, a, button) {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 11px;
   font-weight: 700;
 }
+html[data-theme='brutalist'] thead th:has(> .sr-only:only-child)::after {
+  content: '±';
+}
 html[data-theme='brutalist'] tbody tr:nth-child(odd),
-html[data-theme='brutalist'] tbody tr:nth-child(even) {
+html[data-theme='brutalist'] tbody tr:nth-child(even),
+html[data-theme='brutalist'] :not(thead) > :is(.odd\:bg-white:nth-child(odd), .even\:bg-gray-200\/50:nth-child(even)) {
   background-color: #fff !important;
 }
 html[data-theme='brutalist'] tbody tr {
   border-bottom: 1px solid #000 !important;
+}
+html[data-theme='brutalist'] tbody :is(td, th) {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
 }
 html[data-theme='brutalist'] :is(thead, tbody) :is(td, th):not(:last-child) {
   border-right: 1px solid #000 !important;
@@ -753,49 +818,63 @@ html[data-theme='brutalist'] :is(thead, tbody) :is(td, th):not(:last-child) {
 html[data-theme='brutalist'] thead :is(td, th):not(:last-child) {
   border-right-color: #3a3a3a !important;
 }
+/* The qualifying line: a 2px rule under the last highlighted row */
+html[data-theme='brutalist'] tbody tr[class*='border-l-'] + tr:not([class*='border-l-']) {
+  border-top: 2px solid #000 !important;
+}
 html[data-theme='brutalist'] tbody tr:hover {
   background-color: #f2f2f2 !important;
-  box-shadow: inset 4px 0 0 #ff4f00;
+  box-shadow: inset 4px 0 0 #000;
+}
+html[data-theme='brutalist'] tbody a:hover span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-/* Text links: underlined, inverted on hover */
-html[data-theme='brutalist'] main a:not(:has(div, p, img, li, table)) {
+/* Rank movement: bare coloured arrows */
+html[data-theme='brutalist'] [data-rank-movement] {
+  background-color: transparent !important;
+  padding: 0 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Prose links: underlined, inverted on hover */
+html[data-theme='brutalist'] main :is(p, li, dd) a {
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
 }
-html[data-theme='brutalist'] main a:not(:has(div, p, img, li, table)):hover {
+html[data-theme='brutalist'] main :is(p, li, dd) a:hover {
   background-color: #000 !important;
   color: #fff !important;
   text-decoration: none;
 }
-html[data-theme='brutalist'] main a:not(:has(div, p, img, li, table)):hover * {
+html[data-theme='brutalist'] main :is(p, li, dd) a:hover * {
   color: inherit !important;
 }
 
-/* Primary action: orange slab, black frame */
+/* Primary action: black slab */
 html[data-theme='brutalist'] button.from-blue-500 {
-  background: #ff4f00 !important;
-  color: #000 !important;
+  background: #000 !important;
+  color: #fff !important;
   border: 2px solid #000 !important;
   box-shadow: none !important;
   font-weight: 700;
   text-transform: uppercase;
 }
 html[data-theme='brutalist'] button.from-blue-500:hover {
-  background: #000 !important;
-  color: #fff !important;
-}
-html[data-theme='brutalist'] :not(thead) > :is(.odd\:bg-white:nth-child(odd), .even\:bg-gray-200\/50:nth-child(even)) {
-  background-color: #fff !important;
+  background: #fff !important;
+  color: #000 !important;
 }
 
-/* Chips: square, outlined */
+/* Chips: square, 2px outline */
 html[data-theme='brutalist'] .rounded-full:is(.bg-gray-100, .bg-gray-200) {
-  border: 1.5px solid #000 !important;
+  border: 2px solid #000 !important;
 }
 
-/* Timeline: black rail, framed tiles, orange next-up tile */
+/* Timeline: black rail, framed tiles, orange tile for the event that's next */
 html[data-theme='brutalist'] .bg-gray-300 {
   background-color: #000 !important;
 }
@@ -821,5 +900,8 @@ html[data-theme='brutalist'] [data-upcoming-card] a.bg-blue-100 {
   color: #000 !important;
   font-weight: 700;
   text-transform: uppercase;
-  text-decoration: none;
+}
+html[data-theme='brutalist'] [data-upcoming-card] a.bg-blue-100:hover {
+  background-color: #000 !important;
+  color: #fff !important;
 }
