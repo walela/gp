@@ -52,6 +52,7 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-10-20',
     location: 'TBA',
     confirmed: true,
+    registrationUrl: 'https://www.alphapass.co.ke/event/kcb-open',
     detailsUrl: null
   },
   {
@@ -62,6 +63,8 @@ export const plannedTournaments: Tournament[] = [
     endDate: '2026-11-29',
     location: 'Karen',
     confirmed: true,
+    registrationDeadline: '2026-11-25',
+    registrationUrl: 'https://forms.gle/2RVP6B1z75MVtpqe9',
     detailsUrl: null
   }
 ]
