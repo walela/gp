@@ -139,18 +139,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                     className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-1 sm:grid-cols-[4.5rem_minmax(0,1fr)]">
                     <div className="relative flex items-center justify-center">
                       {index === 0 && (
-                        <Diamond className="absolute left-1/2 top-0 z-10 size-4 -translate-x-1/2 -translate-y-1/2 fill-blue-600 text-blue-600 drop-shadow-sm" aria-hidden="true" />
+                        <Diamond className="absolute left-1/2 top-0 z-10 size-4 -translate-x-1/2 -translate-y-1/2 fill-blue-500 text-blue-500 drop-shadow-sm" aria-hidden="true" />
                       )}
                       <span className="absolute bottom-[calc(50%+1.375rem)] left-1/2 top-0 w-0.5 -translate-x-1/2 bg-gray-300" aria-hidden="true" />
                       <span className="absolute bottom-0 left-1/2 top-[calc(50%+1.375rem)] w-0.5 -translate-x-1/2 bg-gray-300" aria-hidden="true" />
                       <span className="absolute -right-1 left-[calc(50%+1.375rem)] top-1/2 h-0.5 -translate-y-1/2 bg-gray-300" aria-hidden="true" />
                       {index === sortedActiveTournaments.length - 1 && (
-                        <Diamond className="absolute bottom-0 left-1/2 z-10 size-4 -translate-x-1/2 translate-y-1/2 fill-blue-600 text-blue-600 drop-shadow-sm" aria-hidden="true" />
+                        <Diamond className="absolute bottom-0 left-1/2 z-10 size-4 -translate-x-1/2 translate-y-1/2 fill-blue-500 text-blue-500 drop-shadow-sm" aria-hidden="true" />
                       )}
                       <time
                         dateTime={tournament.startDate}
                         className={`relative z-10 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border shadow-sm ${
-                          index === 0 ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300 bg-white text-gray-700'
+                          index === 0 ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 bg-white text-gray-700'
                         }`}>
                         <span className="flex max-w-full flex-col items-center text-[9px] font-semibold uppercase leading-none tracking-wide">
                           <span className={index === 0 ? 'text-blue-100' : 'text-gray-500'}>{monthLabel}</span>
@@ -159,7 +159,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                       </time>
                     </div>
 
-                    <div data-upcoming-card className="my-1.5 min-w-0 rounded-lg bg-white/95 px-4 py-4 shadow-elevation-low">
+                    <div
+                      data-upcoming-card
+                      className={`relative my-1.5 min-w-0 overflow-hidden rounded-lg px-4 py-4 shadow-elevation-low ${
+                        index === 0 ? 'bg-gradient-to-r from-blue-50 to-white/95' : 'bg-white/95'
+                      }`}>
+                      {index === 0 && <span className="absolute inset-y-0 left-0 w-1 bg-blue-500" aria-hidden="true" />}
                       <div className="flex min-h-6 min-w-0 items-center justify-between gap-3">
                         <div className="min-w-0">
                           {detailHref ? (
