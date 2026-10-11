@@ -215,7 +215,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                         <p className="flex min-w-0 items-center gap-2">
                           <MapPin className="size-3.5 shrink-0 text-gray-400" strokeWidth={1.75} aria-hidden="true" />
                           {tournament.locationUrl ? (
-                            <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
+                            <a href={tournament.locationUrl} target="_blank" rel="noopener noreferrer" className="truncate underline decoration-gray-400 decoration-dotted decoration-2 underline-offset-[3px] transition-colors hover:text-gray-700 hover:decoration-gray-500 hover:decoration-solid">
                               {locationLabel}
                             </a>
                           ) : <span className="truncate">{locationLabel}</span>}
