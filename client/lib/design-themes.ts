@@ -4,7 +4,6 @@ export type DesignThemeId =
   | 'brutalist'
   | 'swiss'
   | 'editorial'
-  | 'warm-paper'
   | 'felt'
 
 export interface DesignThemeMeta {
@@ -16,12 +15,11 @@ export interface DesignThemeMeta {
 // Order shown in the picker. "default" is the untouched baseline.
 export const DESIGN_THEMES: DesignThemeMeta[] = [
   { id: 'default', label: 'Default', blurb: 'The original look' },
-  { id: 'neo-brutalist', label: 'Neo-Brutalist', blurb: 'Chunky borders, offset shadows' },
-  { id: 'brutalist', label: 'Brutalist', blurb: 'Raw mono type, hard grid, safety orange' },
-  { id: 'swiss', label: 'Swiss', blurb: 'Ruled tables, tabular figures, red index' },
-  { id: 'editorial', label: 'Editorial', blurb: 'Serif headlines, oxblood accents' },
-  { id: 'warm-paper', label: 'Warm Paper', blurb: 'Ivory paper, ink header, mono figures' },
-  { id: 'felt', label: 'Felt', blurb: 'Club-table green, cream sheets, brass' },
+  { id: 'neo-brutalist', label: 'Neo-Brutalist', blurb: 'Chunky borders, hard shadows' },
+  { id: 'brutalist', label: 'Brutalist', blurb: 'Mono type, safety orange' },
+  { id: 'swiss', label: 'Swiss', blurb: 'Ruled tables, red accents' },
+  { id: 'editorial', label: 'Editorial', blurb: 'Serif headlines, oxblood ink' },
+  { id: 'felt', label: 'Felt', blurb: 'Club-table green and brass' },
 ]
 
 export const DEFAULT_THEME: DesignThemeId = 'default'

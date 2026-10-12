@@ -435,185 +435,47 @@ html[data-theme='editorial'] [data-slot='card'] {
   box-shadow: var(--t-shadow-lg) !important;
 }
 
-/* ============================================================
-   THEME: Warm Paper
-   Ivory paper under an ink header band, serif titles, mono
-   figures, gold for Kenya #1 and navy for the qualifying line.
-   ============================================================ */
-html[data-theme='warm-paper'] {
-  --t-bg: #f1ede4;
-  --t-canvas: #f1ede4;
-  --t-surface: #faf7f1;
-  --t-surface-2: #f3eee4;
-  --t-surface-3: #e9e2d4;
-  --t-thead-bg: #faf7f1;
-  --t-thead-ink: #7a7165;
-  --t-ink: #1c1915;
-  --t-ink-2: #7a7165;
-  --t-link: #1c1915;
-  --t-link-2: #1c1915;
-  --t-accent: #1c1915;
-  --t-accent-ink: #f4efe5;
-  --t-line: #e3dccd;
-  --t-chip: #efe8da;
-  --t-chip-ink: #1c1915;
-  --t-radius: 6px;
-  --t-radius-pill: 9999px;
-  --t-shadow: none;
-  --t-shadow-lg: none;
-  --t-font: var(--font-inter), Inter, system-ui, sans-serif;
-  --t-font-head: var(--font-source-serif), 'Iowan Old Style', Georgia, serif;
-  --t-mono: var(--font-jetbrains-mono), ui-monospace, 'SF Mono', Menlo, monospace;
-  --t-header: #1b1916;
-  --t-header-ink: #f1ebdf;
-  --t-header-ink-2: #a69e90;
-  --t-gold: #b5832f;
-  --t-navy: #2f4b73;
-  --t-teal: #3f7a78;
-  --t-up: #4d8a5a;
-  --t-down: #b4493b;
-}
-html[data-theme='warm-paper'] :is(h1, h2, h3) {
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
 /* Ink header band */
-html[data-theme='warm-paper'] header,
-html[data-theme='warm-paper'] header [data-slot='separator-root'] {
-  background-color: var(--t-header) !important;
-  border-color: var(--t-header) !important;
+html[data-theme='editorial'] header,
+html[data-theme='editorial'] header [data-slot='separator-root'] {
+  background-color: #1f1a16 !important;
+  border-color: #1f1a16 !important;
   box-shadow: none !important;
 }
-html[data-theme='warm-paper'] header [data-brand] span {
+html[data-theme='editorial'] header [data-brand] span {
   font-family: var(--t-font-head) !important;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--t-header-ink) !important;
+  color: #f4efe4 !important;
 }
-html[data-theme='warm-paper'] header :is(a, button, [class*='text-muted-foreground'], .text-primary) {
-  color: var(--t-header-ink-2) !important;
+html[data-theme='editorial'] header :is(a, button, [class*='text-muted-foreground'], .text-primary) {
+  color: #a89a88 !important;
 }
-html[data-theme='warm-paper'] header :is(a[aria-current='page'], a:hover, button:hover) {
-  color: var(--t-header-ink) !important;
+html[data-theme='editorial'] header :is(a[aria-current='page'], a:hover, button:hover) {
+  color: #f4efe4 !important;
 }
-html[data-theme='warm-paper'] header a::after {
-  background-color: var(--t-gold) !important;
+html[data-theme='editorial'] header a::after {
+  background-color: #c4583f !important;
 }
-html[data-theme='warm-paper'] header [data-theme-picker]:hover {
+html[data-theme='editorial'] header [data-theme-picker]:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
 }
-
-/* Open/Ladies keeps the default raised-segment look rather than the shared inverted fill */
-html[data-theme='warm-paper'] [data-slot='segmented-control'] {
-  background-color: var(--t-surface-3) !important;
-}
-html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='true'] {
-  background-color: var(--t-surface) !important;
-  color: var(--t-ink) !important;
-  box-shadow: 0 1px 2px rgba(28, 25, 21, 0.1) !important;
-}
-html[data-theme='warm-paper'] [data-slot='segmented-control'] button[aria-pressed='false']:hover {
-  color: var(--t-ink) !important;
-}
-
-/* Controls */
-html[data-theme='warm-paper'] button.from-blue-500 {
-  background: var(--t-ink) !important;
+html[data-theme='editorial'] button.from-blue-500 {
+  background: var(--t-accent) !important;
   color: var(--t-accent-ink) !important;
-  border-color: var(--t-ink) !important;
-  border-radius: 8px !important;
+  border-color: var(--t-accent) !important;
   box-shadow: none !important;
 }
-html[data-theme='warm-paper'] button.from-blue-500:hover {
-  background: #34302a !important;
+html[data-theme='editorial'] button.from-blue-500:hover {
+  background: var(--t-link-2) !important;
 }
-html[data-theme='warm-paper'] form button.bg-slate-100 {
+html[data-theme='editorial'] form button.bg-slate-100 {
   background-color: var(--t-surface-2) !important;
   color: var(--t-ink-2) !important;
 }
-html[data-theme='warm-paper'] form button.bg-slate-100:hover {
+html[data-theme='editorial'] form button.bg-slate-100:hover {
   background-color: var(--t-surface-3) !important;
   color: var(--t-ink) !important;
-}
-html[data-theme='warm-paper'] :is(input, [data-slot='dropdown-menu-trigger']):focus-visible {
-  border-color: var(--t-ink-2) !important;
-  --tw-ring-color: var(--t-ink-2) !important;
-}
-
-/* The sheet */
-html[data-theme='warm-paper'] [data-slot='card'] {
-  border: 1px solid var(--t-line) !important;
-}
-html[data-theme='warm-paper'] thead {
-  border-bottom: 1px solid var(--t-line) !important;
-}
-html[data-theme='warm-paper'] thead :is(th, span, div) {
-  font-family: var(--t-mono) !important;
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-html[data-theme='warm-paper'] tbody tr:nth-child(even),
-html[data-theme='warm-paper'] tbody tr:nth-child(odd) {
-  background-color: var(--t-surface) !important;
-}
-html[data-theme='warm-paper'] tbody tr {
-  border-bottom: 1px solid var(--t-line) !important;
-}
-html[data-theme='warm-paper'] tbody tr:hover {
-  background-color: var(--t-surface-2) !important;
-}
-html[data-theme='warm-paper'] tbody tr.border-l-amber-500 {
-  border-left-color: var(--t-gold) !important;
-  background-color: #f6efdf !important;
-}
-html[data-theme='warm-paper'] tbody tr.border-l-blue-600 {
-  border-left-color: var(--t-navy) !important;
-}
-html[data-theme='warm-paper'] tbody tr:is(.border-l-teal-600, .border-l-cyan-500) {
-  border-left-color: var(--t-teal) !important;
-}
-
-/* Mono figures */
-html[data-theme='warm-paper'] tbody :is(th[scope='row'], .tabular-nums, [data-rank-movement]) {
-  font-family: var(--t-mono) !important;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
-html[data-theme='warm-paper'] tbody th[scope='row'] {
-  color: var(--t-ink-2) !important;
-}
-html[data-theme='warm-paper'] tbody th[scope='row'] .text-blue-700 {
-  color: var(--t-navy) !important;
-}
-html[data-theme='warm-paper'] tbody :is(.text-amber-700, .text-amber-600) {
-  color: var(--t-gold) !important;
-}
-html[data-theme='warm-paper'] tbody :is(.text-cyan-700, .text-cyan-600, .text-teal-700) {
-  color: var(--t-teal) !important;
-}
-
-/* Rank movement as bare coloured arrows */
-html[data-theme='warm-paper'] [data-rank-movement] {
-  background-color: transparent !important;
-  padding: 0 !important;
-  font-size: 12px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0 !important;
-}
-html[data-theme='warm-paper'] [data-rank-movement].text-green-700 {
-  color: var(--t-up) !important;
-}
-html[data-theme='warm-paper'] [data-rank-movement].text-red-700 {
-  color: var(--t-down) !important;
-}
-html[data-theme='warm-paper'] [data-rank-movement].text-cyan-700 {
-  color: var(--t-gold) !important;
-}
-html[data-theme='warm-paper'] [data-rank-movement].text-gray-500 {
-  color: #c2b8a6 !important;
 }
 
 /* ---------- Upcoming timeline accents ----------
@@ -922,13 +784,13 @@ html[data-theme='brutalist'] [data-upcoming-card] a.bg-blue-100:hover {
    sits on a light surface, so this is not a dark mode.
    ============================================================ */
 html[data-theme='felt'] {
-  --t-bg: #143429;
+  --t-bg: #1c2e25;
   --t-canvas:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    radial-gradient(120% 75% at 50% 0%, #22503f 0%, #173d30 45%, #0f2a21 100%);
+    radial-gradient(120% 75% at 50% 0%, #2b4135 0%, #20342a 45%, #16241d 100%);
   /* On the canvas: cream ink */
   --t-ink: #f2ecdc;
-  --t-ink-2: #a9c0b3;
+  --t-ink-2: #b3bfb5;
   --t-link: #f2ecdc;
   --t-link-2: #ffffff;
   --t-line: rgba(242, 236, 220, 0.16);
@@ -936,7 +798,7 @@ html[data-theme='felt'] {
   --t-surface: #f7f2e6;
   --t-surface-2: #efe8d7;
   --t-surface-3: #e5dcc7;
-  --t-thead-bg: #1d4537;
+  --t-thead-bg: #26392f;
   --t-thead-ink: #efe6cf;
   --t-accent: #c8a24a;
   --t-accent-ink: #14261f;
@@ -961,8 +823,8 @@ html[data-theme='felt']
       .bg-teal-50, .bg-teal-100, .bg-gray-50, .bg-gray-100, .bg-gray-200) {
   --t-ink: #1b2a23;
   --t-ink-2: #5d6d64;
-  --t-link: #1f5c46;
-  --t-link-2: #143f30;
+  --t-link: #2e4a3b;
+  --t-link-2: #1f3529;
   --t-line: #ddd3bd;
   --background: var(--t-surface);
   --foreground: var(--t-ink);
@@ -978,7 +840,7 @@ html[data-theme='felt']
 /* The mobile section band is white below sm and transparent above it */
 @media (max-width: 639px) {
   html[data-theme='felt'] .bg-white\/70 {
-    background-color: rgba(10, 32, 25, 0.55) !important;
+    background-color: rgba(16, 28, 22, 0.55) !important;
     border-color: rgba(242, 236, 220, 0.12) !important;
   }
 }
@@ -994,7 +856,7 @@ html[data-theme='felt'] :is(h1, h2, h3) {
 /* Header: a darker band of the same felt */
 html[data-theme='felt'] header,
 html[data-theme='felt'] header [data-slot='separator-root'] {
-  background-color: #0d241c !important;
+  background-color: #142019 !important;
   border-color: rgba(242, 236, 220, 0.08) !important;
   box-shadow: none !important;
 }
@@ -1030,7 +892,7 @@ html[data-theme='felt'] div:has(> div > .inline-flex.divide-x.rounded-t-lg) + [d
   border-top-left-radius: 0 !important;
 }
 html[data-theme='felt'] [data-slot='segmented-control'] button[aria-pressed='true'] {
-  background-color: #1d4537 !important;
+  background-color: #26392f !important;
   color: #f2ecdc !important;
 }
 html[data-theme='felt'] tbody tr.border-l-amber-500 {
@@ -1069,7 +931,7 @@ html[data-theme='felt'] tbody tr[class*='border-l-']:hover {
 }
 html[data-theme='felt'] tbody tr:is(.border-l-teal-600, .border-l-cyan-500) {
   background-color: #e2e8d6 !important;
-  border-left-color: #2f6b55 !important;
+  border-left-color: #3f5f4e !important;
 }
 html[data-theme='felt'] tbody tr:is(.border-l-teal-600, .border-l-cyan-500):hover {
   background-color: #d6dfc6 !important;
