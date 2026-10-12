@@ -4,7 +4,7 @@ import {
   Bricolage_Grotesque,
   Archivo,
   Source_Serif_4,
-  JetBrains_Mono,
+  IBM_Plex_Mono,
   Archivo_Black,
   Young_Serif,
 } from 'next/font/google'
@@ -24,47 +24,41 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-// Alternate-theme fonts stay available, but only the default Inter face is
-// preloaded. The browser fetches these on demand when a theme uses them.
+// Theme fonts are preloaded too: loading them on demand made the page reflow
+// when a themed page first painted or the theme changed.
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
-  preload: false,
 })
 const archivo = Archivo({
   subsets: ['latin'],
   variable: '--font-archivo',
-  preload: false,
 })
 const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
   variable: '--font-source-serif',
-  preload: false,
 })
-const jetbrainsMono = JetBrains_Mono({
+const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  preload: false,
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-plex-mono',
 })
 const archivoBlack = Archivo_Black({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-archivo-black',
-  preload: false,
 })
 const youngSerif = Young_Serif({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-young-serif',
-  preload: false,
 })
-
 const fontVariables = [
   inter,
   bricolage,
   archivo,
   sourceSerif,
-  jetbrainsMono,
+  plexMono,
   archivoBlack,
   youngSerif,
 ]

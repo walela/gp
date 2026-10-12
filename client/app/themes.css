@@ -539,9 +539,9 @@ html[data-theme='brutalist'] {
   --t-border-w: 2px;
   --t-shadow: none;
   --t-shadow-lg: none;
-  --t-font: var(--font-archivo), 'Helvetica Neue', Arial, sans-serif;
+  --t-font: var(--font-plex-mono), ui-monospace, 'SF Mono', Menlo, monospace;
   --t-font-head: var(--font-archivo-black), 'Arial Black', Impact, sans-serif;
-  --t-mono: var(--font-jetbrains-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+  --t-mono: var(--font-plex-mono), ui-monospace, 'SF Mono', Menlo, monospace;
 }
 html[data-theme='brutalist'] ::selection {
   background: #ff4f00;
