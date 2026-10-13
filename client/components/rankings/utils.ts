@@ -16,21 +16,18 @@ export function getDisplayName(fullName: string): string {
   return fullName.substring(0, 20) + '...'
 }
 
-// Extra names beyond the first two are shortened until the name fits a 360px
-// phone. The first two stay whole unless they alone are too long.
+// 17 characters is the most that fits the rankings table on a 360px phone
+// in every theme, including Brutalist's monospace.
 const MOBILE_NAME_MAX = 17
-const TWO_NAME_MAX = 22
 
 export function getMobileDisplayName(fullName: string): string {
   const parts = fullName.trim().split(/\s+/)
-  const fits = (max: number) => parts.join(' ').length <= max
-  for (let i = parts.length - 1; i >= 2 && !fits(MOBILE_NAME_MAX); i--) {
+  for (let i = parts.length - 1; i >= 1 && parts.join(' ').length > MOBILE_NAME_MAX; i--) {
     if (!parts[i].endsWith('.')) parts[i] = `${parts[i].charAt(0)}.`
   }
-  while (parts.length > 2 && !fits(MOBILE_NAME_MAX)) parts.pop()
-  if (parts.length === 2 && !fits(TWO_NAME_MAX)) parts[1] = `${parts[1].charAt(0)}.`
+  while (parts.length > 2 && parts.join(' ').length > MOBILE_NAME_MAX) parts.pop()
   const name = parts.join(' ')
-  return name.length > TWO_NAME_MAX ? `${name.substring(0, TWO_NAME_MAX - 1)}…` : name
+  return name.length > MOBILE_NAME_MAX ? `${name.substring(0, MOBILE_NAME_MAX - 1)}…` : name
 }
 
 export function getRankMovement(player: PlayerRanking): {
