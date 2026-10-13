@@ -13,8 +13,7 @@ import { SortableHeader } from '@/components/rankings/sortable-header'
 import { Baby, ChevronRight, Crown } from 'lucide-react'
 import { getRankings, getSeasons, type PlayerRanking } from '@/services/api'
 import { cn } from '@/lib/utils'
-import { getRankMovement } from '@/components/rankings/utils'
-import { PlayerDisplayName } from '@/components/rankings/player-display-name'
+import { getDisplayName, getRankMovement } from '@/components/rankings/utils'
 import { forecastMatchesResults, getCategoryForecast } from '@/lib/qualification-forecast'
 import { TIER_LABEL, chanceTier, formatChance, type ForecastEntry } from '@/lib/qualification-odds'
 import { ViewSelector } from '@/components/rankings/view-selector'
@@ -383,7 +382,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                             )}
                             title={player.name}>
                             <span className="flex items-center gap-1 sm:gap-2 sm:group-hover:underline">
-                              <PlayerDisplayName name={player.name} />
+                              {getDisplayName(player.name)}
                               <ChevronRight
                                 className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-blue-500 sm:hidden"
                                 aria-hidden="true"
@@ -405,7 +404,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                                       : ''
                             )}
                             title={player.name}>
-                            <PlayerDisplayName name={player.name} />
+                            {getDisplayName(player.name)}
                           </span>
                         )}
                       </div>

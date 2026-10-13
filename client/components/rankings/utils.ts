@@ -16,20 +16,6 @@ export function getDisplayName(fullName: string): string {
   return fullName.substring(0, 20) + '...'
 }
 
-// 17 characters is the most that fits the rankings table on a 360px phone
-// in every theme, including Brutalist's monospace.
-const MOBILE_NAME_MAX = 17
-
-export function getMobileDisplayName(fullName: string): string {
-  const parts = fullName.trim().split(/\s+/)
-  for (let i = parts.length - 1; i >= 1 && parts.join(' ').length > MOBILE_NAME_MAX; i--) {
-    if (!parts[i].endsWith('.')) parts[i] = `${parts[i].charAt(0)}.`
-  }
-  while (parts.length > 2 && parts.join(' ').length > MOBILE_NAME_MAX) parts.pop()
-  const name = parts.join(' ')
-  return name.length > MOBILE_NAME_MAX ? `${name.substring(0, MOBILE_NAME_MAX - 1)}…` : name
-}
-
 export function getRankMovement(player: PlayerRanking): {
   label: string
   className: string
