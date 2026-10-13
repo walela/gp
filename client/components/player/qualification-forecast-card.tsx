@@ -235,8 +235,7 @@ function EventsDriver({ f }: { f: ForecastFactors }) {
     >
       <dl>
         <DetailRow label="GP participation rate">
-          {f.entered[1] ? Math.round((100 * f.entered[0]) / f.entered[1]) : 0}%{' '}
-          <span className="font-normal text-muted-foreground">({f.entered[0]} of {f.entered[1]})</span>
+          {f.entered[1] ? Math.round((100 * f.entered[0]) / f.entered[1]) : 0}%
         </DetailRow>
         {f.boost === 'near_lock' && (
           <DetailRow label={f.near_lock_needed && f.near_lock_needed > 1 ? `Plays ${f.near_lock_needed} more (near lock)` : 'Plays again (near lock)'}><span className="text-emerald-700">{formatChance(f.near_lock_entry)}</span></DetailRow>
