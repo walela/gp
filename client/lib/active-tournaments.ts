@@ -51,19 +51,6 @@ export const plannedTournaments: Tournament[] = [
     detailsUrl: null
   },
   {
-    id: 'kenya-open-2026',
-    name: 'KCB Kenya Open - Grand Prix',
-    short_name: 'KCB Kenya Open',
-    startDate: '2026-10-17',
-    endDate: '2026-10-20',
-    location: 'KCB Leadership Centre, Karen',
-    locationUrl: 'https://maps.google.com/?q=KCB+Leadership+Centre,+Karen,+Nairobi',
-    rounds: 8,
-    confirmed: true,
-    registrationUrl: 'https://www.alphapass.co.ke/event/kcb-open',
-    detailsUrl: null
-  },
-  {
     id: 'karen-open-2026',
     name: 'Karen Open Grand Prix Tournament',
     short_name: 'Karen Open',
