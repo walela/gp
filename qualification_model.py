@@ -144,10 +144,21 @@ NEAR_LOCK_ENTRY = 0.95
 NEAR_LOCK_ENTRY_MULTI = 0.75
 # Late 2025 (last 6 events), players on 4+ results within 50 of the current 9th place entered
 # at 1.42x (Open) / 1.32x (Ladies) their season rate, vs ~1.09x for everyone else late (already
-# in the event draw factors), so ~1.25x on top. Safe players and distant chasers entered less,
-# but that isn't applied.
+# in the event draw factors), so ~1.25x on top. The extra turnout fades with distance (Open: ~1.55x
+# within 30, 1.19x at 30-45, 0.75x at 45-75), so the boost falls linearly from BUBBLE_PEAK at the
+# line to none at BUBBLE_GAP, averaging 1.25x within it. Safe players and distant chasers entered
+# less, but that isn't applied.
 BUBBLE_GAP = 50
-BUBBLE_TURNOUT = 1.25
+BUBBLE_PEAK = 1.5
+# Kenya #1 is the top active Kenyan (the top active Kenyan woman for Ladies) on the FIDE list named
+# by kenyaNumber1List in qualifiers.json. Until that list is out, it's drawn each season from the
+# active players within KENYA1_WINDOW of the leader: their projected ratings plus the simulated
+# GP events that end before the list, plus rated games elsewhere. Jadon, McLigeyo and Yashmith
+# Chaikam averaged ~6 rated games a month outside the GP over Nov 2025-Oct 2026.
+KENYA1_WINDOW = 150
+OUTSIDE_GAMES_PER_MONTH = 6
+OUTSIDE_EVENT_ROUNDS = 8
+FORMAT_ROUNDS = {"6": 6, "6x3": 6, "8": 8}
 
 CATEGORIES = {
     "open": {"contender_mu": 1750, "contender_best": 2000, "thresholds": range(2000, 2061, 10)},
@@ -156,23 +167,29 @@ CATEGORIES = {
 
 
 def load_fide_bio():
-    """Birth years, women and standard ratings from the Kenyan extract of the FIDE list
-    (scripts/update_fide_bio.py), and the latest event end date that list covers."""
-    years, female, ratings = {}, set(), {}
+    """Names, birth years, women, standard ratings, K-factors and active players from the Kenyan extract
+    of the FIDE list (scripts/update_fide_bio.py), the list's month and the latest event end date it covers."""
+    names, years, female, ratings, k_factors, active = {}, {}, set(), {}, {}, set()
     with open(FIDE_BIO, newline="") as f:
         for row in csv.DictReader(f):
+            if row.get("name"):
+                names[row["fide_id"]] = row["name"]
             if row["birth_year"]:
                 years[row["fide_id"]] = int(row["birth_year"])
             if row["sex"] == "F":
                 female.add(row["fide_id"])
             if row["rating"]:
                 ratings[row["fide_id"]] = int(row["rating"])
+                if row.get("inactive") == "0":
+                    active.add(row["fide_id"])
+            if row.get("k"):
+                k_factors[row["fide_id"]] = int(row["k"])
     with open(FIDE_LIST) as f:
-        rated_through = dt.date.fromisoformat(json.load(f)["rated_through"])
-    return years, female, ratings, rated_through
+        info = json.load(f)
+    return names, years, female, ratings, k_factors, active, info["month"], dt.date.fromisoformat(info["rated_through"])
 
 
-BIRTH_YEARS, FEMALE, FIDE_RATINGS, FIDE_RATED_THROUGH = load_fide_bio()
+FIDE_NAMES, BIRTH_YEARS, FEMALE, FIDE_RATINGS, FIDE_K, FIDE_ACTIVE, FIDE_MONTH, FIDE_RATED_THROUGH = load_fide_bio()
 
 
 def is_junior(fide_id, year):
@@ -180,14 +197,14 @@ def is_junior(fide_id, year):
     return born is not None and year - born <= 18
 
 
-def rating_gain(fide_id, rating, tpr, rounds, year, points=None):
+def rating_gain(fide_id, rating, tpr, rounds, year, points=None, k=None):
     """Approximate FIDE rating change for one event.
 
     With points, uses the Elo formula against the opponents' average rating
     (backed out of the TPR). A perfect score's TPR is just average + 800, so the
     TPR alone overstates the gain.
     """
-    k = 40 if is_junior(fide_id, year) and rating < 2300 else 20 if rating < 2400 else 10
+    k = k or (40 if is_junior(fide_id, year) and rating < 2300 else 20 if rating < 2400 else 10)
     if points is None:
         return k * rounds * 0.00144 * max(-400, min(400, tpr - rating))
     rounds = max(rounds, math.ceil(points))
@@ -427,7 +444,8 @@ def bubble_attendance(contenders, excluded):
     for p in pool:
         n, best = ranking_key(p["tprs"])
         if n == 4 and abs(best - line) < BUBBLE_GAP:
-            p["p_attend"], p["bubble"] = p["p_attend"] * BUBBLE_TURNOUT, True
+            p["bubble"] = 1 + (BUBBLE_PEAK - 1) * (1 - abs(best - line) / BUBBLE_GAP)
+            p["p_attend"] *= p["bubble"]
 
 
 def near_lock_attendance(contenders, events, category):
@@ -490,13 +508,23 @@ def junior_title_pool(contenders, season, category, dead=(), kenya1=()):
     return pool
 
 
-def simulate(contenders, events, excluded, category="open", junior_pool=(), junior_champion=None, kenya1=(), seed=1,
-             ladies_team=None):
-    """Returns qualification counts, junior title counts, final best-4s, cutoffs, per-player
-    [seasons, qualified] by number of new valid results (0 up to one per event), and how often each
-    finished inside the standings spots (whether or not they also won the junior title).
+def poisson(rng, mean):
+    limit, n, product = math.exp(-mean), 0, rng.random()
+    while product > limit:
+        n, product = n + 1, product * rng.random()
+    return n
 
-    Either junior_champion is known, or it is drawn each season from junior_pool.
+
+def simulate(contenders, events, excluded, category="open", junior_pool=(), junior_champion=None, kenya1=(), seed=1,
+             ladies_team=None, kenya1_race=None):
+    """Returns qualification counts, junior title counts, final best-4s, cutoffs, per-player
+    [seasons, qualified] by number of new valid results (0 up to one per event), how often each
+    finished inside the standings spots (whether or not they also won the junior title), and how
+    often each Kenya #1 candidate topped the deciding FIDE list.
+
+    Either junior_champion is known, or it is drawn each season from junior_pool. Likewise Kenya #1
+    is either the fixed kenya1, or drawn each season from kenya1_race (see kenya1_race()); a GP
+    player who tops the list qualifies outside the standings.
 
     ladies_team maps women to their chance of making the Ladies team. A woman who makes
     both teams plays for the Ladies team and her Open place passes down the standings.
@@ -505,9 +533,11 @@ def simulate(contenders, events, excluded, category="open", junior_pool=(), juni
     """
     rng = random.Random(seed)
     team_rng = random.Random(seed + 1)
+    race_rng = random.Random(seed + 2)
     pool = [p for p in contenders if p["fide_id"] not in excluded]
     title_section = "ladies" if category == "ladies" else "open"
     qualified, titles, standings = collections.Counter(), collections.Counter(), collections.Counter()
+    number1 = collections.Counter()
     by_new = collections.defaultdict(lambda: [[0, 0] for _ in range(len(events) + 1)])
     final_best4 = collections.defaultdict(list)
     cutoffs = []
@@ -523,44 +553,64 @@ def simulate(contenders, events, excluded, category="open", junior_pool=(), juni
                 champion = max(entrants, key=title_score)["fide_id"]
                 titles[champion] += 1
         happening = [
-            (fmt, attend * draw, rng.random() < ladies, region(name))
+            (fmt, attend * draw, rng.random() < ladies, region(name), name)
             for name, fmt, cancel, attend, ladies, draw in events
             if rng.random() >= cancel
         ]
+        ratings = dict(kenya1_race["projected"]) if kenya1_race else {}
         keyed, new_counts = [], {}
         for p in pool:
+            fid = p["fide_id"]
             new = []
-            for fmt, attend, has_ladies, where in happening:
+            for fmt, attend, has_ladies, where, name in happening:
                 if rng.random() >= min(0.95, p["p_attend"] * attend * p["region_mult"][where]):
                     continue
                 section = "ladies" if has_ladies and rng.random() < p["p_ladies"] else "open"
                 mu, sd, void = p["section_params"][section]
                 if rng.random() >= void:
-                    new.append(rng.gauss(mu + lift, sd * SPREAD[fmt]))
-            new_counts[p["fide_id"]] = len(new)
+                    tpr = rng.gauss(mu + lift, sd * SPREAD[fmt])
+                    new.append(tpr)
+                    if fid in ratings and name in kenya1_race["rated_events"]:
+                        ratings[fid] += rating_gain(fid, ratings[fid], tpr, FORMAT_ROUNDS[fmt], kenya1_race["year"],
+                                                    k=FIDE_K.get(fid))
+            new_counts[fid] = len(new)
             key = ranking_key(p["tprs"] + new)
-            keyed.append((key, p["fide_id"]))
-            final_best4[p["fide_id"]].append(key[1] if key[0] == 4 else None)
+            keyed.append((key, fid))
+            final_best4[fid].append(key[1] if key[0] == 4 else None)
+        if kenya1_race:
+            for fid, (offset, sd) in kenya1_race["outside"].items():
+                for _ in range(poisson(race_rng, kenya1_race["outside_events"])):
+                    tpr = race_rng.gauss(ratings[fid] + offset, sd)
+                    ratings[fid] += rating_gain(fid, ratings[fid], tpr, OUTSIDE_EVENT_ROUNDS, kenya1_race["year"],
+                                                k=FIDE_K.get(fid))
+            top = max(ratings, key=ratings.get)
+            number1[top] += 1
+            season_kenya1 = {top}
+        else:
+            season_kenya1 = set(kenya1)
         keyed.sort(reverse=True)
         on_ladies_team = {fid for fid, q in (ladies_team or {}).items() if team_rng.random() < q}
         keyed = [(key, fid) for key, fid in keyed if fid not in on_ladies_team]
         # The team size is fixed: a Kenya #1 who also wins the junior title passes that spot down the standings.
-        spots = SPOTS + (champion is not None and champion in kenya1)
-        order = [(key, fid) for key, fid in keyed if fid != champion]
+        spots = SPOTS + (champion is not None and champion in season_kenya1)
+        order = [(key, fid) for key, fid in keyed if fid != champion and fid not in season_kenya1]
         cutoffs.append(order[spots - 1][0][1] if order[spots - 1][0][0] == 4 else None)
         season_qualified = {fid for _, fid in order[:spots]}
         standings.update(season_qualified)
-        if champion and champion not in excluded:
-            # The champion would also have been a standings qualifier if ranked above the cutoff.
-            if next(key for key, fid in keyed if fid == champion) > order[spots - 1][0]:
-                standings[champion] += 1
-            season_qualified.add(champion)
+        separate = {champion} if champion and champion not in excluded else set()
+        if kenya1_race:
+            separate |= season_kenya1 & {fid for _, fid in keyed}
+        for fid in separate:
+            # A separate qualifier would also have been a standings qualifier if ranked above the cutoff.
+            if next(key for key, f in keyed if f == fid) > order[spots - 1][0]:
+                standings[fid] += 1
+            season_qualified.add(fid)
         qualified.update(season_qualified)
         for fid, n in new_counts.items():
             bucket = by_new[fid][n]
             bucket[0] += 1
             bucket[1] += fid in season_qualified
-    return qualified, titles, final_best4, cutoffs, by_new, standings
+    return qualified, titles, final_best4, cutoffs, by_new, standings, number1
 
 
 def pct(values, q):
@@ -585,7 +635,7 @@ def backtest_2025(category="open"):
     contenders, held = load_players(2025, "2025-09-28", category)
     bubble_attendance(contenders, excluded)
     near_lock_attendance(contenders, REMAINING_2025, category)
-    counts, _, _, cutoffs, _, _ = simulate(contenders, REMAINING_2025, excluded, category, kenya1=BACKTEST_2025_KENYA1[category])
+    counts, _, _, cutoffs, _, _, _ = simulate(contenders, REMAINING_2025, excluded, category, kenya1=BACKTEST_2025_KENYA1[category])
     db = Database(DB_FILE)
     results = db.get_all_results(season=2025, section="open" if category == "open" else None)
     final = db._assign_ranks(db._calculate_rankings_from_results(results, 2025, None if category == "open" else "F"))
@@ -681,7 +731,7 @@ def upcoming_events(con, season):
             rounds = b.get("rounds") or b.get("tentativeRounds") or 6
             fmt = "8" if rounds >= 8 else "6x3" if (end - start).days >= 2 else "6"
             cancel, weather, ladies, draw = DEFAULT_EVENT
-        events.append({"id": b["id"], "name": name, "start_date": b["startDate"],
+        events.append({"id": b["id"], "name": name, "start_date": b["startDate"], "end_date": end.isoformat(),
                        "params": (name, fmt, cancel, weather, ladies, draw)})
     if problems:
         raise StaleInputs("; ".join(problems))
@@ -695,11 +745,57 @@ def load_qualifiers(season):
     for category in ("open", "ladies"):
         c = config.get(category, {})
         out[category] = {
+            # Until kenya1_list (YYYY-MM) is out, kenya1 is only the current leader.
             "kenya1": {c["kenyaNumber1"]} if c.get("kenyaNumber1") else set(),
+            "kenya1_list": c.get("kenyaNumber1List"),
             "champion": c.get("juniorChampion"),
             "dead": set(c.get("excluded", [])),
         }
     return out
+
+
+def kenya1_race(season, category, contenders, events, qualifiers):
+    """Kenya #1 candidates while the deciding FIDE list is still to come (None once it's out): projected
+    ratings, the GP events that list rates, and the expected events elsewhere before it."""
+    q = qualifiers[category]
+    if not q["kenya1_list"] or FIDE_MONTH >= q["kenya1_list"]:
+        return None
+    list_date = dt.date.fromisoformat(f"{q['kenya1_list']}-01")
+    projected = {p["fide_id"]: p["projected"] for p in contenders if p.get("projected")}
+    con = sqlite3.connect(DB_FILE)
+    pending = collections.defaultdict(float)
+    for fid, rating, tpr, rounds, points, change, status in con.execute(
+        """SELECT p.fide_id, r.rating, r.tpr, COALESCE(t.rounds, 6), r.points, r.rating_change, COALESCE(r.result_status, 'valid')
+           FROM results r JOIN players p ON p.id = r.player_id JOIN tournaments t ON t.id = r.tournament_id
+           WHERE r.rating > 0 AND COALESCE(t.end_date, t.start_date) > ?""",
+        (FIDE_RATED_THROUGH.isoformat(),),
+    ):
+        if change is not None or (status == "valid" and tpr):
+            pending[fid] += known_or_estimated_gain(fid, rating, tpr, rounds, season, points, change)
+    # Inactive players become active again once they play a rated game.
+    active = FIDE_ACTIVE | {fid for fid in pending if fid in FIDE_RATINGS}
+    for fid in active:
+        if fid not in projected:
+            projected[fid] = round(FIDE_RATINGS[fid] + pending[fid])
+    eligible = {
+        fid: r for fid, r in projected.items()
+        if fid in active and fid not in q["dead"] and (category == "open" or fid in FEMALE)
+    }
+    leader = max(eligible.values())
+    candidates = {fid: r for fid, r in eligible.items() if r >= leader - KENYA1_WINDOW}
+    months = (list_date - dt.timedelta(days=1) - FIDE_RATED_THROUGH).days / 30.44
+    outside = {}
+    for fid in candidates:
+        offset, sd = group_params("open", is_junior(fid, season), fid in FEMALE)
+        outside[fid] = (offset, sd * SPREAD[str(OUTSIDE_EVENT_ROUNDS)])
+    return {
+        "list": q["kenya1_list"],
+        "year": season,
+        "projected": candidates,
+        "outside": outside,
+        "outside_events": OUTSIDE_GAMES_PER_MONTH * months / OUTSIDE_EVENT_ROUNDS,
+        "rated_events": {e["name"] for e in events if e["end_date"] < list_date.isoformat()},
+    }
 
 
 def _sha(value):
@@ -788,7 +884,7 @@ def player_factors(p, events, season, by_new):
         "events_left": len(events),
         "walkover": round(void, 3),
         "boost": "near_lock" if p.get("near_lock") else "bubble" if p.get("bubble") else None,
-        "bubble_factor": BUBBLE_TURNOUT,
+        "bubble_factor": round(p.get("bubble", 1.0), 2),
         "near_lock_entry": p["near_lock"][1] if p.get("near_lock") else NEAR_LOCK_ENTRY,
         "near_lock_needed": p["near_lock"][0] if p.get("near_lock") else None,
         "by_new": [[round(s / SIMS, 3), round(q / s, 3) if s else None] for s, q in by_new],
@@ -798,30 +894,35 @@ def player_factors(p, events, season, by_new):
 def simulate_category(season, as_of, category, events, qualifiers, ladies_team=None):
     q = qualifiers[category]
     kenya1, champion, dead = q["kenya1"], q["champion"], q["dead"]
-    excluded = kenya1 | dead | ({champion} if champion else set())
     contenders, _ = load_players(season, as_of, category)
-    bubble_attendance(contenders, excluded)
+    race = kenya1_race(season, category, contenders, events, qualifiers)
+    excluded = dead | ({champion} if champion else set()) | (set() if race else kenya1)
+    # The current leader stays out of the bubble line either way.
+    bubble_attendance(contenders, excluded | kenya1)
     near_lock_attendance(contenders, [e["params"] for e in events], category)
     juniors = () if champion else junior_title_pool(contenders, season, category, dead, kenya1=kenya1)
     results = simulate(
         contenders, [e["params"] for e in events], excluded, category,
-        junior_pool=juniors, junior_champion=champion, kenya1=kenya1, ladies_team=ladies_team,
+        junior_pool=juniors, junior_champion=champion, kenya1=() if race else kenya1, ladies_team=ladies_team,
+        kenya1_race=race,
     )
-    return contenders, juniors, results
+    return contenders, juniors, results, race
 
 
 def forecast_category(con, season, as_of, category, events, qualifiers, ladies_team=None):
     q = qualifiers[category]
-    kenya1, champion, dead = q["kenya1"], q["champion"], q["dead"]
-    contenders, juniors, results = simulate_category(season, as_of, category, events, qualifiers, ladies_team)
-    counts, titles, final_best4, cutoffs, by_new, standings = results
+    champion, dead = q["champion"], q["dead"]
+    contenders, juniors, results, race = simulate_category(season, as_of, category, events, qualifiers, ladies_team)
+    counts, titles, final_best4, cutoffs, by_new, standings, number1 = results
+    # While the deciding list is still to come, the leader gets a forecast like everyone else.
+    kenya1 = set() if race else q["kenya1"]
     modelled = {p["fide_id"]: p for p in contenders}
     title_entry = {p["fide_id"]: p["p_title_attend"] for p in juniors}
     ranking = category_ranks(con, season, category)
     ranks = {fid: rank for fid, (rank, _) in ranking.items()}
     published = {fid for fid, rank in ranks.items() if rank <= PUBLISHED_RANKS}
     published |= {fid for fid in modelled if fid in ranks and counts[fid] / SIMS >= PUBLISHED_MIN_P}
-    published |= {fid for fid in kenya1 | {champion} if fid in ranks}
+    published |= {fid for fid in q["kenya1"] | {champion} if fid in ranks}
     players = {}
     for fide_id in sorted(published, key=ranks.get):
         rank, best4_now = ranking[fide_id]
@@ -847,18 +948,33 @@ def forecast_category(con, season, as_of, category, events, qualifiers, ladies_t
             })
             if fide_id in title_entry:
                 entry["p_title_entry"] = round(title_entry[fide_id], 3)
+            if race and fide_id in race["projected"]:
+                entry["p_kenya1"] = round(number1[fide_id] / SIMS, 3)
         else:
             # Too far off the pace to simulate; the page shows how far.
             entry["best4_now"] = best4_now
         players[fide_id] = entry
-    return {"cutoff": [pct(cutoffs, 0.1), pct(cutoffs, 0.5), pct(cutoffs, 0.9)], "players": players}
+    out = {"cutoff": [pct(cutoffs, 0.1), pct(cutoffs, 0.5), pct(cutoffs, 0.9)], "players": players}
+    if race:
+        names = dict(con.execute("SELECT fide_id, name FROM players WHERE fide_id IS NOT NULL"))
+        out["kenya1"] = {
+            "list": race["list"],
+            "candidates": [
+                {"fide_id": fid, "name": names.get(fid) or FIDE_NAMES.get(fid), "rating": rating,
+                 "p": round(number1[fid] / SIMS, 3)}
+                for fid, rating in sorted(race["projected"].items(), key=lambda kv: -number1[kv[0]])
+                if number1[fid] / SIMS >= 0.001
+            ],
+        }
+    return out
 
 
 def ladies_team(ladies, qualifiers):
     """Each woman's chance of a Ladies team place, from the Ladies forecast."""
     team = {fid: e["p"] for fid, e in ladies["players"].items() if e["status"] == "forecast"}
     q = qualifiers["ladies"]
-    team.update({fid: 1.0 for fid in q["kenya1"] | ({q["champion"]} if q["champion"] else set())})
+    fixed = set() if "kenya1" in ladies else q["kenya1"]
+    team.update({fid: 1.0 for fid in fixed | ({q["champion"]} if q["champion"] else set())})
     return team
 
 
@@ -871,7 +987,10 @@ def apply_baseline(forecast, previous):
         for fide_id, entry in c["players"].items():
             if entry["status"] == "forecast":
                 prev = old.get(fide_id, {})
-                entry["p_before"] = prev.get("p_before", 0.0) if same_event else prev.get("p", 0.0)
+                if prev.get("status", "forecast") != "forecast":
+                    entry["p_before"] = 1.0
+                else:
+                    entry["p_before"] = prev.get("p_before", 0.0) if same_event else prev.get("p", 0.0)
 
 
 def build_forecast(season=None, previous=None):

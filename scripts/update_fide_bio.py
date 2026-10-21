@@ -1,7 +1,8 @@
-"""Extract Kenyan players' birth year, sex and standard rating from the FIDE rating list.
+"""Extract Kenyan players' name, birth year, sex, standard rating, K-factor and activity from the FIDE rating list.
 
-The qualification forecast needs all three (junior status, women in Open sections, current
-rating), and the full FIDE list is too large to commit, so only Kenyan rows are kept.
+The qualification forecast needs them (junior status, women in Open sections, current rating, and
+who can be Kenya #1, which only counts active players), and the FIDE list is too large to commit,
+so only Kenyan rows are kept.
 
 Run when FIDE publishes a new monthly list. data/fide_list.json records the latest event end
 date the list covers; the forecast adds Chess-Results rating changes for events after it.
@@ -52,24 +53,30 @@ def main():
 
     lines = read_lines(args.list)
     header = next(lines)
-    birth, fed, sex, rating = header.index("B-day"), header.index("Fed"), header.index("Sex"), header.index("SRtng")
+    name, birth, fed, sex = header.index("Name"), header.index("B-day"), header.index("Fed"), header.index("Sex")
+    flag = header.index("Flag")
+    rating, k = header.index("SRtng"), header.index("SK")
     rows = []
     for line in lines:
         if line[fed:fed + 3] != "KEN":
             continue
         year = line[birth:birth + 4].strip()
         std = line[rating:rating + 5].strip()
+        kf = line[k:k + 3].strip()
         rows.append((
             line[:15].strip(),
+            line[name:fed].strip(),
             int(year) if year.isdigit() and year != "0" else "",
             line[sex].strip(),
             int(std) if std.isdigit() and std != "0" else "",
+            int(kf) if kf.isdigit() else "",
+            int("i" in line[flag:flag + 4]),
         ))
     rows.sort(key=lambda r: int(r[0]) if r[0].isdigit() else 0)
 
     with open(OUTPUT, "w", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
-        writer.writerow(["fide_id", "birth_year", "sex", "rating"])
+        writer.writerow(["fide_id", "name", "birth_year", "sex", "rating", "k", "inactive"])
         writer.writerows(rows)
     with open(LIST_INFO, "w") as f:
         json.dump({"month": args.month, "rated_through": rated_through}, f, indent=1)

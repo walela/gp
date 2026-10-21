@@ -4,6 +4,8 @@ export type QualifierCategory = 'open' | 'ladies'
 
 export interface QualifierConfig {
   kenyaNumber1?: string
+  // FIDE list (YYYY-MM) that decides Kenya #1; until it's out, kenyaNumber1 is the current leader.
+  kenyaNumber1List?: string
   juniorChampion?: string
   excluded?: string[]
 }

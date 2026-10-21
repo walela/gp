@@ -10,6 +10,7 @@ import {
   TIER_LABEL,
   type ChanceTier,
   type ForecastFactors,
+  type Kenya1Race,
   type PlayerCategoryForecast,
   type PlayerForecast,
 } from '@/lib/qualification-odds'
@@ -270,6 +271,32 @@ function TitleDriver({ title, entryChance }: { title: number; entryChance?: numb
   )
 }
 
+// The card lists this many leading candidates, plus the player if lower.
+const KENYA1_RIVALS = 4
+
+function listDate(list: string): string {
+  const [year, month] = list.split('-').map(Number)
+  return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+}
+
+function Kenya1Driver({ race, fideId, chance }: { race: Kenya1Race; fideId: string; chance: number }) {
+  const shown = race.candidates.filter((c, i) => i < KENYA1_RIVALS || c.fide_id === fideId)
+  return (
+    <Driver title={`Kenya #1 on the ${listDate(race.list)} FIDE list`} value={formatChance(chance)} tone="good">
+      <dl>
+        {shown.map(c => (
+          <DetailRow key={c.fide_id} label={`${c.name ?? `FIDE ${c.fide_id}`} (${c.rating})`}>
+            <span className={c.fide_id === fideId ? 'font-semibold' : undefined}>{formatChance(c.p)}</span>
+          </DetailRow>
+        ))}
+      </dl>
+      <p className="pt-1 text-xs text-muted-foreground">
+        Ratings now, including rating changes FIDE hasn&apos;t published yet. Kenya #1 qualifies outside the standings.
+      </p>
+    </Driver>
+  )
+}
+
 // Below 1% of seasons (200 of 20,000) a row's qualify rate is mostly noise.
 const MIN_ROW_SHARE = 0.01
 
@@ -369,10 +396,11 @@ function Headline({ title, forecast, event }: { title: string; forecast: PlayerC
 
 const SECTION_GAP = <div className="h-2 border-y border-gray-200/60 bg-gray-50 sm:border-gray-200" aria-hidden />
 
-function CategoryForecast({ forecast, single, event }: {
+function CategoryForecast({ forecast, single, event, fideId }: {
   forecast: PlayerCategoryForecast
   single: boolean
   event: string
+  fideId: string
 }) {
   const { category, entry } = forecast
   const f = entry.factors
@@ -398,6 +426,9 @@ function CategoryForecast({ forecast, single, event }: {
               <GapDriver forecast={forecast} />
               {f && <BreakdownDriver f={f} />}
               {title >= 0.01 && <TitleDriver title={title} entryChance={entry.p_title_entry} />}
+              {forecast.kenya1 && entry.p_kenya1 !== undefined && (
+                <Kenya1Driver race={forecast.kenya1} fideId={fideId} chance={entry.p_kenya1} />
+              )}
             </div>
           </OpenFactor.Provider>
         </>
@@ -413,7 +444,7 @@ export function QualificationForecastCard({ forecast }: { forecast: PlayerForeca
       {forecast.categories.map((c, i) => (
         <Fragment key={c.category}>
           {i > 0 && SECTION_GAP}
-          <CategoryForecast forecast={c} single={single} event={forecast.afterEvent} />
+          <CategoryForecast forecast={c} single={single} event={forecast.afterEvent} fideId={forecast.fideId} />
         </Fragment>
       ))}
       {forecast.categories.some(c => c.entry.status === 'forecast') && (

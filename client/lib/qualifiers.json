@@ -14,12 +14,16 @@
   "2026": {
     "open": {
       "kenyaNumber1": "10824014",
-      "excluded": ["10814582"],
-      "names": "Kenya #1 Jadon Simiyu; Hawi Kaloki excluded"
+      "excluded": [
+        "10814582"
+      ],
+      "names": "Kenya #1 (Dec 1 list) currently Jadon Simiyu; Hawi Kaloki excluded",
+      "kenyaNumber1List": "2026-12"
     },
     "ladies": {
       "kenyaNumber1": "10809090",
-      "names": "Kenya #1 Sasha Mongeli"
+      "names": "Kenya #1 (Dec 1 list) currently Sasha Mongeli",
+      "kenyaNumber1List": "2026-12"
     }
   }
 }

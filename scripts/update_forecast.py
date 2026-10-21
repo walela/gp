@@ -16,6 +16,10 @@ published one:
 
     git show origin/main:client/lib/qualification-forecast.json > /tmp/published.json
     python3 scripts/update_forecast.py --baseline /tmp/published.json
+
+Model changes ship with the next event. Rerun this script with the changed model before saving
+that event: the rerun keeps the published baseline, and its odds become the baseline for the
+event, so the changes players see come from the event alone.
 """
 import argparse
 import json

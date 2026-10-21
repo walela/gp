@@ -18,6 +18,8 @@ export interface ForecastEntry {
   p_standings?: number
   // Only for juniors eligible for the national junior title.
   p_title_entry?: number
+  // Only for Kenya #1 candidates while the deciding FIDE list is still to come.
+  p_kenya1?: number
   factors?: ForecastFactors
   // Only for players too far off the pace to simulate; null without four results.
   best4_now?: number | null
@@ -52,13 +54,21 @@ export interface ForecastFactors {
   by_new: Array<[number, number | null]>
 }
 
+// Kenya #1 is decided by a FIDE list (YYYY-MM); until it's out, each candidate's chance of topping it.
+export interface Kenya1Race {
+  list: string
+  candidates: Array<{ fide_id: string; name: string | null; rating: number; p: number }>
+}
+
 export interface PlayerCategoryForecast {
   category: ForecastCategory
   entry: ForecastEntry
   cutoff: Array<number | null>
+  kenya1?: Kenya1Race
 }
 
 export interface PlayerForecast {
+  fideId: string
   season: number
   afterEvent: string
   sims: number

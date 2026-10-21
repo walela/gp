@@ -45,6 +45,9 @@ When a Grand Prix event is finished, update it in this order:
    - It reads `gp_tracker.db`, the upcoming events in `client/lib/active-tournaments.ts`, `client/lib/qualifiers.json`
      (Kenya #1, junior champion, excluded players; also used by the rankings page) and `data/fide_bio_ken.csv`.
    - Set `juniorChampion` in `client/lib/qualifiers.json` once the national junior championship is decided.
+   - Kenya #1 is the top active Kenyan (top active Kenyan woman for Ladies) on the FIDE list named by
+     `kenyaNumber1List`; until that list is in `data/fide_list.json`, `kenyaNumber1` is only the current leader and
+     the forecast simulates the race. When that list is imported, set `kenyaNumber1` to its actual #1.
    - New events get default forecast settings; add an `EVENT_PARAMS` entry in `qualification_model.py` when the
      format, draw or chance of a Ladies section is known.
    - Player pages show each odds change from the forecast published before the latest event, read from the existing
@@ -57,6 +60,11 @@ When a Grand Prix event is finished, update it in this order:
  that ended after `rated_through` in `data/fide_list.json`. When FIDE publishes a new monthly list (the 1st), run
  `python3 scripts/update_fide_bio.py` (it also refreshes birth years and sex), then confirm `rated_through` covers
  exactly the events FIDE rated; edit it if an event was rated late. Then regenerate the forecast.
+   - Published odds should only move when a Grand Prix event finishes. Ship model refinements (and FIDE list
+     refreshes that arrive between events) together with the next event update, not on their own. Keep them on a
+     branch until then. Before saving the new event, regenerate the forecast with the refined model on the pre-event
+     data (`python3 scripts/update_forecast.py`). That rerun becomes the baseline, so each player's change reflects
+     only the new event. Then save the event and regenerate again as usual.
 
 7. Deploy and verify cache revalidation.
    - A successful Fly deployment does not by itself refresh the frontend. Public API fetches use the Next.js Data Cache with the `gp-data` tag.

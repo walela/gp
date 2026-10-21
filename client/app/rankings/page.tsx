@@ -151,6 +151,9 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
 
   const seasonConfig = getQualifierConfig(season, category)
   const kenyaNumber1Id = seasonConfig?.kenyaNumber1 ?? null
+  // Until the deciding FIDE list is out, Kenya #1 is only the current leader and still has odds.
+  const kenyaNumber1Pending = Boolean(seasonConfig?.kenyaNumber1List) &&
+    (!kenyaNumber1Id || odds?.[kenyaNumber1Id]?.status !== 'kenya1')
   const juniorChampionId = seasonConfig?.juniorChampion ?? null
   const qualifierExcludedIds = new Set(seasonConfig?.excluded ?? [])
 
@@ -167,7 +170,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   // Count how many "special" qualifiers (Kenya #1, junior champ) fall inside the top 9
   // Each one frees up a spot for the next player
   const topPlayerIds = eligibleTopPlayers.map(p => p.fide_id || p.name)
-  const specialInTop9 = [kenyaNumber1Id, juniorChampionId].filter(id =>
+  const specialInTop9 = [kenyaNumber1Pending ? null : kenyaNumber1Id, juniorChampionId].filter(id =>
     id && topPlayerIds.slice(0, highlightCount).includes(id)
   ).length
   const effectiveHighlightCount = highlightCount + specialInTop9
@@ -291,7 +294,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                 const isJuniorChampion = juniorChampionId !== null && player.fide_id === juniorChampionId
                 const tableRank = (page - 1) * 25 + index + 1
 
-                const isDefinitelyQualified = isKenyaNumber1 || isJuniorChampion
+                const isDefinitelyQualified = (isKenyaNumber1 && !kenyaNumber1Pending) || isJuniorChampion
                 const hasQualified = isHighlightedQualifier || isDefinitelyQualified
                 const movement = view === 'best_4' ? getRankMovement(player) : null
                 const movementBadge = (isCurrentSeason || !hasQualified) && movement ? (
