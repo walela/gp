@@ -48,6 +48,7 @@ export const plannedTournaments: Tournament[] = [
     locationUrl: 'https://maps.google.com/?q=Nairobi,+Kenya',
     rounds: 6,
     confirmed: true,
+    registrationUrl: 'https://ncca.or.ke/Events/register/14',
     detailsUrl: null
   },
   {
