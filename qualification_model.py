@@ -12,7 +12,9 @@ count female players' results from any section, so each woman picks the
 Ladies or Open section at events that have one. Final standings use the
 site's cascading best-N rule, and the top 9 non-special players qualify
 (Kenya #1 and the junior champion qualify separately; if one player is both, the
-10th standings place qualifies).
+10th standings place qualifies). Until the FIDE list that decides Kenya #1 is out,
+each season also draws Kenya #1 from the leading active players' projected ratings,
+moved by their simulated GP results and rated games elsewhere.
 
 The published forecast is written by scripts/update_forecast.py.
 """
@@ -774,7 +776,7 @@ def kenya1_race(season, category, contenders, events, qualifiers):
             pending[fid] += known_or_estimated_gain(fid, rating, tpr, rounds, season, points, change)
     # Inactive players become active again once they play a rated game.
     active = FIDE_ACTIVE | {fid for fid in pending if fid in FIDE_RATINGS}
-    for fid in active:
+    for fid in sorted(active):
         if fid not in projected:
             projected[fid] = round(FIDE_RATINGS[fid] + pending[fid])
     eligible = {
@@ -974,7 +976,7 @@ def ladies_team(ladies, qualifiers):
     team = {fid: e["p"] for fid, e in ladies["players"].items() if e["status"] == "forecast"}
     q = qualifiers["ladies"]
     fixed = set() if "kenya1" in ladies else q["kenya1"]
-    team.update({fid: 1.0 for fid in fixed | ({q["champion"]} if q["champion"] else set())})
+    team.update({fid: 1.0 for fid in sorted(fixed | ({q["champion"]} if q["champion"] else set()))})
     return team
 
 
