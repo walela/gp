@@ -344,11 +344,18 @@ function OddsChange({ p, before, event }: { p: number; before: number; event: st
   )
 }
 
-// Austin Walela and Clifford Ombiro: zero odds get four decimals and their own pill.
-const MIRACLE_IDS = new Set(['10801693', '10829504'])
+// Austin Walela, Clifford Ombiro and Nkanda Mwega get their own pill, and zero odds to four decimals.
+const MIRACLE_IDS = new Set(['10801693', '10829504', '10833625'])
 
 function needsMiracle(forecast: PlayerCategoryForecast, fideId: string): boolean {
-  return MIRACLE_IDS.has(fideId) && forecast.entry.status === 'forecast' && (forecast.entry.p ?? 0) === 0
+  return MIRACLE_IDS.has(fideId) && forecast.entry.status === 'forecast'
+}
+
+function oddsText(forecast: PlayerCategoryForecast, fideId: string): string {
+  const { entry } = forecast
+  const p = entry.p ?? 0
+  if (needsMiracle(forecast, fideId) && p === 0) return '0.0000%'
+  return entry.p_text ?? formatChance(p)
 }
 
 function TierPill({ forecast, fideId }: { forecast: PlayerCategoryForecast; fideId: string }) {
@@ -401,7 +408,7 @@ function Headline({ title, forecast, event, fideId }: {
       </div>
       {entry.status === 'forecast' ? (
         <div className="mt-1 flex items-baseline gap-2">
-          <OddsFigure text={needsMiracle(forecast, fideId) ? '0.0000%' : entry.p_text ?? formatChance(p)} />
+          <OddsFigure text={oddsText(forecast, fideId)} />
           {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
         </div>
       ) : (
