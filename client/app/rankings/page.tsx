@@ -299,7 +299,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
                     data-rank-movement
                     aria-label={movement.ariaLabel}
                     className={cn(
-                      'rounded-sm px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+                      'rounded-sm px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wide',
                       movement.className
                     )}>
                     {movement.label}

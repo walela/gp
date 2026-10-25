@@ -39,7 +39,7 @@ export function getRankMovement(player: PlayerRanking): {
   if (change > 0) {
     return {
       label: `↑${change}`,
-      className: 'bg-green-100 text-green-700',
+      className: 'text-green-700',
       ariaLabel: `Moved up ${change} ${change === 1 ? 'spot' : 'spots'}`
     }
   }
@@ -55,7 +55,7 @@ export function getRankMovement(player: PlayerRanking): {
 
   return {
     label: `↓${magnitude}`,
-    className: 'bg-red-100 text-red-700',
+    className: 'text-red-700',
     ariaLabel: `Moved down ${magnitude} ${magnitude === 1 ? 'spot' : 'spots'}`
   }
 }

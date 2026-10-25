@@ -869,8 +869,13 @@ html[data-theme='felt'] header [data-brand] span {
 html[data-theme='felt'] header a::after {
   background-color: #c8a24a !important;
 }
+/* The picker is a dropdown trigger, which the sheet rule above turns dark-ink */
+html[data-theme='felt'] header [data-theme-picker] {
+  color: rgba(242, 236, 220, 0.85) !important;
+}
 html[data-theme='felt'] header [data-theme-picker]:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f2ecdc !important;
 }
 html[data-theme='felt'] footer {
   background-color: transparent !important;
@@ -887,6 +892,11 @@ html[data-theme='felt'] .inline-flex.divide-x {
 html[data-theme='felt'] .inline-flex.divide-x.rounded-t-lg {
   border-radius: var(--t-radius) var(--t-radius) 0 0 !important;
 }
+/* Tabs attached to a card: the drop shadow would fall across the card below */
+html[data-theme='felt'] .inline-flex.divide-x.rounded-t-lg:has(+ [data-slot='card']) {
+  box-shadow: none !important;
+}
+html[data-theme='felt'] .inline-flex.divide-x.rounded-t-lg + [data-slot='card'],
 html[data-theme='felt'] div:has(> div > .inline-flex.divide-x.rounded-t-lg) + [data-slot='card'],
 html[data-theme='felt'] div:has(> div > .inline-flex.divide-x.rounded-t-lg) + [data-slot='card'] > div:first-child {
   border-top-left-radius: 0 !important;
@@ -894,6 +904,30 @@ html[data-theme='felt'] div:has(> div > .inline-flex.divide-x.rounded-t-lg) + [d
 html[data-theme='felt'] [data-slot='segmented-control'] button[aria-pressed='true'] {
   background-color: #26392f !important;
   color: #f2ecdc !important;
+}
+/* Pagination sits on the felt on tournament pages and on a sheet in rankings.
+   Prev/Next are always cream buttons; page numbers are bare, so their hover is
+   tinted from their own ink to show on either background. */
+html[data-theme='felt'] nav[aria-label='Pagination'] a.border {
+  color: #1b2a23 !important;
+}
+html[data-theme='felt'] nav[aria-label='Pagination'] span.border {
+  color: #5d6d64 !important;
+}
+html[data-theme='felt'] nav[aria-label='Pagination'] a:not(.border):hover {
+  background-color: color-mix(in srgb, currentColor 16%, transparent) !important;
+}
+/* Rank movement in the felt palette; the stock cyan pill vanishes on parchment */
+html[data-theme='felt'] [data-rank-movement].text-green-700 {
+  color: #24603d !important;
+}
+html[data-theme='felt'] [data-rank-movement].text-red-700 {
+  color: #9a3324 !important;
+}
+html[data-theme='felt'] [data-rank-movement].bg-cyan-100 {
+  background-color: rgba(200, 162, 74, 0.2) !important;
+  box-shadow: inset 0 0 0 1px rgba(140, 108, 34, 0.35);
+  color: #6b5212 !important;
 }
 html[data-theme='felt'] tbody tr.border-l-amber-500 {
   border-left-color: #c8a24a !important;
