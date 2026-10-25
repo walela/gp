@@ -344,8 +344,22 @@ function OddsChange({ p, before, event }: { p: number; before: number; event: st
   )
 }
 
-function TierPill({ forecast }: { forecast: PlayerCategoryForecast }) {
+// Austin Walela and Clifford Ombiro: zero odds get four decimals and their own pill.
+const MIRACLE_IDS = new Set(['10801693', '10829504'])
+
+function needsMiracle(forecast: PlayerCategoryForecast, fideId: string): boolean {
+  return MIRACLE_IDS.has(fideId) && forecast.entry.status === 'forecast' && (forecast.entry.p ?? 0) === 0
+}
+
+function TierPill({ forecast, fideId }: { forecast: PlayerCategoryForecast; fideId: string }) {
   const { entry } = forecast
+  if (needsMiracle(forecast, fideId)) {
+    return (
+      <span className={cn('rounded-full px-3.5 py-1 text-sm font-medium ring-1 ring-inset', TIER_PILL['long-shot'])}>
+        Needs a miracle
+      </span>
+    )
+  }
   if (entry.status !== 'forecast') {
     return (
       <span className="rounded-full bg-emerald-600 px-3.5 py-1 text-sm font-medium text-white ring-1 ring-inset ring-emerald-700">
@@ -371,18 +385,23 @@ function OddsFigure({ text }: { text: string }) {
   )
 }
 
-function Headline({ title, forecast, event }: { title: string; forecast: PlayerCategoryForecast; event: string }) {
+function Headline({ title, forecast, event, fideId }: {
+  title: string
+  forecast: PlayerCategoryForecast
+  event: string
+  fideId: string
+}) {
   const { entry } = forecast
   const p = entry.p ?? 0
   return (
     <div className="px-3 py-3 sm:px-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground">{title}</h2>
-        <TierPill forecast={forecast} />
+        <TierPill forecast={forecast} fideId={fideId} />
       </div>
       {entry.status === 'forecast' ? (
         <div className="mt-1 flex items-baseline gap-2">
-          <OddsFigure text={entry.p_text ?? formatChance(p)} />
+          <OddsFigure text={needsMiracle(forecast, fideId) ? '0.0000%' : entry.p_text ?? formatChance(p)} />
           {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
         </div>
       ) : (
@@ -412,6 +431,7 @@ function CategoryForecast({ forecast, single, event, fideId }: {
         title={single ? 'Qualification Odds' : `${CATEGORY_LABEL[category]} qualification odds`}
         forecast={forecast}
         event={event}
+        fideId={fideId}
       />
       {entry.status === 'forecast' && (
         <>
