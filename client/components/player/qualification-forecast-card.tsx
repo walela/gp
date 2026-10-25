@@ -420,15 +420,15 @@ function CategoryForecast({ forecast, single, event, fideId }: {
           </h3>
           <OpenFactor.Provider value={openFactor}>
             <div>
+              {forecast.kenya1 && entry.p_kenya1 !== undefined && (
+                <Kenya1Driver race={forecast.kenya1} fideId={fideId} chance={entry.p_kenya1} />
+              )}
               {f && <PerformanceDriver f={f} />}
               {f && <WeakestDriver f={f} />}
               {f && <EventsDriver f={f} />}
               <GapDriver forecast={forecast} />
               {f && <BreakdownDriver f={f} />}
               {title >= 0.01 && <TitleDriver title={title} entryChance={entry.p_title_entry} />}
-              {forecast.kenya1 && entry.p_kenya1 !== undefined && (
-                <Kenya1Driver race={forecast.kenya1} fideId={fideId} chance={entry.p_kenya1} />
-              )}
             </div>
           </OpenFactor.Provider>
         </>
