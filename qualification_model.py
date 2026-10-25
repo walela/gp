@@ -437,7 +437,8 @@ def load_players(season, as_of, category="open"):
             held_r = [e for e in window if region(e[0]) == r]
             apps_r = sum(e in mine for e in held_r)
             p["region_mult"][r] = (apps_r + REGION_PRIOR * overall) / (len(held_r) + REGION_PRIOR) / overall
-        if p["mu"] >= config["contender_mu"] or (p["tprs"] and max(p["tprs"]) >= config["contender_best"]):
+        if (p["fide_id"] in ON_REQUEST or p["mu"] >= config["contender_mu"]
+                or (p["tprs"] and max(p["tprs"]) >= config["contender_best"])):
             contenders.append(p)
     return contenders, held
 
@@ -681,6 +682,11 @@ def backtest_2025(category="open"):
 # contender with 3 results can sit well below 40th).
 PUBLISHED_RANKS = 40
 PUBLISHED_MIN_P = 0.01
+# Modelled and published on request, even below the contender and publishing cuts.
+ON_REQUEST = {
+    "10801693",  # Austin Walela
+    "10829504",  # Clifford Ombiro
+}
 # An event in active-tournaments.ts this close to a stored tournament's dates has already been scraped.
 SCRAPED_WINDOW_DAYS = 3
 
@@ -929,6 +935,7 @@ def forecast_category(con, season, as_of, category, events, qualifiers, ladies_t
     published = {fid for fid, rank in ranks.items() if rank <= PUBLISHED_RANKS}
     published |= {fid for fid in modelled if fid in ranks and counts[fid] / SIMS >= PUBLISHED_MIN_P}
     published |= {fid for fid in q["kenya1"] | {champion} if fid in ranks}
+    published |= {fid for fid in ON_REQUEST if fid in modelled and fid in ranks}
     players = {}
     for fide_id in sorted(published, key=ranks.get):
         rank, best4_now = ranking[fide_id]
