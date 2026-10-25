@@ -782,6 +782,7 @@ def kenya1_race(season, category, contenders, events, qualifiers):
     eligible = {
         fid: r for fid, r in projected.items()
         if fid in active and fid not in q["dead"] and (category == "open" or fid in FEMALE)
+        and is_gp_eligible_player(fid, FIDE_NAMES.get(fid))
     }
     leader = max(eligible.values())
     candidates = {fid: r for fid, r in eligible.items() if r >= leader - KENYA1_WINDOW}
