@@ -25,10 +25,9 @@ export const DESIGN_THEMES: DesignThemeMeta[] = [
 export const DEFAULT_THEME: DesignThemeId = 'default'
 export const THEME_STORAGE_KEY = 'gp-design-theme'
 
-// Visitors who haven't picked a theme get Felt when their device is in dark
-// mode or it's night in Kenya (20:00-06:00 EAT, UTC+3 with no DST).
+// Visitors who haven't picked a theme get Felt when it's night in Kenya
+// (20:00-06:00 EAT, UTC+3 with no DST), whatever their device's colour scheme.
 export const NIGHT_THEME: DesignThemeId = 'felt'
-export const DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)'
 const EAT_UTC_OFFSET_HOURS = 3
 const NIGHT_START_HOUR = 20
 const NIGHT_END_HOUR = 6
@@ -38,8 +37,8 @@ export function isEatNight(now = new Date()): boolean {
   return hour >= NIGHT_START_HOUR || hour < NIGHT_END_HOUR
 }
 
-export function automaticTheme(prefersDark: boolean, now = new Date()): DesignThemeId {
-  return prefersDark || isEatNight(now) ? NIGHT_THEME : DEFAULT_THEME
+export function automaticTheme(now = new Date()): DesignThemeId {
+  return isEatNight(now) ? NIGHT_THEME : DEFAULT_THEME
 }
 
 // Public content routes that get themed. Detail pages (tournament/player)

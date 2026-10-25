@@ -9,7 +9,6 @@ import {
 } from 'react'
 import { usePathname } from 'next/navigation'
 import {
-  DARK_SCHEME_QUERY,
   DEFAULT_THEME,
   THEME_STORAGE_KEY,
   automaticTheme,
@@ -47,7 +46,7 @@ function readStoredChoice(): DesignThemeId | null {
 
 function readAutomaticTheme(): DesignThemeId {
   if (typeof window === 'undefined') return DEFAULT_THEME
-  return automaticTheme(window.matchMedia(DARK_SCHEME_QUERY).matches)
+  return automaticTheme()
 }
 
 export function DesignThemeProvider({ children }: { children: React.ReactNode }) {
@@ -63,15 +62,10 @@ export function DesignThemeProvider({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (choice) return
-    const media = window.matchMedia(DARK_SCHEME_QUERY)
-    const update = () => setAutoTheme(automaticTheme(media.matches))
+    const update = () => setAutoTheme(automaticTheme())
     update()
-    media.addEventListener('change', update)
     const timer = window.setInterval(update, 60_000)
-    return () => {
-      media.removeEventListener('change', update)
-      window.clearInterval(timer)
-    }
+    return () => window.clearInterval(timer)
   }, [choice])
 
   useEffect(() => {
