@@ -130,6 +130,9 @@ def region(event_name):
 JUNIOR_TITLE_ATTEND = 0.42
 JUNIOR_TITLE_PRIOR = 2
 JUNIOR_TITLE_KENYA1 = 0.05
+# Juniors assumed to skip it like a Kenya #1, whoever leads the race: Jadon (standings lock,
+# skipped in 2025).
+JUNIOR_TITLE_SKIPS = {"10824014"}
 # 2025 entrants: full boys' list (tnr, Clarion Hotel, 27-28 Sep); girls' list unavailable, so
 # only the podium (Cassidy, Zuri, Bella) is known and other girls get the base chance.
 JUNIOR_2025_BOYS = {
@@ -497,7 +500,7 @@ def junior_title_pool(contenders, season, category, dead=(), kenya1=()):
     for p in pool:
         fid = p["fide_id"]
         eligible_last_year = BIRTH_YEARS.get(fid, 0) >= season - 21
-        if fid in kenya1:
+        if fid in kenya1 or fid in JUNIOR_TITLE_SKIPS:
             chance = JUNIOR_TITLE_KENYA1
         elif category == "open" and eligible_last_year:
             played = fid in JUNIOR_2025_BOYS

@@ -25,20 +25,6 @@ export const upcomingTournaments: Tournament[] = [
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
   {
-    id: 'kisii-open-2026',
-    name: 'Kisii Open Chess Championship - Grand Prix',
-    short_name: 'Kisii Open',
-    startDate: '2026-10-23',
-    endDate: '2026-10-25',
-    location: 'Kisii ATC',
-    locationUrl: 'https://maps.google.com/?q=Kisii+ATC,+Kisii,+Kenya',
-    rounds: 8,
-    confirmed: true,
-    registrationDeadline: '2026-10-15',
-    registrationUrl: 'https://forms.gle/iS6Pn7Yk5DSubxMy7',
-    detailsUrl: null
-  },
-  {
     id: 'ctc-classical-2026',
     name: 'CTC Open - Grand Prix',
     short_name: 'CTC Open',
