@@ -996,7 +996,11 @@ def apply_baseline(forecast, previous):
     what players saw. Regenerating after the same event keeps the earlier baseline."""
     same_event = previous["after"]["id"] == forecast["after"]["id"]
     for category, c in forecast["categories"].items():
-        old = previous["categories"].get(category, {}).get("players", {})
+        prev_category = previous["categories"].get(category, {})
+        before = prev_category.get("cutoff_before") if same_event else (prev_category.get("cutoff") or [None] * 3)[1]
+        if before is not None:
+            c["cutoff_before"] = before
+        old = prev_category.get("players", {})
         for fide_id, entry in c["players"].items():
             if entry["status"] == "forecast":
                 prev = old.get(fide_id, {})

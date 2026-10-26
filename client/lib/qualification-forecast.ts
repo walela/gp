@@ -12,6 +12,8 @@ interface ForecastFile {
   tournaments: Record<string, number>
   categories: Record<ForecastCategory, {
     cutoff: Array<number | null>
+    // The median cutoff published before the latest event.
+    cutoff_before?: number
     players: Record<string, ForecastEntry>
     kenya1?: Kenya1Race
   }>
@@ -53,9 +55,15 @@ export function getPlayerForecast(
   // Only women have Ladies odds, and a woman who makes both teams takes the Ladies place.
   const order: ForecastCategory[] = ['ladies', 'open']
   const categories = order.flatMap(category => {
-    const { players, cutoff, kenya1 } = forecast.categories[category]
+    const { players, cutoff, cutoff_before: cutoffBefore, kenya1 } = forecast.categories[category]
     const entry = players[fideId]
-    return entry ? [{ category, entry, cutoff, ...(entry.p_kenya1 !== undefined && kenya1 ? { kenya1 } : {}) }] : []
+    return entry ? [{
+      category,
+      entry,
+      cutoff,
+      ...(cutoffBefore !== undefined ? { cutoffBefore } : {}),
+      ...(entry.p_kenya1 !== undefined && kenya1 ? { kenya1 } : {}),
+    }] : []
   })
   if (categories.length === 0) return null
 

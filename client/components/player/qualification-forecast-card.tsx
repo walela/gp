@@ -141,22 +141,54 @@ function Driver({ title, value, tone, flush, children }: {
   )
 }
 
-function OffPaceDriver({ best4, line }: { best4: number | null; line: number | null }) {
+// Coloured the opposite way to the odds change: a higher cutoff is harder to make.
+function CutoffValue({ line, before, event }: { line: number; before?: number; event: string }) {
+  const change = before === undefined ? 0 : line - before
+  if (change === 0) return <>{line}</>
+  const description = `${change > 0 ? 'Up' : 'Down'} ${Math.abs(change)} since before ${event}`
+  return (
+    <span className="inline-flex items-baseline gap-1.5">
+      <span
+        aria-label={description}
+        title={description}
+        className={cn(
+          'inline-flex items-baseline gap-0.5 text-xs font-medium',
+          change > 0 ? 'text-red-600' : 'text-emerald-700',
+        )}
+      >
+        <span className="text-[10px]" aria-hidden>{change > 0 ? '\u25B2' : '\u25BC'}</span>
+        {Math.abs(change)}
+      </span>
+      {line}
+    </span>
+  )
+}
+
+function OffPaceDriver({ best4, line, before, event }: {
+  best4: number | null
+  line: number | null
+  before?: number
+  event: string
+}) {
   const gap = best4 != null && line != null ? best4 - line : null
   return (
     <Driver title="Current Best 4 TPR vs. cutoff" value={gap == null ? 'No Best 4' : signed(gap)} tone="bad">
       <dl>
         {best4 != null && <DetailRow label="Current Best 4">{best4}</DetailRow>}
-        {line != null && <DetailRow label="Projected cutoff">{line}</DetailRow>}
+        {line != null && (
+          <DetailRow label="Projected cutoff"><CutoffValue line={line} before={before} event={event} /></DetailRow>
+        )}
       </dl>
       <p className="mt-1 text-xs text-muted-foreground">Too far below the cutoff to simulate.</p>
     </Driver>
   )
 }
 
-function GapDriver({ forecast }: { forecast: PlayerCategoryForecast }) {
-  const { entry, cutoff } = forecast
-  if (entry.best4_now !== undefined) return <OffPaceDriver best4={entry.best4_now} line={cutoff[1]} />
+function GapDriver({ forecast, event }: { forecast: PlayerCategoryForecast; event: string }) {
+  const { entry, cutoff, cutoffBefore } = forecast
+  if (entry.best4_now !== undefined) {
+    return <OffPaceDriver best4={entry.best4_now} line={cutoff[1]} before={cutoffBefore} event={event} />
+  }
   const f = entry.factors
   const best4 = entry.best4?.[1]
   const line = cutoff[1]
@@ -175,7 +207,9 @@ function GapDriver({ forecast }: { forecast: PlayerCategoryForecast }) {
           <DetailRow label="Chance of a 4th result">{formatChance(entry.p_four)}</DetailRow>
         )}
         {best4 != null && <DetailRow label="Projected Best 4">{best4}</DetailRow>}
-        {line != null && <DetailRow label="Projected cutoff">{line}</DetailRow>}
+        {line != null && (
+          <DetailRow label="Projected cutoff"><CutoffValue line={line} before={cutoffBefore} event={event} /></DetailRow>
+        )}
       </dl>
     </Driver>
   )
@@ -453,7 +487,7 @@ function CategoryForecast({ forecast, single, event, fideId }: {
               {f && <PerformanceDriver f={f} />}
               {f && <WeakestDriver f={f} />}
               {f && <EventsDriver f={f} />}
-              <GapDriver forecast={forecast} />
+              <GapDriver forecast={forecast} event={event} />
               {f && <BreakdownDriver f={f} />}
               {title >= 0.01 && <TitleDriver title={title} entryChance={entry.p_title_entry} />}
             </div>

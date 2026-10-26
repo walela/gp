@@ -64,6 +64,8 @@ export interface PlayerCategoryForecast {
   category: ForecastCategory
   entry: ForecastEntry
   cutoff: Array<number | null>
+  // The median cutoff published before the latest event.
+  cutoffBefore?: number
   kenya1?: Kenya1Race
 }
 

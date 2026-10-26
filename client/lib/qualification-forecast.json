@@ -11,6 +11,7 @@
     1788,
     1814
    ],
+   "cutoff_before": 1787,
    "kenya1": {
     "candidates": [
      {
@@ -2418,6 +2419,7 @@
     2031,
     2047
    ],
+   "cutoff_before": 2031,
    "kenya1": {
     "candidates": [
      {
@@ -5187,7 +5189,7 @@
   "events": "3b2334a4bcc02351",
   "fide_bio": "1f0d6ce7520da211",
   "fide_list": "9bd5fcb6809e97a3",
-  "model": "fded619cae1b6c5a",
+  "model": "f1be067bb2142251",
   "qualifiers": "35b36822a4ed9a30",
   "season": 2026
  },
