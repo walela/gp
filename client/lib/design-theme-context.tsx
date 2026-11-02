@@ -10,16 +10,23 @@ import {
 import { usePathname } from 'next/navigation'
 import {
   DEFAULT_THEME,
+  THEME_EXPIRY_KEY,
   THEME_STORAGE_KEY,
   automaticTheme,
   isThemedPath,
   isDesignThemeId,
+  nextThemeSwitch,
   type DesignThemeId,
 } from '@/lib/design-themes'
 
 interface DesignThemeContextValue {
   theme: DesignThemeId
   setTheme: (theme: DesignThemeId) => void
+}
+
+interface ThemeChoice {
+  theme: DesignThemeId
+  expires: number
 }
 
 const DesignThemeContext = createContext<DesignThemeContextValue | null>(null)
@@ -29,15 +36,26 @@ const DesignThemeContext = createContext<DesignThemeContextValue | null>(null)
  * while the user is on a themed public route (tournaments, rankings, ladies,
  * insights, and tournament/player detail pages). On every other route (e.g.
  * admin) the attribute is removed so it keeps its default look. An explicit
- * choice is persisted in localStorage and shared across all themed pages;
- * without one, the theme follows automaticTheme() and updates live.
+ * choice is persisted in localStorage and shared across all themed pages until
+ * the next nextThemeSwitch(); without one, the theme follows automaticTheme().
+ * Both update live.
  */
-function readStoredChoice(): DesignThemeId | null {
+function clearStoredChoice() {
+  try {
+    window.localStorage.removeItem(THEME_STORAGE_KEY)
+    window.localStorage.removeItem(THEME_EXPIRY_KEY)
+  } catch {
+    // ignore
+  }
+}
+
+function readStoredChoice(): ThemeChoice | null {
   if (typeof window === 'undefined') return null
   try {
-    const saved = window.localStorage.getItem(THEME_STORAGE_KEY)
-    if (isDesignThemeId(saved)) return saved
-    if (saved) window.localStorage.removeItem(THEME_STORAGE_KEY)
+    const theme = window.localStorage.getItem(THEME_STORAGE_KEY)
+    const expires = Number(window.localStorage.getItem(THEME_EXPIRY_KEY))
+    if (isDesignThemeId(theme) && expires > Date.now()) return { theme, expires }
+    if (theme) clearStoredChoice()
   } catch {
     // ignore
   }
@@ -54,15 +72,21 @@ export function DesignThemeProvider({ children }: { children: React.ReactNode })
   // Initialise from storage synchronously so the client's first render already
   // has the right theme — the inline <head> script sets the attribute before
   // paint, and this keeps the provider from flipping it back to default.
-  const [choice, setChoice] = useState<DesignThemeId | null>(readStoredChoice)
+  const [choice, setChoice] = useState<ThemeChoice | null>(readStoredChoice)
   const [autoTheme, setAutoTheme] = useState<DesignThemeId>(readAutomaticTheme)
-  const theme = choice ?? autoTheme
+  const theme = choice?.theme ?? autoTheme
 
   const isThemedRoute = isThemedPath(pathname)
 
   useEffect(() => {
-    if (choice) return
-    const update = () => setAutoTheme(automaticTheme())
+    const update = () => {
+      const now = new Date()
+      setAutoTheme(automaticTheme(now))
+      if (choice && now.getTime() >= choice.expires) {
+        clearStoredChoice()
+        setChoice(null)
+      }
+    }
     update()
     const timer = window.setInterval(update, 60_000)
     return () => window.clearInterval(timer)
@@ -81,9 +105,11 @@ export function DesignThemeProvider({ children }: { children: React.ReactNode })
   }, [isThemedRoute, theme])
 
   const setTheme = useCallback((next: DesignThemeId) => {
-    setChoice(next)
+    const picked = { theme: next, expires: nextThemeSwitch().getTime() }
+    setChoice(picked)
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, next)
+      window.localStorage.setItem(THEME_EXPIRY_KEY, String(picked.expires))
     } catch {
       // ignore
     }

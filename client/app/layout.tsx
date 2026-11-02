@@ -77,11 +77,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={fontVariables} suppressHydrationWarning>
       <body className={`${fontVariables} ${inter.className}`}>
         {/* Apply the saved (or automatic) design theme before paint to avoid a
-            default-theme flash. Mirrors THEME_STORAGE_KEY, automaticTheme() and
-            isThemedPath() in design-themes.ts. */}
+            default-theme flash. Mirrors THEME_STORAGE_KEY, THEME_EXPIRY_KEY,
+            automaticTheme() and isThemedPath() in design-themes.ts. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var k='gp-design-theme';var t=localStorage.getItem(k);var valid=['default','neo-brutalist','brutalist','swiss','editorial','felt'];if(t&&valid.indexOf(t)<0){localStorage.removeItem(k);t=null;}if(!t){var h=(new Date().getUTCHours()+3)%24;t=h>=20||h<6?'felt':'default';}if(t==='default')return;var p=location.pathname;var themed=p==='/'||['/rankings','/tournaments','/ladies','/insights','/tournament','/player'].some(function(x){return p===x||p.indexOf(x+'/')===0;});if(themed)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+            __html: `(function(){try{var k='gp-design-theme';var x='gp-design-theme-expires';var t=localStorage.getItem(k);var valid=['default','neo-brutalist','brutalist','swiss','editorial','felt'];if(t&&(valid.indexOf(t)<0||!(Number(localStorage.getItem(x))>Date.now()))){localStorage.removeItem(k);localStorage.removeItem(x);t=null;}if(!t){var h=(new Date().getUTCHours()+3)%24;t=h>=20||h<6?'felt':'default';}if(t==='default')return;var p=location.pathname;var themed=p==='/'||['/rankings','/tournaments','/ladies','/insights','/tournament','/player'].some(function(x){return p===x||p.indexOf(x+'/')===0;});if(themed)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
           }}
         />
         {/* Neobrutalist background - subtle Kenyan palette undertones */}

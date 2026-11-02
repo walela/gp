@@ -24,21 +24,32 @@ export const DESIGN_THEMES: DesignThemeMeta[] = [
 
 export const DEFAULT_THEME: DesignThemeId = 'default'
 export const THEME_STORAGE_KEY = 'gp-design-theme'
+export const THEME_EXPIRY_KEY = 'gp-design-theme-expires'
 
 // Visitors who haven't picked a theme get Felt when it's night in Kenya
 // (20:00-06:00 EAT, UTC+3 with no DST), whatever their device's colour scheme.
+// A picked theme lasts until the next switch, then the automatic theme resumes.
 export const NIGHT_THEME: DesignThemeId = 'felt'
-const EAT_UTC_OFFSET_HOURS = 3
+const EAT_UTC_OFFSET_MS = 3 * 60 * 60 * 1000
 const NIGHT_START_HOUR = 20
 const NIGHT_END_HOUR = 6
 
 export function isEatNight(now = new Date()): boolean {
-  const hour = (now.getUTCHours() + EAT_UTC_OFFSET_HOURS) % 24
+  const hour = new Date(now.getTime() + EAT_UTC_OFFSET_MS).getUTCHours()
   return hour >= NIGHT_START_HOUR || hour < NIGHT_END_HOUR
 }
 
 export function automaticTheme(now = new Date()): DesignThemeId {
   return isEatNight(now) ? NIGHT_THEME : DEFAULT_THEME
+}
+
+// The next 06:00 or 20:00 EAT, when the automatic theme changes.
+export function nextThemeSwitch(now = new Date()): Date {
+  const eat = new Date(now.getTime() + EAT_UTC_OFFSET_MS)
+  const next = new Date(eat)
+  next.setUTCHours(isEatNight(now) ? NIGHT_END_HOUR : NIGHT_START_HOUR, 0, 0, 0)
+  if (next <= eat) next.setUTCDate(next.getUTCDate() + 1)
+  return new Date(next.getTime() - EAT_UTC_OFFSET_MS)
 }
 
 // Public content routes that get themed. Detail pages (tournament/player)
