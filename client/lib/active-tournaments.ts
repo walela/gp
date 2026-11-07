@@ -31,6 +31,7 @@ export const upcomingTournaments: Tournament[] = [
     rounds: 6,
     confirmed: true,
     registrationDeadline: '2026-11-12',
+    registrationUrl: 'https://chesskenya.co.ke/Event/55',
     detailsUrl: null
   }
 ]
