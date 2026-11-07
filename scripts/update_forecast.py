@@ -20,6 +20,11 @@ published one:
 Model changes ship with the next event. Rerun this script with the changed model before saving
 that event: the rerun keeps the published baseline, and its odds become the baseline for the
 event, so the changes players see come from the event alone.
+
+To publish odds that moved between events (say an event was added), measure the changes from
+the published odds and say why they moved; player pages read "Up 3 points since <reason>":
+
+    python3 scripts/update_forecast.py --baseline /tmp/published.json --rebaseline "Bungoma Open was added"
 """
 import argparse
 import json
@@ -38,6 +43,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true", help="verify instead of regenerating")
     parser.add_argument("--baseline", help="published forecast to measure changes from (default: the existing file)")
+    parser.add_argument("--rebaseline", metavar="REASON",
+                        help="measure changes from the baseline's own odds, shown as 'since REASON'")
     args = parser.parse_args()
 
     if args.check:
@@ -63,7 +70,9 @@ def main():
         with open(baseline) as f:
             previous = json.load(f)
     try:
-        forecast = model.build_forecast(previous=previous)
+        if args.rebaseline and not previous:
+            sys.exit("--rebaseline needs a forecast to measure from")
+        forecast = model.build_forecast(previous=previous, since=args.rebaseline)
     except model.StaleInputs as e:
         sys.exit(f"Can't build the forecast: {e}")
     with open(OUTPUT, "w") as f:

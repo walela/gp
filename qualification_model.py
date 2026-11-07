@@ -97,10 +97,12 @@ REMAINING_2025 = [
 # so the risk is mostly travel and turnout, rising with date and for upcountry travel.
 # Ladies sections: Mombasa and KCB always have one, CTC didn't in 2025, and Kisii and Karen
 # have no history (9 of 13 events this season had one). CTC assumed 8 rounds as in 2025.
+# Bungoma's announcement lists a Ladies section; upcountry in peak rains like Kisii.
 EVENT_PARAMS = {
     "mombasa-open-2026": ("6x3", 0.03, 0.95, 0.95, 1.05),
     "kenya-open-2026": ("8", 0.03, 0.95, 0.95, 1.78),
     "kisii-open-2026": ("8", 0.10, 0.85, 0.7, 0.97),
+    "bungoma-open-2026": ("6", 0.08, 0.85, 0.95, 0.97),
     "ctc-classical-2026": ("8", 0.08, 0.90, 0.2, 0.97),
     "karen-open-2026": ("6", 0.08, 0.90, 0.7, 1.0),
 }
@@ -383,11 +385,17 @@ def load_players(season, as_of, category="open"):
             if rating:
                 p["rated"].append((dt.date.fromisoformat(start_date), rating, tpr, rounds, points, change))
 
+    # A list can be newer than as_of (a list published between events), but in a backtest it mustn't
+    # rate stored events that hadn't started by then.
+    list_usable = as_of_date > FIDE_RATED_THROUGH or not con.execute(
+        "SELECT 1 FROM tournaments WHERE start_date >= ? AND start_date <= ? LIMIT 1",
+        (as_of, FIDE_RATED_THROUGH.isoformat()),
+    ).fetchone()
     config = CATEGORIES[category]
     contenders = []
     for p in players.values():
         junior = is_junior(p["fide_id"], season)
-        listed = FIDE_RATINGS.get(p["fide_id"]) if as_of_date > FIDE_RATED_THROUGH else None
+        listed = FIDE_RATINGS.get(p["fide_id"]) if list_usable else None
         if listed:
             p["rating"] = listed
             pending = sum(
@@ -522,11 +530,14 @@ def poisson(rng, mean):
 
 
 def simulate(contenders, events, excluded, category="open", junior_pool=(), junior_champion=None, kenya1=(), seed=1,
-             ladies_team=None, kenya1_race=None):
+             ladies_team=None, kenya1_race=None, lines=None):
     """Returns qualification counts, junior title counts, final best-4s, cutoffs, per-player
     [seasons, qualified] by number of new valid results (0 up to one per event), how often each
     finished inside the standings spots (whether or not they also won the junior title), and how
     often each Kenya #1 candidate topped the deciding FIDE list.
+
+    lines, if given, collects each season's line for every pool player: the best 4 the other
+    players set for the last standings spot (None if fewer than that many reach four results).
 
     Either junior_champion is known, or it is drawn each season from junior_pool. Likewise Kenya #1
     is either the fixed kenya1, or drawn each season from kenya1_race (see kenya1_race()); a GP
@@ -602,6 +613,13 @@ def simulate(contenders, events, excluded, category="open", junior_pool=(), juni
         order = [(key, fid) for key, fid in keyed if fid != champion and fid not in season_kenya1]
         cutoffs.append(order[spots - 1][0][1] if order[spots - 1][0][0] == 4 else None)
         season_qualified = {fid for _, fid in order[:spots]}
+        if lines is not None:
+            def line_key(i):
+                return order[i][0][1] if i < len(order) and order[i][0][0] == 4 else None
+            inside, outside = line_key(spots), line_key(spots - 1)
+            for p in pool:
+                fid = p["fide_id"]
+                lines.setdefault(fid, []).append(inside if fid in season_qualified else outside)
         standings.update(season_qualified)
         separate = {champion} if champion and champion not in excluded else set()
         if kenya1_race:
@@ -617,6 +635,15 @@ def simulate(contenders, events, excluded, category="open", junior_pool=(), juni
             bucket[0] += 1
             bucket[1] += fid in season_qualified
     return qualified, titles, final_best4, cutoffs, by_new, standings, number1
+
+
+def line_percentiles(values):
+    """Percentiles 0-100 of a player's simulated line; a season where too few others reach four
+    results counts as 0 (any four results clear it)."""
+    if not values:
+        return []
+    values = sorted(0 if v is None else round(v) for v in values)
+    return [values[round(q * (len(values) - 1) / 100)] for q in range(101)]
 
 
 def pct(values, q):
@@ -903,7 +930,7 @@ def player_factors(p, events, season, by_new):
     }
 
 
-def simulate_category(season, as_of, category, events, qualifiers, ladies_team=None):
+def simulate_category(season, as_of, category, events, qualifiers, ladies_team=None, lines=None):
     q = qualifiers[category]
     kenya1, champion, dead = q["kenya1"], q["champion"], q["dead"]
     contenders, _ = load_players(season, as_of, category)
@@ -916,7 +943,7 @@ def simulate_category(season, as_of, category, events, qualifiers, ladies_team=N
     results = simulate(
         contenders, [e["params"] for e in events], excluded, category,
         junior_pool=juniors, junior_champion=champion, kenya1=() if race else kenya1, ladies_team=ladies_team,
-        kenya1_race=race,
+        kenya1_race=race, lines=lines,
     )
     return contenders, juniors, results, race
 
@@ -924,7 +951,9 @@ def simulate_category(season, as_of, category, events, qualifiers, ladies_team=N
 def forecast_category(con, season, as_of, category, events, qualifiers, ladies_team=None):
     q = qualifiers[category]
     champion, dead = q["champion"], q["dead"]
-    contenders, juniors, results, race = simulate_category(season, as_of, category, events, qualifiers, ladies_team)
+    lines = {}
+    contenders, juniors, results, race = simulate_category(season, as_of, category, events, qualifiers, ladies_team,
+                                                           lines=lines)
     counts, titles, final_best4, cutoffs, by_new, standings, number1 = results
     # While the deciding list is still to come, the leader gets a forecast like everyone else.
     kenya1 = set() if race else q["kenya1"]
@@ -958,6 +987,9 @@ def forecast_category(con, season, as_of, category, events, qualifiers, ladies_t
                 "p_junior_title": round(titles[fide_id] / SIMS, 3),
                 "p_standings": round(standings[fide_id] / SIMS, 3),
                 "factors": player_factors(modelled[fide_id], [e["params"] for e in events], season, by_new[fide_id]),
+                # For the TPR calculator: the results that count now and the line they'd have to beat.
+                "tprs": sorted((round(t) for t in modelled[fide_id]["tprs"]), reverse=True),
+                "line": line_percentiles(lines.get(fide_id, [])),
             })
             if fide_id in title_entry:
                 entry["p_title_entry"] = round(title_entry[fide_id], 3)
@@ -991,10 +1023,17 @@ def ladies_team(ladies, qualifiers):
     return team
 
 
-def apply_baseline(forecast, previous):
+def apply_baseline(forecast, previous, since=None):
     """Set each player's p_before to the odds published before the latest event, so the change matches
-    what players saw. Regenerating after the same event keeps the earlier baseline."""
-    same_event = previous["after"]["id"] == forecast["after"]["id"]
+    what players saw. Regenerating after the same event keeps the earlier baseline.
+
+    With since, the change is measured from previous's own odds instead, and since completes the
+    player page's "Up 3 points since ..." (for odds that moved between events)."""
+    same_event = previous["after"]["id"] == forecast["after"]["id"] and since is None
+    if since is not None:
+        forecast["since"] = since
+    elif same_event and "since" in previous:
+        forecast["since"] = previous["since"]
     for category, c in forecast["categories"].items():
         prev_category = previous["categories"].get(category, {})
         before = prev_category.get("cutoff_before") if same_event else (prev_category.get("cutoff") or [None] * 3)[1]
@@ -1010,8 +1049,9 @@ def apply_baseline(forecast, previous):
                     entry["p_before"] = prev.get("p_before", 0.0) if same_event else prev.get("p", 0.0)
 
 
-def build_forecast(season=None, previous=None):
-    """previous is the published forecast the changes are measured from; without it there are none."""
+def build_forecast(season=None, previous=None, since=None):
+    """previous is the published forecast the changes are measured from; without it there are none.
+    since: see apply_baseline()."""
     con = sqlite3.connect(DB_FILE)
     season = season or latest_season(con)
     as_of = season_as_of(con, season)
@@ -1038,7 +1078,7 @@ def build_forecast(season=None, previous=None):
         },
     }
     if previous:
-        apply_baseline(forecast, previous)
+        apply_baseline(forecast, previous, since)
     return forecast
 
 

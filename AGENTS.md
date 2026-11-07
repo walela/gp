@@ -65,6 +65,9 @@ When a Grand Prix event is finished, update it in this order:
      branch until then. Before saving the new event, regenerate the forecast with the refined model on the pre-event
      data (`python3 scripts/update_forecast.py`). That rerun becomes the baseline, so each player's change reflects
      only the new event. Then save the event and regenerate again as usual.
+ - If odds are deliberately published between events (for example when an event is added), measure the changes
+ from the published odds with `--baseline <published.json> --rebaseline "<reason>"`; player pages then read
+ "since <reason>". The next finished event resets this to the usual "since before <event>".
 
 7. Deploy and verify cache revalidation.
    - A successful Fly deployment does not by itself refresh the frontend. Public API fetches use the Next.js Data Cache with the `gp-data` tag.

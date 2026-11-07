@@ -23,6 +23,10 @@ export interface ForecastEntry {
   factors?: ForecastFactors
   // Only for players too far off the pace to simulate; null without four results.
   best4_now?: number | null
+  // For the TPR calculator: the valid TPRs that count now, highest first, and percentiles 0-100 of
+  // the best 4 the other players set for the last standings spot.
+  tprs?: number[]
+  line?: number[]
 }
 
 export type FactorGroup = 'adults_open' | 'juniors_open' | 'women_open' | 'ladies'
@@ -69,11 +73,20 @@ export interface PlayerCategoryForecast {
   kenya1?: Kenya1Race
 }
 
+export interface ForecastEvent {
+  id: string
+  name: string
+  start_date: string
+}
+
 export interface PlayerForecast {
   fideId: string
   season: number
   afterEvent: string
+  // Completes "Up 3 points since ...".
+  since: string
   sims: number
+  remaining: ForecastEvent[]
   categories: PlayerCategoryForecast[]
 }
 
@@ -116,4 +129,24 @@ export function formatChance(p: number): string {
   if (p >= 0.9995) return '>99.9%'
   if (p < 0.0005) return '<0.1%'
   return `${displayedPercent(p).toFixed(1)}%`
+}
+
+// Mean of the best four, or null with fewer than four (the line is always a four-result best 4).
+export function bestFour(tprs: number[]): number | null {
+  if (tprs.length < 4) return null
+  const top = [...tprs].sort((a, b) => b - a).slice(0, 4)
+  return top.reduce((sum, t) => sum + t, 0) / 4
+}
+
+// Share of simulated seasons whose line is below best4, interpolating between percentiles.
+export function chanceOfBeatingLine(line: number[], best4: number | null): number {
+  if (best4 === null || line.length < 2) return 0
+  const last = line.length - 1
+  if (best4 <= line[0]) return 0
+  if (best4 > line[last]) return 1
+  let i = 0
+  while (line[i + 1] < best4) i++
+  const low = line[i]
+  const high = line[i + 1]
+  return (i + (best4 - low) / (high - low)) / last
 }

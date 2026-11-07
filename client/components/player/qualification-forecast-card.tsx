@@ -142,10 +142,10 @@ function Driver({ title, value, tone, flush, children }: {
 }
 
 // Coloured the opposite way to the odds change: a higher cutoff is harder to make.
-function CutoffValue({ line, before, event }: { line: number; before?: number; event: string }) {
+function CutoffValue({ line, before, since }: { line: number; before?: number; since: string }) {
   const change = before === undefined ? 0 : line - before
   if (change === 0) return <>{line}</>
-  const description = `${change > 0 ? 'Up' : 'Down'} ${Math.abs(change)} since before ${event}`
+  const description = `${change > 0 ? 'Up' : 'Down'} ${Math.abs(change)} since ${since}`
   return (
     <span className="inline-flex items-baseline gap-1.5">
       <span
@@ -164,11 +164,11 @@ function CutoffValue({ line, before, event }: { line: number; before?: number; e
   )
 }
 
-function OffPaceDriver({ best4, line, before, event }: {
+function OffPaceDriver({ best4, line, before, since }: {
   best4: number | null
   line: number | null
   before?: number
-  event: string
+  since: string
 }) {
   const gap = best4 != null && line != null ? best4 - line : null
   return (
@@ -176,7 +176,7 @@ function OffPaceDriver({ best4, line, before, event }: {
       <dl>
         {best4 != null && <DetailRow label="Current Best 4">{best4}</DetailRow>}
         {line != null && (
-          <DetailRow label="Projected cutoff"><CutoffValue line={line} before={before} event={event} /></DetailRow>
+          <DetailRow label="Projected cutoff"><CutoffValue line={line} before={before} since={since} /></DetailRow>
         )}
       </dl>
       <p className="mt-1 text-xs text-muted-foreground">Too far below the cutoff to simulate.</p>
@@ -184,10 +184,10 @@ function OffPaceDriver({ best4, line, before, event }: {
   )
 }
 
-function GapDriver({ forecast, event }: { forecast: PlayerCategoryForecast; event: string }) {
+function GapDriver({ forecast, since }: { forecast: PlayerCategoryForecast; since: string }) {
   const { entry, cutoff, cutoffBefore } = forecast
   if (entry.best4_now !== undefined) {
-    return <OffPaceDriver best4={entry.best4_now} line={cutoff[1]} before={cutoffBefore} event={event} />
+    return <OffPaceDriver best4={entry.best4_now} line={cutoff[1]} before={cutoffBefore} since={since} />
   }
   const f = entry.factors
   const best4 = entry.best4?.[1]
@@ -208,7 +208,7 @@ function GapDriver({ forecast, event }: { forecast: PlayerCategoryForecast; even
         )}
         {best4 != null && <DetailRow label="Projected Best 4">{best4}</DetailRow>}
         {line != null && (
-          <DetailRow label="Projected cutoff"><CutoffValue line={line} before={cutoffBefore} event={event} /></DetailRow>
+          <DetailRow label="Projected cutoff"><CutoffValue line={line} before={cutoffBefore} since={since} /></DetailRow>
         )}
       </dl>
     </Driver>
@@ -359,12 +359,12 @@ function BreakdownDriver({ f }: { f: ForecastFactors }) {
   )
 }
 
-function OddsChange({ p, before, event }: { p: number; before: number; event: string }) {
+function OddsChange({ p, before, since }: { p: number; before: number; since: string }) {
   const change = (Math.round(p * 1000) - Math.round(before * 1000)) / 10
   if (change === 0) return null
   const up = change > 0
   const magnitude = Math.abs(change).toFixed(1)
-  const description = `${up ? 'Up' : 'Down'} ${magnitude} points since before ${event}`
+  const description = `${up ? 'Up' : 'Down'} ${magnitude} points since ${since}`
   return (
     <span
       aria-label={description}
@@ -426,10 +426,10 @@ function OddsFigure({ text }: { text: string }) {
   )
 }
 
-function Headline({ title, forecast, event, fideId }: {
+function Headline({ title, forecast, since, fideId }: {
   title: string
   forecast: PlayerCategoryForecast
-  event: string
+  since: string
   fideId: string
 }) {
   const { entry } = forecast
@@ -443,7 +443,7 @@ function Headline({ title, forecast, event, fideId }: {
       {entry.status === 'forecast' ? (
         <div className="mt-1 flex items-baseline gap-2">
           <OddsFigure text={oddsText(forecast, fideId)} />
-          {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} event={event} />}
+          {entry.p_before !== undefined && <OddsChange p={p} before={entry.p_before} since={since} />}
         </div>
       ) : (
         <p className="mt-1 text-sm text-gray-700">
@@ -456,10 +456,10 @@ function Headline({ title, forecast, event, fideId }: {
 
 const SECTION_GAP = <div className="h-2 border-y border-gray-200/60 bg-gray-50 sm:border-gray-200" aria-hidden />
 
-function CategoryForecast({ forecast, single, event, fideId }: {
+function CategoryForecast({ forecast, single, since, fideId }: {
   forecast: PlayerCategoryForecast
   single: boolean
-  event: string
+  since: string
   fideId: string
 }) {
   const { category, entry } = forecast
@@ -471,7 +471,7 @@ function CategoryForecast({ forecast, single, event, fideId }: {
       <Headline
         title={single ? 'Qualification Odds' : `${CATEGORY_LABEL[category]} qualification odds`}
         forecast={forecast}
-        event={event}
+        since={since}
         fideId={fideId}
       />
       {entry.status === 'forecast' && (
@@ -487,7 +487,7 @@ function CategoryForecast({ forecast, single, event, fideId }: {
               {f && <PerformanceDriver f={f} />}
               {f && <WeakestDriver f={f} />}
               {f && <EventsDriver f={f} />}
-              <GapDriver forecast={forecast} event={event} />
+              <GapDriver forecast={forecast} since={since} />
               {f && <BreakdownDriver f={f} />}
               {title >= 0.01 && <TitleDriver title={title} entryChance={entry.p_title_entry} />}
             </div>
@@ -505,7 +505,7 @@ export function QualificationForecastCard({ forecast }: { forecast: PlayerForeca
       {forecast.categories.map((c, i) => (
         <Fragment key={c.category}>
           {i > 0 && SECTION_GAP}
-          <CategoryForecast forecast={c} single={single} event={forecast.afterEvent} fideId={forecast.fideId} />
+          <CategoryForecast forecast={c} single={single} since={forecast.since} fideId={forecast.fideId} />
         </Fragment>
       ))}
       {forecast.categories.some(c => c.entry.status === 'forecast') && (

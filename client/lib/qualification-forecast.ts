@@ -7,6 +7,8 @@ import type { ForecastCategory, ForecastEntry, Kenya1Race, PlayerForecast } from
 interface ForecastFile {
   season: number
   after: { id: string; name: string }
+  // Why odds moved when they were remeasured between events; otherwise changes are since before `after`.
+  since?: string
   sims: number
   remaining: Array<{ id: string; name: string; start_date: string }>
   tournaments: Record<string, number>
@@ -71,7 +73,9 @@ export function getPlayerForecast(
     fideId,
     season: forecast.season,
     afterEvent: forecast.after.name,
+    since: forecast.since ?? `before ${forecast.after.name}`,
     sims: forecast.sims,
+    remaining: forecast.remaining,
     categories,
   }
 }
