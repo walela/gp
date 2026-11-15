@@ -19,22 +19,7 @@ export interface Tournament {
 }
 
 // Tournaments happening within roughly the next two months
-export const upcomingTournaments: Tournament[] = [
-  {
-    id: 'bungoma-open-2026',
-    name: 'Bungoma Open Chess Championship 2026',
-    short_name: 'Bungoma Open',
-    startDate: '2026-11-14',
-    endDate: '2026-11-15',
-    location: 'Royal Suite Hotel, Bungoma',
-    locationUrl: 'https://maps.google.com/?q=Bungoma+Royal+Suites,+Bungoma,+Kenya',
-    rounds: 6,
-    confirmed: true,
-    registrationDeadline: '2026-11-12',
-    registrationUrl: 'https://chesskenya.co.ke/Event/55',
-    detailsUrl: null
-  }
-]
+export const upcomingTournaments: Tournament[] = []
 
 // Grand Prix tournaments beyond the 60-day window
 export const plannedTournaments: Tournament[] = [
