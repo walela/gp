@@ -44,8 +44,8 @@ export default function PlayerClientContent({
   const isMemorialized = player.fide_id === '10814582'
   // Calculate performance metrics
   const totalTournaments = player.results.length
-  const bestTpr = totalTournaments > 0 ? Math.max(...player.results.map(r => r.tpr || 0)) : null
   const validTprResults = player.results.filter(r => r.tpr && (!r.result_status || r.result_status === 'valid'))
+  const bestTpr = validTprResults.length > 0 ? Math.max(...validTprResults.map(r => r.tpr!)) : null
   const averageTpr =
     validTprResults.length > 0 ? Math.round(validTprResults.reduce((acc, r) => acc + r.tpr!, 0) / validTprResults.length) : 0
   const best4Average =
