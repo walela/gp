@@ -12,6 +12,8 @@ import { formatTournamentDateCompact } from '@/utils/tournament'
 import { ArrowRight, CalendarDays, Diamond, Flag, MapPin } from 'lucide-react'
 import { CollapsibleSection } from '@/components/collapsible-section'
 
+const EAT_TIME_ZONE = 'Africa/Nairobi'
+
 // Render HTML per request while allowing explicitly cached data fetches.
 export const revalidate = 0
 
@@ -22,11 +24,12 @@ export const metadata: Metadata = pageMetadata({
 })
 
 function formatTimeAway(startDateIso: string) {
-  const startDate = dayjs(startDateIso).startOf('day')
-  const now = dayjs().startOf('day')
-  const daysAway = startDate.diff(now, 'day')
+  const now = dayjs().tz(EAT_TIME_ZONE)
+  const startDate = dayjs.tz(startDateIso, EAT_TIME_ZONE).startOf('day')
+  const daysAway = startDate.diff(now.startOf('day'), 'day')
 
-  if (daysAway <= 0) return daysAway === 0 ? 'Today' : 'In progress'
+  if (daysAway < 0) return 'In progress'
+  if (daysAway === 0) return now.hour() >= 9 ? 'In progress' : 'Today'
   if (daysAway === 1) return 'Tomorrow'
   if (daysAway < 14) return `in ${daysAway} days`
   return `in ${Math.round(daysAway / 7)} weeks`

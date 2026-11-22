@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 
 // Extend dayjs with plugins we need across the app
 // advancedFormat adds tokens like Do (day with ordinal) etc.
@@ -9,5 +11,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(advancedFormat)
 dayjs.extend(relativeTime)
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export default dayjs;
