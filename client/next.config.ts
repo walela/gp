@@ -1,6 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: '1700chess.vercel.app' }],
+        destination: 'https://www.1700chess.sh/:path*',
+        permanent: true,
+      },
+    ]
+  },
   turbopack: {
     root: __dirname,
   },
