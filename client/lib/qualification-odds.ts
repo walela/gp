@@ -95,7 +95,7 @@ export type ChanceTier =
   | 'very-likely'
   | 'likely'
   | 'toss-up'
-  | 'outside-chance'
+  | 'dark-horse'
   | 'long-shot'
   | 'unlikely'
 
@@ -103,14 +103,14 @@ function displayedPercent(p: number): number {
   return Math.round(p * 1000) / 10
 }
 
-// Tiers follow the displayed number so "95.0%" never reads as merely "Very likely".
+// Tiers follow the displayed number so "99.0%" never reads as merely "Very likely".
 export function chanceTier(p: number): ChanceTier {
   const shown = displayedPercent(p)
-  if (shown >= 95) return 'lock'
+  if (shown >= 99) return 'lock'
   if (shown >= 85) return 'very-likely'
-  if (shown >= 65) return 'likely'
-  if (shown >= 35) return 'toss-up'
-  if (shown >= 15) return 'outside-chance'
+  if (shown >= 60) return 'likely'
+  if (shown >= 40) return 'toss-up'
+  if (shown >= 20) return 'dark-horse'
   if (shown >= 5) return 'long-shot'
   return 'unlikely'
 }
@@ -120,7 +120,7 @@ export const TIER_LABEL: Record<ChanceTier, string> = {
   'very-likely': 'Very likely',
   likely: 'Likely',
   'toss-up': 'Toss-up',
-  'outside-chance': 'Outside chance',
+  'dark-horse': 'Dark horse',
   'long-shot': 'Long shot',
   unlikely: 'Unlikely',
 }

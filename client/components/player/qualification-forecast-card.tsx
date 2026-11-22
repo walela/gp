@@ -20,7 +20,7 @@ const TIER_PILL: Record<ChanceTier, string> = {
   'very-likely': 'bg-teal-50 text-teal-700 ring-teal-600/20',
   likely: 'bg-blue-50 text-blue-700 ring-blue-600/20',
   'toss-up': 'bg-amber-50 text-amber-800 ring-amber-600/20',
-  'outside-chance': 'bg-orange-50 text-orange-700 ring-orange-600/20',
+  'dark-horse': 'bg-orange-50 text-orange-700 ring-orange-600/20',
   'long-shot': 'bg-rose-50 text-rose-700 ring-rose-600/20',
   unlikely: 'bg-gray-100 text-gray-600 ring-gray-500/20',
 }
