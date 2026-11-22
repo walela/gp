@@ -98,16 +98,23 @@ REMAINING_2025 = [
 # Ladies sections: Mombasa and KCB always have one, CTC didn't in 2025, and Kisii and Karen
 # have no history (9 of 13 events this season had one). CTC assumed 8 rounds as in 2025.
 # Bungoma's announcement lists a Ladies section; upcountry in peak rains like Kisii.
+# Karen Open's Chess-Results page (tnr1544731) confirms it is running next weekend with a Ladies section.
 EVENT_PARAMS = {
     "mombasa-open-2026": ("6x3", 0.03, 0.95, 0.95, 1.05),
     "kenya-open-2026": ("8", 0.03, 0.95, 0.95, 1.78),
     "kisii-open-2026": ("8", 0.10, 0.85, 0.7, 0.97),
     "bungoma-open-2026": ("6", 0.08, 0.85, 0.95, 0.97),
     "ctc-classical-2026": ("8", 0.08, 0.90, 0.2, 0.97),
-    "karen-open-2026": ("6", 0.08, 0.90, 0.7, 1.0),
+    "karen-open-2026": ("6", 0.0, 0.90, 1.0, 1.0),
 }
 # Events without an entry: format from rounds and length, typical risk, 9 of 13 with Ladies.
 DEFAULT_EVENT = (0.08, 0.90, 0.7, 1.0)
+# Known absences for specific upcoming events, keyed by event id in active-tournaments.ts.
+EVENT_SKIPS = {
+    "karen-open-2026": {
+        "10842357",  # Muli, Faraja Mumo (playing World Cadets)
+    },
+}
 
 # Attendance clusters by region (home base): rolling predictions over 2025-26 improved from
 # log-loss 0.628 to 0.606 (Open) / 0.599 (Ladies) with a per-region rate shrunk toward the
@@ -290,6 +297,8 @@ def load_players(season, as_of, category="open"):
     con.executemany("INSERT INTO fide_female VALUES (?)", [(f,) for f in FEMALE])
     where = ("t.section = 'open'" if category == "open" else
              "(p.gender = 'F' OR t.section = 'ladies' OR p.fide_id IN (SELECT fide_id FROM fide_female))")
+    # Exclude no-shows / unperformed entries (tpr = 0 / NULL) from both attendance and walkover
+    # history so registering without playing a meaningful event doesn't skew either rate.
     rows = con.execute(
         f"""
         SELECT p.id, p.name, p.fide_id, p.gender, r.rating, r.tpr, r.points, COALESCE(r.result_status, 'valid'),
@@ -297,7 +306,7 @@ def load_players(season, as_of, category="open"):
         FROM results r
         JOIN players p ON p.id = r.player_id
         JOIN tournaments t ON t.id = r.tournament_id
-        WHERE {where} AND p.federation = 'KEN'
+        WHERE {where} AND p.federation = 'KEN' AND COALESCE(r.tpr, 0) > 0
           AND substr(t.start_date, 1, 4) = ? AND t.start_date < ?
         ORDER BY t.start_date
         """,
@@ -325,7 +334,7 @@ def load_players(season, as_of, category="open"):
     for pid, short_name, start_date in con.execute(
         f"""SELECT DISTINCT p.id, t.short_name, t.start_date FROM results r
             JOIN players p ON p.id = r.player_id JOIN tournaments t ON t.id = r.tournament_id
-            WHERE {where} AND t.start_date < ?""",
+            WHERE {where} AND COALESCE(r.tpr, 0) > 0 AND t.start_date < ?""",
         (as_of,),
     ):
         entered[pid].add((short_name, start_date))
@@ -333,7 +342,7 @@ def load_players(season, as_of, category="open"):
         pid: (n, wo) for pid, n, wo in con.execute(
             """SELECT r.player_id, count(*), sum(COALESCE(r.result_status, 'valid') = 'walkover')
                FROM results r JOIN tournaments t ON t.id = r.tournament_id
-               WHERE t.start_date < ? GROUP BY r.player_id""",
+               WHERE COALESCE(r.tpr, 0) > 0 AND t.start_date < ? GROUP BY r.player_id""",
             (as_of,),
         )
     }
@@ -341,7 +350,7 @@ def load_players(season, as_of, category="open"):
         pid for pid, _, _ in con.execute(
             f"""SELECT DISTINCT p.id, t.short_name, t.start_date FROM results r
                 JOIN players p ON p.id = r.player_id JOIN tournaments t ON t.id = r.tournament_id
-                WHERE {where} AND substr(t.start_date, 1, 4) = ? AND t.start_date >= ?""",
+                WHERE {where} AND COALESCE(r.tpr, 0) > 0 AND substr(t.start_date, 1, 4) = ? AND t.start_date >= ?""",
             (str(season - 1), stretch_start),
         )
     )
@@ -462,7 +471,7 @@ def bubble_attendance(contenders, excluded):
             p["p_attend"] *= p["bubble"]
 
 
-def near_lock_attendance(contenders, events, category):
+def near_lock_attendance(contenders, events, category, skips=None):
     """Raise attendance for players whose missing results would lock them even well below par.
 
     2025 showed no extra turnout for players needing a 4th result, but none of them were
@@ -470,17 +479,21 @@ def near_lock_attendance(contenders, events, category):
     rates are judgement defaults rather than measured ones.
     """
     line = max(CATEGORIES[category]["thresholds"])
+    skips = skips or {}
 
     def p_entries(p, rate, needed):
         dist = [1.0]
         for name, _, cancel, attend, _, draw in events:
+            if p["fide_id"] in skips.get(name, ()):
+                continue
             q = (1 - cancel) * min(0.95, rate * attend * draw * p["region_mult"][region(name)])
             dist = [a * (1 - q) + b * q for a, b in zip(dist + [0.0], [0.0] + dist)]
         return sum(dist[needed:])
 
     for p in contenders:
         needed = 4 - len(p["tprs"])
-        if not 1 <= needed <= len(events) or (4 * line - sum(p["tprs"])) / needed > p["mu"] - 2 * p["sigma"]:
+        available = sum(1 for e in events if p["fide_id"] not in skips.get(e[0], ()))
+        if not 1 <= needed <= available or (4 * line - sum(p["tprs"])) / needed > p["mu"] - 2 * p["sigma"]:
             continue
         target = NEAR_LOCK_ENTRY if needed == 1 else NEAR_LOCK_ENTRY_MULTI
         if p_entries(p, p["p_attend"], needed) >= target:
@@ -530,7 +543,7 @@ def poisson(rng, mean):
 
 
 def simulate(contenders, events, excluded, category="open", junior_pool=(), junior_champion=None, kenya1=(), seed=1,
-             ladies_team=None, kenya1_race=None, lines=None):
+             ladies_team=None, kenya1_race=None, lines=None, skips=None):
     """Returns qualification counts, junior title counts, final best-4s, cutoffs, per-player
     [seasons, qualified] by number of new valid results (0 up to one per event), how often each
     finished inside the standings spots (whether or not they also won the junior title), and how
@@ -580,6 +593,8 @@ def simulate(contenders, events, excluded, category="open", junior_pool=(), juni
             fid = p["fide_id"]
             new = []
             for fmt, attend, has_ladies, where, name in happening:
+                if fid in (skips or {}).get(name, ()):
+                    continue
                 if rng.random() >= min(0.95, p["p_attend"] * attend * p["region_mult"][where]):
                     continue
                 section = "ladies" if has_ladies and rng.random() < p["p_ladies"] else "open"
@@ -886,7 +901,7 @@ def category_ranks(con, season, category):
     return {fid: (rank, round(best4) if best4 else None) for fid, rank, best4 in rows}
 
 
-def player_factors(p, events, season, by_new):
+def player_factors(p, events, season, by_new, skips=None):
     """The inputs behind one player's simulated seasons, for the player page."""
     junior = is_junior(p["fide_id"], season)
     main = "ladies" if p["p_ladies"] >= 0.5 else "open"
@@ -902,9 +917,11 @@ def player_factors(p, events, season, by_new):
         weakest = sorted(p["tprs"], reverse=True)[3]
         z = (weakest - expected) / (sigma * SPREAD["6"])
         p_improve = (1 - void) * 0.5 * math.erfc(z / math.sqrt(2))
+    skips = skips or {}
     entries = sum(
         (1 - cancel) * min(0.95, p["p_attend"] * attend * draw * p["region_mult"][region(name)])
         for name, _, cancel, attend, _, draw in events
+        if p["fide_id"] not in skips.get(name, ())
     )
     return {
         "now": [n, round(best)],
@@ -930,20 +947,25 @@ def player_factors(p, events, season, by_new):
     }
 
 
+def event_skips(events):
+    return {e["name"]: EVENT_SKIPS[e["id"]] for e in events if e["id"] in EVENT_SKIPS}
+
+
 def simulate_category(season, as_of, category, events, qualifiers, ladies_team=None, lines=None):
     q = qualifiers[category]
     kenya1, champion, dead = q["kenya1"], q["champion"], q["dead"]
     contenders, _ = load_players(season, as_of, category)
     race = kenya1_race(season, category, contenders, events, qualifiers)
     excluded = dead | ({champion} if champion else set()) | (set() if race else kenya1)
+    skips = event_skips(events)
     # The current leader stays out of the bubble line either way.
     bubble_attendance(contenders, excluded | kenya1)
-    near_lock_attendance(contenders, [e["params"] for e in events], category)
+    near_lock_attendance(contenders, [e["params"] for e in events], category, skips=skips)
     juniors = () if champion else junior_title_pool(contenders, season, category, dead, kenya1=kenya1)
     results = simulate(
         contenders, [e["params"] for e in events], excluded, category,
         junior_pool=juniors, junior_champion=champion, kenya1=() if race else kenya1, ladies_team=ladies_team,
-        kenya1_race=race, lines=lines,
+        kenya1_race=race, lines=lines, skips=skips,
     )
     return contenders, juniors, results, race
 
@@ -986,7 +1008,9 @@ def forecast_category(con, season, as_of, category, events, qualifiers, ladies_t
                 "best4": [pct(finals, 0.1), pct(finals, 0.5), pct(finals, 0.9)],
                 "p_junior_title": round(titles[fide_id] / SIMS, 3),
                 "p_standings": round(standings[fide_id] / SIMS, 3),
-                "factors": player_factors(modelled[fide_id], [e["params"] for e in events], season, by_new[fide_id]),
+                "factors": player_factors(
+                    modelled[fide_id], [e["params"] for e in events], season, by_new[fide_id], skips=event_skips(events),
+                ),
                 # For the TPR calculator: the results that count now and the line they'd have to beat.
                 "tprs": sorted((round(t) for t in modelled[fide_id]["tprs"]), reverse=True),
                 "line": line_percentiles(lines.get(fide_id, [])),

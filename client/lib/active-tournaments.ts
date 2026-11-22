@@ -19,23 +19,7 @@ export interface Tournament {
 }
 
 // Tournaments happening within roughly the next two months
-export const upcomingTournaments: Tournament[] = []
-
-// Grand Prix tournaments beyond the 60-day window
-export const plannedTournaments: Tournament[] = [
-  {
-    id: 'ctc-classical-2026',
-    name: 'CTC Open - Grand Prix',
-    short_name: 'CTC Open',
-    startDate: '2026-11-21',
-    endDate: '2026-11-22',
-    location: 'Nairobi',
-    locationUrl: 'https://maps.google.com/?q=Nairobi,+Kenya',
-    rounds: 6,
-    confirmed: true,
-    registrationUrl: 'https://ncca.or.ke/Events/register/14',
-    detailsUrl: null
-  },
+export const upcomingTournaments: Tournament[] = [
   {
     id: 'karen-open-2026',
     name: 'Karen Open Grand Prix Tournament',
@@ -48,6 +32,9 @@ export const plannedTournaments: Tournament[] = [
     confirmed: true,
     registrationDeadline: '2026-11-25',
     registrationUrl: 'https://forms.gle/2RVP6B1z75MVtpqe9',
-    detailsUrl: null
+    detailsUrl: 'https://chess-results.com/tnr1544731.aspx?lan=1'
   }
 ]
+
+// Grand Prix tournaments beyond the 60-day window
+export const plannedTournaments: Tournament[] = []
