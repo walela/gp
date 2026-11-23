@@ -39,6 +39,9 @@ When a Grand Prix event is finished, update it in this order:
    - Static upcoming/planned tournament data is in `client/lib/active-tournaments.ts`.
    - Once an event is scraped and saved as completed, remove it from `upcomingTournaments`.
    - If an event is postponed or not completed, update/move its static record instead of removing it.
+   - Show the green rankings-update dot in the nav: set `RANKINGS_UPDATE_EXPIRES_AT` in
+     `client/components/layout/main-nav.tsx` to 10:00 Nairobi time the morning after the update
+     (e.g. `2026-11-23T10:00:00+03:00` for results published on November 22).
 
 6. Regenerate the qualification forecast.
    - Run `python3 scripts/update_forecast.py` and commit `client/lib/qualification-forecast.json` with the data.
