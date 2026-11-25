@@ -18,6 +18,7 @@ import Script from 'next/script'
 import { SITE_NAME, SITE_URL } from '@/lib/site'
 import { Suspense } from 'react'
 import { NavigationProgress } from '@/components/navigation-progress'
+import { PageviewTracker } from '@/components/pageview-tracker'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -116,18 +117,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `(function(){try{var p=new URLSearchParams(location.search).get('plausible_ignore');if(p==='true')localStorage.setItem('plausible_ignore','true');else if(p==='false')localStorage.removeItem('plausible_ignore');}catch(e){}})();`,
           }}
         />
-        {/* Queue custom events fired before the deferred Plausible script loads. */}
+        {/* Queue pageviews and custom events fired before the deferred Plausible script loads. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}`,
           }}
         />
+        {/* Manual script: PageviewTracker sends pageviews once a visitor shows real input. */}
         <Script
           defer
           data-domain="1700chess.sh"
           data-api="https://gp-tracker.walerunni.workers.dev/data/event"
-          src="https://gp-tracker.walerunni.workers.dev/static/script.js"
+          src="https://gp-tracker.walerunni.workers.dev/static/script.manual.js"
         />
+        <PageviewTracker />
       </body>
     </html>
   )

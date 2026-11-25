@@ -15,3 +15,7 @@ export function trackEvent(name: string) {
   if (typeof window === 'undefined') return
   window.plausible?.(name)
 }
+
+export function trackPageview() {
+  trackEvent('pageview')
+}
