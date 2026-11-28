@@ -98,25 +98,29 @@ function PlayerName({ row, category }: { row: LiveRow, category: LiveCategory })
   )
 }
 
-const RESULT_BADGE = {
-  W: { label: 'Won', className: 'bg-emerald-100 text-emerald-800' },
-  D: { label: 'Drew', className: 'bg-gray-200 text-gray-700' },
-  L: { label: 'Lost', className: 'bg-red-100 text-red-700' },
-} as const
+function formatScore(points: number): string {
+  const whole = Math.floor(points)
+  const half = points - whole >= 0.5 ? '½' : ''
+  return whole === 0 && half ? half : `${whole}${half}`
+}
+
+function resultTone(game: LiveGame | null): string {
+  if (!game || game.kind === 'unpaired') return 'text-gray-400'
+  if (game.score === 1) return 'text-emerald-700'
+  return game.score === 0.5 ? 'text-orange-600' : 'text-red-600'
+}
+
+function resultLabel(game: LiveGame): string {
+  return game.score === 1 ? 'Won' : game.score === 0.5 ? 'Drew' : 'Lost'
+}
 
 function RoundGame({ game }: { game: LiveGame | null }) {
   if (!game) return <span className="text-gray-400">Not paired</span>
-  const result = game.score === 1 ? 'W' : game.score === 0.5 ? 'D' : 'L'
   return (
     <span className="flex min-w-0 items-center gap-2">
       {game.opponent ? (
         <>
-          <span
-            className={cn('w-5 shrink-0 rounded py-px text-center text-[11px] font-semibold', RESULT_BADGE[result].className)}
-            aria-hidden="true">
-            {result}
-          </span>
-          <span className="sr-only">{RESULT_BADGE[result].label} against</span>
+          <span className="sr-only">{resultLabel(game)} against</span>
           <span className="truncate" title={game.opponent}><NameText name={game.opponent} /></span>
           {game.opponent_rating && <span className="hidden shrink-0 tabular-nums text-gray-400 sm:inline">{game.opponent_rating}</span>}
           {game.kind === 'forfeit' && <span className="shrink-0 text-gray-400">forfeit</span>}
@@ -144,6 +148,9 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
         <RoundCell className="text-right tabular-nums text-gray-400">R{index + 1}</RoundCell>
         <RoundCell cellClassName="max-w-[160px] sm:max-w-none">
           {round.points !== null && <RoundGame game={round.game} />}
+        </RoundCell>
+        <RoundCell className={cn('text-right font-medium tabular-nums whitespace-nowrap', resultTone(round.game))}>
+          {round.points !== null ? `${formatScore(round.points)}/${index + 1}` : <Dash />}
         </RoundCell>
         <RoundCell className="text-right tabular-nums">
           {round.tpr ?? <Dash />}
@@ -247,6 +254,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
             <CustomTableRow>
               <CustomTableHead className="w-[36px] text-right">#</CustomTableHead>
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">Name</CustomTableHead>
+              <CustomTableHead><span className="sr-only">Score</span></CustomTableHead>
               <CustomTableHead className="text-right">TPR</CustomTableHead>
               <CustomTableHead className="text-right">Odds</CustomTableHead>
               <CustomTableHead className="text-right">Change</CustomTableHead>
@@ -288,6 +296,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
                     <CustomTableCell className="max-w-[160px] truncate sm:max-w-none">
                       <PlayerName row={row} category={category} />
                     </CustomTableCell>
+                    <CustomTableCell />
                     <CustomTableCell className="text-right tabular-nums">
                       {row.tpr !== null ? (
                         <span className={cn(row.voided && 'text-gray-400 line-through')}>{row.tpr}</span>
