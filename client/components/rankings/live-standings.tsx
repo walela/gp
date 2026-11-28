@@ -80,6 +80,7 @@ function categoryView(
   return {
     rows: shownRows,
     completedRound: section.completed_round,
+    pairedRound: section.paired_round,
   }
 }
 

@@ -43,6 +43,7 @@ export interface LiveRow {
 export interface LiveCategoryView {
   rows: LiveRow[]
   completedRound: number
+  pairedRound: number
 }
 
 const CATEGORY_LABEL: Record<LiveCategory, string> = { open: 'Open', ladies: 'Ladies' }
@@ -193,7 +194,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
   }
   const roundLabel = view.completedRound === rounds
     ? 'Final'
-    : view.completedRound === 0 ? 'Starting' : `Round ${view.completedRound} of ${rounds}`
+    : `Round ${Math.max(view.pairedRound, view.completedRound, 1)} of ${rounds}`
   const toggleRow = (id: string) => setOpenRows(current => {
     const next = new Set(current)
     if (!next.delete(id)) next.add(id)

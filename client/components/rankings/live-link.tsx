@@ -3,8 +3,10 @@ import { ChevronRight } from 'lucide-react'
 import type { LiveCategory, LiveStandings } from '@/services/api'
 
 export function LiveLink({ data, category }: { data: LiveStandings, category: LiveCategory }) {
-  const completed = Math.max(...Object.values(data.sections).map(section => section?.completed_round ?? 0))
-  const round = completed === data.rounds ? 'Final' : completed === 0 ? 'Starting' : `Round ${completed} of ${data.rounds}`
+  const sections = Object.values(data.sections)
+  const completed = Math.max(...sections.map(section => section?.completed_round ?? 0))
+  const current = Math.max(...sections.map(section => section?.paired_round ?? 0), completed, 1)
+  const round = completed === data.rounds ? 'Final' : `Round ${current} of ${data.rounds}`
   return (
     <Link
       href={category === 'ladies' ? '/live?category=ladies' : '/live'}
