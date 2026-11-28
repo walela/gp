@@ -232,6 +232,56 @@ export async function refreshTournament(id: string): Promise<{ status: string }>
   return response.json()
 }
 
+export type LiveCategory = 'open' | 'ladies'
+
+export interface LiveSnapshot {
+  points: number
+  games: number
+  tpr: number | null
+  status: 'valid' | 'walkover' | 'incomplete'
+}
+
+export interface LiveResult extends LiveSnapshot {
+  tpr: number
+  section: LiveCategory
+  // The result after each completed round, starting with round 1.
+  rounds: LiveSnapshot[]
+}
+
+export interface LivePlayer {
+  fide_id: string | null
+  name: string
+  rank: number
+  rank_before: number | null
+  tournaments_played: number
+  best_1: number
+  best_2: number
+  best_3: number
+  best_4: number
+  live: LiveResult | null
+}
+
+export interface LiveStandings {
+  live: true
+  event: string
+  rounds: number
+  updated_at: string
+  sections: Partial<Record<LiveCategory, { id: string; completed_round: number; paired_round: number }>>
+  categories: Record<LiveCategory, LivePlayer[]>
+}
+
+// Live standings change every round, so they skip the tagged Data Cache.
+export async function getLiveStandings(): Promise<LiveStandings | null> {
+  try {
+    const res = await fetch(`${API_BASE}/live`, { next: { revalidate: 60 } })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.live ? (data as LiveStandings) : null
+  } catch {
+    return null
+  }
+}
+
 export interface TopPlayersResponse {
   topPlayers: PlayerRanking[]
 }

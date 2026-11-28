@@ -4,6 +4,7 @@ from flask_cors import CORS
 from chess_results import ChessResultsScraper
 from result_validator import ResultValidator
 from db import Database
+from live_tracker import live_payload
 import sqlite3
 import os
 import logging
@@ -330,6 +331,12 @@ def seasons():
     """Get available seasons."""
     available_seasons = db.get_available_seasons()
     return jsonify({"seasons": available_seasons})
+
+
+@app.route("/api/live")
+def live():
+    """Season standings counting the games played so far at the event in progress."""
+    return jsonify(live_payload(db))
 
 
 @app.route("/api/rankings")

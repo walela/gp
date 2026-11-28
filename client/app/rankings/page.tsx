@@ -11,7 +11,8 @@ import {
 import { SortableHeader } from '@/components/rankings/sortable-header'
 
 import { Baby, ChevronRight, Crown } from 'lucide-react'
-import { getRankings, getSeasons, type PlayerRanking } from '@/services/api'
+import { getLiveStandings, getRankings, getSeasons, type PlayerRanking } from '@/services/api'
+import { LiveStandings } from '@/components/rankings/live-standings'
 import { cn } from '@/lib/utils'
 import { getDisplayName, getRankMovement } from '@/components/rankings/utils'
 import { forecastMatchesResults, getCategoryForecast } from '@/lib/qualification-forecast'
@@ -134,7 +135,9 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   // The API doesn't know the forecast, so odds sorting fetches everyone in Best 4 order and pages here.
   const sortsByOdds = sort === 'odds'
 
-  const [rankingsData, forecastCurrent] = await Promise.all([
+  const showLive = isCurrentSeason && page === 1 && !search
+
+  const [rankingsData, forecastCurrent, liveStandings] = await Promise.all([
     getRankings({
       sort: sortsByOdds ? defaultSort : sort,
       dir: sortsByOdds ? 'desc' : dir,
@@ -146,6 +149,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
       all: sortsByOdds
     }),
     forecastMatchesResults(season),
+    showLive ? getLiveStandings() : null,
   ])
   const odds = getCategoryForecast(category, season, forecastCurrent)
 
@@ -197,6 +201,18 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
         </div>
         <SearchForm defaultValue={search} basePath={rankingsBasePath} />
       </div>
+
+      {liveStandings && (
+        <LiveStandings
+          data={liveStandings}
+          category={category}
+          season={season}
+          published={{
+            open: getCategoryForecast('open', season, forecastCurrent),
+            ladies: getCategoryForecast('ladies', season, forecastCurrent),
+          }}
+        />
+      )}
 
       <div className="mb-0 w-full">
         <ViewSelector
