@@ -31,8 +31,6 @@ export interface LiveRow {
   rank: number
   qualifying: boolean
   kenyaNumber1: boolean
-  points: number | null
-  games: number | null
   tpr: number | null
   voided: boolean
   odds: number | null
@@ -47,12 +45,6 @@ export interface LiveCategoryView {
 }
 
 const CATEGORY_LABEL: Record<LiveCategory, string> = { open: 'Open', ladies: 'Ladies' }
-function formatScore(points: number): string {
-  const whole = Math.floor(points)
-  const half = points - whole >= 0.5 ? '½' : ''
-  return whole === 0 && half ? half : `${whole}${half}`
-}
-
 // Odds change in percentage points, as on the player page.
 function pointChange(now: number | null, before: number | null): number {
   if (now === null || before === null) return 0
@@ -78,15 +70,30 @@ function Dash() {
   return <span className="text-gray-400">—</span>
 }
 
+// Names are stored surname first, e.g. "Shile, Lenny Mataiga" -> "Shile L."
+function shortName(fullName: string): string {
+  const [surname, ...rest] = fullName.replace(',', ' ').trim().split(/\s+/)
+  return rest.length ? `${surname} ${rest[0].charAt(0)}.` : surname
+}
+
+function NameText({ name }: { name: string }) {
+  return (
+    <>
+      <span className="sm:hidden">{shortName(name)}</span>
+      <span className="hidden sm:inline">{getDisplayName(name)}</span>
+    </>
+  )
+}
+
 function PlayerName({ row, category }: { row: LiveRow, category: LiveCategory }) {
   const tone = row.kenyaNumber1 ? 'text-amber-700' : row.qualifying ? 'text-blue-700' : 'text-blue-600'
-  if (!row.fideId) return <span className="font-medium" title={row.name}>{getDisplayName(row.name)}</span>
+  if (!row.fideId) return <span className="font-medium" title={row.name}><NameText name={row.name} /></span>
   return (
     <Link
       href={`/player/${row.fideId}${category === 'ladies' ? '?gender=f' : ''}`}
       className={cn('font-medium sm:hover:underline', tone)}
       title={row.name}>
-      {getDisplayName(row.name)}
+      <NameText name={row.name} />
     </Link>
   )
 }
@@ -112,8 +119,8 @@ function RoundGame({ game }: { game: LiveGame | null }) {
             role="img"
             aria-label={game.color === 'b' ? 'Black' : 'White'}
           />
-          <span className="truncate" title={game.opponent}>{getDisplayName(game.opponent)}</span>
-          {game.opponent_rating && <span className="shrink-0 tabular-nums text-gray-400">{game.opponent_rating}</span>}
+          <span className="truncate" title={game.opponent}><NameText name={game.opponent} /></span>
+          {game.opponent_rating && <span className="hidden shrink-0 tabular-nums text-gray-400 sm:inline">{game.opponent_rating}</span>}
           {game.kind === 'forfeit' && <span className="shrink-0 text-gray-400">forfeit</span>}
         </>
       ) : (
@@ -140,10 +147,7 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
         <RoundCell cellClassName="max-w-[160px] sm:max-w-none">
           {round.points !== null && <RoundGame game={round.game} />}
         </RoundCell>
-        <RoundCell className="text-right tabular-nums whitespace-nowrap">
-          {round.points !== null ? formatScore(round.points) : <Dash />}
-        </RoundCell>
-        <RoundCell className="text-right tabular-nums" cellClassName="hidden sm:table-cell">
+        <RoundCell className="text-right tabular-nums">
           {round.tpr ?? <Dash />}
         </RoundCell>
         <RoundCell className="text-right tabular-nums whitespace-nowrap text-gray-900">
@@ -245,8 +249,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
             <CustomTableRow>
               <CustomTableHead className="w-[36px] text-right">#</CustomTableHead>
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">Name</CustomTableHead>
-              <CustomTableHead className="text-right">Score</CustomTableHead>
-              <CustomTableHead className="hidden sm:table-cell text-right">TPR</CustomTableHead>
+              <CustomTableHead className="text-right">TPR</CustomTableHead>
               <CustomTableHead className="text-right">Odds</CustomTableHead>
               <CustomTableHead className="text-right">Change</CustomTableHead>
               <CustomTableHead className="w-8"><span className="sr-only">Rounds</span></CustomTableHead>
@@ -287,14 +290,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
                     <CustomTableCell className="max-w-[160px] truncate sm:max-w-none">
                       <PlayerName row={row} category={category} />
                     </CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums whitespace-nowrap">
-                      {row.points !== null ? (
-                        <span className={cn(row.voided && 'text-gray-400 line-through')}>
-                          {formatScore(row.points)}/{row.games}
-                        </span>
-                      ) : <Dash />}
-                    </CustomTableCell>
-                    <CustomTableCell className="hidden sm:table-cell text-right tabular-nums">
+                    <CustomTableCell className="text-right tabular-nums">
                       {row.tpr !== null ? (
                         <span className={cn(row.voided && 'text-gray-400 line-through')}>{row.tpr}</span>
                       ) : <Dash />}

@@ -57,8 +57,6 @@ function categoryView(
         rank: player.rank,
         qualifying: qualifying.has(id),
         kenyaNumber1: id !== null && id === kenyaNumber1,
-        points: live?.games ? live.points : null,
-        games: live?.games || null,
         tpr: live?.tpr ?? null,
         voided: live !== null && live.status !== 'valid',
         odds: id !== null && id in current ? current[id] : null,
