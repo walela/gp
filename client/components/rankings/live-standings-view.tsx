@@ -167,7 +167,7 @@ function RoundCell({ children, className, cellClassName }: {
     <td className={cellClassName}>
       <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] group-data-[open=true]/round:grid-rows-[1fr] group-data-[open=true]/round:opacity-100 motion-reduce:transition-none">
         <div className="overflow-hidden">
-          <div className={cn('px-2 py-1.5 sm:px-4 xl:px-6', className)}>{children}</div>
+          <div className={cn('px-2 py-1.5 sm:px-4 lg:px-3 xl:px-6', className)}>{children}</div>
         </div>
       </div>
     </td>
@@ -236,7 +236,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
 
       <Card className="w-full gap-0 rounded-b-lg border-0 bg-white/95 p-0 shadow-elevation-low sm:rounded-tr-lg">
       <CustomTable
-          className="[&>tbody>tr>*]:py-2.5 [&>thead_th]:py-2.5 md:[&>tbody>tr>*]:px-4 md:[&>thead_th]:px-4 xl:[&>tbody>tr>*]:px-6 xl:[&>thead_th]:px-6">
+          className="md:[&>tbody>tr>*]:px-4 md:[&>thead_th]:px-4 lg:[&>tbody>tr>*]:px-3 lg:[&>thead_th]:px-3 xl:[&>tbody>tr>*]:px-6 xl:[&>thead_th]:px-6">
           <CustomTableHeader>
             <CustomTableRow>
               <CustomTableHead className="w-[36px] text-right">#</CustomTableHead>
