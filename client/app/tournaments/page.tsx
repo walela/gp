@@ -245,11 +245,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                         {isLive && (
                           <Link
                             href="/live"
-                            className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-blue-300 bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-400 hover:bg-blue-200/70">
-                            <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
-                              <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 motion-safe:animate-ping" />
-                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-500" />
-                            </span>
+                            className="ml-auto inline-flex items-center gap-1 rounded-md border border-blue-300 bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-400 hover:bg-blue-200/70">
                             Live standings
                             <ArrowRight className="h-3 w-3" aria-hidden="true" />
                           </Link>
