@@ -38,16 +38,16 @@ export function MainNav({ live }: { live: boolean }) {
   }, [])
 
   const routes = [
-    {
-      href: '/',
-      label: 'Rankings',
-      active: pathname === '/' || pathname === '/rankings'
-    },
     ...(live ? [{
       href: '/live',
       label: 'Live',
       active: pathname === '/live'
     }] : []),
+    {
+      href: '/',
+      label: 'Rankings',
+      active: pathname === '/' || pathname === '/rankings'
+    },
     {
       href: '/tournaments',
       label: 'Tournaments',
