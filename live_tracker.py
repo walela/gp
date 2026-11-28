@@ -148,6 +148,8 @@ def _section_games(tournament_id: str, rounds: int):
     """Each player's games in a section and the last round with every result in."""
     players = _starting_list(tournament_id)
     games: Dict[int, List[Dict]] = {snr: [] for snr in players}
+    # Paired games still being played, by round and start number.
+    pending: Dict[int, Dict[int, Dict]] = {}
     paired = set()
     completed_round = 0
     paired_round = 0
@@ -177,6 +179,9 @@ def _section_games(tournament_id: str, rounds: int):
                 continue
             if len(parts) != 2 or parts[0] not in SCORES or parts[1] not in SCORES:
                 finished = False
+                boards_left = pending.setdefault(round_number, {})
+                boards_left[board["white"]] = {"opponent": board["black"], "color": "w"}
+                boards_left[board["black"]] = {"opponent": board["white"], "color": "b"}
                 continue
             kind = "forfeit" if "+" in parts or "-" in parts or "K" in board["result"] else "game"
             for side, opponent, token, color in (
@@ -192,7 +197,7 @@ def _section_games(tournament_id: str, rounds: int):
                 _finished_rounds[(tournament_id, round_number)] = (time.time(), boards)
             if completed_round == round_number - 1:
                 completed_round = round_number
-    return players, games, paired, completed_round, paired_round
+    return players, games, pending.get(completed_round + 1, {}), paired, completed_round, paired_round
 
 
 def _live_result(games: List[Dict], players: Dict[int, Dict], completed_round: int) -> Dict:
@@ -227,6 +232,25 @@ def _round_game(games: List[Dict], players: Dict[int, Dict], round_number: int) 
     }
 
 
+def _next_game(games: List[Dict], players: Dict[int, Dict], board: Dict, round_number: int) -> Dict:
+    """The game still being played, with the performance each result would leave."""
+    played = [game for game in games if game["kind"] == "game"]
+    ratings = [players.get(game["opponent"], {}).get("rating") or UNRATED for game in played]
+    score = sum(game["score"] for game in played)
+    opponent = players.get(board["opponent"], {})
+    opponent_rating = opponent.get("rating") or UNRATED
+    return {
+        "round": round_number,
+        "color": board["color"],
+        "opponent": opponent.get("name"),
+        "opponent_rating": opponent.get("rating") or None,
+        "tpr": {
+            result: performance(ratings + [opponent_rating], score + points)
+            for result, points in (("win", 1.0), ("draw", 0.5), ("loss", 0.0))
+        },
+    }
+
+
 def _known_players(db: Database, fide_ids: List[str]) -> Dict[str, Dict]:
     if not fide_ids:
         return {}
@@ -253,7 +277,9 @@ def standings(event: Dict, db: Database) -> Dict:
     sections = {}
     entrants = []
     for section, tournament_id in event["sections"].items():
-        players, games, paired, completed_round, paired_round = _section_games(tournament_id, event["rounds"])
+        players, games, pending, paired, completed_round, paired_round = _section_games(
+            tournament_id, event["rounds"]
+        )
         sections[section] = {"id": tournament_id, "completed_round": completed_round, "paired_round": paired_round}
         for snr, player in players.items():
             if player["federation"] == "KEN" and player["fide_id"] and snr in paired:
@@ -267,6 +293,8 @@ def standings(event: Dict, db: Database) -> Dict:
                     }
                     for round_number in range(1, completed_round + 1)
                 ]
+                board = pending.get(snr)
+                live["next"] = _next_game(games[snr], players, board, completed_round + 1) if board else None
                 entrants.append((section, player, live))
 
     known = _known_players(db, [player["fide_id"] for _, player, _ in entrants])

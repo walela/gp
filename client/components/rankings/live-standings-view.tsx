@@ -15,7 +15,7 @@ import {
 import { getDisplayName } from '@/components/rankings/utils'
 import { formatChance } from '@/lib/qualification-odds'
 import { cn } from '@/lib/utils'
-import type { LiveCategory, LiveGame } from '@/services/api'
+import type { LiveCategory, LiveGame, LiveNextGame } from '@/services/api'
 
 export interface LiveRoundRow {
   odds: number | null
@@ -38,6 +38,7 @@ export interface LiveRow {
   odds: number | null
   before: number | null
   rounds: LiveRoundRow[]
+  next: LiveNextGame | null
 }
 
 export interface LiveCategoryView {
@@ -134,8 +135,59 @@ function RoundGame({ game }: { game: LiveGame | null }) {
   )
 }
 
+const NEXT_OUTCOMES = [
+  { key: 'win', letter: 'W', label: 'win', tone: 'text-emerald-700' },
+  { key: 'draw', letter: 'D', label: 'draw', tone: 'text-orange-600' },
+  { key: 'loss', letter: 'L', label: 'loss', tone: 'text-red-600' },
+] as const
+
+function NextOutcomes({ next }: { next: LiveNextGame }) {
+  return NEXT_OUTCOMES.map(outcome => (
+    <span key={outcome.key} className="whitespace-nowrap">
+      <span className="sr-only">TPR after a {outcome.label}: </span>
+      <span className="text-gray-400" aria-hidden="true">{outcome.letter} </span>
+      <span className={cn('font-medium', outcome.tone)}>{next.tpr[outcome.key]}</span>
+    </span>
+  ))
+}
+
+function NextRound({ next, open, className }: { next: LiveNextGame, open: boolean, className: string }) {
+  return (
+    <tr
+      data-open={open}
+      inert={!open}
+      className={cn(
+        className,
+        'group/round bg-gray-50/80 text-xs text-gray-600 [&>td]:!p-0',
+        open && 'border-b border-gray-200'
+      )}>
+      <RoundCell className="text-right tabular-nums text-gray-400">R{next.round}</RoundCell>
+      <RoundCell cellClassName="max-w-[160px] min-[500px]:max-w-none">
+        <span className="flex min-w-0 items-center gap-2">
+          <span className="sr-only">Playing</span>
+          <span className="truncate" title={next.opponent ?? undefined}>
+            {next.opponent ? <NameText name={next.opponent} /> : 'Unknown'}
+          </span>
+          {next.opponent_rating && (
+            <span className="hidden shrink-0 tabular-nums text-gray-400 sm:inline">{next.opponent_rating}</span>
+          )}
+        </span>
+      </RoundCell>
+      <RoundCell cellClassName="hidden sm:table-cell" colSpan={2} className="flex justify-end gap-x-3 tabular-nums">
+        <NextOutcomes next={next} />
+      </RoundCell>
+      <RoundCell cellClassName="sm:hidden" className="flex flex-col items-end tabular-nums">
+        <NextOutcomes next={next} />
+      </RoundCell>
+      <td />
+      <td />
+      <td />
+    </tr>
+  )
+}
+
 function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, className: string }) {
-  return row.rounds.map((round, index) => {
+  const played = row.rounds.map((round, index) => {
     const previous = index === 0 ? row.before : row.rounds[index - 1].odds
     return (
       <tr
@@ -145,13 +197,20 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
         className={cn(
           className,
           'group/round bg-gray-50/80 text-xs text-gray-600 [&>td]:!p-0',
-          open && index === row.rounds.length - 1 && 'border-b border-gray-200'
+          open && index === row.rounds.length - 1 && !row.next && 'border-b border-gray-200'
         )}>
-        <RoundCell className="text-right tabular-nums text-gray-400">R{index + 1}</RoundCell>
+        <RoundCell className="text-right tabular-nums text-gray-400">
+          <span className="hidden sm:inline">R{index + 1}</span>
+          <span className={cn('font-medium sm:hidden', resultTone(round.game))}>
+            {round.points !== null ? `${formatScore(round.points)}/${index + 1}` : `R${index + 1}`}
+          </span>
+        </RoundCell>
         <RoundCell cellClassName="max-w-[160px] min-[500px]:max-w-none">
           {round.points !== null && <RoundGame game={round.game} />}
         </RoundCell>
-        <RoundCell className={cn('text-right font-medium tabular-nums whitespace-nowrap', resultTone(round.game))}>
+        <RoundCell
+          cellClassName="hidden sm:table-cell"
+          className={cn('text-right font-medium tabular-nums whitespace-nowrap', resultTone(round.game))}>
           {round.points !== null ? `${formatScore(round.points)}/${index + 1}` : <Dash />}
         </RoundCell>
         <RoundCell className="text-right tabular-nums">
@@ -167,16 +226,19 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
       </tr>
     )
   })
+  if (!row.next) return played
+  return [...played, <NextRound key="next" next={row.next} open={open} className={className} />]
 }
 
 // Table rows can't animate their height, so each cell's content collapses instead.
-function RoundCell({ children, className, cellClassName }: {
+function RoundCell({ children, className, cellClassName, colSpan }: {
   children: ReactNode
   className?: string
   cellClassName?: string
+  colSpan?: number
 }) {
   return (
-    <td className={cellClassName}>
+    <td className={cellClassName} colSpan={colSpan}>
       <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] group-data-[open=true]/round:grid-rows-[1fr] group-data-[open=true]/round:opacity-100 motion-reduce:transition-none">
         <div className="overflow-hidden">
           <div className={cn('px-2 py-1.5 sm:px-4 lg:px-3 xl:px-6', className)}>{children}</div>
@@ -256,7 +318,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
             <CustomTableRow>
               <CustomTableHead className="w-[36px] text-right">#</CustomTableHead>
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">Name</CustomTableHead>
-              <CustomTableHead className="text-right"><span className="sr-only sm:not-sr-only">Score</span></CustomTableHead>
+              <CustomTableHead className="hidden sm:table-cell text-right">Score</CustomTableHead>
               <CustomTableHead className="text-right">TPR</CustomTableHead>
               <CustomTableHead className="text-right">Odds</CustomTableHead>
               <CustomTableHead className="text-right">Change</CustomTableHead>
@@ -267,7 +329,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
             {view.rows.map((row, index) => {
               const isCut = index > 0 && !row.qualifying && view.rows[index - 1].qualifying
               const isOpen = openRows.has(row.id)
-              const canOpen = row.rounds.length > 0
+              const canOpen = row.rounds.length > 0 || row.next !== null
               return (
                 <Fragment key={row.id}>
                   <CustomTableRow
@@ -298,14 +360,12 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
                     <CustomTableCell className="max-w-[160px] truncate min-[500px]:max-w-none">
                       <PlayerName row={row} category={category} />
                     </CustomTableCell>
-                    <CustomTableCell className="text-right tabular-nums whitespace-nowrap">
-                      <span className="hidden sm:inline">
-                        {row.points !== null ? (
-                          <span className={cn(row.voided && 'text-gray-400 line-through')}>
-                            {formatScore(row.points)}/{row.games}
-                          </span>
-                        ) : <Dash />}
-                      </span>
+                    <CustomTableCell className="hidden sm:table-cell text-right tabular-nums whitespace-nowrap">
+                      {row.points !== null ? (
+                        <span className={cn(row.voided && 'text-gray-400 line-through')}>
+                          {formatScore(row.points)}/{row.games}
+                        </span>
+                      ) : <Dash />}
                     </CustomTableCell>
                     <CustomTableCell className="text-right tabular-nums">
                       {row.tpr !== null ? (

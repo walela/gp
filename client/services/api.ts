@@ -254,10 +254,21 @@ export interface LiveRound extends LiveSnapshot {
   game: LiveGame | null
 }
 
+export interface LiveNextGame {
+  round: number
+  color: 'w' | 'b'
+  opponent: string | null
+  opponent_rating: number | null
+  // Performance after a win, draw or loss in this game.
+  tpr: { win: number; draw: number; loss: number }
+}
+
 export interface LiveResult extends LiveSnapshot {
   section: LiveCategory
   // The result after each completed round, starting with round 1.
   rounds: LiveRound[]
+  // The player's game in the next round while it's being played.
+  next?: LiveNextGame | null
 }
 
 export interface LivePlayer {
