@@ -1,6 +1,6 @@
 import { getLiveOdds } from '@/lib/live-odds'
 import { getQualifierConfig } from '@/lib/qualifiers'
-import type { ForecastEntry } from '@/lib/qualification-odds'
+import { formatChance, type ForecastEntry } from '@/lib/qualification-odds'
 import type { LiveCategory, LiveStandings as LiveStandingsData } from '@/services/api'
 import { LiveStandingsView, type LiveCategoryView, type LiveRow } from '@/components/rankings/live-standings-view'
 
@@ -8,6 +8,14 @@ const SPOTS = 9
 // Odds below this aren't worth a row.
 const CONTENDER_ODDS = 0.005
 const ROWS_BELOW_CUT = 4
+
+// Players whose odds have stayed at >99.9% (or <0.1%) all event.
+function isSettled(row: LiveRow): boolean {
+  const odds = [row.before, row.odds, ...row.rounds.map(round => round.odds)]
+  if (odds.some(p => p === null)) return false
+  const shown = new Set(odds.map(p => formatChance(p as number)))
+  return shown.size === 1 && (shown.has('>99.9%') || shown.has('<0.1%'))
+}
 
 function categoryView(
   data: LiveStandingsData,
@@ -68,9 +76,11 @@ function categoryView(
       }
     })
 
-  const lastQualifying = rows.findLastIndex(row => row.qualifying)
+  const shownRows = rows.filter(row => !isSettled(row))
+  if (shownRows.length === 0) return null
+  const lastQualifying = shownRows.findLastIndex(row => row.qualifying)
   return {
-    rows,
+    rows: shownRows,
     shown: Math.max(lastQualifying + 1 + ROWS_BELOW_CUT, SPOTS),
     completedRound: section.completed_round,
   }
