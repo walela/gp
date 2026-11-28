@@ -192,6 +192,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
     setCategory(option)
     window.history.replaceState(null, '', option === 'ladies' ? '?category=ladies' : window.location.pathname)
   }
+  const roundInProgress = view.completedRound < Math.max(view.pairedRound, 1)
   const roundLabel = view.completedRound === rounds
     ? 'Final'
     : `Round ${Math.max(view.pairedRound, view.completedRound, 1)} of ${rounds}`
@@ -228,8 +229,10 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
         </div>
         <span className="flex items-center gap-2 whitespace-nowrap text-xs tabular-nums text-gray-500">
           <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 motion-safe:animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+            {roundInProgress && (
+              <span className="absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-60 motion-safe:animate-ping" />
+            )}
+            <span className={cn('relative inline-flex h-2 w-2 rounded-full', roundInProgress ? 'bg-orange-500' : 'bg-green-500')} />
           </span>
           {roundLabel}
         </span>
