@@ -133,7 +133,6 @@ function RoundGame({ game }: { game: LiveGame | null }) {
           <span className="sr-only">{resultLabel(game)} against</span>
           <span className="truncate" title={game.opponent}><NameText name={game.opponent} /></span>
           {game.opponent_rating && <span className="hidden shrink-0 tabular-nums text-gray-400 sm:inline">{game.opponent_rating}</span>}
-          {game.kind === 'forfeit' && <span className="shrink-0 text-gray-400">forfeit</span>}
         </>
       ) : (
         <span className="text-gray-400">{game.kind === 'bye' ? 'Bye' : 'Not paired'}</span>
@@ -206,7 +205,7 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
           'group/round bg-gray-50/80 text-xs text-gray-600 [&>td]:!p-0',
           open && index === row.rounds.length - 1 && !row.next && 'border-b border-gray-200'
         )}>
-        <RoundCell className="text-right tabular-nums text-gray-400">
+        <RoundCell className="text-right tabular-nums whitespace-nowrap text-gray-400">
           <span className="hidden sm:inline">R{index + 1}</span>
           <span className={cn('font-medium sm:hidden', resultTone(round.game))}>
             {round.points !== null && round.game ? roundResult(round.game) : `R${index + 1}`}
