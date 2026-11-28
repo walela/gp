@@ -2,8 +2,10 @@ import Link from 'next/link'
 import { DesignThemePicker } from '@/components/design-theme-picker'
 import { MainNav } from '@/components/layout/main-nav'
 import { Separator } from '@/components/ui/separator'
+import { getLiveStandings } from '@/services/api'
 
-export function Header() {
+export async function Header() {
+  const live = await getLiveStandings()
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-elevation-low">
       <div className="container mx-auto max-w-7xl px-3">
@@ -12,7 +14,7 @@ export function Header() {
             <span className="truncate text-base font-semibold tracking-tight sm:text-lg">CK GP 2026</span>
           </Link>
           <div className="flex items-center gap-1">
-            <MainNav />
+            <MainNav live={live !== null} />
             <DesignThemePicker />
           </div>
         </div>

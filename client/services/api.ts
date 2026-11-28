@@ -255,7 +255,6 @@ export interface LiveRound extends LiveSnapshot {
 }
 
 export interface LiveResult extends LiveSnapshot {
-  tpr: number
   section: LiveCategory
   // The result after each completed round, starting with round 1.
   rounds: LiveRound[]

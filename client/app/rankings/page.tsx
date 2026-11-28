@@ -12,7 +12,7 @@ import { SortableHeader } from '@/components/rankings/sortable-header'
 
 import { Baby, ChevronRight, Crown } from 'lucide-react'
 import { getLiveStandings, getRankings, getSeasons, type PlayerRanking } from '@/services/api'
-import { LiveStandings } from '@/components/rankings/live-standings'
+import { LiveLink } from '@/components/rankings/live-link'
 import { cn } from '@/lib/utils'
 import { getDisplayName, getRankMovement } from '@/components/rankings/utils'
 import { forecastMatchesResults, getCategoryForecast } from '@/lib/qualification-forecast'
@@ -135,7 +135,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
   // The API doesn't know the forecast, so odds sorting fetches everyone in Best 4 order and pages here.
   const sortsByOdds = sort === 'odds'
 
-  const showLive = isCurrentSeason && page === 1 && !search
+  const showLive = isCurrentSeason
 
   const [rankingsData, forecastCurrent, liveStandings] = await Promise.all([
     getRankings({
@@ -202,17 +202,7 @@ export async function RankingsPageContent({ searchParams }: RankingsPageProps) {
         <SearchForm defaultValue={search} basePath={rankingsBasePath} />
       </div>
 
-      {liveStandings && (
-        <LiveStandings
-          data={liveStandings}
-          category={category}
-          season={season}
-          published={{
-            open: getCategoryForecast('open', season, forecastCurrent),
-            ladies: getCategoryForecast('ladies', season, forecastCurrent),
-          }}
-        />
-      )}
+      {liveStandings && <LiveLink data={liveStandings} category={category} />}
 
       <div className="mb-0 w-full">
         <ViewSelector

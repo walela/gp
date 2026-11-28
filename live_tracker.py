@@ -145,16 +145,19 @@ def _section_games(tournament_id: str, rounds: int):
     """Each player's games in a section and the last round with every result in."""
     players = _starting_list(tournament_id)
     games: Dict[int, List[Dict]] = {snr: [] for snr in players}
+    paired = set()
     completed_round = 0
     paired_round = 0
 
     for round_number in range(1, rounds + 1):
         boards = _round_pairings(tournament_id, round_number, players)
-        if not boards:
+        # Rounds not yet paired can already list players who asked to sit out.
+        if not any(board["black"] is not None for board in boards):
             break
         paired_round = round_number
         finished = True
         for board in boards:
+            paired.update(snr for snr in (board["white"], board["black"]) if snr is not None)
             result = board["result"].replace("K", "").strip()
             parts = [part.strip() for part in result.split(" - ")] if " - " in result else []
             if board["black"] is None:
@@ -177,9 +180,9 @@ def _section_games(tournament_id: str, rounds: int):
                     "round": round_number, "kind": kind, "score": SCORES[token], "opponent": opponent,
                     "color": color,
                 })
-        if finished:
+        if finished and completed_round == round_number - 1:
             completed_round = round_number
-    return players, games, completed_round, paired_round
+    return players, games, paired, completed_round, paired_round
 
 
 def _live_result(games: List[Dict], players: Dict[int, Dict], completed_round: int) -> Dict:
@@ -240,10 +243,10 @@ def standings(event: Dict, db: Database) -> Dict:
     sections = {}
     entrants = []
     for section, tournament_id in event["sections"].items():
-        players, games, completed_round, paired_round = _section_games(tournament_id, event["rounds"])
+        players, games, paired, completed_round, paired_round = _section_games(tournament_id, event["rounds"])
         sections[section] = {"id": tournament_id, "completed_round": completed_round, "paired_round": paired_round}
         for snr, player in players.items():
-            if player["federation"] == "KEN" and player["fide_id"] and games.get(snr):
+            if player["federation"] == "KEN" and player["fide_id"] and snr in paired:
                 live = _live_result(games[snr], players, completed_round)
                 live["rounds"] = [
                     {
@@ -262,11 +265,11 @@ def standings(event: Dict, db: Database) -> Dict:
     with_live_all = {key: list(value) for key, value in all_results.items()}
 
     for section, player, live in entrants:
-        if live["tpr"] is None:
-            continue
         record = known.get(player["fide_id"])
         key = record["id"] if record else f"live:{player['fide_id']}"
         live_by_key[key] = {**live, "section": section}
+        if live["tpr"] is None:
+            continue
         result = {
             "player": {
                 "name": record["name"] if record else player["name"],

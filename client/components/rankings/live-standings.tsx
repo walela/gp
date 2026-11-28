@@ -7,7 +7,6 @@ import { LiveStandingsView, type LiveCategoryView, type LiveRow } from '@/compon
 const SPOTS = 9
 // Odds below this aren't worth a row.
 const CONTENDER_ODDS = 0.005
-const ROWS_BELOW_CUT = 4
 
 // Players whose odds have stayed at >99.9% (or <0.1%) all event.
 function isSettled(row: LiveRow): boolean {
@@ -25,7 +24,7 @@ function categoryView(
   published: Record<string, ForecastEntry> | null
 ): LiveCategoryView | null {
   const section = data.sections[category] ?? data.sections.open
-  if (!section || section.completed_round === 0) return null
+  if (!section) return null
 
   const qualifiers = getQualifierConfig(season, category)
   const excluded = new Set(qualifiers?.excluded ?? [])
@@ -58,8 +57,8 @@ function categoryView(
         rank: player.rank,
         qualifying: qualifying.has(id),
         kenyaNumber1: id !== null && id === kenyaNumber1,
-        points: live?.points ?? null,
-        games: live?.games ?? null,
+        points: live?.games ? live.points : null,
+        games: live?.games || null,
         tpr: live?.tpr ?? null,
         voided: live !== null && live.status !== 'valid',
         odds: id !== null && id in current ? current[id] : null,
@@ -78,10 +77,8 @@ function categoryView(
 
   const shownRows = rows.filter(row => !isSettled(row))
   if (shownRows.length === 0) return null
-  const lastQualifying = shownRows.findLastIndex(row => row.qualifying)
   return {
     rows: shownRows,
-    shown: Math.max(lastQualifying + 1 + ROWS_BELOW_CUT, SPOTS),
     completedRound: section.completed_round,
   }
 }

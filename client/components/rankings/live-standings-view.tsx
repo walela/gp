@@ -43,7 +43,6 @@ export interface LiveRow {
 
 export interface LiveCategoryView {
   rows: LiveRow[]
-  shown: number
   completedRound: number
 }
 
@@ -139,7 +138,7 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
         )}>
         <RoundCell className="text-right tabular-nums text-gray-400">R{index + 1}</RoundCell>
         <RoundCell cellClassName="max-w-[160px] sm:max-w-none">
-          {row.points !== null && <RoundGame game={round.game} />}
+          {round.points !== null && <RoundGame game={round.game} />}
         </RoundCell>
         <RoundCell className="text-right tabular-nums whitespace-nowrap">
           {round.points !== null ? formatScore(round.points) : <Dash />}
@@ -186,13 +185,17 @@ interface LiveStandingsViewProps {
 
 export function LiveStandingsView({ event, rounds, updatedAt, views, initialCategory }: LiveStandingsViewProps) {
   const [category, setCategory] = useState<LiveCategory>(initialCategory)
-  const [expanded, setExpanded] = useState(false)
   const [openRows, setOpenRows] = useState<ReadonlySet<string>>(new Set())
   const view = views[category]
   if (!view) return null
 
-  const hidden = Math.max(view.rows.length - view.shown, 0)
-  const roundLabel = view.completedRound === rounds ? 'Final' : `Round ${view.completedRound} of ${rounds}`
+  const selectCategory = (option: LiveCategory) => {
+    setCategory(option)
+    window.history.replaceState(null, '', option === 'ladies' ? '?category=ladies' : window.location.pathname)
+  }
+  const roundLabel = view.completedRound === rounds
+    ? 'Final'
+    : view.completedRound === 0 ? 'Starting' : `Round ${view.completedRound} of ${rounds}`
   const toggleRow = (id: string) => setOpenRows(current => {
     const next = new Set(current)
     if (!next.delete(id)) next.add(id)
@@ -207,7 +210,7 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
             <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 motion-safe:animate-ping" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
           </span>
-          <h2 className="truncate text-sm font-semibold text-gray-900">{event}</h2>
+          <h1 className="truncate text-sm font-semibold text-gray-900">{event}</h1>
           <span className="whitespace-nowrap text-xs tabular-nums text-gray-500">
             {roundLabel}
             <span className="hidden sm:inline"> · {dayjs(updatedAt).tz('Africa/Nairobi').format('HH:mm')}</span>
@@ -220,7 +223,7 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
               type="button"
               disabled={!views[option]}
               aria-pressed={category === option}
-              onClick={() => setCategory(option)}
+              onClick={() => selectCategory(option)}
               className={cn(
                 'px-3 py-1 text-xs font-medium transition-colors disabled:opacity-40',
                 category === option
@@ -233,8 +236,7 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
         </div>
       </div>
 
-      <div className="group/live" data-expanded={expanded}>
-        <CustomTable
+      <CustomTable
           containerClassName="sm:rounded-none sm:shadow-none"
           className="[&>tbody>tr>*]:py-2.5 [&>thead_th]:py-2.5 md:[&>tbody>tr>*]:px-4 md:[&>thead_th]:px-4 xl:[&>tbody>tr>*]:px-6 xl:[&>thead_th]:px-6">
           <CustomTableHeader>
@@ -253,7 +255,6 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
               const isCut = index > 0 && !row.qualifying && view.rows[index - 1].qualifying
               const isOpen = openRows.has(row.id)
               const canOpen = row.rounds.length > 0
-              const beyondShown = index >= view.shown && 'hidden group-data-[expanded=true]/live:table-row'
               return (
                 <Fragment key={row.id}>
                   <CustomTableRow
@@ -261,7 +262,6 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
                       if (canOpen && !(event.target as HTMLElement).closest('a, button')) toggleRow(row.id)
                     }}
                     className={cn(
-                      beyondShown,
                       canOpen && 'cursor-pointer',
                       isCut && 'border-t-2 border-t-gray-300',
                       row.kenyaNumber1
@@ -328,7 +328,6 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
                       row={row}
                       open={isOpen}
                       className={cn(
-                        beyondShown,
                         row.kenyaNumber1 ? 'border-l-2 border-l-amber-500' : row.qualifying && 'border-l-2 border-l-blue-600'
                       )}
                     />
@@ -337,17 +336,7 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
               )
             })}
           </CustomTableBody>
-        </CustomTable>
-        {hidden > 0 && (
-          <button
-            type="button"
-            onClick={() => setExpanded(value => !value)}
-            aria-expanded={expanded}
-            className="w-full border-t border-gray-200 py-2.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900">
-            {expanded ? 'Show fewer' : `Show ${hidden} more`}
-          </button>
-        )}
-      </div>
+      </CustomTable>
     </Card>
   )
 }

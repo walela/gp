@@ -13,7 +13,16 @@ import {
 
 const RANKINGS_UPDATE_EXPIRES_AT = new Date('2026-11-23T10:00:00+03:00').getTime()
 
-export function MainNav() {
+function LiveDot() {
+  return (
+    <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
+      <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 motion-safe:animate-ping" />
+      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-500" />
+    </span>
+  )
+}
+
+export function MainNav({ live }: { live: boolean }) {
   const pathname = usePathname()
   const [pendingNavigation, setPendingNavigation] = useState<{ href: string, fromPathname: string } | null>(null)
   const [showRankingsUpdate, setShowRankingsUpdate] = useState(() => Date.now() < RANKINGS_UPDATE_EXPIRES_AT)
@@ -34,6 +43,11 @@ export function MainNav() {
       label: 'Rankings',
       active: pathname === '/' || pathname === '/rankings'
     },
+    ...(live ? [{
+      href: '/live',
+      label: 'Live',
+      active: pathname === '/live'
+    }] : []),
     {
       href: '/tournaments',
       label: 'Tournaments',
@@ -73,6 +87,7 @@ export function MainNav() {
                     {route.href === '/admin' && (
                       <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true" />
                     )}
+                    {route.href === '/live' && <LiveDot />}
                     {route.label}
                     {route.href === '/' && showRankingsUpdate && (
                       <span className="absolute -right-2 top-0 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
@@ -109,6 +124,7 @@ export function MainNav() {
                 <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true" />
               )}
               <span className="relative inline-flex items-center gap-1.5">
+                {route.href === '/live' && <LiveDot />}
                 {route.label}
                 {route.href === '/' && showRankingsUpdate && (
                   <span className="absolute -right-2 top-0 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
