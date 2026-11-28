@@ -98,27 +98,25 @@ function PlayerName({ row, category }: { row: LiveRow, category: LiveCategory })
   )
 }
 
-function gameResult(game: LiveGame): string {
-  if (game.kind === 'unpaired') return '–'
-  if (game.kind === 'forfeit') return game.score ? '+' : '−'
-  return game.score === 0.5 ? '½' : String(game.score)
-}
+const RESULT_BADGE = {
+  W: { label: 'Won', className: 'bg-emerald-100 text-emerald-800' },
+  D: { label: 'Drew', className: 'bg-gray-200 text-gray-700' },
+  L: { label: 'Lost', className: 'bg-red-100 text-red-700' },
+} as const
 
 function RoundGame({ game }: { game: LiveGame | null }) {
   if (!game) return <span className="text-gray-400">Not paired</span>
+  const result = game.score === 1 ? 'W' : game.score === 0.5 ? 'D' : 'L'
   return (
     <span className="flex min-w-0 items-center gap-2">
-      <span className="w-3 shrink-0 text-center font-semibold text-gray-900">{gameResult(game)}</span>
       {game.opponent ? (
         <>
           <span
-            className={cn(
-              'h-2.5 w-2.5 shrink-0 rounded-[2px] border border-gray-400',
-              game.color === 'b' ? 'bg-gray-800' : 'bg-white'
-            )}
-            role="img"
-            aria-label={game.color === 'b' ? 'Black' : 'White'}
-          />
+            className={cn('w-5 shrink-0 rounded py-px text-center text-[11px] font-semibold', RESULT_BADGE[result].className)}
+            aria-hidden="true">
+            {result}
+          </span>
+          <span className="sr-only">{RESULT_BADGE[result].label} against</span>
           <span className="truncate" title={game.opponent}><NameText name={game.opponent} /></span>
           {game.opponent_rating && <span className="hidden shrink-0 tabular-nums text-gray-400 sm:inline">{game.opponent_rating}</span>}
           {game.kind === 'forfeit' && <span className="shrink-0 text-gray-400">forfeit</span>}
