@@ -31,6 +31,8 @@ export interface LiveRow {
   rank: number
   qualifying: boolean
   kenyaNumber1: boolean
+  points: number | null
+  games: number | null
   tpr: number | null
   voided: boolean
   odds: number | null
@@ -254,7 +256,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
             <CustomTableRow>
               <CustomTableHead className="w-[36px] text-right">#</CustomTableHead>
               <CustomTableHead className="min-w-[108px] sm:min-w-[140px]">Name</CustomTableHead>
-              <CustomTableHead><span className="sr-only">Score</span></CustomTableHead>
+              <CustomTableHead className="text-right"><span className="sr-only sm:not-sr-only">Score</span></CustomTableHead>
               <CustomTableHead className="text-right">TPR</CustomTableHead>
               <CustomTableHead className="text-right">Odds</CustomTableHead>
               <CustomTableHead className="text-right">Change</CustomTableHead>
@@ -296,7 +298,15 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
                     <CustomTableCell className="max-w-[160px] truncate min-[500px]:max-w-none">
                       <PlayerName row={row} category={category} />
                     </CustomTableCell>
-                    <CustomTableCell />
+                    <CustomTableCell className="text-right tabular-nums whitespace-nowrap">
+                      <span className="hidden sm:inline">
+                        {row.points !== null ? (
+                          <span className={cn(row.voided && 'text-gray-400 line-through')}>
+                            {formatScore(row.points)}/{row.games}
+                          </span>
+                        ) : <Dash />}
+                      </span>
+                    </CustomTableCell>
                     <CustomTableCell className="text-right tabular-nums">
                       {row.tpr !== null ? (
                         <span className={cn(row.voided && 'text-gray-400 line-through')}>{row.tpr}</span>
