@@ -13,7 +13,6 @@ import {
   CustomTableCell
 } from '@/components/ui/custom-table'
 import { getDisplayName } from '@/components/rankings/utils'
-import dayjs from '@/lib/dayjs'
 import { formatChance } from '@/lib/qualification-odds'
 import { cn } from '@/lib/utils'
 import type { LiveCategory, LiveGame } from '@/services/api'
@@ -178,12 +177,11 @@ function RoundCell({ children, className, cellClassName }: {
 interface LiveStandingsViewProps {
   event: string
   rounds: number
-  updatedAt: string
   views: Record<LiveCategory, LiveCategoryView | null>
   initialCategory: LiveCategory
 }
 
-export function LiveStandingsView({ event, rounds, updatedAt, views, initialCategory }: LiveStandingsViewProps) {
+export function LiveStandingsView({ event, rounds, views, initialCategory }: LiveStandingsViewProps) {
   const [category, setCategory] = useState<LiveCategory>(initialCategory)
   const [openRows, setOpenRows] = useState<ReadonlySet<string>>(new Set())
   const view = views[category]
@@ -211,10 +209,7 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
             <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
           </span>
           <h1 className="truncate text-sm font-semibold text-gray-900">{event}</h1>
-          <span className="whitespace-nowrap text-xs tabular-nums text-gray-500">
-            {roundLabel}
-            <span className="hidden sm:inline"> · {dayjs(updatedAt).tz('Africa/Nairobi').format('HH:mm')}</span>
-          </span>
+          <span className="whitespace-nowrap text-xs tabular-nums text-gray-500">{roundLabel}</span>
         </div>
         <div className="inline-flex shrink-0 divide-x divide-gray-200 overflow-hidden rounded-md border border-gray-200" role="group" aria-label="Category">
           {(['open', 'ladies'] as const).map(option => (

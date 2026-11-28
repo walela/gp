@@ -102,7 +102,6 @@ export function LiveStandings({ data, category, season, published }: LiveStandin
     <LiveStandingsView
       event={data.event}
       rounds={data.rounds}
-      updatedAt={data.updated_at}
       views={views}
       initialCategory={views[category] ? category : 'open'}
     />
