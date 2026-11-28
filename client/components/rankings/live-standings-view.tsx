@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { ChevronDown, Crown } from 'lucide-react'
 import { Card } from '@/components/ui/card'
@@ -124,33 +124,56 @@ function RoundGame({ game }: { game: LiveGame | null }) {
   )
 }
 
-function PlayerRounds({ row, className }: { row: LiveRow, className: string }) {
+function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, className: string }) {
   return row.rounds.map((round, index) => {
     const previous = index === 0 ? row.before : row.rounds[index - 1].odds
     return (
       <tr
         key={index}
+        data-open={open}
+        inert={!open}
         className={cn(
           className,
-          'bg-gray-50/80 text-xs text-gray-600 [&>td]:!py-1.5 [&>td]:px-2 sm:[&>td]:px-4',
-          index === row.rounds.length - 1 ? 'border-b border-gray-200' : ''
+          'group/round bg-gray-50/80 text-xs text-gray-600 [&>td]:!p-0',
+          open && index === row.rounds.length - 1 && 'border-b border-gray-200'
         )}>
-        <td className="text-right tabular-nums text-gray-400">R{index + 1}</td>
-        <td className="max-w-[160px] sm:max-w-none">{row.points !== null && <RoundGame game={round.game} />}</td>
-        <td className="text-right tabular-nums whitespace-nowrap">
+        <RoundCell className="text-right tabular-nums text-gray-400">R{index + 1}</RoundCell>
+        <RoundCell cellClassName="max-w-[160px] sm:max-w-none">
+          {row.points !== null && <RoundGame game={round.game} />}
+        </RoundCell>
+        <RoundCell className="text-right tabular-nums whitespace-nowrap">
           {round.points !== null ? formatScore(round.points) : <Dash />}
-        </td>
-        <td className="hidden sm:table-cell text-right tabular-nums">{round.tpr ?? <Dash />}</td>
-        <td className="text-right tabular-nums whitespace-nowrap text-gray-900">
+        </RoundCell>
+        <RoundCell className="text-right tabular-nums" cellClassName="hidden sm:table-cell">
+          {round.tpr ?? <Dash />}
+        </RoundCell>
+        <RoundCell className="text-right tabular-nums whitespace-nowrap text-gray-900">
           {round.odds !== null ? formatChance(round.odds) : <Dash />}
-        </td>
-        <td className="text-right tabular-nums whitespace-nowrap">
+        </RoundCell>
+        <RoundCell className="text-right tabular-nums whitespace-nowrap">
           <OddsChange now={round.odds} before={previous} />
-        </td>
+        </RoundCell>
         <td />
       </tr>
     )
   })
+}
+
+// Table rows can't animate their height, so each cell's content collapses instead.
+function RoundCell({ children, className, cellClassName }: {
+  children: ReactNode
+  className?: string
+  cellClassName?: string
+}) {
+  return (
+    <td className={cellClassName}>
+      <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] group-data-[open=true]/round:grid-rows-[1fr] group-data-[open=true]/round:opacity-100 motion-reduce:transition-none">
+        <div className="overflow-hidden">
+          <div className={cn('px-2 py-1.5 sm:px-4 xl:px-6', className)}>{children}</div>
+        </div>
+      </div>
+    </td>
+  )
 }
 
 interface LiveStandingsViewProps {
@@ -240,7 +263,6 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
                     className={cn(
                       beyondShown,
                       canOpen && 'cursor-pointer',
-                      isOpen && 'border-b-0',
                       isCut && 'border-t-2 border-t-gray-300',
                       row.kenyaNumber1
                         ? 'bg-amber-50/50 border-l-2 border-l-amber-500'
@@ -291,16 +313,20 @@ export function LiveStandingsView({ event, rounds, updatedAt, views, initialCate
                           aria-label={`Rounds for ${row.name}`}
                           className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700">
                           <ChevronDown
-                            className={cn('h-4 w-4 transition-transform duration-200', isOpen && 'rotate-180')}
+                            className={cn(
+                              'h-4 w-4 transition-transform duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] motion-reduce:transition-none',
+                              isOpen && 'rotate-180'
+                            )}
                             aria-hidden="true"
                           />
                         </button>
                       )}
                     </CustomTableCell>
                   </CustomTableRow>
-                  {isOpen && (
+                  {canOpen && (
                     <PlayerRounds
                       row={row}
+                      open={isOpen}
                       className={cn(
                         beyondShown,
                         row.kenyaNumber1 ? 'border-l-2 border-l-amber-500' : row.qualifying && 'border-l-2 border-l-blue-600'
