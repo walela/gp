@@ -201,17 +201,12 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
   })
 
   return (
-    <Card className="w-full gap-0 overflow-hidden rounded-lg border-0 bg-white/95 p-0 shadow-elevation-low">
-      <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-2.5 sm:px-6">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 motion-safe:animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
-          </span>
-          <h1 className="truncate text-sm font-semibold text-gray-900">{event}</h1>
-          <span className="whitespace-nowrap text-xs tabular-nums text-gray-500">{roundLabel}</span>
-        </div>
-        <div className="inline-flex shrink-0 divide-x divide-gray-200 overflow-hidden rounded-md border border-gray-200" role="group" aria-label="Category">
+    <div className="w-full">
+      <div className="flex w-full items-center justify-between gap-2">
+        <div
+          className="inline-flex divide-x divide-gray-200 rounded-t-lg border border-b-0 bg-white/90 shadow-sm backdrop-blur-sm"
+          role="group"
+          aria-label="Category">
           {(['open', 'ladies'] as const).map(option => (
             <button
               key={option}
@@ -220,7 +215,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
               aria-pressed={category === option}
               onClick={() => selectCategory(option)}
               className={cn(
-                'px-3 py-1 text-xs font-medium transition-colors disabled:opacity-40',
+                'inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-all disabled:opacity-40',
                 category === option
                   ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
@@ -229,10 +224,18 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
             </button>
           ))}
         </div>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 motion-safe:animate-ping" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+          </span>
+          <h1 className="truncate text-sm font-semibold text-gray-900">{event}</h1>
+          <span className="whitespace-nowrap text-xs tabular-nums text-gray-500">{roundLabel}</span>
+        </div>
       </div>
 
+      <Card className="w-full gap-0 rounded-b-lg border-0 bg-white/95 p-0 shadow-elevation-low sm:rounded-tr-lg">
       <CustomTable
-          containerClassName="sm:rounded-none sm:shadow-none"
           className="[&>tbody>tr>*]:py-2.5 [&>thead_th]:py-2.5 md:[&>tbody>tr>*]:px-4 md:[&>thead_th]:px-4 xl:[&>tbody>tr>*]:px-6 xl:[&>thead_th]:px-6">
           <CustomTableHeader>
             <CustomTableRow>
@@ -332,6 +335,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
             })}
           </CustomTableBody>
       </CustomTable>
-    </Card>
+      </Card>
+    </div>
   )
 }
