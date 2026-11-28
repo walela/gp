@@ -79,8 +79,8 @@ function shortName(fullName: string): string {
 function NameText({ name }: { name: string }) {
   return (
     <>
-      <span className="sm:hidden">{shortName(name)}</span>
-      <span className="hidden sm:inline">{getDisplayName(name)}</span>
+      <span className="min-[500px]:hidden">{shortName(name)}</span>
+      <span className="hidden min-[500px]:inline">{getDisplayName(name)}</span>
     </>
   )
 }
@@ -146,7 +146,7 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
           open && index === row.rounds.length - 1 && 'border-b border-gray-200'
         )}>
         <RoundCell className="text-right tabular-nums text-gray-400">R{index + 1}</RoundCell>
-        <RoundCell cellClassName="max-w-[160px] sm:max-w-none">
+        <RoundCell cellClassName="max-w-[160px] min-[500px]:max-w-none">
           {round.points !== null && <RoundGame game={round.game} />}
         </RoundCell>
         <RoundCell className={cn('text-right font-medium tabular-nums whitespace-nowrap', resultTone(round.game))}>
@@ -293,7 +293,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
                         </span>
                       ) : row.rank}
                     </CustomTableCell>
-                    <CustomTableCell className="max-w-[160px] truncate sm:max-w-none">
+                    <CustomTableCell className="max-w-[160px] truncate min-[500px]:max-w-none">
                       <PlayerName row={row} category={category} />
                     </CustomTableCell>
                     <CustomTableCell />
