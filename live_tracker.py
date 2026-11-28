@@ -49,6 +49,9 @@ _scraper = ChessResultsScraper()
 _lock = threading.Lock()
 _cache: Dict[str, object] = {"at": 0.0, "payload": None}
 _starting_lists: Dict[str, tuple] = {}
+# Rounds with every result in; kept for a while so late corrections still come through.
+_finished_rounds: Dict[tuple, tuple] = {}
+FINISHED_ROUND_SECONDS = 30 * 60
 
 
 def performance(opponent_ratings: List[int], score: float) -> Optional[int]:
@@ -150,7 +153,11 @@ def _section_games(tournament_id: str, rounds: int):
     paired_round = 0
 
     for round_number in range(1, rounds + 1):
-        boards = _round_pairings(tournament_id, round_number, players)
+        cached = _finished_rounds.get((tournament_id, round_number))
+        if cached and time.time() - cached[0] < FINISHED_ROUND_SECONDS:
+            boards = cached[1]
+        else:
+            boards = _round_pairings(tournament_id, round_number, players)
         # Rounds not yet paired can already list players who asked to sit out.
         if not any(board["black"] is not None for board in boards):
             break
@@ -180,8 +187,11 @@ def _section_games(tournament_id: str, rounds: int):
                     "round": round_number, "kind": kind, "score": SCORES[token], "opponent": opponent,
                     "color": color,
                 })
-        if finished and completed_round == round_number - 1:
-            completed_round = round_number
+        if finished:
+            if not cached or cached[1] is not boards:
+                _finished_rounds[(tournament_id, round_number)] = (time.time(), boards)
+            if completed_round == round_number - 1:
+                completed_round = round_number
     return players, games, paired, completed_round, paired_round
 
 

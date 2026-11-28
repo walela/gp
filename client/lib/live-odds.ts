@@ -166,9 +166,18 @@ function simulate(data: LiveStandings, players: Entrant[], round: number | null)
 
 const cache = new Map<string, LiveOdds>()
 
+// The odds only change when a result does, not every time the standings are refreshed.
+function resultsKey(data: LiveStandings): string {
+  const results = CATEGORY_ORDER.flatMap(category =>
+    data.categories[category].flatMap(player => player.live ? [[player.fide_id, player.live]] : [])
+  )
+  return JSON.stringify([data.sections, results])
+}
+
 export function getLiveOdds(data: LiveStandings): LiveOdds | null {
   if (forecast.season !== Number(data.updated_at.slice(0, 4))) return null
-  const cached = cache.get(data.updated_at)
+  const key = resultsKey(data)
+  const cached = cache.get(key)
   if (cached) return cached
 
   try {
@@ -179,7 +188,7 @@ export function getLiveOdds(data: LiveStandings): LiveOdds | null {
       rounds: Array.from({ length: completed }, (_, index) => simulate(data, players, index + 1)),
     }
     cache.clear()
-    cache.set(data.updated_at, odds)
+    cache.set(key, odds)
     return odds
   } catch (error) {
     console.error('live_odds_failed', error)
