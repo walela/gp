@@ -203,6 +203,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
 
   return (
     <div className="w-full">
+      <h1 className="mb-4 text-2xl font-bold tracking-tight md:text-3xl">{event}</h1>
       <div className="flex w-full items-center justify-between gap-2">
         <div
           className="inline-flex divide-x divide-gray-200 rounded-t-lg border border-b-0 bg-white/90 shadow-sm backdrop-blur-sm"
@@ -225,14 +226,13 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
             </button>
           ))}
         </div>
-        <div className="flex min-w-0 items-center gap-2.5">
+        <span className="flex items-center gap-2 whitespace-nowrap text-xs tabular-nums text-gray-500">
           <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
             <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 motion-safe:animate-ping" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
           </span>
-          <h1 className="truncate text-sm font-semibold text-gray-900">{event}</h1>
-          <span className="whitespace-nowrap text-xs tabular-nums text-gray-500">{roundLabel}</span>
-        </div>
+          {roundLabel}
+        </span>
       </div>
 
       <Card className="w-full gap-0 rounded-b-lg border-0 bg-white/95 p-0 shadow-elevation-low sm:rounded-tr-lg">
