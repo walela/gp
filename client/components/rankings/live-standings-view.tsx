@@ -107,6 +107,13 @@ function formatScore(points: number): string {
   return whole === 0 && half ? half : `${whole}${half}`
 }
 
+// The round's own result, with Chess-Results' K for forfeits.
+function roundResult(game: LiveGame): string {
+  if (game.kind === 'unpaired') return '–'
+  const score = formatScore(game.score)
+  return game.kind === 'forfeit' ? `${score}K` : score
+}
+
 function resultTone(game: LiveGame | null): string {
   if (!game || game.kind === 'unpaired') return 'text-gray-400'
   if (game.score === 1) return 'text-emerald-700'
@@ -202,7 +209,7 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
         <RoundCell className="text-right tabular-nums text-gray-400">
           <span className="hidden sm:inline">R{index + 1}</span>
           <span className={cn('font-medium sm:hidden', resultTone(round.game))}>
-            {round.points !== null ? `${formatScore(round.points)}/${index + 1}` : `R${index + 1}`}
+            {round.points !== null && round.game ? roundResult(round.game) : `R${index + 1}`}
           </span>
         </RoundCell>
         <RoundCell cellClassName="max-w-[160px] min-[500px]:max-w-none">
@@ -211,7 +218,7 @@ function PlayerRounds({ row, open, className }: { row: LiveRow, open: boolean, c
         <RoundCell
           cellClassName="hidden sm:table-cell"
           className={cn('text-right font-medium tabular-nums whitespace-nowrap', resultTone(round.game))}>
-          {round.points !== null ? `${formatScore(round.points)}/${index + 1}` : <Dash />}
+          {round.points !== null && round.game ? roundResult(round.game) : <Dash />}
         </RoundCell>
         <RoundCell className="text-right tabular-nums">
           {round.tpr ?? <Dash />}
