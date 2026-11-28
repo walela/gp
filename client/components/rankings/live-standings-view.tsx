@@ -257,7 +257,7 @@ interface LiveStandingsViewProps {
 
 export function LiveStandingsView({ event, rounds, views, initialCategory }: LiveStandingsViewProps) {
   const [category, setCategory] = useState<LiveCategory>(initialCategory)
-  const [openRows, setOpenRows] = useState<ReadonlySet<string>>(new Set())
+  const [openRow, setOpenRow] = useState<string | null>(null)
   const view = views[category]
   if (!view) return null
 
@@ -269,11 +269,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
   const roundLabel = view.completedRound === rounds
     ? 'Final'
     : `Round ${Math.max(view.pairedRound, view.completedRound, 1)} of ${rounds}`
-  const toggleRow = (id: string) => setOpenRows(current => {
-    const next = new Set(current)
-    if (!next.delete(id)) next.add(id)
-    return next
-  })
+  const toggleRow = (id: string) => setOpenRow(current => (current === id ? null : id))
 
   return (
     <div className="w-full">
@@ -328,7 +324,7 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
           <CustomTableBody>
             {view.rows.map((row, index) => {
               const isCut = index > 0 && !row.qualifying && view.rows[index - 1].qualifying
-              const isOpen = openRows.has(row.id)
+              const isOpen = openRow === row.id
               const canOpen = row.rounds.length > 0 || row.next !== null
               return (
                 <Fragment key={row.id}>
