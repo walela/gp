@@ -246,7 +246,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                           <Link
                             href="/live"
                             className="ml-auto inline-flex items-center gap-1 rounded-md border border-blue-300 bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-400 hover:bg-blue-200/70">
-                            Live standings
+                            Live
                             <ArrowRight className="h-3 w-3" aria-hidden="true" />
                           </Link>
                         )}
