@@ -169,12 +169,13 @@ def _section_games(tournament_id: str, rounds: int):
                 finished = False
                 continue
             kind = "forfeit" if "+" in parts or "-" in parts or "K" in board["result"] else "game"
-            for side, opponent, token in (
-                (board["white"], board["black"], parts[0]),
-                (board["black"], board["white"], parts[1]),
+            for side, opponent, token, color in (
+                (board["white"], board["black"], parts[0], "w"),
+                (board["black"], board["white"], parts[1], "b"),
             ):
                 games.setdefault(side, []).append({
                     "round": round_number, "kind": kind, "score": SCORES[token], "opponent": opponent,
+                    "color": color,
                 })
         if finished:
             completed_round = round_number
@@ -196,6 +197,20 @@ def _live_result(games: List[Dict], players: Dict[int, Dict], completed_round: i
         "games": len(games),
         "tpr": performance(ratings, sum(game["score"] for game in played)),
         "status": status,
+    }
+
+
+def _round_game(games: List[Dict], players: Dict[int, Dict], round_number: int) -> Optional[Dict]:
+    game = next((game for game in games if game["round"] == round_number), None)
+    if game is None:
+        return None
+    opponent = players.get(game.get("opponent"))
+    return {
+        "kind": game["kind"],
+        "score": game["score"],
+        "color": game.get("color"),
+        "opponent": opponent["name"] if opponent else None,
+        "opponent_rating": (opponent["rating"] or None) if opponent else None,
     }
 
 
@@ -231,7 +246,12 @@ def standings(event: Dict, db: Database) -> Dict:
             if player["federation"] == "KEN" and player["fide_id"] and games.get(snr):
                 live = _live_result(games[snr], players, completed_round)
                 live["rounds"] = [
-                    _live_result([game for game in games[snr] if game["round"] <= round_number], players, round_number)
+                    {
+                        **_live_result(
+                            [game for game in games[snr] if game["round"] <= round_number], players, round_number
+                        ),
+                        "game": _round_game(games[snr], players, round_number),
+                    }
                     for round_number in range(1, completed_round + 1)
                 ]
                 entrants.append((section, player, live))

@@ -241,11 +241,24 @@ export interface LiveSnapshot {
   status: 'valid' | 'walkover' | 'incomplete'
 }
 
+export interface LiveGame {
+  kind: 'game' | 'forfeit' | 'bye' | 'unpaired'
+  score: number
+  color: 'w' | 'b' | null
+  opponent: string | null
+  opponent_rating: number | null
+}
+
+export interface LiveRound extends LiveSnapshot {
+  // Null when the player wasn't paired in the round.
+  game: LiveGame | null
+}
+
 export interface LiveResult extends LiveSnapshot {
   tpr: number
   section: LiveCategory
   // The result after each completed round, starting with round 1.
-  rounds: LiveSnapshot[]
+  rounds: LiveRound[]
 }
 
 export interface LivePlayer {

@@ -56,7 +56,15 @@ function categoryView(
         voided: live !== null && live.status !== 'valid',
         odds: id !== null && id in current ? current[id] : null,
         before: id !== null ? published?.[id]?.p ?? null : null,
-        history: (odds?.rounds ?? []).map(round => (id !== null && id in round[category] ? round[category][id] : null)),
+        rounds: (odds?.rounds ?? []).map((round, index) => {
+          const snapshot = live?.rounds?.[index]
+          return {
+            odds: id !== null && id in round[category] ? round[category][id] : null,
+            game: snapshot?.game ?? null,
+            points: snapshot?.points ?? null,
+            tpr: snapshot?.tpr ?? null,
+          }
+        }),
       }
     })
 
