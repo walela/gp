@@ -266,11 +266,10 @@ export function LiveStandingsView({ event, rounds, views, initialCategory }: Liv
                     className={cn(
                       canOpen && 'cursor-pointer',
                       isCut && 'border-t-2 border-t-gray-300',
+                      index % 2 === 0 ? '!bg-white' : '!bg-gray-200/50',
                       row.kenyaNumber1
-                        ? 'bg-amber-50/50 border-l-2 border-l-amber-500'
-                        : row.qualifying
-                          ? 'bg-blue-50/70 border-l-2 border-l-blue-600'
-                          : index % 2 === 0 ? 'bg-gray-50/50' : 'bg-white'
+                        ? 'border-l-2 border-l-amber-500'
+                        : row.qualifying && 'border-l-2 border-l-blue-600'
                     )}>
                     <CustomTableCell
                       isHeader
