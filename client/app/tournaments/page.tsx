@@ -6,7 +6,7 @@ import dayjs from '@/lib/dayjs'
 import { Metadata } from 'next'
 import { pageMetadata } from '@/lib/site'
 import { SeasonSelector } from '@/components/season-selector'
-import { getSeasons } from '@/services/api'
+import { getLiveStandings, getSeasons } from '@/services/api'
 import { TrackedLink } from '@/components/tracked-link'
 import { formatTournamentDateCompact } from '@/utils/tournament'
 import { ArrowRight, CalendarDays, Diamond, Flag, MapPin } from 'lucide-react'
@@ -93,7 +93,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const currentYear = new Date().getFullYear()
   const season = params.season ? Number(params.season) : (seasons[0] || currentYear)
 
-  const tournaments = await getTournamentData(season)
+  const [tournaments, live] = await Promise.all([getTournamentData(season), getLiveStandings()])
   const nearTermTournamentIds = new Set(upcomingTournaments.map(tournament => tournament.id))
   const sortedActiveTournaments = sortTournamentsBySchedule([...upcomingTournaments, ...plannedTournaments])
   const sectionHeaderClassName =
@@ -123,6 +123,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 const hasDates = Boolean(tournament.startDate && tournament.endDate)
                 const isNearTerm = nearTermTournamentIds.has(tournament.id)
                 const canRegister = Boolean(tournament.registrationUrl) && !isTournamentInProgress(tournament)
+                const isLive = live !== null && live.event === (tournament.short_name || tournament.name)
                 const monthLabel = tournament.startDate
                   ? dayjs(tournament.startDate).format('MMM').toUpperCase()
                   : tournament.month?.split(/\s+/)[0].slice(0, 3).toUpperCase() ?? 'TBA'
@@ -240,6 +241,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                             Register
                             <ArrowRight className="h-3 w-3" aria-hidden="true" />
                           </TrackedLink>
+                        )}
+                        {isLive && (
+                          <Link
+                            href="/live"
+                            className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-blue-300 bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:border-blue-400 hover:bg-blue-200/70">
+                            <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
+                              <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 motion-safe:animate-ping" />
+                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-500" />
+                            </span>
+                            Live standings
+                            <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                          </Link>
                         )}
                       </div>
                     </div>
